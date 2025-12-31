@@ -1,0 +1,30 @@
+---
+import { type Block, checker } from "~/interfaces/application";
+import { concatBlocks } from "~/lib/blocks";
+import Inline from "./Inline.astro";
+
+// 特許出願書類の明細書の段落を表示するためのコンポーネント
+
+const { basePath, block } = Astro.props as {
+    basePath: string;
+    block: Block;
+};
+---
+
+{
+    // 段落
+    checker.isParagraph(block) && (
+        <div>
+            <div class={`jpTag indentLevel-${block.indentLevel}`}>
+                {block.jpTag}
+            </div>
+            {concatBlocks(block.blocks).map((group) => (
+                <div>
+                    {group.map((b) => (
+                        <Inline basePath={basePath} block={b} />
+                    ))}
+                </div>
+            ))}
+        </div>
+    )
+}

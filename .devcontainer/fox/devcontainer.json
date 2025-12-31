@@ -17,7 +17,8 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "KevinRose.vsc-python-indent"
+                "KevinRose.vsc-python-indent",
+                "astro-build.astro-vscode"
             ]
         }
     }

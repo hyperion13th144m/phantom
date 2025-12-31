@@ -1,0 +1,36 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+const inventors = new Set<string>();
+const docIdList = await getDocIdPaths();
+for (const p of docIdList) {
+    const contentInfo = await getContentInfo(p.params.docId);
+    contentInfo.bibData.inventors.forEach((inventor) => {
+        inventors.add(inventor);
+    });
+}
+const sortedInventors = Array.from(inventors).sort();
+---
+
+<Layout title="発明者の一覧">
+    <main>
+        <h1 class="text-2xl font-bold mb-4">発明者の一覧</h1>
+        <section>
+            <ul class="list-disc list-inside">
+                {
+                    sortedInventors.map((inventor) => (
+                        <li>
+                            <a
+                                href={`/docs/inventors/${inventor}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {inventor}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </section>
+    </main>
+</Layout>

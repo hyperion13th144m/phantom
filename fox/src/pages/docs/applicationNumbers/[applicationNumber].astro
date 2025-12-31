@@ -1,0 +1,73 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { formatApplicationNumber, formatDateString } from "~/lib/bib-utils";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+type ApplicationInfo = {
+    law: "patent" | "utilityModel";
+    applicationNumber: string;
+    documents: DocumentInfo[];
+};
+type DocumentInfo = {
+    docId: string;
+    documentName: string;
+    submissionDate: string;
+};
+export async function getStaticPaths() {
+    const appInfoList: Record<string, ApplicationInfo> = {};
+    const docIdList = await getDocIdPaths();
+    for (const p of docIdList) {
+        const contentInfo = await getContentInfo(p.params.docId);
+        const appNum = `${contentInfo.bibData.law}-${contentInfo.bibData.applicationNumber}`;
+        if (!appInfoList[appNum]) {
+            appInfoList[appNum] = {
+                law: contentInfo.bibData.law,
+                applicationNumber: contentInfo.bibData.applicationNumber,
+                documents: [],
+            };
+        }
+        appInfoList[appNum].documents.push({
+            docId: p.params.docId,
+            documentName: contentInfo.bibData.documentName,
+            submissionDate: contentInfo.bibData.submissionDate,
+        });
+    }
+    return Object.entries(appInfoList).map(([applicationNumber, props]) => ({
+        params: { applicationNumber },
+        props: { appInfo: props },
+    }));
+}
+
+const { applicationNumber } = Astro.params;
+const { appInfo } = Astro.props;
+const docs = appInfo.documents.sort((a, b) =>
+    a.submissionDate.localeCompare(b.submissionDate),
+);
+const law = appInfo.law;
+const an = formatApplicationNumber(law, appInfo.applicationNumber);
+---
+
+<Layout title={`出願番号別文書一覧 | ${an}`}>
+    <main>
+        <h1 class="text-2xl font-bold mb-4">
+            出願番号:{an}
+        </h1>
+        <section>
+            <ul class="list-disc list-inside">
+                {
+                    docs.map(({ docId, documentName, submissionDate }) => (
+                        <li>
+                            <span>{formatDateString(submissionDate)}</span>
+                            <a
+                                href={`/docs/${docId}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {documentName}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </section>
+    </main>
+</Layout>

@@ -1,0 +1,53 @@
+---
+import "../styles/global.css";
+const title = Astro.props.title || "Document";
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+    </head>
+    <body>
+        <slot />
+    </body>
+</html>
+
+<style>
+    body {
+        font-family:
+            "Courier New", Courier, monospace, "Osaka−等幅", "MS Gothic";
+        line-height: 1.6;
+        margin: 2rem;
+    }
+    :global(.indentLevel-1) {
+        text-indent: 1em;
+    }
+    :global(.figref, .patcit, .nplcit) {
+        @apply flex;
+    }
+    :global(.figref .indentLevel-2) {
+        text-indent: 2em;
+    }
+    :global(.patcit .indentLevel-2) {
+        text-indent: 2em;
+    }
+    :global(.nplcit .indentLevel-2) {
+        text-indent: 2em;
+    }
+    :global(.application-item) {
+        @apply flex;
+    }
+    :global(.application-item .jpTag) {
+        @apply w-[18em];
+    }
+    :global(.application-item .indentLevel-1) {
+        text-indent: 1em;
+    }
+    :global(.application-item .indentLevel-2) {
+        text-indent: 2em;
+    }
+</style>

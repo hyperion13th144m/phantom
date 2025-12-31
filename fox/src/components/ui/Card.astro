@@ -1,0 +1,81 @@
+---
+const {
+    title = "",
+    footer = "",
+    open = true, // 初期状態
+    collapsible = true,
+    id = crypto.randomUUID(), // 複数カードでも衝突しにくい
+} = Astro.props;
+---
+
+<article
+    class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden"
+>
+    <!-- Header -->
+    <header
+        class="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-100 bg-gray-50"
+    >
+        <div class="min-w-0">
+            <h3 class="text-base font-semibold text-gray-900 truncate">
+                {title}
+            </h3>
+        </div>
+
+        {
+            collapsible && (
+                <button
+                    type="button"
+                    class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm hover:bg-blue-100"
+                    data-card-toggle
+                    aria-controls={`card-body-${id}`}
+                    aria-expanded={open ? "true" : "false"}
+                >
+                    <span data-card-toggle-label>
+                        {open ? "閉じる" : "開く"}
+                    </span>
+                    <span class="select-none" aria-hidden="true">
+                        ▾
+                    </span>
+                </button>
+            )
+        }
+    </header>
+
+    <!-- Body -->
+    <section
+        id={`card-body-${id}`}
+        data-card-body
+        class={open ? "px-4 py-4" : "px-4 py-4 hidden"}
+    >
+        <slot />
+    </section>
+
+    <!-- Footer -->
+    {
+        (footer || Astro.slots.footer) && (
+            <footer class="px-4 py-3 border-t border-gray-100 text-sm text-gray-600">
+                {Astro.slots.footer ? <slot name="footer" /> : footer}
+            </footer>
+        )
+    }
+</article>
+
+<!-- collapse用の最小JS（このCardが存在するページ内だけで動く） -->
+<script>
+    // 同一ページで複数CardがあってもOKなように、要素単位で処理
+    document.querySelectorAll("[data-card-toggle]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const controls = btn.getAttribute("aria-controls");
+            const body = controls ? document.getElementById(controls) : null;
+            if (!body) return;
+
+            const expanded = btn.getAttribute("aria-expanded") === "true";
+            btn.setAttribute("aria-expanded", String(!expanded));
+
+            const label = btn.querySelector("[data-card-toggle-label]");
+            if (label) label.textContent = expanded ? "開く" : "閉じる";
+
+            body.classList.toggle("hidden", expanded);
+        });
+    });
+</script>

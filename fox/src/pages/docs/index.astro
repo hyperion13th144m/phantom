@@ -1,0 +1,42 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+const inventors = new Set<string>();
+const docIdList = await getDocIdPaths();
+for (const p of docIdList) {
+    const contentInfo = await getContentInfo(p.params.docId);
+    contentInfo.bibData.inventors.forEach((inventor) => {
+        inventors.add(inventor);
+    });
+}
+const sortedInventors = Array.from(inventors).sort();
+---
+
+<Layout title="出願書類">
+    <main>
+        <h1 class="text-2xl font-bold mb-4">出願書類</h1>
+        <section>
+            <ul class="list-disc list-inside">
+                <li>
+                    <a
+                        href="/docs/applicants"
+                        class="text-blue-600 hover:underline">出願人の一覧</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="/docs/inventors"
+                        class="text-blue-600 hover:underline">発明者の一覧</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="/docs/applicationNumbers"
+                        class="text-blue-600 hover:underline">出願番号の一覧</a
+                    >
+                </li>
+            </ul>
+        </section>
+    </main>
+</Layout>

@@ -1,0 +1,199 @@
+---
+import Application from "~/components/application/Application.astro";
+import Layout from "~/layouts/Layout.astro";
+import { formatApplicationNumber } from "~/lib/bib-utils";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+export const getStaticPaths = getDocIdPaths;
+
+const { docId } = Astro.params as { docId: string };
+const { basePath, textBlock, bibData, images } = await getContentInfo(docId);
+const title = `${formatApplicationNumber(bibData.law, bibData.applicationNumber)} | ${bibData.documentName}`;
+---
+
+{
+    bibData.documentCode == "A163" && (
+        <Layout title={title}>
+            <main data-search-root>
+                <Application
+                    textBlock={textBlock}
+                    basePath={basePath}
+                    images={images}
+                    bibData={bibData}
+                />
+            </main>
+        </Layout>
+    )
+}
+
+<script>
+    const colors = [
+        { backgroundColor: "bg-orange-500", color: "text-black" },
+        { backgroundColor: "bg-green-500", color: "text-white" },
+        { backgroundColor: "bg-amber-500", color: "text-black" },
+        { backgroundColor: "bg-indigo-500", color: "text-white" },
+        { backgroundColor: "bg-blue-500", color: "text-white" },
+        { backgroundColor: "bg-emerald-500", color: "text-white" },
+        { backgroundColor: "bg-yellow-500", color: "text-black" },
+        { backgroundColor: "bg-cyan-500", color: "text-black" },
+        { backgroundColor: "bg-fuchsia-500", color: "text-white" },
+        { backgroundColor: "bg-violet-500", color: "text-white" },
+    ];
+    const numColors = colors.length;
+
+    (() => {
+        const nav = document.querySelector("[data-keyword-nav]");
+        const root =
+            document.querySelector("[data-search-root]") ?? document.body;
+        if (!nav || !root) return;
+
+        const statusEl = nav.querySelector("[data-status]");
+        const state = new Map<string, { hits: Element[]; index: number }>();
+        let currentHighlight: Element | null = null;
+
+        /* ========= q パラメータからキーワード取得 ========= */
+        function getKeywordsFromQuery() {
+            const params = new URLSearchParams(location.search);
+            const q = params.get("q");
+            if (!q) return [];
+            return q
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .sort((a, b) => b.length - a.length); // 長い順
+        }
+
+        const keywords = getKeywordsFromQuery();
+        if (keywords.length === 0) {
+            //if (statusEl) statusEl.textContent = "検索キーワードがありません";
+            return;
+        }
+
+        /* ========= UI生成 ========= */
+        for (const kw of keywords) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.dataset.kw = kw;
+            btn.innerHTML = `${kw} <span class="count" data-count="${kw}"></span>`;
+            btn.className = `rounded-md shadow-md px-2 py-1 ${colors[keywords.indexOf(kw) % numColors].backgroundColor} ${colors[keywords.indexOf(kw) % numColors].color}`;
+            nav.insertBefore(btn, statusEl);
+        }
+
+        /* ========= ユーティリティ ========= */
+        const escapeRegExp = (s: string) =>
+            s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+        function unwrap(node: Element) {
+            const p = node.parentNode;
+            while (node.firstChild) p?.insertBefore(node.firstChild, node);
+            p?.removeChild(node);
+        }
+
+        function clearHighlights() {
+            root.querySelectorAll('mark[data-kw-hit="1"]').forEach(unwrap);
+            currentHighlight = null;
+        }
+
+        function collectTextNodes(container: Element) {
+            const walker = document.createTreeWalker(
+                container,
+                NodeFilter.SHOW_TEXT,
+                {
+                    acceptNode(node) {
+                        if (!node.nodeValue?.trim())
+                            return NodeFilter.FILTER_REJECT;
+                        const p = node.parentElement;
+                        if (!p) return NodeFilter.FILTER_REJECT;
+                        if (
+                            p.closest(
+                                "script,style,textarea,code,pre,[data-keyword-nav]",
+                            )
+                        )
+                            return NodeFilter.FILTER_REJECT;
+                        return NodeFilter.FILTER_ACCEPT;
+                    },
+                },
+            );
+            const nodes = [];
+            let n;
+            while ((n = walker.nextNode())) nodes.push(n);
+            return nodes;
+        }
+
+        function highlightKeyword(kw: string) {
+            const re = new RegExp(escapeRegExp(kw), "g");
+            const hits = [];
+            const kwIndex = keywords.indexOf(kw);
+            for (const tn of collectTextNodes(root)) {
+                const text = tn.nodeValue;
+                if (!text) continue;
+                if (!re.test(text)) continue;
+                re.lastIndex = 0;
+
+                const frag = document.createDocumentFragment();
+                let last = 0,
+                    m;
+                while ((m = re.exec(text))) {
+                    if (m.index > last)
+                        frag.appendChild(
+                            document.createTextNode(text.slice(last, m.index)),
+                        );
+
+                    const mark = document.createElement("mark");
+                    mark.textContent = m[0];
+                    mark.dataset.kwHit = "1";
+                    mark.dataset.kw = kw;
+                    mark.className = `${colors[kwIndex % numColors].backgroundColor} ${colors[kwIndex % numColors].color}`;
+                    frag.appendChild(mark);
+                    hits.push(mark);
+
+                    last = m.index + m[0].length;
+                }
+                if (last < text.length)
+                    frag.appendChild(document.createTextNode(text.slice(last)));
+
+                tn.parentNode?.replaceChild(frag, tn);
+            }
+            return hits;
+        }
+
+        function setCurrent(el: Element) {
+            if (currentHighlight)
+                currentHighlight.classList.remove("px-5", "py-2", "text-lg/7");
+            currentHighlight = el;
+            if (el) el.classList.add("px-5", "py-2", "text-lg/7");
+        }
+
+        function jumpTo(kw: string) {
+            const st = state.get(kw);
+            if (!st || st.hits.length === 0) {
+                if (statusEl) statusEl.textContent = `"${kw}" は見つかりません`;
+                return;
+            }
+            st.index = (st.index + 1) % st.hits.length;
+            const el = st.hits[st.index];
+            setCurrent(el);
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (statusEl)
+                statusEl.textContent = `"${kw}" ${st.index + 1}/${st.hits.length}`;
+        }
+
+        /* ========= 初期構築 ========= */
+        clearHighlights();
+        for (const kw of keywords) {
+            const hits = highlightKeyword(kw);
+            state.set(kw, { hits, index: -1 });
+            const c = nav?.querySelector(`[data-count="${CSS.escape(kw)}"]`);
+            if (c) c.textContent = `(${hits.length})`;
+        }
+
+        /* ========= クリック処理 ========= */
+        nav.addEventListener("click", (e) => {
+            const btn = (e.target as Element).closest(
+                "button[data-kw]",
+            ) as HTMLButtonElement;
+            if (!btn) return;
+            jumpTo(btn.dataset.kw as string);
+        });
+    })();
+</script>

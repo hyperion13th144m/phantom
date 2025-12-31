@@ -1,0 +1,20 @@
+---
+import PrintingApplication from "~/components/application/ApplicationForPrinting.astro";
+import PrintingLayout from "~/layouts/PrintingLayout.astro";
+import { formatApplicationNumber } from "~/lib/bib-utils";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+export const getStaticPaths = getDocIdPaths;
+
+const { docId } = Astro.params as { docId: string };
+const { basePath, textBlock, bibData } = await getContentInfo(docId);
+const title = `${formatApplicationNumber(bibData.law, bibData.applicationNumber)} | ${bibData.documentName}`;
+---
+
+{
+    bibData.documentCode == "A163" && (
+        <PrintingLayout title={title}>
+            <PrintingApplication textBlock={textBlock} basePath={basePath} />
+        </PrintingLayout>
+    )
+}

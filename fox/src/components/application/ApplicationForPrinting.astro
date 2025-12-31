@@ -1,0 +1,43 @@
+---
+import Abstract from "~/components/application/Abstract.astro";
+import ApplicationForm from "~/components/application/ApplicationForm.astro";
+import Claims from "~/components/application/Claims.astro";
+import Description from "~/components/application/Description.astro";
+import Drawings from "~/components/application/Drawings.astro";
+import type {
+    AbstractBlock,
+    ApplicationFormBlock,
+    ClaimsBlock,
+    DescriptionBlock,
+    DrawingsBlock,
+    TextBlocksJson,
+} from "~/interfaces/application";
+
+const { textBlock, basePath } = Astro.props as {
+    textBlock: TextBlocksJson;
+    basePath: string;
+};
+
+// 各セクションのブロックを抽出
+const application = textBlock.blocks
+    .filter((block) => block.tag === "applicationForm")
+    .at(0) as ApplicationFormBlock;
+const description = textBlock.blocks
+    .filter((block) => block.tag === "description")
+    .at(0) as DescriptionBlock;
+const claims = textBlock.blocks
+    .filter((block) => block.tag === "claims")
+    .at(0) as ClaimsBlock;
+const abstract = textBlock.blocks
+    .filter((block) => block.tag === "abstract")
+    .at(0) as AbstractBlock;
+const drawings = textBlock.blocks
+    .filter((block) => block.tag === "drawings")
+    .at(0) as DrawingsBlock | undefined;
+---
+
+<ApplicationForm application={application} />
+<Description basePath={basePath} description={description} />
+<Claims claims={claims} basePath={basePath} />
+<Abstract {...abstract} />
+{drawings && <Drawings basePath={basePath} drawings={drawings} />}

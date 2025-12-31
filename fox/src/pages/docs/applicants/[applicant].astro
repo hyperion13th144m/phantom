@@ -1,0 +1,71 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { formatApplicationNumber } from "~/lib/bib-utils";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+type ApplicantProps = {
+    docId: string;
+    applicationNumber: string;
+    documentName: string;
+    law: "patent" | "utilityModel";
+    submissionDate: string;
+};
+export async function getStaticPaths() {
+    const applicantProps: Record<string, ApplicantProps[]> = {};
+    const docIdList = await getDocIdPaths();
+    for (const p of docIdList) {
+        const contentInfo = await getContentInfo(p.params.docId);
+        contentInfo.bibData.applicants.forEach((applicant) => {
+            if (!applicantProps[applicant]) {
+                applicantProps[applicant] = [];
+            }
+            applicantProps[applicant].push({
+                docId: p.params.docId,
+                law: contentInfo.bibData.law,
+                applicationNumber: contentInfo.bibData.applicationNumber,
+                documentName: contentInfo.bibData.documentName,
+                submissionDate: contentInfo.bibData.submissionDate,
+            });
+        });
+    }
+    docIdList.forEach(async ({ params }) => {});
+    return Object.entries(applicantProps).map(([applicant, props]) => ({
+        params: { applicant },
+        props: { applicant, documents: props },
+    }));
+}
+
+const { applicant } = Astro.params;
+const { documents } = Astro.props;
+const docs = documents.sort((a, b) =>
+    a.submissionDate.localeCompare(b.submissionDate),
+);
+---
+
+<Layout title={`出願人別文書一覧 | ${applicant}`}>
+    <main>
+        <h1 class="text-2xl font-bold mb-4">出願人: {applicant}</h1>
+        <section>
+            <ul class="list-disc list-inside">
+                {
+                    docs.map(
+                        ({ docId, law, applicationNumber, documentName }) => (
+                            <li>
+                                <a
+                                    href={`/docs/${docId}`}
+                                    class="text-blue-600 hover:underline"
+                                >
+                                    {formatApplicationNumber(
+                                        law,
+                                        applicationNumber,
+                                    )}{" "}
+                                    - {documentName}
+                                </a>
+                            </li>
+                        ),
+                    )
+                }
+            </ul>
+        </section>
+    </main>
+</Layout>

@@ -1,0 +1,51 @@
+---
+import type { ApplicationFormBlock } from "~/interfaces/application";
+const { block } = Astro.props as {
+    block: ApplicationFormBlock;
+};
+---
+
+{
+    block.jpTag && block.convertedText && (
+        <div class="application-item">
+            <span class={`jpTag indentLevel-${block.indentLevel}`}>
+                {block.jpTag}
+            </span>
+            <span class="convertedText">{block.convertedText}</span>
+        </div>
+    )
+}
+
+{
+    block.jpTag && !block.convertedText && block.text && (
+        <div class="application-item">
+            <span class={`jpTag indentLevel-${block.indentLevel}`}>
+                {block.jpTag}
+            </span>
+            <span class="text">{block.text}</span>
+        </div>
+    )
+}
+
+{
+    block.jpTag && !block.convertedText && !block.text && (
+        <>
+            <div class="application-item">
+                <span class={`jpTag indentLevel-${block.indentLevel}`}>
+                    {block.jpTag}
+                </span>
+            </div>
+            {block?.blocks?.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </>
+    )
+}
+
+{
+    !block.jpTag &&
+        !block.convertedText &&
+        !block.text &&
+        "blocks" in block &&
+        block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
+}

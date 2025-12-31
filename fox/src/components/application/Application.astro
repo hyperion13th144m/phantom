@@ -1,0 +1,92 @@
+---
+import ImageCarousel from "~/components/ui/ImageCarousel.astro";
+import type {
+    AbstractBlock,
+    ApplicationFormBlock,
+    ClaimsBlock,
+    DescriptionBlock,
+    DrawingsBlock,
+    TextBlocksJson,
+} from "~/interfaces/application";
+import type { IBibliographicData } from "~/interfaces/bibliographic-data";
+import Card from "../ui/Card.astro";
+import Abstract from "./Abstract.astro";
+import ApplicationForm from "./ApplicationForm.astro";
+import BibliographicData from "./BibliographicData.astro";
+import Claims from "./Claims.astro";
+import Description from "./Description.astro";
+import Drawings from "./Drawings.astro";
+
+const { textBlock, basePath, images, bibData } = Astro.props as {
+    textBlock: TextBlocksJson;
+    basePath: string;
+    images: {
+        src: string;
+        thumbSrc: string;
+        alt: string;
+        rotation: number;
+    }[];
+    bibData: IBibliographicData;
+};
+
+// 各セクションのブロックを抽出
+const application = textBlock.blocks
+    .filter((block) => block.tag === "applicationForm")
+    .at(0) as ApplicationFormBlock;
+const description = textBlock.blocks
+    .filter((block) => block.tag === "description")
+    .at(0) as DescriptionBlock;
+const claims = textBlock.blocks
+    .filter((block) => block.tag === "claims")
+    .at(0) as ClaimsBlock;
+const abstract = textBlock.blocks
+    .filter((block) => block.tag === "abstract")
+    .at(0) as AbstractBlock;
+const drawings = textBlock.blocks
+    .filter((block) => block.tag === "drawings")
+    .at(0) as DrawingsBlock | undefined;
+---
+
+<BibliographicData bibData={bibData} />
+<div class="grid lg:grid-cols-2 gap-4">
+    <div class="">
+        <main id="doc-content">
+            <Card title="特許願">
+                <ApplicationForm application={application} />
+            </Card>
+            <Card title="明細書">
+                <Description basePath={basePath} description={description} />
+            </Card>
+            <Card title="請求の範囲">
+                <Claims claims={claims} basePath={basePath} />
+            </Card>
+            <Card title="要約書">
+                <Abstract {...abstract} />
+            </Card>
+            {
+                drawings && (
+                    <Card title="図面">
+                        <Drawings basePath={basePath} drawings={drawings} />
+                    </Card>
+                )
+            }
+        </main>
+    </div>
+    <div class="hidden lg:block">
+        <div class="sticky top-20 bg-white">
+            {
+                images && images.length > 0 ? (
+                    <Card title="図面一覧">
+                        <ImageCarousel
+                            images={images}
+                            heightClass="h-[640px]"
+                            thumbHeight={128}
+                        />
+                    </Card>
+                ) : (
+                    <p>図面はありません。</p>
+                )
+            }
+        </div>
+    </div>
+</div>

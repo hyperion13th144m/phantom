@@ -1,0 +1,12 @@
+---
+import BlockRenderer from "~/components/application/ApplicationFormBlockRenderer.astro";
+import type { ApplicationFormBlock } from "~/interfaces/application";
+
+const { application } = Astro.props as {
+    application: ApplicationFormBlock;
+};
+---
+
+<div class="applicationForm">
+    {application.blocks.map((block) => <BlockRenderer block={block} />)}
+</div>

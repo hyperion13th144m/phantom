@@ -1,20 +1,13 @@
-FROM python:3.13.9-bookworm
+FROM node:24-bookworm
 
-ARG USERNAME=pyuser
-ARG GROUPNAME=pygroup
+ARG USERNAME=node
+ARG GROUPNAME=node
 ARG UID=1000
 ARG GID=1000
 ENV TZ=Asia/Tokyo
 
-RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
-
 RUN apt-get update
-RUN python -m pip install --upgrade pip
 
 WORKDIR /app
-#COPY requirements.txt /app/
-#RUN pip install -r requirements.txt
-
 USER $USERNAME
-CMD [ "python" ]
-
+CMD [ "node" ]

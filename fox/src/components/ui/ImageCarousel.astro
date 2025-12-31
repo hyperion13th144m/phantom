@@ -1,0 +1,326 @@
+---
+/**
+ * ImageCarousel.astro
+ * Props:
+ *  images: Array<{
+ *    src: string;        // main image
+ *    thumb?: string;     // thumbnail (optional). if omitted, uses src
+ *    alt?: string;
+ *    caption?: string;   // optional caption text
+ *  }>
+ *  initialIndex?: number
+ *  loop?: boolean
+ *  showRotate?: boolean
+ *  heightClass?: string  // tailwind height class e.g. "h-80" / "h-[420px]"
+ */
+
+type CarouselImage = {
+    src: string;
+    thumb?: string;
+    alt?: string;
+    caption?: string;
+};
+
+const {
+    images,
+    initialIndex = 0,
+    loop = true,
+    showRotate = true,
+    heightClass = "h-[420px]",
+} = Astro.props as {
+    images: CarouselImage[];
+    initialIndex?: number;
+    loop?: boolean;
+    showRotate?: boolean;
+    heightClass?: string;
+};
+
+// uid を確実にユニーク化（Node 18+ / Astro なら crypto.randomUUID() が普通に使えます）
+const uid = crypto.randomUUID();
+---
+
+<div id={`ic-${uid}`} class="w-full" data-ic-root data-loop={loop ? "1" : "0"}>
+    <!-- 上段：サムネイル（ページネーション） -->
+    <div class="mb-2">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2">
+            {
+                images.map((img, i) => (
+                    <button
+                        type="button"
+                        class="shrink-0 rounded-lg border border-gray-300 bg-white p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        data-ic-thumb
+                        data-index={i}
+                        aria-label={`Go to image ${i + 1}`}
+                    >
+                        <img
+                            src={img.thumb ?? img.src}
+                            alt={img.alt ?? `thumbnail ${i + 1}`}
+                            loading="lazy"
+                            decoding="async"
+                            class="h-32 w-32 rounded-md object-cover"
+                        />
+                    </button>
+                ))
+            }
+        </div>
+    </div>
+
+    <!-- メイン表示 -->
+    <figure class="w-full">
+        <div
+            class={`relative w-full ${heightClass} overflow-hidden rounded-2xl border border-gray-200 bg-gray-50`}
+        >
+            <!-- 画像 -->
+            <img
+                data-ic-main-img
+                src={images[initialIndex]?.src}
+                alt={images[initialIndex]?.alt ?? `image ${initialIndex + 1}`}
+                decoding="async"
+                fetchpriority="high"
+                class="h-full w-full object-contain select-none touch-pan-y"
+            />
+
+            <!-- 現在位置インジケータ（例：1 / N） -->
+            <div
+                class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-sm text-gray-700 shadow"
+                data-ic-indicator
+            >
+                1 / {images.length}
+            </div>
+
+            <!-- 左右ボタン -->
+            <div class="absolute inset-y-0 left-0 flex items-center">
+                <button
+                    type="button"
+                    class="ml-2 rounded-full bg-white/90 px-3 py-2 text-sm shadow hover:bg-white"
+                    data-ic-prev
+                >
+                    前へ
+                </button>
+            </div>
+            <div class="absolute inset-y-0 right-0 flex items-center">
+                <button
+                    type="button"
+                    class="mr-2 rounded-full bg-white/90 px-3 py-2 text-sm shadow hover:bg-white"
+                    data-ic-next
+                >
+                    次へ
+                </button>
+            </div>
+
+            <!-- 回転ボタン（任意） -->
+            {
+                showRotate && (
+                    <div class="absolute bottom-3 right-3 flex gap-2">
+                        <button
+                            type="button"
+                            class="rounded-full bg-white/90 px-3 py-2 text-sm shadow hover:bg-white"
+                            data-ic-rot-left
+                            title="左に90°回転"
+                        >
+                            ⟲
+                        </button>
+                        <button
+                            type="button"
+                            class="rounded-full bg-white/90 px-3 py-2 text-sm shadow hover:bg-white"
+                            data-ic-rot-right
+                            title="右に90°回転"
+                        >
+                            ⟳
+                        </button>
+                        <button
+                            type="button"
+                            class="rounded-full bg-white/90 px-3 py-2 text-sm shadow hover:bg-white"
+                            data-ic-rot-reset
+                            title="回転リセット"
+                        >
+                            Reset
+                        </button>
+                    </div>
+                )
+            }
+        </div>
+
+        <!-- img の下に「図1」＋キャプション表示 -->
+        <figcaption class="mt-2 text-sm text-gray-700">
+            <span class="font-semibold" data-ic-zu>図1</span>
+            <span class="ml-2" data-ic-caption></span>
+        </figcaption>
+    </figure>
+</div>
+
+<script type="module" define:vars={{ uid, images, initialIndex }}>
+    const root = document.getElementById(`ic-${uid}`);
+    if (!root) throw new Error("ImageCarousel root not found");
+
+    const mainImg = root.querySelector("[data-ic-main-img]");
+    const indicator = root.querySelector("[data-ic-indicator]");
+    const captionEl = root.querySelector("[data-ic-caption]");
+    const zuEl = root.querySelector("[data-ic-zu]");
+    const prevBtn = root.querySelector("[data-ic-prev]");
+    const nextBtn = root.querySelector("[data-ic-next]");
+    const thumbBtns = root.querySelectorAll("[data-ic-thumb]");
+
+    const rotLeftBtn = root.querySelector("[data-ic-rot-left]");
+    const rotRightBtn = root.querySelector("[data-ic-rot-right]");
+    const rotResetBtn = root.querySelector("[data-ic-rot-reset]");
+
+    const loop = root.getAttribute("data-loop") === "1";
+
+    // 状態
+    let index = clamp(initialIndex, 0, images.length - 1);
+    let rotation = 0; // 0, 90, 180, 270
+
+    // スワイプ
+    let startX = null;
+    let startY = null;
+    let dragging = false;
+
+    function clamp(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+    }
+
+    function mod(n, m) {
+        return ((n % m) + m) % m;
+    }
+
+    function setActiveThumb() {
+        thumbBtns.forEach((btn) => {
+            const i = Number(btn.getAttribute("data-index"));
+            btn.classList.toggle("ring-2", i === index);
+            btn.classList.toggle("ring-gray-500", i === index);
+            btn.classList.toggle("border-gray-400", i === index);
+        });
+
+        // 選択サムネを見える位置へ（横スクロール対応）
+        const active = root.querySelector(
+            `[data-ic-thumb][data-index="${index}"]`,
+        );
+        active?.scrollIntoView({
+            block: "nearest",
+            inline: "nearest",
+            behavior: "smooth",
+        });
+    }
+
+    function applyRotation() {
+        // object-contain なので枠内には収まります（回転しても overflow-hidden）
+        mainImg.style.transform = `rotate(${rotation}deg)`;
+        mainImg.style.transformOrigin = "center center";
+    }
+
+    function render() {
+        const img = images[index];
+        mainImg.src = img.src;
+        mainImg.alt = img.alt ?? `image ${index + 1}`;
+
+        indicator.textContent = `${index + 1} / ${images.length}`;
+
+        // 「図1」表示
+        zuEl.textContent = `図${index + 1}`;
+
+        // キャプション表示
+        captionEl.textContent = img.caption
+            ? img.caption
+            : img.alt
+              ? img.alt
+              : "";
+
+        setActiveThumb();
+        applyRotation();
+    }
+
+    function goTo(next) {
+        if (images.length === 0) return;
+
+        if (loop) {
+            index = mod(next, images.length);
+        } else {
+            index = clamp(next, 0, images.length - 1);
+        }
+
+        // 画像切替時は回転維持したいならこのまま、リセットしたいなら rotation=0 に
+        // rotation = 0;
+
+        render();
+    }
+
+    function next() {
+        goTo(index + 1);
+    }
+    function prev() {
+        goTo(index - 1);
+    }
+
+    // クリック
+    prevBtn?.addEventListener("click", prev);
+    nextBtn?.addEventListener("click", next);
+
+    thumbBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const i = Number(btn.getAttribute("data-index"));
+            goTo(i);
+        });
+    });
+
+    // 回転
+    rotLeftBtn?.addEventListener("click", () => {
+        rotation = mod(rotation - 90, 360);
+        applyRotation();
+    });
+    rotRightBtn?.addEventListener("click", () => {
+        rotation = mod(rotation + 90, 360);
+        applyRotation();
+    });
+    rotResetBtn?.addEventListener("click", () => {
+        rotation = 0;
+        applyRotation();
+    });
+
+    // スワイプ（スマホ・タッチパッド想定）
+    // 画像要素にリスナー
+    mainImg.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        mainImg.setPointerCapture?.(e.pointerId);
+    });
+
+    mainImg.addEventListener("pointermove", (e) => {
+        if (!dragging || startX == null || startY == null) return;
+        // ここでは表示上のドラッグ追従はしない（軽量）
+    });
+
+    mainImg.addEventListener("pointerup", (e) => {
+        if (!dragging || startX == null || startY == null) return;
+        dragging = false;
+
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        // 縦スクロール誤判定を避ける：横が優勢で、一定距離以上
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+            if (dx < 0) next();
+            else prev();
+        }
+
+        startX = null;
+        startY = null;
+    });
+
+    mainImg.addEventListener("pointercancel", () => {
+        dragging = false;
+        startX = null;
+        startY = null;
+    });
+
+    // キーボード（任意：アクセシビリティ）
+    root.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") prev();
+        if (e.key === "ArrowRight") next();
+    });
+    root.tabIndex = 0;
+
+    // 初期描画
+    render();
+</script>

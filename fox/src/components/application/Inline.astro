@@ -1,0 +1,33 @@
+---
+import { type Block, checker } from "~/interfaces/application";
+import Figure from "./Figure.astro";
+const { basePath, block } = Astro.props as {
+    basePath: string;
+    block: Block;
+};
+---
+
+{checker.isTextBlock(block) && <span>{block.text}</span>}
+{checker.isSubBlock(block) && <sub>{block.text}</sub>}
+{checker.isSupBlock(block) && <sup>{block.text}</sup>}
+{checker.isUnderlineBlock(block) && <u>{block.text}</u>}
+{
+    // 表n，化n, 数n
+    (checker.isChemistry(block) ||
+        checker.isMaths(block) ||
+        checker.isTables(block)) && <Figure basePath={basePath} block={block} />
+}
+
+{
+    // 特許文献n，非特許文献n, 図面の簡単な説明
+    (checker.isPatcitBlock(block) ||
+        checker.isNplcitBlock(block) ||
+        checker.isFigRefBlock(block)) && (
+        <div class={block.tag}>
+            <div class={`jpTag indentLevel-${block.indentLevel}`}>
+                {block.jpTag}
+            </div>
+            <div class="text">{block.text}</div>
+        </div>
+    )
+}

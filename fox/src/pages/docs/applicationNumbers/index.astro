@@ -1,0 +1,51 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { formatApplicationNumber } from "~/lib/bib-utils";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+
+const appNumbers: Record<
+    string,
+    { law: "patent" | "utilityModel"; number: string }
+> = {};
+const docIdList = await getDocIdPaths();
+for (const p of docIdList) {
+    const contentInfo = await getContentInfo(p.params.docId);
+    const key = `${contentInfo.bibData.law}-${contentInfo.bibData.applicationNumber}`;
+    appNumbers[key] = {
+        law: contentInfo.bibData.law,
+        number: contentInfo.bibData.applicationNumber,
+    };
+}
+const sortedAppNumbers = Object.values(appNumbers).sort((a, b) => {
+    if (a.law !== b.law) {
+        return a.law.localeCompare(b.law);
+    } else {
+        return a.number.localeCompare(b.number);
+    }
+});
+---
+
+<Layout title="出願番号の一覧">
+    <main>
+        <h1 class="text-2xl font-bold mb-4">出願番号の一覧</h1>
+        <section>
+            <ul class="list-disc list-inside">
+                {
+                    sortedAppNumbers.map((appNumber) => (
+                        <li>
+                            <a
+                                href={`/docs/applicationNumbers/${appNumber.law}-${appNumber.number}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {formatApplicationNumber(
+                                    appNumber.law,
+                                    appNumber.number,
+                                )}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </section>
+    </main>
+</Layout>
