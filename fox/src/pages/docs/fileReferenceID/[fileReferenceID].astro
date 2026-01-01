@@ -1,12 +1,13 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { formatApplicationNumber, formatDateString } from "~/lib/bib-utils";
+import { formatDateString } from "~/lib/bib-utils";
 import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
 
 type ApplicationInfo = {
     law: "patent" | "utilityModel";
     applicationNumber: string;
+    fileReferenceID: string;
     documents: DocumentInfo[];
 };
 type DocumentInfo = {
@@ -20,44 +21,44 @@ export async function getStaticPaths() {
     for (const p of docIdList) {
         const contentInfo = await getContentInfo(p.params.docId);
         const appNum = `${contentInfo.bibData.law}-${contentInfo.bibData.applicationNumber}`;
-        if (!appInfoList[appNum]) {
-            appInfoList[appNum] = {
+        const fileReferenceID = contentInfo.bibData.fileReferenceID;
+        if (!appInfoList[fileReferenceID]) {
+            appInfoList[fileReferenceID] = {
                 law: contentInfo.bibData.law,
                 applicationNumber: contentInfo.bibData.applicationNumber,
+                fileReferenceID: contentInfo.bibData.fileReferenceID,
                 documents: [],
             };
         }
-        appInfoList[appNum].documents.push({
+        appInfoList[fileReferenceID].documents.push({
             docId: p.params.docId,
             documentName: contentInfo.bibData.documentName,
             submissionDate: contentInfo.bibData.submissionDate,
         });
     }
-    return Object.entries(appInfoList).map(([applicationNumber, props]) => ({
-        params: { applicationNumber },
+    return Object.entries(appInfoList).map(([fileReferenceID, props]) => ({
+        params: { fileReferenceID },
         props: { appInfo: props },
     }));
 }
 
-const { applicationNumber } = Astro.params;
+const { fileReferenceID } = Astro.params;
 const { appInfo } = Astro.props;
 const docs = appInfo.documents.sort((a, b) =>
     a.submissionDate.localeCompare(b.submissionDate),
 );
-const law = appInfo.law;
-const an = formatApplicationNumber(law, appInfo.applicationNumber);
 ---
 
-<Layout title={`出願番号別文書一覧 | ${an}`}>
+<Layout title={`整理番号別文書一覧 | ${fileReferenceID}`}>
     <main>
         <BreadCrumbs
             crumbs={[
                 { title: "HOME", href: "/" },
                 { title: "出願書類", href: "/docs" },
-                { title: "出願番号の一覧", href: "/docs/applicationNumbers" },
+                { title: "整理番号の一覧", href: "/docs/fileReferenceID" },
                 {
-                    title: an,
-                    href: `/docs/applicationNumbers/${law}-${appInfo.applicationNumber}`,
+                    title: fileReferenceID,
+                    href: `/docs/fileReferenceID/${fileReferenceID}`,
                 },
             ]}
         />

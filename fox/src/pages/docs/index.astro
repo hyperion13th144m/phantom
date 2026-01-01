@@ -1,6 +1,7 @@
 ---
+import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths";
 
 const inventors = new Set<string>();
 const docIdList = await getDocIdPaths();
@@ -10,12 +11,17 @@ for (const p of docIdList) {
         inventors.add(inventor);
     });
 }
-const sortedInventors = Array.from(inventors).sort();
 ---
 
 <Layout title="出願書類">
     <main>
-        <h1 class="text-2xl font-bold mb-4">出願書類</h1>
+        <BreadCrumbs
+            crumbs={[
+                { title: "HOME", href: "/" },
+                { title: "出願書類", href: "/docs" },
+            ]}
+        />
+
         <section>
             <ul class="list-disc list-inside">
                 <li>
@@ -34,6 +40,12 @@ const sortedInventors = Array.from(inventors).sort();
                     <a
                         href="/docs/applicationNumbers"
                         class="text-blue-600 hover:underline">出願番号の一覧</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="/docs/fileReferenceID"
+                        class="text-blue-600 hover:underline">整理番号の一覧</a
                     >
                 </li>
             </ul>

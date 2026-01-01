@@ -6,6 +6,10 @@ import type {
     ClaimsBlock,
     DescriptionBlock,
     DrawingsBlock,
+    ForeignAbstractBlock,
+    ForeignClaimsBlock,
+    ForeignDescriptionBlock,
+    ForeignDrawingsBlock,
     TextBlocksJson,
 } from "~/interfaces/application";
 import type { IBibliographicData } from "~/interfaces/bibliographic-data";
@@ -16,6 +20,7 @@ import BibliographicData from "./BibliographicData.astro";
 import Claims from "./Claims.astro";
 import Description from "./Description.astro";
 import Drawings from "./Drawings.astro";
+import ForeignLanguageDocumentBlock from "./ForeignLanguageDocument.astro";
 
 const { textBlock, basePath, images, bibData } = Astro.props as {
     textBlock: TextBlocksJson;
@@ -25,9 +30,18 @@ const { textBlock, basePath, images, bibData } = Astro.props as {
         thumbSrc: string;
         alt: string;
         rotation: number;
+        kind: string;
+        sizeTag: "thumbnail" | "middle" | "large";
+        number: string;
+        width: number;
+        height: number;
     }[];
     bibData: IBibliographicData;
 };
+
+const lawPrefix = bibData.law === "patent" ? "特許" : "実用新案登録";
+const carouselImages = images.filter((img) => img.kind.includes("figure"));
+const hasCarouselImages = carouselImages && carouselImages.length > 0;
 
 // 各セクションのブロックを抽出
 const application = textBlock.blocks
@@ -45,24 +59,53 @@ const abstract = textBlock.blocks
 const drawings = textBlock.blocks
     .filter((block) => block.tag === "drawings")
     .at(0) as DrawingsBlock | undefined;
+
+// 外国語書面出願
+const foreignDescription = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-description")
+    .at(0) as ForeignDescriptionBlock;
+const foreignClaims = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-claims")
+    .at(0) as ForeignClaimsBlock;
+const foreignAbstract = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-abstract")
+    .at(0) as ForeignAbstractBlock;
+const foreignDrawings = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-drawings")
+    .at(0) as ForeignDrawingsBlock | undefined;
 ---
 
 <BibliographicData bibData={bibData} />
-<div class="grid lg:grid-cols-2 gap-4">
+<div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
     <div class="">
         <main id="doc-content">
             <Card title="特許願">
                 <ApplicationForm application={application} />
             </Card>
-            <Card title="明細書">
-                <Description basePath={basePath} description={description} />
-            </Card>
-            <Card title="請求の範囲">
-                <Claims claims={claims} basePath={basePath} />
-            </Card>
-            <Card title="要約書">
-                <Abstract {...abstract} />
-            </Card>
+            {
+                description && (
+                    <Card title="明細書">
+                        <Description
+                            basePath={basePath}
+                            description={description}
+                        />
+                    </Card>
+                )
+            }
+            {
+                claims && (
+                    <Card title={lawPrefix + "請求の範囲"}>
+                        <Claims claims={claims} basePath={basePath} />
+                    </Card>
+                )
+            }
+            {
+                abstract && (
+                    <Card title="要約書">
+                        <Abstract {...abstract} />
+                    </Card>
+                )
+            }
             {
                 drawings && (
                     <Card title="図面">
@@ -70,23 +113,65 @@ const drawings = textBlock.blocks
                     </Card>
                 )
             }
+            {
+                foreignDescription && (
+                    <Card title="外国語明細書">
+                        <ForeignLanguageDocumentBlock
+                            basePath={basePath}
+                            block={foreignDescription}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+            {
+                foreignClaims && (
+                    <Card title={"外国語" + lawPrefix + "請求の範囲"}>
+                        <ForeignLanguageDocumentBlock
+                            basePath={basePath}
+                            block={foreignClaims}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+            {
+                foreignAbstract && (
+                    <Card title="外国語要約書">
+                        <ForeignLanguageDocumentBlock
+                            basePath={basePath}
+                            block={foreignAbstract}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+            {
+                foreignDrawings && (
+                    <Card title="外国語図面">
+                        <ForeignLanguageDocumentBlock
+                            basePath={basePath}
+                            block={foreignDrawings}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
         </main>
     </div>
-    <div class="hidden lg:block">
-        <div class="sticky top-20 bg-white">
-            {
-                images && images.length > 0 ? (
+    {
+        hasCarouselImages && (
+            <div class="hidden lg:block">
+                <div class="sticky top-32 bg-white">
                     <Card title="図面一覧">
                         <ImageCarousel
-                            images={images}
+                            images={carouselImages}
                             heightClass="h-[640px]"
                             thumbHeight={128}
                         />
                     </Card>
-                ) : (
-                    <p>図面はありません。</p>
-                )
-            }
-        </div>
-    </div>
+                </div>
+            </div>
+        )
+    }
 </div>

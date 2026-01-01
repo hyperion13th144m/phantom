@@ -59,6 +59,10 @@ export type Block =
     | AdvantageousEffectsBlock
     | EmbodimentExampleBlock
     | ModeForInventionBlock
+    | ForeignDescriptionBlock
+    | ForeignClaimsBlock
+    | ForeignAbstractBlock
+    | ForeignDrawingsBlock
     | UnknownBlock;
 
 /** 想定外 tag が来ても落ちないためのフォールバック */
@@ -105,7 +109,11 @@ export type KnownTag =
     | "figure"
     | "tables"
     | "maths"
-    | "chemistry";
+    | "chemistry"
+    | "foreign-language-description"
+    | "foreign-language-claims"
+    | "foreign-language-abstract"
+    | "foreign-language-drawings";
 
 /** -----------------------------
  *  再帰の中心：paragraph / text runs
@@ -385,6 +393,46 @@ export interface ChemistryBlock extends BaseBlock {
     jpTag: string;
     number: NumberString; // "1" / "2" ...
     images: FigureImage[];
+}
+
+/** -----------------------------
+ *  外国語書面出願：外国語明細書
+ * ---------------------------- */
+export interface ForeignDescriptionBlock extends BaseBlock {
+    tag: "foreign-language-description";
+    blocks: {
+        images: FigureImage[]
+    }[];
+}
+
+/** -----------------------------
+ *  外国語書面出願：外国語特許請求の範囲
+ * ---------------------------- */
+export interface ForeignClaimsBlock extends BaseBlock {
+    tag: "foreign-language-claims";
+    blocks: {
+        images: FigureImage[]
+    }[];
+}
+
+/** -----------------------------
+ *  外国語書面出願：外国語要約書
+ * ---------------------------- */
+export interface ForeignAbstractBlock extends BaseBlock {
+    tag: "foreign-language-abstract";
+    blocks: {
+        images: FigureImage[]
+    }[];
+}
+
+/** -----------------------------
+ *  外国語書面出願：外国語図面
+ * ---------------------------- */
+export interface ForeignDrawingsBlock extends BaseBlock {
+    tag: "foreign-language-drawings";
+    blocks: {
+        images: FigureImage[]
+    }[];
 }
 
 // --- 型ガードの汎用ファクトリー関数 ---

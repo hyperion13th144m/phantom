@@ -1,1 +1,66 @@
 @import "tailwindcss";
+
+html,
+body {
+    font-family:
+        "Courier New", Courier, monospace, "Osaka−等幅", "MS Gothic";
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.figref,
+.patcit,
+.nplcit {
+    @apply flex;
+}
+
+.indentLevel-1 {
+    text-indent: 1em;
+}
+
+.figref .indentLevel-2 {
+    text-indent: 2em;
+}
+
+.patcit .indentLevel-2 {
+    text-indent: 2em;
+}
+
+.nplcit .indentLevel-2 {
+    text-indent: 2em;
+}
+
+.application-item {
+    @apply flex;
+}
+
+.application-item .indentLevel-1 {
+    text-indent: 1em;
+}
+
+.application-item .indentLevel-2 {
+    text-indent: 2em;
+}
+
+.description {
+    break-before: page;
+}
+
+.claims {
+    break-before: page;
+}
+
+.abstract {
+    break-before: page;
+}
+
+.drawings {
+    break-before: page;
+}
+
+.figure:not(:last-child) {
+    break-after: page;
+}

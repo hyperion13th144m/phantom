@@ -1,0 +1,30 @@
+---
+// 外国語書面出願の各書類を表示するためのコンポーネント
+import type {
+    ForeignAbstractBlock,
+    ForeignClaimsBlock,
+    ForeignDescriptionBlock,
+    ForeignDrawingsBlock,
+} from "~/interfaces/application";
+interface Props {
+    basePath: string;
+    sizeTag?: "thumbnail" | "middle" | "large";
+    block:
+        | ForeignDescriptionBlock
+        | ForeignClaimsBlock
+        | ForeignAbstractBlock
+        | ForeignDrawingsBlock;
+}
+const { basePath, block, sizeTag = "middle" } = Astro.props as Props;
+---
+
+<div class={block.tag}>
+    <div class={`jpTag indentLevel-${block.indentLevel}`}>
+        {
+            block.blocks
+                .flatMap((b) => b.images)
+                .filter((image) => image.sizeTag === sizeTag)
+                .map((image) => <img src={`${basePath}/${image.src}`} />)
+        }
+    </div>
+</div>

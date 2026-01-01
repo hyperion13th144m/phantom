@@ -1,4 +1,5 @@
 ---
+import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
 import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
@@ -44,7 +45,17 @@ const docs = documents.sort((a, b) =>
 
 <Layout title={`発明者別文書一覧 | ${inventor}`}>
     <main>
-        <h1 class="text-2xl font-bold mb-4">発明者: {inventor}</h1>
+        <BreadCrumbs
+            crumbs={[
+                { title: "HOME", href: "/" },
+                { title: "出願書類", href: "/docs" },
+                { title: "発明者の一覧", href: "/docs/inventors" },
+                {
+                    title: inventor,
+                    href: `/docs/inventors/${inventor}`,
+                },
+            ]}
+        />
         <section>
             <ul class="list-disc list-inside">
                 {
@@ -52,14 +63,13 @@ const docs = documents.sort((a, b) =>
                         ({ docId, law, applicationNumber, documentName }) => (
                             <li>
                                 <a
-                                    href={`/docs/${docId}`}
+                                    href={`/docs/applicationNumbers/${law}-${applicationNumber}`}
                                     class="text-blue-600 hover:underline"
                                 >
                                     {formatApplicationNumber(
                                         law,
                                         applicationNumber,
-                                    )}{" "}
-                                    - {documentName}
+                                    )}
                                 </a>
                             </li>
                         ),

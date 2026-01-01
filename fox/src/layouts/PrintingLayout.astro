@@ -16,53 +16,7 @@ const title = Astro.props.title || "Document";
 </html>
 
 <style>
-    body {
-        font-family:
-            "Courier New", Courier, monospace, "Osaka−等幅", "MS Gothic";
-        line-height: 1.6;
-        margin: 2rem;
-        max-width: 800px;
-    }
-    :global(.description) {
-        break-before: page;
-    }
-    :global(.claims) {
-        break-before: page;
-    }
-    :global(.abstract) {
-        break-before: page;
-    }
-    :global(.drawings) {
-        break-before: page;
-    }
-    :global(.figure:not(:last-child)) {
-        break-after: page;
-    }
-    :global(.indentLevel-1) {
-        text-indent: 1em;
-    }
-    :global(.figref, .patcit, .nplcit) {
-        @apply flex;
-    }
-    :global(.figref .indentLevel-2) {
-        text-indent: 2em;
-    }
-    :global(.patcit .indentLevel-2) {
-        text-indent: 2em;
-    }
-    :global(.nplcit .indentLevel-2) {
-        text-indent: 2em;
-    }
-    :global(.application-item) {
-        @apply flex;
-    }
     :global(.application-item .jpTag) {
-        @apply w-[18em];
-    }
-    :global(.application-item .indentLevel-1) {
-        text-indent: 1em;
-    }
-    :global(.application-item .indentLevel-2) {
-        text-indent: 2em;
+        @apply min-w-[12em];
     }
 </style>
