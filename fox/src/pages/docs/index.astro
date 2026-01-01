@@ -15,12 +15,14 @@ for (const p of docIdList) {
 
 <Layout title="出願書類">
     <main>
-        <BreadCrumbs
-            crumbs={[
-                { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
-            ]}
-        />
+        <nav class="header-nav">
+            <BreadCrumbs
+                crumbs={[
+                    { title: "HOME", href: "/" },
+                    { title: "出願書類", href: "/docs" },
+                ]}
+            />
+        </nav>
 
         <section>
             <ul class="list-disc list-inside">

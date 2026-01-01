@@ -8,7 +8,9 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="HOME">
     <main>
-        <BreadCrumbs crumbs={[{ title: "HOME", href: "/" }]} />
+        <nav class="header-nav">
+            <BreadCrumbs crumbs={[{ title: "HOME", href: "/" }]} />
+        </nav>
         <section>
             <ul class="list-disc list-inside">
                 <li>

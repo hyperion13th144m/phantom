@@ -51,17 +51,20 @@ const docs = appInfo.documents.sort((a, b) =>
 
 <Layout title={`整理番号別文書一覧 | ${fileReferenceID}`}>
     <main>
-        <BreadCrumbs
-            crumbs={[
-                { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
-                { title: "整理番号の一覧", href: "/docs/fileReferenceID" },
-                {
-                    title: fileReferenceID,
-                    href: `/docs/fileReferenceID/${fileReferenceID}`,
-                },
-            ]}
-        />
+        <nav class="header-nav">
+            <BreadCrumbs
+                crumbs={[
+                    { title: "HOME", href: "/" },
+                    { title: "出願書類", href: "/docs" },
+                    { title: "整理番号の一覧", href: "/docs/fileReferenceID" },
+                    {
+                        title: fileReferenceID,
+                        href: `/docs/fileReferenceID/${fileReferenceID}`,
+                    },
+                ]}
+            />
+        </nav>
+
         <section>
             <ul class="list-disc list-inside">
                 {

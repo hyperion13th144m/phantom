@@ -64,3 +64,9 @@ body {
 .figure:not(:last-child) {
     break-after: page;
 }
+
+@layer components {
+    .header-nav {
+        @apply sticky top-0 mb-4 bg-gray-100 z-10 p-4 rounded-md shadow-md
+    }
+}

@@ -45,17 +45,20 @@ const docs = documents.sort((a, b) =>
 
 <Layout title={`出願人別文書一覧 | ${applicant}`}>
     <main>
-        <BreadCrumbs
-            crumbs={[
-                { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
-                { title: "出願人の一覧", href: "/docs/applicants" },
-                {
-                    title: applicant,
-                    href: `/docs/applicants/${applicant}`,
-                },
-            ]}
-        />
+        <nav class="header-nav">
+            <BreadCrumbs
+                crumbs={[
+                    { title: "HOME", href: "/" },
+                    { title: "出願書類", href: "/docs" },
+                    { title: "出願人の一覧", href: "/docs/applicants" },
+                    {
+                        title: applicant,
+                        href: `/docs/applicants/${applicant}`,
+                    },
+                ]}
+            />
+        </nav>
+
         <section>
             <ul class="list-disc list-inside">
                 {

@@ -50,17 +50,23 @@ const an = formatApplicationNumber(law, appInfo.applicationNumber);
 
 <Layout title={`出願番号別文書一覧 | ${an}`}>
     <main>
-        <BreadCrumbs
-            crumbs={[
-                { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
-                { title: "出願番号の一覧", href: "/docs/applicationNumbers" },
-                {
-                    title: an,
-                    href: `/docs/applicationNumbers/${law}-${appInfo.applicationNumber}`,
-                },
-            ]}
-        />
+        <nav class="header-nav">
+            <BreadCrumbs
+                crumbs={[
+                    { title: "HOME", href: "/" },
+                    { title: "出願書類", href: "/docs" },
+                    {
+                        title: "出願番号の一覧",
+                        href: "/docs/applicationNumbers",
+                    },
+                    {
+                        title: an,
+                        href: `/docs/applicationNumbers/${law}-${appInfo.applicationNumber}`,
+                    },
+                ]}
+            />
+        </nav>
+
         <section>
             <ul class="list-disc list-inside">
                 {

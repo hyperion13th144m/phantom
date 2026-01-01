@@ -25,13 +25,16 @@ const sortedAppNumbers = Object.values(appNumbers).sort((a, b) => {
 
 <Layout title="整理番号の一覧">
     <main>
-        <BreadCrumbs
-            crumbs={[
-                { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
-                { title: "整理番号の一覧", href: "/docs/fileReferenceID" },
-            ]}
-        />
+        <nav class="header-nav">
+            <BreadCrumbs
+                crumbs={[
+                    { title: "HOME", href: "/" },
+                    { title: "出願書類", href: "/docs" },
+                    { title: "整理番号の一覧", href: "/docs/fileReferenceID" },
+                ]}
+            />
+        </nav>
+
         <section>
             <ul class="list-disc list-inside">
                 {
