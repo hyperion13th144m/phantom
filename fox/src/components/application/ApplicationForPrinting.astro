@@ -10,8 +10,13 @@ import type {
     ClaimsBlock,
     DescriptionBlock,
     DrawingsBlock,
+    ForeignAbstractBlock,
+    ForeignClaimsBlock,
+    ForeignDescriptionBlock,
+    ForeignDrawingsBlock,
     TextBlocksJson,
 } from "~/interfaces/application";
+import ForeignLanguageDocumentBlock from "./ForeignLanguageDocument.astro";
 
 const { textBlock, basePath } = Astro.props as {
     textBlock: TextBlocksJson;
@@ -34,10 +39,59 @@ const abstract = textBlock.blocks
 const drawings = textBlock.blocks
     .filter((block) => block.tag === "drawings")
     .at(0) as DrawingsBlock | undefined;
+
+// 外国語書面出願
+const foreignDescription = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-description")
+    .at(0) as ForeignDescriptionBlock;
+const foreignClaims = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-claims")
+    .at(0) as ForeignClaimsBlock;
+const foreignAbstract = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-abstract")
+    .at(0) as ForeignAbstractBlock;
+const foreignDrawings = textBlock.blocks
+    .filter((block) => block.tag === "foreign-language-drawings")
+    .at(0) as ForeignDrawingsBlock | undefined;
 ---
 
 <ApplicationForm application={application} />
-<Description basePath={basePath} description={description} />
-<Claims claims={claims} basePath={basePath} />
-<Abstract {...abstract} />
+{description && <Description basePath={basePath} description={description} />}
+{claims && <Claims claims={claims} basePath={basePath} />}
+{abstract && <Abstract {...abstract} />}
 {drawings && <Drawings basePath={basePath} drawings={drawings} />}
+{
+    foreignDescription && (
+        <ForeignLanguageDocumentBlock
+            basePath={basePath}
+            block={foreignDescription}
+            sizeTag="large"
+        />
+    )
+}
+{
+    foreignClaims && (
+        <ForeignLanguageDocumentBlock
+            basePath={basePath}
+            block={foreignClaims}
+            sizeTag="large"
+        />
+    )
+}
+{
+    foreignAbstract && (
+        <ForeignLanguageDocumentBlock
+            basePath={basePath}
+            block={foreignAbstract}
+        />
+    )
+}
+{
+    foreignDrawings && (
+        <ForeignLanguageDocumentBlock
+            basePath={basePath}
+            block={foreignDrawings}
+            sizeTag="large"
+        />
+    )
+}
