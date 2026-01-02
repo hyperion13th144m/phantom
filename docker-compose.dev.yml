@@ -26,9 +26,10 @@ services:
       - .:/workspaces:cached
     tty: true
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATA_DIR: /data_dir
+      ES_URL: http://es01:9200
+      ES_USER: ${ELASTIC_USER}
+      ES_PASSWORD: ${ELASTIC_PASSWORD}
  
   queen:
     container_name: queen-dev
@@ -98,20 +99,43 @@ services:
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
     container_name: phantom-elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
     environment:
-      xpack.security.enabled: false
-      discovery.type: single-node
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
-    mem_limit: ${MEM_LIMIT}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - network.host=0.0.0.0
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     volumes:
       - es-data:/usr/share/elasticsearch/data
-    restart: always
+    #mem_limit: ${MEM_LIMIT}
+    #ulimits:
+    #  memlock:
+    #    soft: -1
+    #    hard: -1
 
+  setup:
+    image: curlimages/curl:8.5.0
+    depends_on:
+      - es01
+    entrypoint: >
+      sh -c "
+         echo 'Waiting for Elasticsearch...';
+      until curl -s http://elasticsearch:9200 >/dev/null; do sleep 1; done;
+      echo 'Creating index patent-documents...';
+      curl -X PUT http://elasticsearch:9200/patent-documents -H 'Content-Type: application/json' -d '
+      {
+        \"settings\": {
+          \"number_of_shards\": 1,
+          \"number_of_replicas\": 0
+        }
+      }';
+      echo 'Done.';
+      "
+    restart: "no"
+ 
   kibana:
     image: docker.elastic.co/kibana/kibana:9.2.3
     container_name: phantom-kibana

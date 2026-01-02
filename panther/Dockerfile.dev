@@ -1,4 +1,4 @@
-FROM python:3.13.9-bookworm
+FROM python:3.14-bookworm
 
 ARG USERNAME=pyuser
 ARG GROUPNAME=pygroup
@@ -10,11 +10,12 @@ RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USER
 
 RUN apt-get update
 RUN python -m pip install --upgrade pip
+RUN pip install poetry
 
 WORKDIR /app
-COPY requirements.txt /app/
-RUN pip install -r requirements.txt
-
+COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock ./
+RUN poetry install --no-root
 USER $USERNAME
-CMD [ "python" ]
+COPY --chown=$USERNAME:$GROUPNAME . .
 
+CMD [ "python" ]
