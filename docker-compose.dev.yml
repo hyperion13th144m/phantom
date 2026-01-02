@@ -60,12 +60,16 @@ services:
   joker:
     container_name: joker-dev
     image: joker-dev
-    tty: true
     build:
       context: joker
       dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
+    environment:
+      ES_URL: http://es01:9200
+      ES_USER: ${ELASTIC_USER}
+      ES_PASSWORD: ${ELASTIC_PASSWORD}
+    tty: true
     #ports:
     #  - 20041:10041
 
