@@ -6,6 +6,6 @@ ENV TZ=Asia/Tokyo
 RUN apt-get update
 WORKDIR /app
 USER node
-
+COPY . .
 CMD  [ "node" ]
 
