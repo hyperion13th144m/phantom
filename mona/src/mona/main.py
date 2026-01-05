@@ -8,12 +8,17 @@ import sys
 from itertools import chain
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Generator
+from typing import Generator, List
 
 from libefiling import parse_archive
 from libefiling.archive.utils import detect_document_id
 from libefiling.manifest.model import Manifest
 
+from mona.default_config import (
+    FileKind,
+    default_image_params,
+    default_translator_config,
+)
 from mona.xml_pkg.merge import merge_xml
 
 
@@ -33,31 +38,49 @@ def find_archives_in_directory(directory: str) -> Generator[tuple[Path, Path], N
         procedure = find_procedure_xml(file)
         yield file, procedure
 
-def extract_archive(archive_path: Path, procedure_path: Path, output_dir: Path):
+def extract_archive(archive_path: Path, procedure_path: Path, output_dir: Path, image_params):
     """Extract e-filing archive to the specified output directory."""
-    with TemporaryDirectory() as temp_dir:
-        ### Parse the archive into the temporary directory
-        parse_archive(
-            str(archive_path),
-            str(procedure_path),
-            temp_dir,
-        )
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-        ### Read the manifest to get the document ID
-        with open(os.path.join(temp_dir, "manifest.json"), "r", encoding="utf-8") as f:
-            manifest_data = Manifest.model_validate_json(f.read())
-    
-        ### Move the parsed files to the final destination
-        if not output_dir.exists():
-            output_dir.mkdir(parents=True, exist_ok=True)
-        else:
-            raise FileExistsError(f"Directory {output_dir} already exists.")
-        shutil.copytree(temp_dir, output_dir, dirs_exist_ok=True)
-    return manifest_data
+    ### Parse the archive into output_dir
+    parse_archive(
+        str(archive_path),
+        str(procedure_path),
+        str(output_dir),
+    )
 
 def id2dir(doc_id: str, base_dir: Path) -> Path:
     """Convert document ID to directory path."""
     return base_dir.joinpath(doc_id[0:2], doc_id[2:4], doc_id)
+
+def merge_dicts(dicts: list[dict]) -> dict:
+    """Merge a list of dicts into a single dict."""
+    
+    result = {}
+    for d in dicts:
+        if "root" not in d:
+            continue
+        for key in d["root"]:
+            if key in result:
+                ### key が既に存在する場合は、リストに追加する
+                if isinstance(result[key], list):
+                    result[key].extend(d["root"][key])
+                else:
+                    result[key] = [result[key]] + d["root"][key]
+            else:
+                ### key が存在しない場合は、新規に追加する
+                result[key] = d["root"][key]
+
+    return result
+
+from mona.default_config import (
+    ManifestProcessor,
+    MetadataProcessor,
+    OCRProcessor,
+    XSLTProcessor,
+    default_translator_config,
+)
 
 if __name__ == "__main__":
     argparse = argparse.ArgumentParser(
@@ -91,14 +114,29 @@ if __name__ == "__main__":
             continue
 
         try:
-            manifest_data = extract_archive(archive_path, procedure_path, output_dir)
+            extract_archive(archive_path, procedure_path, output_dir, default_image_params)
             print(f"  Extracted to: {output_dir}")
-            xml_files = (output_dir / manifest_data.paths.xml_dir).glob("*.XML", case_sensitive=False)
-            merge_xml(xml_files, str(output_dir / "document.xml"))
-            print(f"  Merged XML created at: {output_dir / 'document.xml'}")
+
+            ### Read the manifest
+            with open(os.path.join(output_dir, "manifest.json"), "r", encoding="utf-8") as f:
+                manifest_data = Manifest.model_validate_json(f.read())
+            
+            manifest_path = output_dir / "manifest.json"
+            processors: List[ManifestProcessor] = [MetadataProcessor(manifest_path), OCRProcessor(manifest_path), XSLTProcessor(manifest_path, default_translator_config)]
+            data = []
+            for p in processors:
+                translated_data = p.translate()
+                data.extend(translated_data)
+            
+            merged_dict = merge_dicts(data) 
+            dst_path = output_dir / f"document.json"
+            with open(dst_path, "w", encoding="utf-8") as f:
+                json.dump(merged_dict, f, ensure_ascii=False, indent=2)
+                print(f"  Generated {dst_path}")
 
         except FileExistsError as fee:
             print(f"Skipping extracting {archive_path}: {fee}")
         except Exception as e:
             print(f"Failed to extract {archive_path}: {e}")
+            output_dir.rmdir()  # Clean up partial output
             
