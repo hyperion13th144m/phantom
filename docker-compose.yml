@@ -1,19 +1,17 @@
 services:
   mona:
-    container_name: mona-dev
-    image: mona-dev
+    container_name: mona
+    image: mona
     build:
       context: mona
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir
-      - .:/workspaces:cached
     tty: true
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SRC_DIR: /src_dir
+      DATA_DIR: /data_dir
   
   panther:
     container_name: panther

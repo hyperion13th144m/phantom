@@ -5,8 +5,8 @@ from typing import List
 import xmltodict
 from pydantic import BaseModel
 
-from ..xml.merge import merge_xml_to_string
-from ..xml.translate import translate_xml
+from ..merge_xml import merge_xml_to_string
+from ..translate_xml import translate_xml
 from .base import ManifestProcessor
 
 

@@ -2,14 +2,27 @@
 取り込み対象のアーカイブに関するモジュール
 """
 
+import logging
 import re
 from itertools import chain
 from pathlib import Path
 from typing import Generator
 
-TARGET_DOCUMENT_CODES = [
-    "A163",
-]
+logger = logging.getLogger(__name__)
+
+
+def find_archives(
+    directory: str, doc_codes: list[str]
+) -> Generator[tuple[Path, Path], None, None]:
+    """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
+    for file in chain(Path(directory).rglob("*.JWX"), Path(directory).rglob("*.JPC")):
+        if re.match(r".+AAA$", file.stem) is None:
+            continue
+        if is_target_document(file, doc_codes) is False:
+            logging.debug(f"Skip non-target document: {file.name}")
+            continue
+        procedure = find_procedure_xml(file)
+        yield file, procedure
 
 
 def is_target_document(document_filename: Path, doc_codes: list[str]) -> bool:
@@ -19,15 +32,6 @@ def is_target_document(document_filename: Path, doc_codes: list[str]) -> bool:
         if re.match(pattern, document_filename.name):
             return True
     return False
-
-
-def find_archives(directory: str) -> Generator[tuple[Path, Path], None, None]:
-    """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
-    for file in chain(Path(directory).rglob("*.JWX"), Path(directory).rglob("*.JPC")):
-        if re.match(r".+AAA$", file.stem) is None:
-            continue
-        procedure = find_procedure_xml(file)
-        yield file, procedure
 
 
 def find_procedure_xml(archive_path: Path) -> Path:

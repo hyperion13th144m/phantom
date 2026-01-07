@@ -3,6 +3,7 @@ from libefiling.image.params import ImageConvertParam
 from .manifest_processor.xslt import TranslatorConfig
 
 SCHEMA_VER = "1.0"
+TARGET_DOCUMENT_CODES = ["A163"]
 
 
 image_params: list[ImageConvertParam] = [

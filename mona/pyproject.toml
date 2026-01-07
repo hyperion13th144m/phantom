@@ -8,9 +8,9 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "saxonche (>=12.9.0,<13.0.0)",
     "xmltodict (>=1.0.2,<2.0.0)",
     "libefiling (>=0.1.30,<0.2.0)",
+    "saxonche (>=12.9.0,<13.0.0)",
 ]
 
 [tool.poetry]

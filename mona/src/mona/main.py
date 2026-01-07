@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import shutil
 import sys
 import traceback
@@ -9,23 +10,28 @@ from typing import List
 
 from libefiling import generate_sha256, parse_archive
 
-from mona.config import image_params, translator_config
-from mona.find_archives import TARGET_DOCUMENT_CODES, find_archives, is_target_document
-from mona.logger import build_logger
+from mona.config import TARGET_DOCUMENT_CODES, image_params, translator_config
+from mona.find_archives import find_archives
+from mona.logger import setup_logger
 from mona.manifest_processor.base import ManifestProcessor
 from mona.manifest_processor.metadata import MetadataProcessor
 from mona.manifest_processor.ocr import OCRProcessor
 from mona.manifest_processor.xslt import XSLTProcessor
 
+setup_logger()
+logger = logging.getLogger(__name__)
+
 
 def main():
     src_dir, output_dir_root, doc_code, log_level, multi_processors = get_args()
+    logger.setLevel(getattr(logging, log_level.upper(), None))
+
     if multi_processors > 1:
         multi_processes_parent(
-            src_dir, output_dir_root, doc_code, log_level, multi_processors
+            src_dir, output_dir_root, doc_code, multi_processors, log_level
         )
     else:
-        single_process(src_dir, output_dir_root, doc_code, log_level)
+        single_process(src_dir, output_dir_root, doc_code)
 
 
 def get_args() -> tuple[Path, Path, str, int]:
@@ -35,11 +41,9 @@ def get_args() -> tuple[Path, Path, str, int]:
     p.add_argument("src_dir", type=str, help="Directory containing e-filing archives")
     p.add_argument("output_dir", type=str, help="Directory to store parsed output")
     p.add_argument(
-        "-c",
-        "--doc-code",
+        "doc_code",
         nargs="+",
         choices=TARGET_DOCUMENT_CODES,
-        default=TARGET_DOCUMENT_CODES,
         help="document codes to parse",
     )
     p.add_argument(
@@ -78,22 +82,17 @@ def get_args() -> tuple[Path, Path, str, int]:
     )
 
 
-def single_process(
-    src_dir: Path, output_dir_root: Path, doc_code: List[str], log_level: str
-):
-    logger = build_logger(log_level)
-    for archive_path, procedure_path in find_archives(src_dir):
-        common_processing_steps(
-            archive_path, procedure_path, output_dir_root, doc_code, logger
-        )
+def single_process(src_dir: Path, output_dir_root: Path, doc_code: List[str]):
+    for archive_path, procedure_path in find_archives(src_dir, doc_code):
+        common_processing_steps(archive_path, procedure_path, output_dir_root)
 
 
 def multi_processes_parent(
     src_dir: Path,
     output_dir_root: Path,
     doc_code: List[str],
-    log_level: str,
     num_processors: int,
+    log_level: str,
 ):
     from multiprocessing import Process, Queue
 
@@ -104,14 +103,14 @@ def multi_processes_parent(
     for _ in range(num_processors):
         p = Process(
             target=multi_processes_child,
-            args=(output_dir_root, doc_code, log_level, queue),
+            args=(output_dir_root, queue, log_level),
         )
         p.start()
         processes.append(p)
 
     try:
         # give archive to each processes via queue
-        for item in find_archives(src_dir):
+        for item in find_archives(src_dir, doc_code):
             queue.put(item)
 
         # give None for quit processes
@@ -127,33 +126,22 @@ def multi_processes_parent(
             p.join()
 
 
-def multi_processes_child(output_dir_root, doc_code, log_level, queue):
-    logger = build_logger(log_level)
+def multi_processes_child(output_dir_root, queue, log_level):
+    logger.setLevel(getattr(logging, log_level.upper(), None))
     while True:
         item = queue.get()
         if item is None:
             break
         archive_path, procedure_path = item
 
-        common_processing_steps(
-            archive_path, procedure_path, output_dir_root, doc_code, logger
-        )
+        common_processing_steps(archive_path, procedure_path, output_dir_root)
 
 
 def common_processing_steps(
     archive_path: Path,
     procedure_path: Path,
     output_dir_root: Path,
-    doc_code: List[str],
-    logger: Logger,
 ):
-    ### check if target document
-    if is_target_document(archive_path, doc_code) is False:
-        logger.debug(
-            f"Skipping {archive_path}, not in target document codes: {doc_code}"
-        )
-        return
-
     ### check if already processed
     doc_id = generate_sha256(str(archive_path))
     output_dir = get_output_dir(doc_id, output_dir_root)
