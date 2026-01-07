@@ -5,12 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "crawl",
+            "name": "single",
             "type": "debugpy",
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "/src_dir/A163 /data_dir"
+            "args": "-l debug /src_dir/A1632 /data_dir"
+        },
+        {
+            "name": "multi",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/mona/main.py",
+            "console": "integratedTerminal",
+            "args": " -m 2 -l debug /src_dir/A1632 /data_dir"
         }
     ]
 }

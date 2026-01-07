@@ -1,14 +1,18 @@
+from importlib import resources
 from pathlib import Path
 from typing import Union
 
 import saxonche
 
-from .resolver import xsl_resolver
+from . import stylesheets
 
 
-def translate_xml(
-    src_xml: Union[str, Path], xsl_name: str
-) -> str:
+def xsl_resolver(xsl_name: str) -> Path:
+    xsl = resources.files(stylesheets) / xsl_name
+    return xsl
+
+
+def translate_xml(src_xml: Union[str, Path], xsl_name: str) -> str:
     """translate xml by xsl using saxon
 
     Args:

@@ -14,7 +14,7 @@
     <xsl:include href="sub-templates/pat-appd.xsl" />
     <xsl:include href="common-templates/date-templates.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
-    <xsl:include href="common-templates/document-code.xsl" />
+    <xsl:include href="common-templates/doc-code.xsl" />
     <xsl:include href="common-templates/special-mention-matter-article.xsl" />
     <xsl:include href="common-templates/country.xsl" />
     <xsl:include href="common-templates/doc-number.xsl" />

@@ -14,8 +14,8 @@ RUN pip install poetry
 
 USER $USERNAME
 WORKDIR /app
-COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock  ./
-RUN poetry config virtualenvs.in-project true
-RUN poetry install --no-root
-COPY --chown=$USERNAME:$GROUPNAME . .
+#COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock  ./
+#RUN poetry config virtualenvs.in-project true
+#RUN poetry install --no-root
+#COPY --chown=$USERNAME:$GROUPNAME . .
 CMD [ "python" ]

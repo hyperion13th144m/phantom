@@ -12,12 +12,20 @@
 
     <!-- 画像 -->
     <xsl:template match="images">
-        <xsl:apply-templates select="image" />
+        <xsl:choose>
+            <xsl:when test="count(image) = 0">
+                <xsl:element name="images">
+                </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="image" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template match="image">
         <!-- 変換前の画像ファイル名-->
-        <xsl:variable name="orig" select="@orig" />
+        <xsl:variable name="orig" select="@orig-filename" />
 
         <!-- 変換前の画像ファイルを参照しているノードを探す-->
         <xsl:variable name="img-node" select="//img[@file=$orig]" />
@@ -27,7 +35,7 @@
 
         <!-- 代表図のファイル名 -->
         <xsl:variable name="repr"
-            select="//procedure-param[@name='representation-image']/@file-name" />
+            select="//jp:procedure//jp:representation-image/jp:file-name"/>
 
         <!-- 図面の簡単な説明から図番号に対応するものを得る -->
         <xsl:variable name="desc" select="//description-of-drawings//figref[@num=$img-number]" />

@@ -11,9 +11,9 @@
     <xsl:variable name="law">
         <xsl:choose>
             <xsl:when
-                test="//procedure-param[@name='law' and text() = '1']">patent</xsl:when>
+                test="//jp:procedure//jp:law = '1'">patent</xsl:when>
             <xsl:when
-                test="//procedure-param[@name='law' and text() = '2']">utility-model</xsl:when>
+                test="//jp:procedure//jp:law = '2'">utility-model</xsl:when>
             <xsl:otherwise>unknown</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
@@ -291,7 +291,7 @@
 
             <xsl:element name="representative">
                 <xsl:choose>
-                    <xsl:when test="//procedure-param[@file-name = $image-file]">true</xsl:when>
+                    <xsl:when test="//jp:procedure//jp:representation-image/jp:file-name = $image-file">true</xsl:when>
                     <xsl:otherwise>false</xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -327,7 +327,7 @@
 
 
     <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig" />
+    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
 
     <!--  イメージ   -->
     <xsl:template match="img">

@@ -40,14 +40,14 @@ python-dotenv = "*"
 
 [[package]]
 name = "libefiling"
-version = "0.1.22"
+version = "0.1.30"
 description = "A Python library for e-filing systems."
 optional = false
 python-versions = ">=3.12"
 groups = ["main"]
 files = [
-    {file = "libefiling-0.1.22-py3-none-any.whl", hash = "sha256:d8df178b20761dbfc7c5ab943828aa520490bd4964ade6a94cca668159909633"},
-    {file = "libefiling-0.1.22.tar.gz", hash = "sha256:9795d82b5bc531ef6bab42cb33ae5841d6f2aa2825420ad8dc44d316a2b91e9b"},
+    {file = "libefiling-0.1.30-py3-none-any.whl", hash = "sha256:361694f335320cf31ec1b92cc035e6ef9ed675a3170a71cca871b77d4fc6e330"},
+    {file = "libefiling-0.1.30.tar.gz", hash = "sha256:e8673a5aea5300397349803354200ad97685976f714c6c4d91ce9df06621c1f7"},
 ]
 
 [package.dependencies]
@@ -450,4 +450,4 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "e7a9299e4541697be6b3b030c3096f5900b45986bdefd90d13eceb64be728ff5"
+content-hash = "2de308c120d07a40e31cf2a5ffc953fa571490790245b03bda73827401c2c55b"

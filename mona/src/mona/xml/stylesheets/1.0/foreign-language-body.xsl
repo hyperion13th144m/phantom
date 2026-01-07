@@ -9,9 +9,9 @@
     <xsl:variable name="law">
         <xsl:choose>
             <xsl:when
-                test="//procedure-param[@name='law' and text() = '1']">patent</xsl:when>
+                test="//jp:procedure//jp:law = '1'">patent</xsl:when>
             <xsl:when
-                test="//procedure-param[@name='law' and text() = '2']">utility-model</xsl:when>
+                test="//jp:procedure//jp:law = '2'">utility-model</xsl:when>
             <xsl:otherwise>unknown</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>

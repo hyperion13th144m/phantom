@@ -20,7 +20,8 @@
                 "tamasfe.even-better-toml",
                 "njpwerner.autodocstring",
                 "ms-python.python",
-                "ms-python.isort"
+                "ms-python.isort",
+                "ms-python.black-formatter"
             ]
         }
     }
