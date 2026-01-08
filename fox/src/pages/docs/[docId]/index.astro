@@ -2,24 +2,24 @@
 import Application from "~/components/application/Application.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
 
-export const getStaticPaths = getDocIdPaths;
+export const getStaticPaths = getDocIds;
 
 const { docId } = Astro.params as { docId: string };
-const { basePath, textBlock, bibData, images } = await getContentInfo(docId);
-const title = `${formatApplicationNumber(bibData.law, bibData.applicationNumber)} | ${bibData.documentName}`;
+const { basePath, document, images } = await getContentInfo(docId);
+const title = `${formatApplicationNumber(document.law, document.applicationNumber)} | ${document.documentName}`;
 ---
 
 {
-    bibData.documentCode == "A163" && (
+    document.documentCode == "A163" && (
         <Layout title={title}>
             <main data-search-root class="w-full my-2">
                 <Application
-                    textBlock={textBlock}
+                    textBlock={document.textBlocksRoot}
                     basePath={basePath}
                     images={images}
-                    bibData={bibData}
+                    bibData={document}
                 />
             </main>
         </Layout>

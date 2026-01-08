@@ -2,7 +2,7 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
 
 type ApplicantProps = {
     docId: string;
@@ -13,19 +13,32 @@ type ApplicantProps = {
 };
 export async function getStaticPaths() {
     const applicantProps: Record<string, ApplicantProps[]> = {};
-    const docIdList = await getDocIdPaths();
+    const docIdList = await getDocIds();
+    const applicants = new Set<string>();
     for (const p of docIdList) {
         const contentInfo = await getContentInfo(p.params.docId);
-        contentInfo.bibData.applicants.forEach((applicant) => {
+        contentInfo.document.textBlocksRoot
+            .filter((block: any) => block.tag === "applicationForm")
+            .flatMap((appForm: any) => appForm.blocks)
+            .filter((block: any) => block.tag === "applicants")
+            .flatMap((applicantsBlock: any) => applicantsBlock.blocks)
+            .filter((block: any) => block.tag === "applicant")
+            .flatMap((applicantBlock: any) => applicantBlock.blocks)
+            .filter((block: any) => block.tag === "name")
+            .map((nameBlock: any) => nameBlock.text)
+            .forEach((applicantName: string) => {
+                applicants.add(applicantName);
+            });
+        Array.from(applicants).forEach((applicant) => {
             if (!applicantProps[applicant]) {
                 applicantProps[applicant] = [];
             }
             applicantProps[applicant].push({
                 docId: p.params.docId,
-                law: contentInfo.bibData.law,
-                applicationNumber: contentInfo.bibData.applicationNumber,
-                documentName: contentInfo.bibData.documentName,
-                submissionDate: contentInfo.bibData.submissionDate,
+                law: contentInfo.document.law,
+                applicationNumber: contentInfo.document.applicationNumber,
+                documentName: contentInfo.document.documentName,
+                submissionDate: contentInfo.document.submissionDate,
             });
         });
     }

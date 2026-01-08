@@ -1,15 +1,24 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
 
 const applicants = new Set<string>();
-const docIdList = await getDocIdPaths();
+const docIdList = await getDocIds();
 for (const p of docIdList) {
     const contentInfo = await getContentInfo(p.params.docId);
-    contentInfo.bibData.applicants.forEach((applicant) => {
-        applicants.add(applicant);
-    });
+    contentInfo.document.textBlocksRoot
+        .filter((block: any) => block.tag === "applicationForm")
+        .flatMap((appForm: any) => appForm.blocks)
+        .filter((block: any) => block.tag === "applicants")
+        .flatMap((applicantsBlock: any) => applicantsBlock.blocks)
+        .filter((block: any) => block.tag === "applicant")
+        .flatMap((applicantBlock: any) => applicantBlock.blocks)
+        .filter((block: any) => block.tag === "name")
+        .map((nameBlock: any) => nameBlock.text)
+        .forEach((applicantName: string) => {
+            applicants.add(applicantName);
+        });
 }
 const sortedApplicants = Array.from(applicants).sort();
 ---

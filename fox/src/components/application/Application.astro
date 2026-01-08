@@ -16,7 +16,6 @@ import type { IBibliographicData } from "~/interfaces/bibliographic-data";
 import Card from "../ui/Card.astro";
 import Abstract from "./Abstract.astro";
 import ApplicationForm from "./ApplicationForm.astro";
-import BibliographicData from "./BibliographicData.astro";
 import Claims from "./Claims.astro";
 import Description from "./Description.astro";
 import Drawings from "./Drawings.astro";
@@ -38,44 +37,43 @@ const { textBlock, basePath, images, bibData } = Astro.props as {
     }[];
     bibData: IBibliographicData;
 };
-
 const lawPrefix = bibData.law === "patent" ? "特許" : "実用新案登録";
 const carouselImages = images.filter((img) => img.kind.includes("figure"));
 const hasCarouselImages = carouselImages && carouselImages.length > 0;
 
 // 各セクションのブロックを抽出
-const application = textBlock.blocks
+const application = textBlock
     .filter((block) => block.tag === "applicationForm")
     .at(0) as ApplicationFormBlock;
-const description = textBlock.blocks
+const description = textBlock
     .filter((block) => block.tag === "description")
     .at(0) as DescriptionBlock;
-const claims = textBlock.blocks
+const claims = textBlock
     .filter((block) => block.tag === "claims")
     .at(0) as ClaimsBlock;
-const abstract = textBlock.blocks
+const abstract = textBlock
     .filter((block) => block.tag === "abstract")
     .at(0) as AbstractBlock;
-const drawings = textBlock.blocks
-    .filter((block) => block.tag === "drawings")
-    .at(0) as DrawingsBlock | undefined;
+const drawings = textBlock.filter((block) => block.tag === "drawings").at(0) as
+    | DrawingsBlock
+    | undefined;
 
 // 外国語書面出願
-const foreignDescription = textBlock.blocks
+const foreignDescription = textBlock
     .filter((block) => block.tag === "foreign-language-description")
     .at(0) as ForeignDescriptionBlock;
-const foreignClaims = textBlock.blocks
+const foreignClaims = textBlock
     .filter((block) => block.tag === "foreign-language-claims")
     .at(0) as ForeignClaimsBlock;
-const foreignAbstract = textBlock.blocks
+const foreignAbstract = textBlock
     .filter((block) => block.tag === "foreign-language-abstract")
     .at(0) as ForeignAbstractBlock;
-const foreignDrawings = textBlock.blocks
+const foreignDrawings = textBlock
     .filter((block) => block.tag === "foreign-language-drawings")
     .at(0) as ForeignDrawingsBlock | undefined;
 ---
 
-<BibliographicData bibData={bibData} />
+<!--<BibliographicData bibData={bibData} />-->
 <div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
     <div class="">
         <main id="doc-content">

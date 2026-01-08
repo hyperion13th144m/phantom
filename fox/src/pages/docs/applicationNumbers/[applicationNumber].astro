@@ -2,7 +2,7 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber, formatDateString } from "~/lib/bib-utils";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
 
 type ApplicationInfo = {
     law: "patent" | "utilityModel";
@@ -16,21 +16,21 @@ type DocumentInfo = {
 };
 export async function getStaticPaths() {
     const appInfoList: Record<string, ApplicationInfo> = {};
-    const docIdList = await getDocIdPaths();
+    const docIdList = await getDocIds();
     for (const p of docIdList) {
         const contentInfo = await getContentInfo(p.params.docId);
-        const appNum = `${contentInfo.bibData.law}-${contentInfo.bibData.applicationNumber}`;
+        const appNum = `${contentInfo.document.law}-${contentInfo.document.applicationNumber}`;
         if (!appInfoList[appNum]) {
             appInfoList[appNum] = {
-                law: contentInfo.bibData.law,
-                applicationNumber: contentInfo.bibData.applicationNumber,
+                law: contentInfo.document.law,
+                applicationNumber: contentInfo.document.applicationNumber,
                 documents: [],
             };
         }
         appInfoList[appNum].documents.push({
             docId: p.params.docId,
-            documentName: contentInfo.bibData.documentName,
-            submissionDate: contentInfo.bibData.submissionDate,
+            documentName: contentInfo.document.documentName,
+            submissionDate: contentInfo.document.submissionDate,
         });
     }
     return Object.entries(appInfoList).map(([applicationNumber, props]) => ({

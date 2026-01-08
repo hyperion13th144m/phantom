@@ -66,33 +66,6 @@ services:
     #ports:
     #  - 20041:10041
 
-  postgres:
-    image: postgres:17.4-bookworm
-    container_name: phantom-postgres
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - phantom-pgdata:/var/lib/postgresql/data
-    restart: always
-
-  pgadmin:
-    image: dpage/pgadmin4:9.3.0
-    container_name: phantom-pgadmin
-    ports:
-      - ${PGADMIN_PORT}:80
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@example.com
-      PGADMIN_DEFAULT_PASSWORD: password
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-    volumes:
-      - ./pgadmin4/servers.json:/pgadmin4/servers.json
-    restart: always
-    depends_on:
-      - postgres
-
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
     container_name: phantom-elasticsearch
@@ -147,6 +120,5 @@ services:
 
 
 volumes:
-  phantom-pgdata:
   es-data:
 

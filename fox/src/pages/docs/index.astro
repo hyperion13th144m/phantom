@@ -1,16 +1,6 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths";
-
-const inventors = new Set<string>();
-const docIdList = await getDocIdPaths();
-for (const p of docIdList) {
-    const contentInfo = await getContentInfo(p.params.docId);
-    contentInfo.bibData.inventors.forEach((inventor) => {
-        inventors.add(inventor);
-    });
-}
 ---
 
 <Layout title="出願書類">

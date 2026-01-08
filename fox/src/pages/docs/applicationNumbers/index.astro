@@ -2,19 +2,19 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
 
 const appNumbers: Record<
     string,
     { law: "patent" | "utilityModel"; number: string }
 > = {};
-const docIdList = await getDocIdPaths();
+const docIdList = await getDocIds();
 for (const p of docIdList) {
     const contentInfo = await getContentInfo(p.params.docId);
-    const key = `${contentInfo.bibData.law}-${contentInfo.bibData.applicationNumber}`;
+    const key = `${contentInfo.document.law}-${contentInfo.document.applicationNumber}`;
     appNumbers[key] = {
-        law: contentInfo.bibData.law,
-        number: contentInfo.bibData.applicationNumber,
+        law: contentInfo.document.law,
+        number: contentInfo.document.applicationNumber,
     };
 }
 const sortedAppNumbers = Object.values(appNumbers).sort((a, b) => {
