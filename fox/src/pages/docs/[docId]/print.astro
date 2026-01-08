@@ -2,13 +2,13 @@
 import PrintingApplication from "~/components/application/ApplicationForPrinting.astro";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
 
 export const getStaticPaths = getDocIds;
 
 const { docId } = Astro.params as { docId: string };
-const { basePath, document, images } = await getContentInfo(docId);
-const title = `${formatApplicationNumber(document.law, document.applicationNumber)} | ${document.documentName}`;
+const { basePath, document, images } = await getDocument(docId);
+const title = `${formatApplicationNumber(document.law, document.applicationNumber ?? "")} | ${document.documentName}`;
 ---
 
 {

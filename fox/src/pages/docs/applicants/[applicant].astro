@@ -2,7 +2,7 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths";
 
 type ApplicantProps = {
     docId: string;
@@ -16,8 +16,8 @@ export async function getStaticPaths() {
     const docIdList = await getDocIds();
     const applicants = new Set<string>();
     for (const p of docIdList) {
-        const contentInfo = await getContentInfo(p.params.docId);
-        contentInfo.document.textBlocksRoot
+        const document = await getDocument(p.params.docId);
+        document.document.textBlocksRoot
             .filter((block: any) => block.tag === "applicationForm")
             .flatMap((appForm: any) => appForm.blocks)
             .filter((block: any) => block.tag === "applicants")
@@ -35,10 +35,10 @@ export async function getStaticPaths() {
             }
             applicantProps[applicant].push({
                 docId: p.params.docId,
-                law: contentInfo.document.law,
-                applicationNumber: contentInfo.document.applicationNumber,
-                documentName: contentInfo.document.documentName,
-                submissionDate: contentInfo.document.submissionDate,
+                law: document.document.law,
+                applicationNumber: document.document.applicationNumber ?? "",
+                documentName: document.document.documentName,
+                submissionDate: document.document.submissionDate,
             });
         });
     }

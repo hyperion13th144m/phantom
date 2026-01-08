@@ -1,13 +1,13 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
 
 const applicants = new Set<string>();
 const docIdList = await getDocIds();
 for (const p of docIdList) {
-    const contentInfo = await getContentInfo(p.params.docId);
-    contentInfo.document.textBlocksRoot
+    const document = await getDocument(p.params.docId);
+    document.document.textBlocksRoot
         .filter((block: any) => block.tag === "applicationForm")
         .flatMap((appForm: any) => appForm.blocks)
         .filter((block: any) => block.tag === "applicants")

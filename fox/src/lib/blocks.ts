@@ -1,4 +1,4 @@
-import { type Block, checker } from "~/interfaces/application";
+import { type Block, checker } from "~/interfaces/text-blocks-root";
 
 // ClaimText や Paragraph 下の連続する textBlock, subBlock, supBlock, underlineBlock をまとめる
 // Paragraph 下のそれ以外のブロックは個別に扱う

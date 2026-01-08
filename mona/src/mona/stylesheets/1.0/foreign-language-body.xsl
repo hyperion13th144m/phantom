@@ -43,13 +43,14 @@
     </xsl:template>
 
     <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig" />
+    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
 
     <!--  イメージ   -->
     <xsl:template match="img">
         <xsl:element name="blocks">
-            <xsl:for-each select="key('images-table-key', @file)">
-                <xsl:element name="images">
+            <xsl:element name="tag">image</xsl:element>
+             <xsl:for-each select="key('images-table-key', @file)">
+                <xsl:element name="blocks">
                     <xsl:element name="src">
                         <xsl:value-of select="@new" />
                     </xsl:element>

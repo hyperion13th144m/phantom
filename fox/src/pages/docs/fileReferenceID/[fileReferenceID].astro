@@ -2,7 +2,7 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatDateString } from "~/lib/bib-utils";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths";
 
 type ApplicationInfo = {
     law: "patent" | "utilityModel";
@@ -17,23 +17,23 @@ type DocumentInfo = {
 };
 export async function getStaticPaths() {
     const appInfoList: Record<string, ApplicationInfo> = {};
-    const docIdList = await getDocIdPaths();
+    const docIdList = await getDocIds();
     for (const p of docIdList) {
-        const contentInfo = await getContentInfo(p.params.docId);
-        const appNum = `${contentInfo.bibData.law}-${contentInfo.bibData.applicationNumber}`;
-        const fileReferenceID = contentInfo.bibData.fileReferenceID;
+        const contentInfo = await getDocument(p.params.docId);
+        const appNum = `${contentInfo.document.law}-${contentInfo.document.applicationNumber}`;
+        const fileReferenceID = contentInfo.document.fileReferenceId;
         if (!appInfoList[fileReferenceID]) {
             appInfoList[fileReferenceID] = {
-                law: contentInfo.bibData.law,
-                applicationNumber: contentInfo.bibData.applicationNumber,
-                fileReferenceID: contentInfo.bibData.fileReferenceID,
+                law: contentInfo.document.law,
+                applicationNumber: contentInfo.document.applicationNumber ?? "",
+                fileReferenceID: contentInfo.document.fileReferenceId ?? "",
                 documents: [],
             };
         }
         appInfoList[fileReferenceID].documents.push({
             docId: p.params.docId,
-            documentName: contentInfo.bibData.documentName,
-            submissionDate: contentInfo.bibData.submissionDate,
+            documentName: contentInfo.document.documentName,
+            submissionDate: contentInfo.document.submissionDate,
         });
     }
     return Object.entries(appInfoList).map(([fileReferenceID, props]) => ({

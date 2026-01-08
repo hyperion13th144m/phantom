@@ -2,7 +2,7 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
 
 type InventorProps = {
     docId: string;
@@ -13,10 +13,10 @@ type InventorProps = {
 };
 export async function getStaticPaths() {
     const inventorProps: Record<string, InventorProps[]> = {};
-    const docIdList = await getDocIdPaths();
+    const docIdList = await getDocIds();
     for (const p of docIdList) {
-        const contentInfo = await getContentInfo(p.params.docId);
-        contentInfo.bibData.inventors.forEach((inventor) => {
+        const contentInfo = await getDocument(p.params.docId);
+        contentInfo.document.inventors.forEach((inventor) => {
             if (!inventorProps[inventor]) {
                 inventorProps[inventor] = [];
             }

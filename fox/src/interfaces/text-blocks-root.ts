@@ -1,7 +1,17 @@
 /** text-blocks.json のトップレベル */
-export interface TextBlocksJson {
-    blocks: Block[];
-}
+//export interface TextBlocksRoot {
+//    blocks: Block[];
+//}
+export type TextBlocksRoot = (
+    ApplicationFormBlock
+    | DescriptionBlock
+    | ClaimsBlock
+    | AbstractBlock
+    | DrawingsBlock
+    | ForeignDescriptionBlock
+    | ForeignClaimsBlock
+    | ForeignAbstractBlock
+    | ForeignDrawingsBlock)[]
 
 /** -----------------------------
  *  共通ユーティリティ
@@ -16,16 +26,24 @@ export type NumberString = string;
 /** "true"/"false" が文字列で入っている */
 export type BoolString = "true" | "false";
 
+/** tag と blocks のみを持つ
+ * 表示には使われない コンテナブロック */
+export interface ContainerBlock extends BaseBlock {
+    tag: string;
+    blocks: Block[];
+}
+
 /** 多くのブロックで共通する最小フィールド */
 export interface BaseBlock {
     tag: string;
     jpTag: string;
     indentLevel: IndentLevelString;
+    blocks: Block[];
 }
 
 /** tag で判別する総称 Block（必要に応じて随時拡張してください） */
 export type Block =
-    | ApplicationFormBlock
+    ApplicationFormBlock
     | DescriptionBlock
     | TechnicalFieldBlock
     | BackgroundArtBlock
@@ -49,6 +67,7 @@ export type Block =
     | TablesBlock
     | MathsBlock
     | ChemistryBlock
+    | ImageBlock
     | TextRun
     | FigRefBlock
     | PatcitBlock
@@ -110,6 +129,7 @@ export type KnownTag =
     | "tables"
     | "maths"
     | "chemistry"
+    | "image"
     | "foreign-language-description"
     | "foreign-language-claims"
     | "foreign-language-abstract"
@@ -121,14 +141,12 @@ export type KnownTag =
 
 export interface ParagraphBlock extends BaseBlock {
     tag: "paragraph";
-    jpTag: string;
     number?: NumberString;
-    indentLevel: IndentLevelString;
-    blocks: InlineOrBlock[];
+    blocks: Inline[];
 }
 
 /** paragraph 内に出てくる inline 要素（text/sub/sup等） */
-export type InlineOrBlock = TextRun | FigRefBlock | PatcitBlock | UnknownBlock;
+export type Inline = TextRun | FigRefBlock | PatcitBlock | UnknownBlock;
 
 /** 文章の最小単位：text/sub/sup/underline */
 export type TextRun = TextBlock | SubBlock | SupBlock | UnderlineBlock;
@@ -172,13 +190,20 @@ export interface PatcitBlock extends BaseBlock {
 }
 
 /** -----------------------------
- *  特許出願願書系（application 配下）
+ *  特許出願願書系
  * ---------------------------- */
-export interface ApplicationFormBlock extends BaseBlock {
-    tag: "application";
-    text?: string;
-    convertedText?: string;
+export interface ApplicationFormBlock extends ContainerBlock {
+    tag: "applicationForm";
     blocks: Block[];
+}
+
+export interface ApplicationFormItemBlock {
+    tag: string;
+    text?: string;
+    jpTag?: string;
+    convertedText?: string;
+    indentLevel?: IndentLevelString;
+    blocks?: ApplicationFormItemBlock[];
 }
 
 /** -----------------------------
@@ -187,20 +212,17 @@ export interface ApplicationFormBlock extends BaseBlock {
 
 export interface DescriptionBlock extends BaseBlock {
     tag: "description";
-    jpTag: string;
     blocks: Block[];
 }
 
 export interface InventionTitleBlock extends BaseBlock {
     tag: "inventionTitle";
     text: string;
-    jpTag: string;
 }
 
 /** 【技術分野】 */
 export interface TechnicalFieldBlock extends BaseBlock {
     tag: "technicalField";
-    jpTag: string;
     blocks: ParagraphBlock[];
 }
 
@@ -213,7 +235,7 @@ export interface BackgroundArtBlock extends BaseBlock {
 /** 【先行技術文献】 */
 export interface CitationListBlock extends BaseBlock {
     tag: "citationList";
-    blocks: PatentLiteratureBlock[];
+    blocks: PatentLiteratureBlock[] | NonPatentLiteratureBlock[];
 }
 
 /** 【特許文献】 */
@@ -240,16 +262,19 @@ export interface DisclosureBlock extends BaseBlock {
     blocks: (TechProblemBlock | TechSolutionBlock | AdvantageousEffectsBlock | UnknownBlock)[];
 }
 
+/** 【発明が解決しようとする課題】 */
 export interface TechProblemBlock extends BaseBlock {
     tag: "techProblem";
     blocks: ParagraphBlock[];
 }
 
+/** 【課題を発明する手段】 */
 export interface TechSolutionBlock extends BaseBlock {
     tag: "techSolution";
     blocks: ParagraphBlock[];
 }
 
+/** 【発明の効果】 */
 export interface AdvantageousEffectsBlock extends BaseBlock {
     tag: "advantageousEffects";
     blocks: ParagraphBlock[];
@@ -258,7 +283,7 @@ export interface AdvantageousEffectsBlock extends BaseBlock {
 /** 【図面の簡単な説明】 */
 export interface DescriptionOfDrawingsBlock extends BaseBlock {
     tag: "descriptionOfDrawings";
-    blocks: ParagraphBlock[]; // paragraph 内に figref が入る
+    blocks: ParagraphBlock[];
 }
 
 /** 【発明を実施するための形態】 */
@@ -317,24 +342,19 @@ export interface ReferenceToDepositedBiologicalMaterialBlock extends BaseBlock {
 
 export interface ClaimsBlock extends BaseBlock {
     tag: "claims";
-    jpTag: string;
-    indentLevel: IndentLevelString;
     blocks: ClaimBlock[];
 }
 
 export interface ClaimBlock extends BaseBlock {
     tag: "claim";
-    jpTag: string;
     number: NumberString; // "1" / "2" ...
-    indentLevel: IndentLevelString;
     isIndependent: BoolString; // "true" / "false"
     blocks: ClaimTextBlock[];
 }
 
-export interface ClaimTextBlock extends BaseBlock {
+export interface ClaimTextBlock extends ContainerBlock {
     tag: "claimText";
-
-    blocks: TextRun[]; // 現状は text のみ
+    blocks: TextRun[];
 }
 
 /** -----------------------------
@@ -352,14 +372,11 @@ export interface AbstractBlock extends BaseBlock {
 
 export interface DrawingsBlock extends BaseBlock {
     tag: "drawings";
-    jpTag: string;
-    indentLevel: IndentLevelString;
     blocks: FigureBlock[];
 }
 
 export interface FigureBlock extends BaseBlock {
     tag: "figure";
-    jpTag: string;
     number: NumberString; // "1" / "2" ...
     alt: string;
     representative: BoolString; // "false" など
@@ -370,69 +387,63 @@ export interface FigureImage {
     src: string;
     width: NumberString;  // "300" など
     height: NumberString; // "300" など
-    kind: "figure" | string;
-    sizeTag: "thumbnail" | "middle" | "large" | string;
+    kind: "figure" | "table" | "math" | "chemistry" | "image" | "unknown";
+    sizeTag: "thumbnail" | "middle" | "large";
 }
 
 export interface TablesBlock extends BaseBlock {
     tag: "tables";
-    jpTag: string;
     number: NumberString; // "1" / "2" ...
     images: FigureImage[];
 }
 
 export interface MathsBlock extends BaseBlock {
     tag: "maths";
-    jpTag: string;
     number: NumberString; // "1" / "2" ...
     images: FigureImage[];
 }
 
 export interface ChemistryBlock extends BaseBlock {
     tag: "chemistry";
-    jpTag: string;
     number: NumberString; // "1" / "2" ...
+    images: FigureImage[];
+}
+
+export interface ImageBlock extends BaseBlock {
+    tag: "image";
     images: FigureImage[];
 }
 
 /** -----------------------------
  *  外国語書面出願：外国語明細書
  * ---------------------------- */
-export interface ForeignDescriptionBlock extends BaseBlock {
+export interface ForeignDescriptionBlock extends ContainerBlock {
     tag: "foreign-language-description";
-    blocks: {
-        images: FigureImage[]
-    }[];
+    blocks: ImageBlock[];
 }
 
 /** -----------------------------
  *  外国語書面出願：外国語特許請求の範囲
  * ---------------------------- */
-export interface ForeignClaimsBlock extends BaseBlock {
+export interface ForeignClaimsBlock extends ContainerBlock {
     tag: "foreign-language-claims";
-    blocks: {
-        images: FigureImage[]
-    }[];
+    blocks: ImageBlock[];
 }
 
 /** -----------------------------
  *  外国語書面出願：外国語要約書
  * ---------------------------- */
-export interface ForeignAbstractBlock extends BaseBlock {
+export interface ForeignAbstractBlock extends ContainerBlock {
     tag: "foreign-language-abstract";
-    blocks: {
-        images: FigureImage[]
-    }[];
+    blocks: ImageBlock[];
 }
 
 /** -----------------------------
  *  外国語書面出願：外国語図面
  * ---------------------------- */
-export interface ForeignDrawingsBlock extends BaseBlock {
+export interface ForeignDrawingsBlock extends ContainerBlock {
     tag: "foreign-language-drawings";
-    blocks: {
-        images: FigureImage[]
-    }[];
+    blocks: ImageBlock[];
 }
 
 // --- 型ガードの汎用ファクトリー関数 ---

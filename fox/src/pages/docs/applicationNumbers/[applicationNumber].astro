@@ -2,7 +2,7 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber, formatDateString } from "~/lib/bib-utils";
-import { getContentInfo, getDocIds } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
 
 type ApplicationInfo = {
     law: "patent" | "utilityModel";
@@ -18,12 +18,12 @@ export async function getStaticPaths() {
     const appInfoList: Record<string, ApplicationInfo> = {};
     const docIdList = await getDocIds();
     for (const p of docIdList) {
-        const contentInfo = await getContentInfo(p.params.docId);
+        const contentInfo = await getDocument(p.params.docId);
         const appNum = `${contentInfo.document.law}-${contentInfo.document.applicationNumber}`;
         if (!appInfoList[appNum]) {
             appInfoList[appNum] = {
                 law: contentInfo.document.law,
-                applicationNumber: contentInfo.document.applicationNumber,
+                applicationNumber: contentInfo.document.applicationNumber ?? "",
                 documents: [],
             };
         }

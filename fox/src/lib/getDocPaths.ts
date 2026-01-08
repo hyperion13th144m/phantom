@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import type { IPDocument } from "~/interfaces/document";
 import { id2dir } from "~/lib/docId";
 
 export async function getDocIds() {
@@ -26,7 +27,7 @@ export async function getDocIds() {
     return results.map((docId) => ({ params: { docId } }));
 }
 
-export const getContentInfo = async (docId: string) => {
+export const getDocument = async (docId: string) => {
     // json が保存されたディレクトリのパスを取得
     const contentRoot = path.join(
         process.cwd(),
@@ -41,7 +42,7 @@ export const getContentInfo = async (docId: string) => {
     // テキストブロック
     const documentPath = path.resolve(contentRoot, "document.json");
     const documentRaw = await fs.readFile(documentPath, "utf-8");
-    const document = JSON.parse(documentRaw);
+    const document: IPDocument = JSON.parse(documentRaw);
 
 
     const thumbnails = document.images.filter((img: any) => img.sizeTag === "thumbnail")

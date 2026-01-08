@@ -1,20 +1,20 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getContentInfo, getDocIdPaths } from "~/lib/getDocPaths.js";
+import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
 
 const appNumbers: Record<
     string,
     { law: "patent" | "utilityModel"; number: string; fileReferenceID: string }
 > = {};
-const docIdList = await getDocIdPaths();
+const docIdList = await getDocIds();
 for (const p of docIdList) {
-    const contentInfo = await getContentInfo(p.params.docId);
-    const key = contentInfo.bibData.fileReferenceID;
+    const contentInfo = await getDocument(p.params.docId);
+    const key = contentInfo.document.fileReferenceId;
     appNumbers[key] = {
-        fileReferenceID: contentInfo.bibData.fileReferenceID,
-        law: contentInfo.bibData.law,
-        number: contentInfo.bibData.applicationNumber,
+        fileReferenceID: contentInfo.document.fileReferenceId,
+        law: contentInfo.document.law,
+        number: contentInfo.document.applicationNumber ?? "",
     };
 }
 
