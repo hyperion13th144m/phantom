@@ -443,7 +443,7 @@ function createTypeGuard<T extends object, K extends keyof T>(
         (obj as T)[key] === value;
 }
 
-// 願書は、tag が "jp:~" で始まる。
+// 願書の各項目は、tag が "jp:" で始まる。
 const isApplicationFormItemBlock = (obj: unknown): obj is ApplicationFormItemBlock => {
     return typeof obj === 'object' &&
         obj !== null &&

@@ -1,34 +1,34 @@
-# Astro Starter Kit: Basics
+# fox project
+特許明細書を HTML にレンダリングする astro プロジェクト
 
-```sh
-yarn create astro@latest -- --template basics
-```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Project Structure
 
 ```text
 /
+├── dist/              ビルド出力先
 ├── public/
-│   └── favicon.svg
+│   ├── favicon.svg
+│   └── content/       レンダリング元の明細書 JSON, webp などファイル群
 ├── src
 │   ├── assets
 │   │   └── astro.svg
 │   ├── components
-│   │   └── Welcome.astro
+│   │   ├── application/   明細書レンダリング関連コンポーネント
+│   │   ├── icons/         アイコンコンポーネント
+│   │   └── ui/            文書に非依存な UI コンポーネント
+│   ├── interfaces        TypeScript インターフェース
+│   ├── lib               ヘルパー関数
+│   ├── pages
+│   │   └── docs/         明細書関連ページ
 │   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
+│   │   ├── PrintingLayout.astro 明細書印刷用レイアウト
+│   │   └── Layout.astro 明細書用レイアウト
+│   └── styles/
+│       └── global.css
 └── package.json
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
+## Commands
 
 All commands are run from the root of the project, from a terminal:
 
@@ -40,7 +40,3 @@ All commands are run from the root of the project, from a terminal:
 | `yarn preview`         | Preview your build locally, before deploying     |
 | `yarn astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `yarn astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
