@@ -1,58 +1,32 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
+import type { IPDocument } from "~/interfaces/document";
 import Layout from "~/layouts/Layout.astro";
-import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getDocIds, getDocument } from "~/lib/getDocPaths";
+import { getDocIds } from "~/lib/getDocPaths";
+import { getIPDocument } from "~/lib/getIPDocument";
 
-type ApplicantProps = {
-    docId: string;
-    applicationNumber: string;
-    documentName: string;
-    law: "patent" | "utilityModel";
-    submissionDate: string;
-};
 export async function getStaticPaths() {
-    const applicantProps: Record<string, ApplicantProps[]> = {};
+    const applicantProps: Record<string, IPDocument[]> = {};
     const docIdList = await getDocIds();
-    const applicants = new Set<string>();
     for (const p of docIdList) {
-        const document = await getDocument(p.params.docId);
-        document.document.textBlocksRoot
-            .filter((block: any) => block.tag === "applicationForm")
-            .flatMap((appForm: any) => appForm.blocks)
-            .filter((block: any) => block.tag === "applicants")
-            .flatMap((applicantsBlock: any) => applicantsBlock.blocks)
-            .filter((block: any) => block.tag === "applicant")
-            .flatMap((applicantBlock: any) => applicantBlock.blocks)
-            .filter((block: any) => block.tag === "name")
-            .map((nameBlock: any) => nameBlock.text)
-            .forEach((applicantName: string) => {
-                applicants.add(applicantName);
-            });
-        Array.from(applicants).forEach((applicant) => {
+        const ipDocument = await getIPDocument(p.params.docId);
+        ipDocument.applicants.forEach((applicant) => {
             if (!applicantProps[applicant]) {
                 applicantProps[applicant] = [];
             }
-            applicantProps[applicant].push({
-                docId: p.params.docId,
-                law: document.document.law,
-                applicationNumber: document.document.applicationNumber ?? "",
-                documentName: document.document.documentName,
-                submissionDate: document.document.submissionDate,
-            });
+            applicantProps[applicant].push(ipDocument);
         });
     }
-    docIdList.forEach(async ({ params }) => {});
-    return Object.entries(applicantProps).map(([applicant, props]) => ({
+    return Object.entries(applicantProps).map(([applicant, ipDocuments]) => ({
         params: { applicant },
-        props: { applicant, documents: props },
+        props: { ipDocuments },
     }));
 }
 
 const { applicant } = Astro.params;
-const { documents } = Astro.props;
-const docs = documents.sort((a, b) =>
-    a.submissionDate.localeCompare(b.submissionDate),
+const { ipDocuments } = Astro.props;
+const docs = ipDocuments.sort((a, b) =>
+    a.submissionDate.date > b.submissionDate.date ? 1 : -1,
 );
 ---
 
@@ -75,21 +49,16 @@ const docs = documents.sort((a, b) =>
         <section>
             <ul class="list-disc list-inside">
                 {
-                    docs.map(
-                        ({ docId, law, applicationNumber, documentName }) => (
-                            <li>
-                                <a
-                                    href={`/docs/applicationNumbers/${law}-${applicationNumber}`}
-                                    class="text-blue-600 hover:underline"
-                                >
-                                    {formatApplicationNumber(
-                                        law,
-                                        applicationNumber,
-                                    )}
-                                </a>
-                            </li>
-                        ),
-                    )
+                    docs.map(({ applicationNumber, fileReferenceId }) => (
+                        <li>
+                            <a
+                                href={`/docs/applicationNumbers/${applicationNumber.slug}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {`${applicationNumber.toString()} (${fileReferenceId})`}
+                            </a>
+                        </li>
+                    ))
                 }
             </ul>
         </section>

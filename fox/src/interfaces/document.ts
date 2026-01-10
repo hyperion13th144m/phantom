@@ -1,7 +1,9 @@
+import { DocumentDate } from "~/lib/doc-date";
+import { ApplicationNumber } from "~/lib/doc-number";
 import type { TextBlocksRoot } from "./text-blocks-root";
 
-// Intellectual Property Document Interface
-export interface IPDocument {
+// document.json Interface
+export interface DocumentJson {
     // Unique identifier for the document
     docId: string;
 
@@ -60,19 +62,29 @@ export interface IPDocument {
     textBlocksRoot: TextBlocksRoot;
 
     // images associated with the document
-    images: ImagesOfDocument[];
+    images: ImagesOfIPDocument[];
 
     // OCR text from the images.
     ocrText: string;
 }
 
-export interface ImagesOfDocument {
+export interface ImagesOfIPDocument {
     number: string;
     filename: string;
     kind: "chemistry" | "figure" | "math" | "table" | "image" | "unknown";
     sizeTag: string;
-    width: string;
-    height: string;
-    representative: string;
+    width: number;
+    height: number;
+    representative: boolean;
     description: string | null;
 }
+
+export interface IPDocument extends Omit<DocumentJson, "submissionDate" | "applicationNumber"> {
+    inventors: string[];
+    applicants: string[];
+    agents: string[];
+
+    submissionDate: DocumentDate;
+
+    applicationNumber: ApplicationNumber;
+};

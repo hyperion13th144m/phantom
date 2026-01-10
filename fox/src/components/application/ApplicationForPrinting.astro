@@ -4,66 +4,54 @@ import ApplicationForm from "~/components/application/ApplicationForm.astro";
 import Claims from "~/components/application/Claims.astro";
 import Description from "~/components/application/Description.astro";
 import Drawings from "~/components/application/Drawings.astro";
-import type {
-    AbstractBlock,
-    ApplicationFormBlock,
-    ClaimsBlock,
-    DescriptionBlock,
-    DrawingsBlock,
-    ForeignAbstractBlock,
-    ForeignClaimsBlock,
-    ForeignDescriptionBlock,
-    ForeignDrawingsBlock,
-    TextBlocksJson,
-} from "~/interfaces/application";
+import type { IPDocument } from "~/interfaces/document";
+import { checker } from "~/interfaces/text-blocks-root";
 import ForeignLanguageDocumentBlock from "./ForeignLanguageDocument.astro";
 
-const { textBlock, basePath } = Astro.props as {
-    textBlock: TextBlocksJson;
-    basePath: string;
+const { ipDocument } = Astro.props as {
+    ipDocument: IPDocument;
 };
 
 // 各セクションのブロックを抽出
-const application = textBlock.blocks
-    .filter((block) => block.tag === "applicationForm")
-    .at(0) as ApplicationFormBlock;
-const description = textBlock.blocks
-    .filter((block) => block.tag === "description")
-    .at(0) as DescriptionBlock;
-const claims = textBlock.blocks
-    .filter((block) => block.tag === "claims")
-    .at(0) as ClaimsBlock;
-const abstract = textBlock.blocks
-    .filter((block) => block.tag === "abstract")
-    .at(0) as AbstractBlock;
-const drawings = textBlock.blocks
-    .filter((block) => block.tag === "drawings")
-    .at(0) as DrawingsBlock | undefined;
+const application = ipDocument.textBlocksRoot
+    .filter((block) => checker.isApplicationForm(block))
+    .at(0);
+const description = ipDocument.textBlocksRoot
+    .filter((block) => checker.isDescription(block))
+    .at(0);
+const claims = ipDocument.textBlocksRoot
+    .filter((block) => checker.isClaims(block))
+    .at(0);
+const abstract = ipDocument.textBlocksRoot
+    .filter((block) => checker.isAbstract(block))
+    .at(0);
+const drawings = ipDocument.textBlocksRoot
+    .filter((block) => checker.isDrawings(block))
+    .at(0);
 
 // 外国語書面出願
-const foreignDescription = textBlock.blocks
-    .filter((block) => block.tag === "foreign-language-description")
-    .at(0) as ForeignDescriptionBlock;
-const foreignClaims = textBlock.blocks
-    .filter((block) => block.tag === "foreign-language-claims")
-    .at(0) as ForeignClaimsBlock;
-const foreignAbstract = textBlock.blocks
-    .filter((block) => block.tag === "foreign-language-abstract")
-    .at(0) as ForeignAbstractBlock;
-const foreignDrawings = textBlock.blocks
-    .filter((block) => block.tag === "foreign-language-drawings")
-    .at(0) as ForeignDrawingsBlock | undefined;
+const foreignDescription = ipDocument.textBlocksRoot
+    .filter((block) => checker.isForeignDescription(block))
+    .at(0);
+const foreignClaims = ipDocument.textBlocksRoot
+    .filter((block) => checker.isForeignClaims(block))
+    .at(0);
+const foreignAbstract = ipDocument.textBlocksRoot
+    .filter((block) => checker.isForeignAbstract(block))
+    .at(0);
+const foreignDrawings = ipDocument.textBlocksRoot
+    .filter((block) => checker.isForeignDrawings(block))
+    .at(0);
 ---
 
-<ApplicationForm application={application} />
-{description && <Description basePath={basePath} description={description} />}
-{claims && <Claims claims={claims} basePath={basePath} />}
+{application && <ApplicationForm applicationForm={application} />}
+{description && <Description description={description} />}
+{claims && <Claims claims={claims} />}
 {abstract && <Abstract {...abstract} />}
-{drawings && <Drawings basePath={basePath} drawings={drawings} />}
+{drawings && <Drawings drawings={drawings} />}
 {
     foreignDescription && (
         <ForeignLanguageDocumentBlock
-            basePath={basePath}
             block={foreignDescription}
             sizeTag="large"
         />
@@ -71,27 +59,12 @@ const foreignDrawings = textBlock.blocks
 }
 {
     foreignClaims && (
-        <ForeignLanguageDocumentBlock
-            basePath={basePath}
-            block={foreignClaims}
-            sizeTag="large"
-        />
+        <ForeignLanguageDocumentBlock block={foreignClaims} sizeTag="large" />
     )
 }
-{
-    foreignAbstract && (
-        <ForeignLanguageDocumentBlock
-            basePath={basePath}
-            block={foreignAbstract}
-        />
-    )
-}
+{foreignAbstract && <ForeignLanguageDocumentBlock block={foreignAbstract} />}
 {
     foreignDrawings && (
-        <ForeignLanguageDocumentBlock
-            basePath={basePath}
-            block={foreignDrawings}
-            sizeTag="large"
-        />
+        <ForeignLanguageDocumentBlock block={foreignDrawings} sizeTag="large" />
     )
 }

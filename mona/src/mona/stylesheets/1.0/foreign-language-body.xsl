@@ -49,8 +49,11 @@
     <xsl:template match="img">
         <xsl:element name="blocks">
             <xsl:element name="tag">image</xsl:element>
-             <xsl:for-each select="key('images-table-key', @file)">
-                <xsl:element name="blocks">
+            <xsl:element name="number"><xsl:value-of select="position()"/></xsl:element>
+            <xsl:element name="jpTag"/>
+            <xsl:element name="indentLevel">0</xsl:element>
+            <xsl:for-each select="key('images-table-key', @file)">
+                <xsl:element name="images">
                     <xsl:element name="src">
                         <xsl:value-of select="@new" />
                     </xsl:element>

@@ -5,8 +5,7 @@ import Inline from "./Inline.astro";
 
 // 特許出願書類の明細書の段落を表示するためのコンポーネント
 
-const { basePath, block } = Astro.props as {
-    basePath: string;
+const { block } = Astro.props as {
     block: Block;
 };
 ---
@@ -21,7 +20,7 @@ const { basePath, block } = Astro.props as {
             {concatBlocks(block.blocks).map((group) => (
                 <div>
                     {group.map((b) => (
-                        <Inline basePath={basePath} block={b} />
+                        <Inline block={b} />
                     ))}
                 </div>
             ))}

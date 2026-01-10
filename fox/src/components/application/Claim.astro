@@ -1,18 +1,13 @@
 ---
-import type { ClaimBlock } from "~/interfaces/application";
+import type { ClaimBlock } from "~/interfaces/text-blocks-root";
 import ClaimText from "./ClaimText.astro";
 
-const { basePath, claim } = Astro.props as {
-    basePath: string;
+const { claim } = Astro.props as {
     claim: ClaimBlock;
 };
 ---
 
 <div class="claim">
     <div class="jpTag">{claim.jpTag}</div>
-    {
-        claim.blocks.map((block) => (
-            <ClaimText basePath={basePath} claimText={block} />
-        ))
-    }
+    {claim.blocks.map((block) => <ClaimText claimText={block} />)}
 </div>

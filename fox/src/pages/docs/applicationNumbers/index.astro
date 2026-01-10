@@ -1,28 +1,25 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
+import type { IPDocument } from "~/interfaces/document";
 import Layout from "~/layouts/Layout.astro";
-import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
+import { getDocIds } from "~/lib/getDocPaths";
+import { getIPDocument } from "~/lib/getIPDocument";
 
-const appNumbers: Record<
-    string,
-    { law: "patent" | "utilityModel"; number: string }
-> = {};
+// IPDocument[] にはしない。複数の出願番号があっても、ipDocumentを一つ得られればよい。
+const appNumbers: Record<string, IPDocument> = {};
 const docIdList = await getDocIds();
 for (const p of docIdList) {
-    const contentInfo = await getDocument(p.params.docId);
-    const key = `${contentInfo.document.law}-${contentInfo.document.applicationNumber}`;
-    appNumbers[key] = {
-        law: contentInfo.document.law,
-        number: contentInfo.document.applicationNumber ?? "",
-    };
-}
-const sortedAppNumbers = Object.values(appNumbers).sort((a, b) => {
-    if (a.law !== b.law) {
-        return a.law.localeCompare(b.law);
-    } else {
-        return a.number.localeCompare(b.number);
+    const ipDocument = await getIPDocument(p.params.docId);
+    if (ipDocument.applicationNumber == null) {
+        continue;
     }
+    if (!ipDocument.applicationNumber.slug) {
+        continue;
+    }
+    appNumbers[ipDocument.applicationNumber.slug] = ipDocument;
+}
+const sortedIPDocuments = Object.values(appNumbers).sort((a, b) => {
+    return a.applicationNumber.slug.localeCompare(b.applicationNumber.slug);
 });
 ---
 
@@ -44,16 +41,13 @@ const sortedAppNumbers = Object.values(appNumbers).sort((a, b) => {
         <section>
             <ul class="list-disc list-inside">
                 {
-                    sortedAppNumbers.map((appNumber) => (
+                    sortedIPDocuments.map((appNumber) => (
                         <li>
                             <a
-                                href={`/docs/applicationNumbers/${appNumber.law}-${appNumber.number}`}
+                                href={`/docs/applicationNumbers/${appNumber.applicationNumber.slug}`}
                                 class="text-blue-600 hover:underline"
                             >
-                                {formatApplicationNumber(
-                                    appNumber.law,
-                                    appNumber.number,
-                                )}
+                                {`${appNumber.applicationNumber.toString()} (${appNumber.fileReferenceId})`}
                             </a>
                         </li>
                     ))

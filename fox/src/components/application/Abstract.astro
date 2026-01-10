@@ -1,6 +1,6 @@
 ---
 // 特許出願書類の要約書を表示するためのコンポーネント
-import type { AbstractBlock } from "~/interfaces/application";
+import type { AbstractBlock } from "~/interfaces/text-blocks-root";
 
 const { jpTag, text } = Astro.props as AbstractBlock;
 const htmlText = text.replace(/\n/g, "<br />");

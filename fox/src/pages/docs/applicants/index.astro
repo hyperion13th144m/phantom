@@ -1,24 +1,16 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
+import { getDocIds } from "~/lib/getDocPaths";
+import { getIPDocument } from "~/lib/getIPDocument";
 
 const applicants = new Set<string>();
 const docIdList = await getDocIds();
 for (const p of docIdList) {
-    const document = await getDocument(p.params.docId);
-    document.document.textBlocksRoot
-        .filter((block: any) => block.tag === "applicationForm")
-        .flatMap((appForm: any) => appForm.blocks)
-        .filter((block: any) => block.tag === "applicants")
-        .flatMap((applicantsBlock: any) => applicantsBlock.blocks)
-        .filter((block: any) => block.tag === "applicant")
-        .flatMap((applicantBlock: any) => applicantBlock.blocks)
-        .filter((block: any) => block.tag === "name")
-        .map((nameBlock: any) => nameBlock.text)
-        .forEach((applicantName: string) => {
-            applicants.add(applicantName);
-        });
+    const ipDocument = await getIPDocument(p.params.docId);
+    ipDocument.applicants.forEach((applicant) => {
+        applicants.add(applicant);
+    });
 }
 const sortedApplicants = Array.from(applicants).sort();
 ---

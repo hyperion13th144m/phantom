@@ -4,37 +4,40 @@ import Layout from "~/layouts/Layout.astro";
 import { getDocIds } from "~/lib/getDocPaths";
 import { getIPDocument } from "~/lib/getIPDocument";
 
-const inventors = new Set<string>();
+const refNumbers = new Set<string>();
 const docIdList = await getDocIds();
 for (const p of docIdList) {
     const ipDocument = await getIPDocument(p.params.docId);
-    ipDocument.inventors.forEach((inventor) => {
-        inventors.add(inventor);
-    });
+    refNumbers.add(ipDocument.fileReferenceId);
 }
-const sortedInventors = Array.from(inventors).sort();
+
+const sortedRefNumbers = Array.from(refNumbers).sort((a, b) => {
+    return a.localeCompare(b);
+});
 ---
 
-<Layout title="発明者の一覧">
+<Layout title="整理番号の一覧">
     <main>
-        <BreadCrumbs
-            crumbs={[
-                { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
-                { title: "発明者の一覧", href: "/docs/inventors" },
-            ]}
-        />
+        <nav class="header-nav">
+            <BreadCrumbs
+                crumbs={[
+                    { title: "HOME", href: "/" },
+                    { title: "出願書類", href: "/docs" },
+                    { title: "整理番号の一覧", href: "/docs/fileReferenceId" },
+                ]}
+            />
+        </nav>
 
         <section>
             <ul class="list-disc list-inside">
                 {
-                    sortedInventors.map((inventor) => (
+                    sortedRefNumbers.map((refNumber) => (
                         <li>
                             <a
-                                href={`/docs/inventors/${inventor}`}
+                                href={`/docs/fileReferenceId/${refNumber}`}
                                 class="text-blue-600 hover:underline"
                             >
-                                {inventor}
+                                {refNumber}
                             </a>
                         </li>
                     ))

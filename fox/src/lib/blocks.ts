@@ -14,7 +14,7 @@ export function concatBlocks(blocks: Block[]): Block[][] {
             checker.isUnderlineBlock(currentBlock)
         ) {
             currentGroup.push(currentBlock);
-            if (currentBlock.isLastSentence === "true") {
+            if (currentBlock.isLastSentence === true) {
                 results.push(currentGroup);
                 currentGroup = [];
             }

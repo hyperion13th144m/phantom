@@ -1,34 +1,16 @@
 ---
-/**
- * ImageCarousel.astro
- * Props:
- *  images: Array<{
- *    src: string;        // main image
- *    thumb?: string;     // thumbnail (optional). if omitted, uses src
- *    alt?: string;
- *    caption?: string;   // optional caption text
- *  }>
- *  initialIndex?: number
- *  loop?: boolean
- *  showRotate?: boolean
- *  heightClass?: string  // tailwind height class e.g. "h-80" / "h-[420px]"
- */
-
-type CarouselImage = {
-    src: string;
-    thumb?: string;
-    alt?: string;
-    caption?: string;
-};
+import type { ImagesOfIPDocument } from "~/interfaces/document";
 
 const {
     images,
+    thumbnails,
     initialIndex = 0,
     loop = true,
     showRotate = true,
     heightClass = "h-[420px]",
 } = Astro.props as {
-    images: CarouselImage[];
+    images: ImagesOfIPDocument[];
+    thumbnails: ImagesOfIPDocument[];
     initialIndex?: number;
     loop?: boolean;
     showRotate?: boolean;
@@ -44,7 +26,7 @@ const uid = crypto.randomUUID();
     <div class="mb-2">
         <div class="flex items-center gap-2 overflow-x-auto pb-2">
             {
-                images.map((img, i) => (
+                thumbnails.map((img, i) => (
                     <button
                         type="button"
                         class="shrink-0 rounded-lg border border-gray-300 bg-white p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
@@ -53,8 +35,8 @@ const uid = crypto.randomUUID();
                         aria-label={`Go to image ${i + 1}`}
                     >
                         <img
-                            src={img.thumb ?? img.src}
-                            alt={img.alt ?? `thumbnail ${i + 1}`}
+                            src={img.filename}
+                            alt={img.description ?? `thumbnail ${i + 1}`}
                             loading="lazy"
                             decoding="async"
                             class="h-32 w-32 rounded-md object-cover"
@@ -73,8 +55,8 @@ const uid = crypto.randomUUID();
             <!-- 画像 -->
             <img
                 data-ic-main-img
-                src={images[initialIndex]?.src}
-                alt={images[initialIndex]?.alt ?? `image ${initialIndex + 1}`}
+                src={images[initialIndex].filename}
+                alt={images[initialIndex].description ?? `image 1`}
                 decoding="async"
                 fetchpriority="high"
                 class="h-full w-full object-contain select-none touch-pan-y"
@@ -211,8 +193,8 @@ const uid = crypto.randomUUID();
 
     function render() {
         const img = images[index];
-        mainImg.src = img.src;
-        mainImg.alt = img.alt ?? `image ${index + 1}`;
+        mainImg.src = img.filename;
+        mainImg.alt = img.description ?? `image ${index + 1}`;
 
         indicator.textContent = `${index + 1} / ${images.length}`;
 
@@ -220,11 +202,7 @@ const uid = crypto.randomUUID();
         zuEl.textContent = `図${index + 1}`;
 
         // キャプション表示
-        captionEl.textContent = img.caption
-            ? img.caption
-            : img.alt
-              ? img.alt
-              : "";
+        captionEl.textContent = img.description ?? "";
 
         setActiveThumb();
         applyRotation();

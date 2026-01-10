@@ -1,23 +1,20 @@
 ---
 import PrintingApplication from "~/components/application/ApplicationForPrinting.astro";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
-import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
+import { getDocIds } from "~/lib/getDocPaths";
+import { getIPDocument } from "~/lib/getIPDocument";
 
 export const getStaticPaths = getDocIds;
 
 const { docId } = Astro.params as { docId: string };
-const { basePath, document, images } = await getDocument(docId);
-const title = `${formatApplicationNumber(document.law, document.applicationNumber ?? "")} | ${document.documentName}`;
+const ipDocument = await getIPDocument(docId);
+const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documentName}`;
 ---
 
 {
-    document.documentCode == "A163" && (
+    ipDocument.documentCode == "A163" && (
         <PrintingLayout title={title}>
-            <PrintingApplication
-                textBlock={document.textBlocksRoot}
-                basePath={basePath}
-            />
+            <PrintingApplication ipDocument={ipDocument} />
         </PrintingLayout>
     )
 }

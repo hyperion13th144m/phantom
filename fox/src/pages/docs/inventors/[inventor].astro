@@ -1,45 +1,32 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
+import type { IPDocument } from "~/interfaces/document";
 import Layout from "~/layouts/Layout.astro";
-import { formatApplicationNumber } from "~/lib/bib-utils";
-import { getDocIds, getDocument } from "~/lib/getDocPaths.js";
+import { getDocIds } from "~/lib/getDocPaths";
+import { getIPDocument } from "~/lib/getIPDocument";
 
-type InventorProps = {
-    docId: string;
-    applicationNumber: string;
-    documentName: string;
-    law: "patent" | "utilityModel";
-    submissionDate: string;
-};
 export async function getStaticPaths() {
-    const inventorProps: Record<string, InventorProps[]> = {};
+    const inventorProps: Record<string, IPDocument[]> = {};
     const docIdList = await getDocIds();
     for (const p of docIdList) {
-        const contentInfo = await getDocument(p.params.docId);
-        contentInfo.document.inventors.forEach((inventor) => {
+        const ipDocument = await getIPDocument(p.params.docId);
+        ipDocument.inventors.forEach((inventor) => {
             if (!inventorProps[inventor]) {
                 inventorProps[inventor] = [];
             }
-            inventorProps[inventor].push({
-                docId: p.params.docId,
-                law: contentInfo.bibData.law,
-                applicationNumber: contentInfo.bibData.applicationNumber,
-                documentName: contentInfo.bibData.documentName,
-                submissionDate: contentInfo.bibData.submissionDate,
-            });
+            inventorProps[inventor].push(ipDocument);
         });
     }
-    docIdList.forEach(async ({ params }) => {});
-    return Object.entries(inventorProps).map(([inventor, props]) => ({
+    return Object.entries(inventorProps).map(([inventor, ipDocuments]) => ({
         params: { inventor },
-        props: { inventor, documents: props },
+        props: { ipDocuments },
     }));
 }
 
 const { inventor } = Astro.params;
-const { documents } = Astro.props;
-const docs = documents.sort((a, b) =>
-    a.submissionDate.localeCompare(b.submissionDate),
+const { ipDocuments } = Astro.props;
+const docs = ipDocuments.sort((a, b) =>
+    a.submissionDate.date > b.submissionDate.date ? 1 : -1,
 );
 ---
 
@@ -59,21 +46,16 @@ const docs = documents.sort((a, b) =>
         <section>
             <ul class="list-disc list-inside">
                 {
-                    docs.map(
-                        ({ docId, law, applicationNumber, documentName }) => (
-                            <li>
-                                <a
-                                    href={`/docs/applicationNumbers/${law}-${applicationNumber}`}
-                                    class="text-blue-600 hover:underline"
-                                >
-                                    {formatApplicationNumber(
-                                        law,
-                                        applicationNumber,
-                                    )}
-                                </a>
-                            </li>
-                        ),
-                    )
+                    docs.map(({ applicationNumber, fileReferenceId }) => (
+                        <li>
+                            <a
+                                href={`/docs/applicationNumbers/${applicationNumber.slug}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {`${applicationNumber.toString()} (${fileReferenceId})`}
+                            </a>
+                        </li>
+                    ))
                 }
             </ul>
         </section>

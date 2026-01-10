@@ -1,20 +1,14 @@
 ---
 import Print from "~/components/icons/Print.astro";
-import type { IBibliographicData } from "~/interfaces/bibliographic-data";
-import { formatApplicationNumber } from "~/lib/bib-utils";
+import type { IPDocument } from "~/interfaces/document";
 import Minus from "~/components/icons/Minus.astro";
 import Plus from "~/components/icons/Plus.astro";
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 export interface Props {
-    bibData: IBibliographicData;
+    ipDocument: IPDocument;
 }
 
-const { bibData } = Astro.props;
-
-const appNumber = formatApplicationNumber(
-    bibData.law,
-    bibData.applicationNumber,
-);
+const { ipDocument } = Astro.props;
 ---
 
 <nav class="header-nav">
@@ -29,11 +23,11 @@ const appNumber = formatApplicationNumber(
                     href: "/docs/applicationNumbers",
                 },
                 {
-                    title: appNumber,
-                    href: `/docs/applicationNumbers/${bibData.law}-${bibData.applicationNumber}`,
+                    title: ipDocument.applicationNumber.toString(),
+                    href: `/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`,
                 },
                 {
-                    title: bibData.documentName,
+                    title: ipDocument.documentName,
                     href: Astro.url.pathname,
                 },
             ]}
@@ -59,26 +53,26 @@ const appNumber = formatApplicationNumber(
                 <div class="bg-orange-200 rounded-md shadow-md px-2">
                     <!-- 出願番号 -->
                     <a
-                        href={`/docs/applicationNumbers/${bibData.law}-${bibData.applicationNumber}`}
+                        href={`/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`}
                         class="hover:text-blue-600"
                     >
-                        {appNumber}
+                        {ipDocument.applicationNumber.toString()}
                     </a>
                 </div>
                 <div class="bg-violet-200 rounded-md shadow-md px-2">
                     <!-- 整理番号 -->
                     <a
-                        href={`/docs/fileReferenceID/${bibData.fileReferenceID}`}
+                        href={`/docs/fileReferenceId/${ipDocument.fileReferenceId}`}
                         class="hover:text-blue-600"
                     >
-                        {bibData.fileReferenceID}
+                        {ipDocument.fileReferenceId}
                     </a>
                 </div>
                 <div class="flex gap-2">
                     <!-- 発明者 -->
                     {
-                        bibData.inventors.length > 0 &&
-                            bibData.inventors.map((inv) => (
+                        ipDocument.inventors.length > 0 &&
+                            ipDocument.inventors.map((inv) => (
                                 <div class="bg-cyan-100 rounded-md shadow-md px-2">
                                     <a
                                         href={`/docs/inventors/${encodeURIComponent(inv)}`}
@@ -93,8 +87,8 @@ const appNumber = formatApplicationNumber(
                 <div class="flex gap-2">
                     <!-- 出願人 -->
                     {
-                        bibData.applicants.length > 0 &&
-                            bibData.applicants.map((app) => (
+                        ipDocument.applicants.length > 0 &&
+                            ipDocument.applicants.map((app) => (
                                 <div class="bg-green-100 rounded-md shadow-md px-2">
                                     <a
                                         href={`/docs/applicants/${encodeURIComponent(app)}`}
@@ -212,24 +206,24 @@ const appNumber = formatApplicationNumber(
                     <div class="bg-orange-200 rounded-md shadow-md px-2">
                         <!-- 出願番号 -->
                         <a
-                            href={`/docs/applicationNumbers/${bibData.law}-${bibData.applicationNumber}`}
+                            href={`/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`}
                             class="hover:text-blue-600"
                         >
-                            {appNumber}
+                            {ipDocument.applicationNumber.toString()}
                         </a>
                     </div>
                     <div class="bg-violet-200 rounded-md shadow-md px-2">
                         <!-- 整理番号 -->
                         <a
-                            href={`/docs/fileReferenceID/${bibData.fileReferenceID}`}
+                            href={`/docs/fileReferenceId/${ipDocument.fileReferenceId}`}
                             class="hover:text-blue-600"
                         >
-                            {bibData.fileReferenceID}
+                            {ipDocument.fileReferenceId}
                         </a>
                     </div>
                     {
-                        bibData.inventors.length > 0 &&
-                            bibData.inventors.map((inv) => (
+                        ipDocument.inventors.length > 0 &&
+                            ipDocument.inventors.map((inv) => (
                                 <div class="bg-cyan-100 rounded-md shadow-md px-2">
                                     <a
                                         href={`/docs/inventors/${encodeURIComponent(inv)}`}
@@ -242,8 +236,8 @@ const appNumber = formatApplicationNumber(
                     }
 
                     {
-                        bibData.applicants.length > 0 &&
-                            bibData.applicants.map((app) => (
+                        ipDocument.applicants.length > 0 &&
+                            ipDocument.applicants.map((app) => (
                                 <div class="bg-green-100 rounded-md shadow-md px-2">
                                     <a
                                         href={`/docs/applicants/${encodeURIComponent(app)}`}

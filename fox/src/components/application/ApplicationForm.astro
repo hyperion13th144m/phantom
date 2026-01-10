@@ -1,12 +1,12 @@
 ---
 import BlockRenderer from "~/components/application/ApplicationFormBlockRenderer.astro";
-import type { ApplicationFormBlock } from "~/interfaces/application";
+import type { ApplicationFormBlock } from "~/interfaces/text-blocks-root";
 
-const { application } = Astro.props as {
-    application: ApplicationFormBlock;
+const { applicationForm } = Astro.props as {
+    applicationForm: ApplicationFormBlock;
 };
 ---
 
 <div class="applicationForm">
-    {application.blocks.map((block) => <BlockRenderer block={block} />)}
+    {applicationForm.blocks.map((block) => <BlockRenderer block={block} />)}
 </div>

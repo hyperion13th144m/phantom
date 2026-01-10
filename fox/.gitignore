@@ -25,4 +25,4 @@ pnpm-debug.log*
 .vercel
 
 public/content
-document.json
+document*.json

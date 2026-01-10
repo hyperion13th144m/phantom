@@ -21,7 +21,7 @@
     <xsl:template match="jp:document-code">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
@@ -47,7 +47,7 @@
     <xsl:template match="jp:special-mention-matter-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -78,7 +78,7 @@
                jp:priority-claim/jp:date | jp:appeal-reference/jp:date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -120,7 +120,7 @@
     <xsl:template match="jp:application-reference//jp:date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -162,7 +162,7 @@
     <xsl:template match="jp:parent-application-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -200,7 +200,7 @@
         <xsl:variable name="app-ref-law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -228,7 +228,7 @@
         match="jp:application-reference [@appl-type = 'international-application']//jp:doc-number">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -254,7 +254,7 @@
         <xsl:variable name="app-ref-law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -298,7 +298,7 @@
         <xsl:variable name="app-ref-law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -326,7 +326,7 @@
         <xsl:variable name="app-ref-law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -352,7 +352,7 @@
     <xsl:template match="jp:appeal-reference/jp:doc-number">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -377,7 +377,7 @@
     <xsl:template match="jp:priority-claim/jp:doc-number">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -444,7 +444,7 @@
 
             <xsl:element name="blocks">
                 <xsl:element name="tag">
-                    <xsl:value-of select="local-name()" />
+                    <xsl:value-of select="name()" />
                 </xsl:element>
                 <xsl:element name="text">
                     <xsl:value-of select="normalize-space()" />
@@ -484,7 +484,7 @@
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="$date-str" />
@@ -559,7 +559,7 @@
     <xsl:template match="jp:inventors">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:inventor" />
         </xsl:element>
@@ -573,7 +573,7 @@
     <xsl:template match="jp:inventor">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -599,7 +599,7 @@
     <xsl:template match="jp:inventor//jp:name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【氏名】'" />
@@ -622,7 +622,7 @@
         <!-- | jp:applicant-of-case-article | jp:presenter-article"> -->
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:applicant" />
         </xsl:element>
@@ -631,7 +631,7 @@
     <xsl:template match="jp:applicants/jp:applicant">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <!-- オリジナルの<xsl:template name="申請者前編集">
@@ -702,7 +702,7 @@
     <xsl:template match="jp:share-rate">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【持分の割合】'" />
@@ -729,7 +729,7 @@
     <xsl:template match="jp:representative/jp:original-language-of-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
@@ -752,7 +752,7 @@
     <xsl:template match="jp:agents | jp:attorney-change-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:agent" />
         </xsl:element>
@@ -761,7 +761,7 @@
     <xsl:template match="jp:agents/jp:agent | jp:attorney-change-article/jp:agent">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -960,7 +960,7 @@
     <xsl:template match="jp:country">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -994,7 +994,7 @@
     <xsl:template match="jp:priority-claims">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:priority-claim" />
         </xsl:element>
@@ -1007,7 +1007,7 @@
     <xsl:template match="jp:priority-claim">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【パリ条約による優先権等の主張】'" />
@@ -1032,7 +1032,7 @@
     <xsl:template match="jp:declaration-priority-ear-app">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:earlier-app" />
         </xsl:element>
@@ -1045,7 +1045,7 @@
         <xsl:element name="blocks">
 
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【先の出願に基づく優先権主張】'" />
@@ -1070,7 +1070,7 @@
     <xsl:template match="jp:payment-years">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【納付年分】'" />
@@ -1092,7 +1092,7 @@
     <xsl:template match="jp:charge-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【手数料の表示】'" />
@@ -1120,7 +1120,7 @@
     <xsl:template match="jp:account">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -1191,7 +1191,7 @@
     <xsl:template match="jp:fee">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【納付金額】'" />
@@ -1225,7 +1225,7 @@
     <xsl:template match="jp:submission-object-list-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【提出物件の目録】'" />
@@ -1254,7 +1254,7 @@
     <xsl:template match="jp:document-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【物件名】'" />
@@ -1280,7 +1280,7 @@
     <xsl:template match="jp:return-request">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【返還の申出】'" />
@@ -1316,7 +1316,7 @@
     <xsl:template match="jp:proof-necessity">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【プルーフの要否】'" />
@@ -1352,7 +1352,7 @@
     <xsl:template match="jp:rule-outside-item-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【規定外の項目】'" />
@@ -1370,7 +1370,7 @@
     <xsl:template match="jp:rule-outside-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:item-name" />
         </xsl:element>
@@ -1383,7 +1383,7 @@
     <xsl:template match="jp:item-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【' || . || '】'" />
@@ -1404,7 +1404,7 @@
     <xsl:template match="jp:indication-of-case-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【出願の表示】'" />
@@ -1444,7 +1444,7 @@
     <xsl:template match="jp:notice-contents-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -1478,7 +1478,7 @@
     <xsl:template match="jp:addressbook/jp:original-language-of-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【氏名又は名称原語表記】'" />
@@ -1499,7 +1499,7 @@
     <xsl:template match="jp:applicant//jp:relation-of-case">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【事件との関係】'" />
@@ -1524,7 +1524,7 @@
          jp:attorney | jp:lawyer">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="key('tags-table-key-1', local-name(), $tags-table-1)/@value" />
@@ -1575,7 +1575,7 @@
          jp:addressed-to-person | jp:file-reference-id | jp:dtext">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="local-name()" />
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="key('tags-table-key-2', local-name(), $tags-table-2)/@value" />

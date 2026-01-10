@@ -1,8 +1,7 @@
 ---
 import { type Block, checker } from "~/interfaces/text-blocks-root";
 import Figure from "./Figure.astro";
-const { basePath, block } = Astro.props as {
-    basePath: string;
+const { block } = Astro.props as {
     block: Block;
 };
 ---
@@ -15,7 +14,7 @@ const { basePath, block } = Astro.props as {
     // 表n，化n, 数n
     (checker.isChemistry(block) ||
         checker.isMaths(block) ||
-        checker.isTables(block)) && <Figure basePath={basePath} block={block} />
+        checker.isTables(block)) && <Figure block={block} />
 }
 
 {

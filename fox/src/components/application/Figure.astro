@@ -6,13 +6,12 @@ import type {
     FigureBlock,
     MathsBlock,
     TablesBlock,
-} from "~/interfaces/application";
+} from "~/interfaces/text-blocks-root";
 interface Props {
-    basePath: string;
     sizeTag?: "thumbnail" | "middle" | "large";
     block: FigureBlock | TablesBlock | MathsBlock | ChemistryBlock;
 }
-const { basePath, block, sizeTag = "middle" } = Astro.props as Props;
+const { block, sizeTag = "middle" } = Astro.props as Props;
 const cls =
     block.tag === "figure"
         ? "figure"
@@ -30,7 +29,7 @@ const cls =
             .filter((image) => image.sizeTag === sizeTag)
             .map((image) => (
                 <img
-                    src={`${basePath}/${image.src}`}
+                    src={image.src}
                     alt={"alt" in block ? (block.alt ?? "") : ""}
                 />
             ))

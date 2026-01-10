@@ -404,25 +404,6 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template name="text-node">
-        <xsl:param name="text" as="xs:string" />
-        <xsl:param name="is-last" as="xs:boolean" />
-        <xsl:if test="normalize-space($text) != ''">
-            <xsl:element name="blocks">
-                <xsl:element name="tag">text</xsl:element>
-                <xsl:element name="text">
-                    <xsl:call-template name="trim">
-                        <xsl:with-param name="text" select="." />
-                    </xsl:call-template>
-                </xsl:element>
-                <xsl:element name="isLast">
-                    <xsl:value-of select="$is-last" />
-                </xsl:element>
-            </xsl:element>
-        </xsl:if>
-    </xsl:template>
-
-
     <xsl:key name="tags-table-key" match="item" use="@tag" />
     <xsl:variable name="tags-table">
         <item tag="description" camel-tag="description" jp-tag="【書類名】 明細書" />

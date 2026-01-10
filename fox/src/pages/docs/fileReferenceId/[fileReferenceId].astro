@@ -6,48 +6,41 @@ import { getDocIds } from "~/lib/getDocPaths";
 import { getIPDocument } from "~/lib/getIPDocument";
 
 export async function getStaticPaths() {
-    const appNumberProps: Record<string, IPDocument[]> = {};
+    const refNumberProps: Record<string, IPDocument[]> = {};
     const docIdList = await getDocIds();
     for (const p of docIdList) {
         const ipDocument = await getIPDocument(p.params.docId);
-        if (ipDocument.applicationNumber == null) {
-            continue;
+        if (!refNumberProps[ipDocument.fileReferenceId]) {
+            refNumberProps[ipDocument.fileReferenceId] = [];
         }
-        if (!appNumberProps[ipDocument.applicationNumber.slug]) {
-            appNumberProps[ipDocument.applicationNumber.slug] = [];
-        }
-        appNumberProps[ipDocument.applicationNumber.slug].push(ipDocument);
+        refNumberProps[ipDocument.fileReferenceId].push(ipDocument);
     }
-    return Object.entries(appNumberProps).map(
-        ([applicationNumber, ipDocuments]) => ({
-            params: { applicationNumber },
+    return Object.entries(refNumberProps).map(
+        ([fileReferenceId, ipDocuments]) => ({
+            params: { fileReferenceId },
             props: { ipDocuments },
         }),
     );
 }
 
-const { applicationNumber } = Astro.params;
+const { fileReferenceId } = Astro.params;
 const { ipDocuments } = Astro.props;
 const docs = ipDocuments.sort((a, b) =>
     a.submissionDate.date > b.submissionDate.date ? 1 : -1,
 );
-const an = docs[0].applicationNumber.toString();
 ---
 
-<Layout title={`出願番号別文書一覧 | ${an}`}>
+<Layout title={`整理番号別文書一覧 | ${fileReferenceId}`}>
     <main>
         <nav class="header-nav">
             <BreadCrumbs
                 crumbs={[
                     { title: "HOME", href: "/" },
                     { title: "出願書類", href: "/docs" },
+                    { title: "整理番号の一覧", href: "/docs/fileReferenceId" },
                     {
-                        title: "出願番号の一覧",
-                        href: "/docs/applicationNumbers",
-                    },
-                    {
-                        title: an,
-                        href: `/docs/applicationNumbers/${applicationNumber}`,
+                        title: fileReferenceId,
+                        href: `/docs/fileReferenceId/${fileReferenceId}`,
                     },
                 ]}
             />

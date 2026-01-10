@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import List
+from typing import Callable, List
 
 import xmltodict
 from pydantic import BaseModel
@@ -12,13 +12,18 @@ from .base import ManifestProcessor
 
 class TranslatorConfig(BaseModel):
     xsl_path: str
-    force_list: List[str]
     namespace: str
     doctype: str
+    force_list: List[str]
+    postprocessor: Callable[[List[str], str, str], None] | None = None
 
 
 class XSLTProcessor(ManifestProcessor):
-    def __init__(self, manifest_path: Path, translator_config: List[TranslatorConfig]):
+    def __init__(
+        self,
+        manifest_path: Path,
+        translator_config: List[TranslatorConfig],
+    ):
         super().__init__(manifest_path)
         self.translator_config = translator_config
 
@@ -47,6 +52,7 @@ class XSLTProcessor(ManifestProcessor):
                 translated_xml,
                 strip_whitespace=False,
                 force_list=config.force_list,
+                postprocessor=config.postprocessor,
             )
             data.append(translated_data)
 

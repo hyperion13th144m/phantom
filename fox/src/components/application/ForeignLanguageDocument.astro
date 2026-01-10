@@ -5,9 +5,10 @@ import type {
     ForeignClaimsBlock,
     ForeignDescriptionBlock,
     ForeignDrawingsBlock,
-} from "~/interfaces/application";
+} from "~/interfaces/text-blocks-root";
+import { checker } from "~/interfaces/text-blocks-root";
+
 interface Props {
-    basePath: string;
     sizeTag?: "thumbnail" | "middle" | "large";
     block:
         | ForeignDescriptionBlock
@@ -15,16 +16,21 @@ interface Props {
         | ForeignAbstractBlock
         | ForeignDrawingsBlock;
 }
-const { basePath, block, sizeTag = "middle" } = Astro.props as Props;
+const { block, sizeTag = "middle" } = Astro.props as Props;
+const images = block.blocks
+    .filter((b) => checker.isImage(b))
+    .flatMap((b) => b.images)
+    .filter((img) => img.sizeTag === sizeTag);
 ---
 
 <div class={block.tag}>
     <div class={`jpTag indentLevel-${block.indentLevel}`}>
         {
-            block.blocks
-                .flatMap((b) => b.images)
-                .filter((image) => image.sizeTag === sizeTag)
-                .map((image) => <img src={`${basePath}/${image.src}`} />)
+            images.map((image) => (
+                <div>
+                    <img src={image.src} />
+                </div>
+            ))
         }
     </div>
 </div>

@@ -1,17 +1,5 @@
 /** text-blocks.json のトップレベル */
-//export interface TextBlocksRoot {
-//    blocks: Block[];
-//}
-export type TextBlocksRoot = (
-    ApplicationFormBlock
-    | DescriptionBlock
-    | ClaimsBlock
-    | AbstractBlock
-    | DrawingsBlock
-    | ForeignDescriptionBlock
-    | ForeignClaimsBlock
-    | ForeignAbstractBlock
-    | ForeignDrawingsBlock)[]
+export type TextBlocksRoot = Block[];
 
 /** -----------------------------
  *  共通ユーティリティ
@@ -23,19 +11,13 @@ export type IndentLevelString = string;
 /** "0001" / "1" など、数字っぽいが文字列 */
 export type NumberString = string;
 
-/** "true"/"false" が文字列で入っている */
-export type BoolString = "true" | "false";
-
-/** tag と blocks のみを持つ
- * 表示には使われない コンテナブロック */
-export interface ContainerBlock extends BaseBlock {
+export interface ContainerBlock {
     tag: string;
     blocks: Block[];
 }
 
 /** 多くのブロックで共通する最小フィールド */
-export interface BaseBlock {
-    tag: string;
+export interface BaseBlock extends ContainerBlock {
     jpTag: string;
     indentLevel: IndentLevelString;
     blocks: Block[];
@@ -45,6 +27,15 @@ export interface BaseBlock {
 export type Block =
     ApplicationFormBlock
     | DescriptionBlock
+    | ClaimsBlock
+    | AbstractBlock
+    | DrawingsBlock
+    | ForeignDescriptionBlock
+    | ForeignClaimsBlock
+    | ForeignAbstractBlock
+    | ForeignDrawingsBlock
+    | ApplicationFormItemBlock
+    | InventionTitleBlock
     | TechnicalFieldBlock
     | BackgroundArtBlock
     | CitationListBlock
@@ -57,9 +48,6 @@ export type Block =
     | SequenceListTextBlock
     | ReferenceSignsListBlock
     | ReferenceToDepositedBiologicalMaterialBlock
-    | ClaimsBlock
-    | AbstractBlock
-    | DrawingsBlock
     | ParagraphBlock
     | ClaimBlock
     | ClaimTextBlock
@@ -78,10 +66,6 @@ export type Block =
     | AdvantageousEffectsBlock
     | EmbodimentExampleBlock
     | ModeForInventionBlock
-    | ForeignDescriptionBlock
-    | ForeignClaimsBlock
-    | ForeignAbstractBlock
-    | ForeignDrawingsBlock
     | UnknownBlock;
 
 /** 想定外 tag が来ても落ちないためのフォールバック */
@@ -92,7 +76,14 @@ export interface UnknownBlock extends BaseBlock {
 
 /** 既知 tag の集合（必要に応じて増やす） */
 export type KnownTag =
-    | "application"
+    | "applicationForm"
+    | "claims"
+    | "abstract"
+    | "drawings"
+    | "foreign-language-description"
+    | "foreign-language-claims"
+    | "foreign-language-abstract"
+    | "foreign-language-drawings"
     | "description"
     | "inventionTitle"
     | "technicalField"
@@ -112,11 +103,8 @@ export type KnownTag =
     | "referenceSignsList"
     | "sequenceListText"
     | "referenceToDepositedBiologicalMaterial"
-    | "claims"
     | "claim"
     | "claimText"
-    | "abstract"
-    | "drawings"
     | "paragraph"
     | "text"
     | "sub"
@@ -129,11 +117,7 @@ export type KnownTag =
     | "tables"
     | "maths"
     | "chemistry"
-    | "image"
-    | "foreign-language-description"
-    | "foreign-language-claims"
-    | "foreign-language-abstract"
-    | "foreign-language-drawings";
+    | "image";
 
 /** -----------------------------
  *  再帰の中心：paragraph / text runs
@@ -154,25 +138,25 @@ export type TextRun = TextBlock | SubBlock | SupBlock | UnderlineBlock;
 export interface TextBlock extends BaseBlock {
     tag: "text";
     text: string;
-    isLastSentence: BoolString; // "true" / "false"
+    isLastSentence: boolean;
 }
 
 export interface SubBlock extends BaseBlock {
     tag: "sub";
     text: string;
-    isLastSentence: BoolString; // "true" / "false"
+    isLastSentence: boolean;
 }
 
 export interface SupBlock extends BaseBlock {
     tag: "sup";
     text: string;
-    isLastSentence: BoolString; // "true" / "false"
+    isLastSentence: boolean;
 }
 
 export interface UnderlineBlock extends BaseBlock {
     tag: "underline";
     text: string;
-    isLastSentence: BoolString; // "true" / "false"
+    isLastSentence: boolean;
 }
 
 /** 図参照（description-of-drawings などで出現） */
@@ -191,19 +175,18 @@ export interface PatcitBlock extends BaseBlock {
 
 /** -----------------------------
  *  特許出願願書系
+ *  TODO: 願書はinterface とjsonがあってないかも
  * ---------------------------- */
-export interface ApplicationFormBlock extends ContainerBlock {
+export interface ApplicationFormBlock extends BaseBlock {
     tag: "applicationForm";
-    blocks: Block[];
+    blocks: ApplicationFormItemBlock[];
 }
 
-export interface ApplicationFormItemBlock {
+export interface ApplicationFormItemBlock extends BaseBlock {
     tag: string;
     text?: string;
-    jpTag?: string;
     convertedText?: string;
-    indentLevel?: IndentLevelString;
-    blocks?: ApplicationFormItemBlock[];
+    blocks: ApplicationFormItemBlock[];
 }
 
 /** -----------------------------
@@ -348,11 +331,11 @@ export interface ClaimsBlock extends BaseBlock {
 export interface ClaimBlock extends BaseBlock {
     tag: "claim";
     number: NumberString; // "1" / "2" ...
-    isIndependent: BoolString; // "true" / "false"
+    isIndependent: boolean;
     blocks: ClaimTextBlock[];
 }
 
-export interface ClaimTextBlock extends ContainerBlock {
+export interface ClaimTextBlock extends BaseBlock {
     tag: "claimText";
     blocks: TextRun[];
 }
@@ -379,45 +362,46 @@ export interface FigureBlock extends BaseBlock {
     tag: "figure";
     number: NumberString; // "1" / "2" ...
     alt: string;
-    representative: BoolString; // "false" など
-    images: FigureImage[];
-}
-
-export interface FigureImage {
-    src: string;
-    width: NumberString;  // "300" など
-    height: NumberString; // "300" など
-    kind: "figure" | "table" | "math" | "chemistry" | "image" | "unknown";
-    sizeTag: "thumbnail" | "middle" | "large";
+    representative: boolean;
+    images: ImageSrcBlock[];
 }
 
 export interface TablesBlock extends BaseBlock {
     tag: "tables";
     number: NumberString; // "1" / "2" ...
-    images: FigureImage[];
+    images: ImageSrcBlock[];
 }
 
 export interface MathsBlock extends BaseBlock {
     tag: "maths";
     number: NumberString; // "1" / "2" ...
-    images: FigureImage[];
+    images: ImageSrcBlock[];
 }
 
 export interface ChemistryBlock extends BaseBlock {
     tag: "chemistry";
     number: NumberString; // "1" / "2" ...
-    images: FigureImage[];
+    images: ImageSrcBlock[];
 }
 
 export interface ImageBlock extends BaseBlock {
     tag: "image";
-    images: FigureImage[];
+    number: NumberString; // "1" / "2" ...
+    images: ImageSrcBlock[];
+}
+
+export interface ImageSrcBlock {
+    src: string;
+    width: number;
+    height: number;
+    kind: "figure" | "table" | "math" | "chemistry" | "image" | "unknown";
+    sizeTag: "thumbnail" | "middle" | "large";
 }
 
 /** -----------------------------
  *  外国語書面出願：外国語明細書
  * ---------------------------- */
-export interface ForeignDescriptionBlock extends ContainerBlock {
+export interface ForeignDescriptionBlock extends BaseBlock {
     tag: "foreign-language-description";
     blocks: ImageBlock[];
 }
@@ -425,7 +409,7 @@ export interface ForeignDescriptionBlock extends ContainerBlock {
 /** -----------------------------
  *  外国語書面出願：外国語特許請求の範囲
  * ---------------------------- */
-export interface ForeignClaimsBlock extends ContainerBlock {
+export interface ForeignClaimsBlock extends BaseBlock {
     tag: "foreign-language-claims";
     blocks: ImageBlock[];
 }
@@ -433,7 +417,7 @@ export interface ForeignClaimsBlock extends ContainerBlock {
 /** -----------------------------
  *  外国語書面出願：外国語要約書
  * ---------------------------- */
-export interface ForeignAbstractBlock extends ContainerBlock {
+export interface ForeignAbstractBlock extends BaseBlock {
     tag: "foreign-language-abstract";
     blocks: ImageBlock[];
 }
@@ -441,7 +425,7 @@ export interface ForeignAbstractBlock extends ContainerBlock {
 /** -----------------------------
  *  外国語書面出願：外国語図面
  * ---------------------------- */
-export interface ForeignDrawingsBlock extends ContainerBlock {
+export interface ForeignDrawingsBlock extends BaseBlock {
     tag: "foreign-language-drawings";
     blocks: ImageBlock[];
 }
@@ -459,8 +443,26 @@ function createTypeGuard<T extends object, K extends keyof T>(
         (obj as T)[key] === value;
 }
 
+// 願書は、tag が "jp:~" で始まる。
+const isApplicationFormItemBlock = (obj: unknown): obj is ApplicationFormItemBlock => {
+    return typeof obj === 'object' &&
+        obj !== null &&
+        'tag' in obj &&
+        typeof (obj as any).tag === 'string' &&
+        (obj as any).tag.startsWith('jp:');
+};
+
 // --- 各型専用の型ガードを生成 ---
 export const checker = {
+    isApplicationForm: createTypeGuard<ApplicationFormBlock, 'tag'>('tag', 'applicationForm'),
+    isClaims: createTypeGuard<ClaimsBlock, 'tag'>('tag', 'claims'),
+    isAbstract: createTypeGuard<AbstractBlock, 'tag'>('tag', 'abstract'),
+    isDrawings: createTypeGuard<DrawingsBlock, 'tag'>('tag', 'drawings'),
+    isForeignDescription: createTypeGuard<ForeignDescriptionBlock, 'tag'>('tag', 'foreign-language-description'),
+    isForeignClaims: createTypeGuard<ForeignClaimsBlock, 'tag'>('tag', 'foreign-language-claims'),
+    isForeignAbstract: createTypeGuard<ForeignAbstractBlock, 'tag'>('tag', 'foreign-language-abstract'),
+    isForeignDrawings: createTypeGuard<ForeignDrawingsBlock, 'tag'>('tag', 'foreign-language-drawings'),
+    isDescription: createTypeGuard<DescriptionBlock, 'tag'>('tag', 'description'),
     isInventionTitle: createTypeGuard<InventionTitleBlock, 'tag'>('tag', 'inventionTitle'),
     isTechnicalField: createTypeGuard<TechnicalFieldBlock, 'tag'>('tag', 'technicalField'),
     isBackgroundArt: createTypeGuard<BackgroundArtBlock, 'tag'>('tag', 'backgroundArt'),
@@ -475,15 +477,13 @@ export const checker = {
     isDescriptionOfEmbodiments: createTypeGuard<DescriptionOfEmbodimentsBlock, 'tag'>('tag', 'descriptionOfEmbodiments'),
     isBestMode: createTypeGuard<BestModeBlock, 'tag'>('tag', 'bestMode'),
     isIndustrialApplicability: createTypeGuard<IndustrialApplicabilityBlock, 'tag'>('tag', 'industrialApplicability'),
-    isClaims: createTypeGuard<ClaimsBlock, 'tag'>('tag', 'claims'),
     isClaim: createTypeGuard<ClaimBlock, 'tag'>('tag', 'claim'),
     isClaimText: createTypeGuard<ClaimTextBlock, 'tag'>('tag', 'claimText'),
-    isAbstract: createTypeGuard<AbstractBlock, 'tag'>('tag', 'abstract'),
-    isDrawings: createTypeGuard<DrawingsBlock, 'tag'>('tag', 'drawings'),
     isFigure: createTypeGuard<FigureBlock, 'tag'>('tag', 'figure'),
     isTables: createTypeGuard<TablesBlock, 'tag'>('tag', 'tables'),
     isMaths: createTypeGuard<MathsBlock, 'tag'>('tag', 'maths'),
     isChemistry: createTypeGuard<ChemistryBlock, 'tag'>('tag', 'chemistry'),
+    isImage: createTypeGuard<ImageBlock, 'tag'>('tag', 'image'),
     isParagraph: createTypeGuard<ParagraphBlock, 'tag'>('tag', 'paragraph'),
     isTextBlock: createTypeGuard<TextBlock, 'tag'>('tag', 'text'),
     isSubBlock: createTypeGuard<SubBlock, 'tag'>('tag', 'sub'),
@@ -498,4 +498,5 @@ export const checker = {
     isReferenceSignsList: createTypeGuard<ReferenceSignsListBlock, 'tag'>('tag', 'referenceSignsList'),
     isReferenceToDepositedBiologicalMaterial: createTypeGuard<ReferenceToDepositedBiologicalMaterialBlock, 'tag'>('tag', 'referenceToDepositedBiologicalMaterial'),
     isDisclosure: createTypeGuard<DisclosureBlock, 'tag'>('tag', 'disclosure'),
+    isApplicationFormItemBlock,
 }

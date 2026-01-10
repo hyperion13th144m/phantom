@@ -176,3 +176,5 @@ cython_debug/
 output
 old
 output2
+document*.json
+

@@ -1,9 +1,20 @@
+from typing import List
+
 from libefiling.image.params import ImageConvertParam
 
 from .manifest_processor.xslt import TranslatorConfig
 
 SCHEMA_VER = "1.0"
 TARGET_DOCUMENT_CODES = ["A163"]
+
+
+def postprocess_application_body(path: List[str], key: str, value: str) -> None:
+    if key in ["representative", "isLastSentence", "isIndependent"]:
+        return key, value.lower() == "true"
+    if key in ["width", "height"]:
+        if value.isdigit():
+            return key, int(value)
+    return key, value
 
 
 image_params: list[ImageConvertParam] = [
@@ -52,6 +63,7 @@ translator_config = [
         force_list=["blocks"],
         namespace="",
         doctype="application-body",
+        postprocessor=postprocess_application_body,
     ),
     TranslatorConfig(
         ### A163 外国語書面出願
@@ -59,6 +71,7 @@ translator_config = [
         force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="foreign-language-body",
+        postprocessor=postprocess_application_body,
     ),
     TranslatorConfig(
         ### 画像情報
@@ -66,5 +79,6 @@ translator_config = [
         force_list=["blocks", "image"],
         namespace="",
         doctype="images",
+        postprocessor=postprocess_application_body,
     ),
 ]

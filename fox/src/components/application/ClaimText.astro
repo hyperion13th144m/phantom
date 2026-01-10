@@ -1,10 +1,9 @@
 ---
-import type { ClaimTextBlock } from "~/interfaces/application";
+import type { ClaimTextBlock } from "~/interfaces/text-blocks-root";
 import { concatBlocks } from "~/lib/blocks";
 import Inline from "./Inline.astro";
 
-const { basePath, claimText } = Astro.props as {
-    basePath: string;
+const { claimText } = Astro.props as {
     claimText: ClaimTextBlock;
 };
 ---
@@ -14,7 +13,7 @@ const { basePath, claimText } = Astro.props as {
         concatBlocks(claimText.blocks).map((group) => (
             <div>
                 {group.map((g) => (
-                    <Inline basePath={basePath} block={g} />
+                    <Inline block={g} />
                 ))}
             </div>
         ))
