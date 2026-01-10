@@ -28,20 +28,20 @@ services:
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
  
-  queen:
-    container_name: queen-dev
-    image: queen-dev
-    build:
-      context: queen
-      dockerfile: Dockerfile.dev
-    volumes:
-      - .:/workspaces:cached
-    tty: true
-    restart: always
-    #environment:
-    #  GROONGA_URL: http://groonga-dev:10041/d
-    #ports:
-    #  - 28000:8000
+  #  queen:
+  #    container_name: queen-dev
+  #    image: queen-dev
+  #  build:
+  #    context: queen
+  #    dockerfile: Dockerfile.dev
+  #  volumes:
+  #    - .:/workspaces:cached
+  #  tty: true
+  #  restart: always
+  #  #environment:
+  #  #  GROONGA_URL: http://groonga-dev:10041/d
+  #  #ports:
+  #  #  - 28000:8000
  
   fox:
     container_name: fox
@@ -55,8 +55,8 @@ services:
       - ${DATA_DIR}:/app/public/content
 
   joker:
-    container_name: joker-dev
-    image: joker-dev
+    container_name: joker
+    image: joker
     tty: true
     build:
       context: joker

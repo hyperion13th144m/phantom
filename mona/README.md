@@ -1,0 +1,24 @@
+# Mona
+インターネット出願ソフトの電子出願のアーカイブを解析・変換するツールです。
+
+## requrements
+- Python 3.8以上
+- poetry
+- tesseract-ocr tesseract-ocr-jpn
+
+## setup
+```bash
+apt-get update
+apt-get install tesseract-ocr tesseract-ocr-jpn
+pip install poetry
+poetry install
+```
+
+## usage
+```bash
+$ poetry run python src/mona/main.py mona input_root_dir output_root_dir document_code
+```
+- `input_root_dir`にはインターネット出願ソフトで作成された電子出願のアーカイブが格納されたディレクトリを指定します。  
+- `output_root_dir`には変換後のデータを格納するディレクトリを指定します。
+- `document_code`には変換対象の電子出願の文書コードを指定します。
+- 詳細なオプションは`poetry run python src/mona/main.py --help`で確認できます。
