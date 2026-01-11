@@ -21,6 +21,7 @@ from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
 
+from panther.ip_document import load_ip_document
 
 PRESERVE_FIELDS = {"assignee", "tags"}  # user-managed fields in ES
 
@@ -29,16 +30,13 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def load_json(path: Path) -> Dict:
-    with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-
 def stable_hash(obj: Dict) -> str:
     """
     Create a stable hash of a dict (order-independent).
     """
-    data = json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    data = json.dumps(
+        obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
     return hashlib.sha256(data).hexdigest()
 
 
@@ -57,7 +55,7 @@ def iter_documents(root: Path) -> Iterator[Path]:
     """
     # Expect structure: root/docid/document.json, where root is data/
     # We'll find all document-sections.json under data/**/document-sections.json
-    for p in root.rglob("document-sections.json"):
+    for p in root.rglob("document.json"):
         yield p
 
 
@@ -73,11 +71,11 @@ def build_actions(
     """
     for path in iter_documents(data_root):
         try:
-            raw = load_json(path)
+            raw = load_ip_document(path)
             doc = strip_preserve_fields(raw)
 
             # Put docid inside source too (optional but handy)
-            docid = doc['docId']
+            docid = doc["docId"]
 
             ingest_hash = stable_hash(doc)
             now = utc_now_iso()
@@ -158,7 +156,9 @@ def bulk_upsert_with_retries(
     # We'll implement simple retry around streaming_bulk for better control.
 
     backoff = initial_backoff
-    to_send = list(actions)  # materialize once for retry simplicity (OK for moderate size)
+    to_send = list(
+        actions
+    )  # materialize once for retry simplicity (OK for moderate size)
     attempt = 0
 
     while True:
@@ -217,7 +217,10 @@ def bulk_upsert_with_retries(
                     failed_items.append(act)
                 else:
                     failed += 1
-                    print(f"[FAIL] could not find original action for _id={_id}", file=sys.stderr)
+                    print(
+                        f"[FAIL] could not find original action for _id={_id}",
+                        file=sys.stderr,
+                    )
 
         if not failed_items:
             success += ok_count
@@ -225,7 +228,10 @@ def bulk_upsert_with_retries(
 
         if attempt > max_retries:
             failed += len(failed_items)
-            print(f"[GIVE UP] retries exceeded for {len(failed_items)} items", file=sys.stderr)
+            print(
+                f"[GIVE UP] retries exceeded for {len(failed_items)} items",
+                file=sys.stderr,
+            )
             success += ok_count
             return success, failed
 
@@ -240,17 +246,46 @@ def bulk_upsert_with_retries(
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--es", default=os.getenv("ES_URL", "http://localhost:9200"), help="Elasticsearch URL")
-    ap.add_argument("--api-key", default=os.getenv("ES_API_KEY"), help="Elastic API key (optional)")
-    ap.add_argument("--user", default=os.getenv("ES_USER"), help="Basic auth user (optional)")
-    ap.add_argument("--password", default=os.getenv("ES_PASSWORD"), help="Basic auth password (optional)")
+    ap.add_argument(
+        "--es",
+        default=os.getenv("ES_URL", "http://localhost:9200"),
+        help="Elasticsearch URL",
+    )
+    ap.add_argument(
+        "--api-key", default=os.getenv("ES_API_KEY"), help="Elastic API key (optional)"
+    )
+    ap.add_argument(
+        "--user", default=os.getenv("ES_USER"), help="Basic auth user (optional)"
+    )
+    ap.add_argument(
+        "--password",
+        default=os.getenv("ES_PASSWORD"),
+        help="Basic auth password (optional)",
+    )
     ap.add_argument("--index", required=True, help="Target index name")
-    ap.add_argument("--data-root", default="data", help="Root dir containing docid/document.json")
-    ap.add_argument("--pipeline", default=os.getenv("ES_PIPELINE"), help="Ingest pipeline name (optional)")
+    ap.add_argument(
+        "--data-root", default="data", help="Root dir containing docid/document.json"
+    )
+    ap.add_argument(
+        "--pipeline",
+        default=os.getenv("ES_PIPELINE"),
+        help="Ingest pipeline name (optional)",
+    )
     ap.add_argument("--chunk-size", type=int, default=500, help="Bulk chunk size")
-    ap.add_argument("--max-retries", type=int, default=5, help="Max retry attempts for transient failures")
-    ap.add_argument("--use-hash-guard", action="store_true", help="Skip updates if ingest_hash unchanged")
-    ap.add_argument("--refresh", action="store_true", help="Refresh index after bulk (slower)")
+    ap.add_argument(
+        "--max-retries",
+        type=int,
+        default=5,
+        help="Max retry attempts for transient failures",
+    )
+    ap.add_argument(
+        "--use-hash-guard",
+        action="store_true",
+        help="Skip updates if ingest_hash unchanged",
+    )
+    ap.add_argument(
+        "--refresh", action="store_true", help="Refresh index after bulk (slower)"
+    )
     args = ap.parse_args()
 
     auth = None

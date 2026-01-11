@@ -13,6 +13,7 @@ RUN pip install poetry
 
 USER $USERNAME
 WORKDIR /app
+ENV PYTHONPATH=/app/src:$PYTHONPATH
 COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock ./
 RUN poetry install --no-root
 COPY --chown=$USERNAME:$GROUPNAME . .

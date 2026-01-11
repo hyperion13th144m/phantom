@@ -1,6 +1,16 @@
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
 from datetime import datetime
+import json
+
+
+def load_ip_document(file_path: Path) -> dict[str, Any]:
+    """IP Document JSONファイルを読み込む"""
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    converted_data = convert_dict(data)
+    return converted_data
 
 
 def convert_dict(src_dict: dict) -> dict[str, Any]:
@@ -136,7 +146,6 @@ def filter_blocks(
     for tag in tags:
         filtered_blocks = get_blocks_by_tag(filtered_blocks, tag)
     return filtered_blocks
-
 
 
 def exclude_keys(src_dict: dict[str, Any], *keys: str) -> dict[str, Any]:

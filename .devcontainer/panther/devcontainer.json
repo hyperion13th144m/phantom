@@ -19,7 +19,8 @@
             "extensions": [
                 "KevinRose.vsc-python-indent",
                 "njpwerner.autodocstring",
-                "ms-python.python"
+                "ms-python.python",
+                "ms-python.isort"
             ]
         }
     }
