@@ -18,5 +18,4 @@ COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock ./
 RUN poetry install --no-root
 COPY --chown=$USERNAME:$GROUPNAME . .
 
-ENTRYPOINT [ "poetry", "run", "python", "src/panther/upload_es.py" ]
-CMD [ "--data-root", "/data_dir", "--index", "patent-documents", "--use-hash-guard" ]
+ENTRYPOINT [ "poetry", "run", "python", "src/panther/main.py" ]

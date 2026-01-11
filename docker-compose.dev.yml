@@ -73,8 +73,11 @@ services:
     #  - 20041:10041
 
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
+    image: phantom-lasticsearch
     container_name: phantom-elasticsearch
+    build:
+      context: elasticsearch
+      dockerfile: Dockerfile
     ports:
       - 9200:9200
       - 9300:9300
@@ -92,25 +95,6 @@ services:
     #    soft: -1
     #    hard: -1
 
-  setup:
-    image: curlimages/curl:8.5.0
-    depends_on:
-      - es01
-    entrypoint: >
-      sh -c "
-         echo 'Waiting for Elasticsearch...';
-      until curl -s http://elasticsearch:9200 >/dev/null; do sleep 1; done;
-      echo 'Creating index patent-documents...';
-      curl -X PUT http://elasticsearch:9200/patent-documents -H 'Content-Type: application/json' -d '
-      {
-        \"settings\": {
-          \"number_of_shards\": 1,
-          \"number_of_replicas\": 0
-        }
-      }';
-      echo 'Done.';
-      "
-    restart: "no"
  
   kibana:
     image: docker.elastic.co/kibana/kibana:9.2.3
