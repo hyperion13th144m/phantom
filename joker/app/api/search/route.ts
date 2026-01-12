@@ -1,4 +1,5 @@
 import { es } from "@/lib/es";
+import type { estypes } from "@elastic/elasticsearch";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs"; // @elastic/elasticsearch はnode runtime推奨
@@ -103,7 +104,7 @@ export async function GET(req: NextRequest) {
     // フィルタ（mapping次第：keywordがあるなら `.keyword` を推奨）
     // ここでは “とりあえず text でも動く” ように match を使います。
     // もし `assignee.keyword`, `tags.keyword`, `applicants.keyword` があるなら term に変更してください。
-    const filter: any[] = [];
+    const filter: estypes.QueryDslQueryContainer[] = [];
     if (applicant) filter.push({ match: { applicants: applicant } });
     if (inventor) filter.push({ match: { inventors: inventor } });
 
@@ -170,7 +171,7 @@ export async function GET(req: NextRequest) {
             id: h._id,
             score: h._score ?? null,
             source: h._source ?? {},
-            highlight: (h as any).highlight ?? {},
+            highlight: h.highlight ?? {},
         }));
 
         const total =
@@ -179,8 +180,8 @@ export async function GET(req: NextRequest) {
                 : result.hits.total?.value ?? 0;
 
         const aggregations = {
-            applicants: (result.aggregations?.applicants as any)?.buckets ?? [],
-            inventors: (result.aggregations?.inventors as any)?.buckets ?? [],
+            applicants: (result.aggregations?.applicants as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
+            inventors: (result.aggregations?.inventors as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
         };
 
         return NextResponse.json({
@@ -190,12 +191,12 @@ export async function GET(req: NextRequest) {
             hits,
             aggregations,
         });
-    } catch (e: any) {
+    } catch (e: unknown) {
         // ESエラーの見える化
         return NextResponse.json(
             {
                 error: "Elasticsearch search failed",
-                message: e?.message ?? String(e),
+                message: (e as Error)?.message ?? String(e),
             },
             { status: 500 }
         );

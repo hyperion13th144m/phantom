@@ -3,8 +3,6 @@
 import { useState } from "react";
 
 interface Props {
-    maxWidth: number;
-    maxHeight: number;
     images: ImageInformation[];
 }
 
@@ -21,7 +19,7 @@ interface ImageInformation {
 }
 
 
-const ImagesArray: React.FC<Props> = ({ maxWidth = 120, maxHeight = 120, images }) => {
+const ImagesArray: React.FC<Props> = ({ images }) => {
     const [selectedImage, setSelectedImage] = useState<ImageInformation | null>(null);
 
     return (
@@ -37,7 +35,7 @@ const ImagesArray: React.FC<Props> = ({ maxWidth = 120, maxHeight = 120, images 
                             <img
                                 src={img.filename}
                                 alt={img.description || `Image ${img.number}`}
-                                className={`max-w-[${maxWidth}px] max-h-[${maxHeight}px] object-contain`}
+                                className="max-w-[120px] max-h-[120px] object-contain"
                                 width={img.width}
                                 height={img.height}
                                 onError={(e) => {
@@ -76,8 +74,6 @@ const ImagesArray: React.FC<Props> = ({ maxWidth = 120, maxHeight = 120, images 
                                 src={selectedImage.largeFilename || selectedImage.filename}
                                 alt={selectedImage.description || `Image ${selectedImage.number}`}
                                 className="max-w-full h-auto"
-                                width={selectedImage.width}
-                                height={selectedImage.height}
                             />
                             <div className="mt-4 text-center">
                                 <div className="font-semibold">図{selectedImage.number}</div>

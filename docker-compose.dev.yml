@@ -1,5 +1,5 @@
 services:
-  mona:
+  mona-dev:
     container_name: mona-dev
     image: mona-dev
     build:
@@ -13,8 +13,10 @@ services:
     environment:
       SRC_DIR: /src_dir
       DATA_DIR: /data_dir
+    networks:
+      - dev-net
   
-  panther:
+  panther-dev:
     container_name: panther-dev
     image: panther-dev
     build:
@@ -26,11 +28,13 @@ services:
     tty: true
     environment:
       DATA_DIR: /data_dir
-      ES_URL: http://es01:9200
+      ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
- 
-  queen:
+    networks:
+      - dev-net
+
+  queen-dev:
     container_name: queen-dev
     image: queen-dev
     build:
@@ -40,12 +44,15 @@ services:
       - .:/workspaces:cached
     tty: true
     restart: always
+    networks:
+      - dev-net
+
     #environment:
     #  GROONGA_URL: http://groonga-dev:10041/d
     #ports:
     #  - 28000:8000
  
-  fox:
+  fox-dev:
     container_name: fox-dev
     image: fox-dev
     build:
@@ -55,8 +62,10 @@ services:
     volumes:
       - .:/workspaces:cached
       - ${DATA_DIR}:/workspaces/fox/public/content
+    networks:
+      - dev-net
 
-  joker:
+  joker-dev:
     container_name: joker-dev
     image: joker-dev
     build:
@@ -65,65 +74,51 @@ services:
     volumes:
       - .:/workspaces:cached
     environment:
-      ES_URL: http://es01:9200
+      ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
+      NEXT_PUBLIC_IMAGE_BASE_URL: /content
+      NEXT_PUBLIC_DOCUMENT_BASE_URL: http://192.168.11.250:38080/docs
     tty: true
-    ports:
-      - ${JOKER_DEV_PORT}:3000
+    networks:
+      - dev-net
 
-  es01:
+  es01-dev:
     image: phantom-lasticsearch
-    container_name: phantom-elasticsearch
+    container_name: phantom-elasticsearch-dev
     build:
       context: elasticsearch
       dockerfile: Dockerfile
-    ports:
-      - 9200:9200
-      - 9300:9300
     environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - network.host=0.0.0.0
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      discovery.type: single-node
+      xpack.security.enabled: false
+      network.host: 0.0.0.0
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
     volumes:
-      - es-data:/usr/share/elasticsearch/data
-    #mem_limit: ${MEM_LIMIT}
-    #ulimits:
-    #  memlock:
-    #    soft: -1
-    #    hard: -1
+      - es-data-dev:/usr/share/elasticsearch/data
+    networks:
+      - dev-net
+    restart: always
 
- 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:9.2.3
-    container_name: phantom-kibana
-    ports:
-      - ${KIBANA_PORT}:5601
-    environment:
-      - ELASTICSEARCH_HOSTS=http://es01:9200
-      - xpack.security.enabled=true
-      - xpack.security.authc.providers=[]
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - I18N_LOCALE=${I18N_LOCALE}
-    mem_limit: ${MEM_LIMIT}
-    depends_on:
-      - es01
 
-  nginx:
+  nginx-dev:
     container_name: nginx-dev
     image: nginx-dev
     build:
       context: nginx
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ${WWW_ROOT}:/usr/share/nginx/html
     ports:
-      - ${NGINX_PORT}:8080
-
-
+      - ${DEV_NGINX_PORT}:38080
+    networks:
+      - dev-net
 
 volumes:
-  es-data:
+  es-data-dev:
 
+networks:
+  dev-net:
+    name: phantom-dev-net
+    driver: bridge

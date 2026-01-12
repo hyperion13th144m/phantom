@@ -29,11 +29,11 @@ services:
       ES_PASSWORD: ${ELASTIC_PASSWORD}
  
   #  queen:
-  #    container_name: queen-dev
-  #    image: queen-dev
+  #    container_name: queen
+  #    image: queen
   #  build:
   #    context: queen
-  #    dockerfile: Dockerfile.dev
+  #    dockerfile: Dockerfile
   #  volumes:
   #    - .:/workspaces:cached
   #  tty: true
@@ -57,18 +57,22 @@ services:
   joker:
     container_name: joker
     image: joker
-    tty: true
     build:
       context: joker
-      dockerfile: Dockerfile.dev
-    volumes:
-      - .:/workspaces:cached
-    #ports:
-    #  - 20041:10041
+      dockerfile: Dockerfile
+    environment:
+      ES_URL: http://es01:9200
+      ES_USER: ${ELASTIC_USER}
+      ES_PASSWORD: ${ELASTIC_PASSWORD}
+      NEXT_PUBLIC_IMAGE_BASE_URL: /static/content
+      NEXT_PUBLIC_DOCUMENT_BASE_URL: /static/docs
 
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
+    image: phantom-lasticsearch
     container_name: phantom-elasticsearch
+    build:
+      context: elasticsearch
+      dockerfile: Dockerfile
     environment:
       xpack.security.enabled: false
       discovery.type: single-node
@@ -83,41 +87,16 @@ services:
       - es-data:/usr/share/elasticsearch/data
     restart: always
 
-  setup:
-    image: curlimages/curl:8.5.0
-    depends_on:
-      - es01
-    entrypoint: >
-      sh -c "
-         echo 'Waiting for Elasticsearch...';
-      until curl -s http://elasticsearch:9200 >/dev/null; do sleep 1; done;
-      echo 'Creating index patent-documents...';
-      curl -X PUT http://elasticsearch:9200/patent-documents -H 'Content-Type: application/json' -d '
-      {
-        \"settings\": {
-          \"number_of_shards\": 1,
-          \"number_of_replicas\": 0
-        }
-      }';
-      echo 'Done.';
-      "
-    restart: "no"
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:9.2.3
-    container_name: phantom-kibana
+  nginx:
+    container_name: nginx
+    image: nginx
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ${WWW_ROOT}:/usr/share/nginx/html
     ports:
-      - ${KIBANA_PORT}:5601
-    environment:
-      - ELASTICSEARCH_HOSTS=http://es01:9200
-      - xpack.security.enabled=true
-      - xpack.security.authc.providers=[]
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - I18N_LOCALE=${I18N_LOCALE}
-    mem_limit: ${MEM_LIMIT}
-    depends_on:
-      - es01
-
+      - ${NGINX_PORT}:8080
 
 volumes:
   es-data:

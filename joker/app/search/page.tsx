@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import ErrorMessage from "@/app/components/error-message";
 import SimpleInput from "@/app/components/simple-input";
 import Pagination from "@/app/components/pagination";
 import Highlight from "@/app/components/highlight";
 import ImagesArray from "@/app/components/images-array";
 import { clamp, buildImageUrl, formatApplicationNumber, formatDate } from "@/lib/helpers";
+import { getEnv } from "@/lib/env";
 
 type Hit = {
     id: string;
@@ -54,9 +54,7 @@ type ApiResponse = {
 };
 
 
-const DOCUMENT_BASE_URL = process.env.NEXT_PUBLIC_DOCUMENT_BASE_URL || "http://webserver:8080/docs";
-
-export default function SearchPage() {
+function SearchPageContent() {
     const router = useRouter();
     const sp = useSearchParams();
 
@@ -81,7 +79,6 @@ export default function SearchPage() {
         setQ(q0);
         setPage(clamp(page0, 1, 100000));
         setSize(clamp(size0, 1, 100));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [q0, page0, size0]);
 
     async function fetchSearch(params: { q: string; page: number; size: number; applicant?: string; inventor?: string }) {
@@ -104,8 +101,8 @@ export default function SearchPage() {
                 throw new Error(json?.message || json?.error || `HTTP ${res.status}`);
             }
             setData(json);
-        } catch (e: any) {
-            setErr(e?.message ?? String(e));
+        } catch (e: unknown) {
+            setErr((e as Error)?.message ?? String(e));
             setData(null);
         } finally {
             setLoading(false);
@@ -132,13 +129,14 @@ export default function SearchPage() {
     useEffect(() => {
         if (data?.hits) {
             const newImages: Record<string, (Hit["source"]["images"][number] & { largeFilename: string })[]> = {};
+            const baseUrl = getEnv().NEXT_PUBLIC_IMAGE_BASE_URL; // Next.jsのrewritesでプロキシされる相対パス
             data.hits.forEach((hit) => {
                 if (hit.source.images) {
                     const images = hit.source.images
                         .filter((img) => img.kind === "figure")
                         .map((img) => ({
                             ...img,
-                            filename: buildImageUrl(hit.id, img.filename),
+                            filename: buildImageUrl(baseUrl, hit.id, img.filename),
                         }))
                     const thumbnails = images
                         .filter((img) => img.sizeTag === "thumbnail")
@@ -159,6 +157,8 @@ export default function SearchPage() {
             setImages(newImages);
         }
     }, [data]);
+
+    const DOCUMENT_BASE_URL = getEnv().NEXT_PUBLIC_DOCUMENT_BASE_URL || "http://webserver:8080/docs";
 
     const totalPages = data ? Math.max(1, Math.ceil(data.total / data.size)) : 1;
 
@@ -289,11 +289,7 @@ export default function SearchPage() {
                             {/* 画像表示 */}
                             {images[h.id] !== undefined && images[h.id].length > 0 && (
                                 <div className="mt-3">
-                                    <ImagesArray
-                                        maxWidth={120}
-                                        maxHeight={120}
-                                        images={images[h.id]}
-                                    />
+                                    <ImagesArray images={images[h.id]} />
                                 </div>
                             )}
                         </div>
@@ -308,5 +304,13 @@ export default function SearchPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={<div className="max-w-[980px] mx-auto my-6 text-center">読み込み中...</div>}>
+            <SearchPageContent />
+        </Suspense>
     );
 }

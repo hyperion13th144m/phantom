@@ -3,8 +3,7 @@ export function clamp(n: number, min: number, max: number) {
 }
 
 // 画像URLを構築するヘルパー関数
-export function buildImageUrl(docId: string, relativePath: string): string {
-    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "http://webserver";
+export function buildImageUrl(baseUrl: string, docId: string, relativePath: string): string {
     return `${baseUrl}/${docId.substring(0, 2)}/${docId.substring(2, 4)}/${docId}/${relativePath}`;
 }
 

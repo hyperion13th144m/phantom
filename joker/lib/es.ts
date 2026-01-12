@@ -1,10 +1,23 @@
 import { Client } from "@elastic/elasticsearch";
+import { getEnv } from "./env";
 
-export const es = new Client({
-    node: process.env.ES_URL!,
-    auth: process.env.ELASTICSEARCH_API_KEY
-        ? { apiKey: process.env.ELASTICSEARCH_API_KEY }
-        : process.env.ES_USER && process.env.ES_PASSWORD
-            ? { username: process.env.ES_USER, password: process.env.ES_PASSWORD }
-            : undefined,
-});
+let esClient: Client | null = null;
+
+export const getEsClient = () => {
+    if (!esClient) {
+        const { ES_URL, ELASTICSEARCH_API_KEY, ES_USER, ES_PASSWORD } = getEnv();
+        const nodeUrl = ES_URL || "http://localhost:9200";
+
+        esClient = new Client({
+            node: nodeUrl,
+            auth: ELASTICSEARCH_API_KEY
+                ? { apiKey: ELASTICSEARCH_API_KEY }
+                : ES_USER && ES_PASSWORD
+                    ? { username: ES_USER, password: ES_PASSWORD }
+                    : undefined,
+        });
+    }
+    return esClient;
+};
+
+export const es = getEsClient();
