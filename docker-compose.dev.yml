@@ -69,8 +69,8 @@ services:
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
     tty: true
-    #ports:
-    #  - 20041:10041
+    ports:
+      - ${JOKER_DEV_PORT}:3000
 
   es01:
     image: phantom-lasticsearch

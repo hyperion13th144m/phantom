@@ -7,14 +7,45 @@ const INDEX = "patent-documents";
 
 // 検索対象フィールド（指定どおり）
 const SEARCH_FIELDS = [
-    "inventionTitle^4",
-    "independentClaims^3",
-    "dependentClaims^2",
-    "embodiments",
-    "abstract^2",
-    "applicants^2",
-    "assignee^2",
-    "tags^2",
+    "inventionTitle.ngram^5",
+    "independentClaims.ngram^10",
+    "dependentClaims.ngram^8",
+    "technicalField.ngram^2",
+    "technicalField.ngram^2",
+    "backgroundArt.ngram^2",
+    "techProblem.ngram^2",
+    "techSolution.ngram^2",
+    "advantageousEffects.ngram^2",
+    "industrialApplicability.ngram^2",
+    "referenceToDepositedBiologicalMaterial.ngram^2",
+    "lawOfIndustrialRegenerate.ngram^2",
+    "descriptionOfEmbodiments.ngram^3",
+    "abstract.ngram^5",
+    "applicants.ngram^7",
+    "inventors.ngram^6",
+    "ocrText.ngram^1",
+    "fileReferenceId^10",
+    "fileReferenceId.ngram^10",
+];
+
+const SHOULD_SEARCH_FIELDS = [
+    "inventionTitle^5",
+    "independentClaims^10",
+    "dependentClaims^8",
+    "technicalField^2",
+    "technicalField^2",
+    "backgroundArt^2",
+    "techProblem^2",
+    "techSolution^2",
+    "advantageousEffects^2",
+    "industrialApplicability^2",
+    "referenceToDepositedBiologicalMaterial^2",
+    "lawOfIndustrialRegenerate^2",
+    "descriptionOfEmbodiments^3",
+    "abstract^5",
+    "applicants.analyzed^7",
+    "inventors.analyzed^6",
+    "ocrText^1"
 ];
 
 function toInt(v: string | null, def: number, min = 0, max = 1000) {
@@ -31,9 +62,8 @@ export async function GET(req: NextRequest) {
     const size = toInt(searchParams.get("size"), 10, 1, 100);
 
     // 任意フィルタ（UI側で渡せるようにしておく）
-    const assignee = (searchParams.get("assignee") ?? "").trim(); // 完全一致に寄せるなら keyword が必要
-    const tag = (searchParams.get("tag") ?? "").trim();
     const applicant = (searchParams.get("applicant") ?? "").trim();
+    const inventor = (searchParams.get("inventor") ?? "").trim();
 
     const from = (page - 1) * size;
 
@@ -45,22 +75,37 @@ export async function GET(req: NextRequest) {
                     multi_match: {
                         query: q,
                         fields: SEARCH_FIELDS,
-                        //type: "best_fields",
-                        type: "phrase",
-                        operator: "and",
-                        //fuzziness: "AUTO",
+                        type: "best_fields" as const,
+                        operator: "and" as const,
                     },
                 },
             ]
             : [{ match_all: {} }];
 
+    const shouldQuery =
+        q.length > 0
+            ? [
+                {
+                    multi_match: {
+                        query: q,
+                        fields: SHOULD_SEARCH_FIELDS,
+                        type: "best_fields" as const,
+                        operator: "and" as const,
+                    },
+                },
+            ]
+            : [{ match_all: {} }];
+
+    const sort = q.length > 0
+        ? [{ _score: { order: "desc" as const } }]
+        : [{ submissionDate: { order: "desc" as const } }];
+
     // フィルタ（mapping次第：keywordがあるなら `.keyword` を推奨）
     // ここでは “とりあえず text でも動く” ように match を使います。
     // もし `assignee.keyword`, `tags.keyword`, `applicants.keyword` があるなら term に変更してください。
     const filter: any[] = [];
-    if (assignee) filter.push({ match: { assignee } });
-    if (tag) filter.push({ match: { tags: tag } });
     if (applicant) filter.push({ match: { applicants: applicant } });
+    if (inventor) filter.push({ match: { inventors: inventor } });
 
     try {
         const result = await es.search({
@@ -71,6 +116,7 @@ export async function GET(req: NextRequest) {
             query: {
                 bool: {
                     must: mustQuery,
+                    should: shouldQuery,
                     filter,
                 },
             },
@@ -81,24 +127,42 @@ export async function GET(req: NextRequest) {
                     inventionTitle: {},
                     independentClaims: {},
                     dependentClaims: {},
-                    embodiments: {},
                     abstract: {},
+                    descriptionOfEmbodiments: {},
                     applicants: {},
                     assignee: {},
                     tags: {},
                 },
             },
-            // ソートは必要なら追加
-            // sort: [{ _score: "desc" }, { _id: "asc" }],
+            aggs: {
+                applicants: {
+                    terms: {
+                        field: "applicants",
+                        size: 50,
+                    },
+                },
+                inventors: {
+                    terms: {
+                        field: "inventors",
+                        size: 50,
+                    },
+                },
+            },
+            sort,
             _source: [
+                "law",
+                "applicationNumber",
+                "submissionDate",
+                "fileReferenceId",
                 "inventionTitle",
                 "independentClaims",
                 "dependentClaims",
-                "embodiments",
                 "abstract",
                 "applicants",
+                "inventors",
                 "assignee",
                 "tags",
+                "images",
             ],
         });
 
@@ -114,11 +178,17 @@ export async function GET(req: NextRequest) {
                 ? result.hits.total
                 : result.hits.total?.value ?? 0;
 
+        const aggregations = {
+            applicants: (result.aggregations?.applicants as any)?.buckets ?? [],
+            inventors: (result.aggregations?.inventors as any)?.buckets ?? [],
+        };
+
         return NextResponse.json({
             page,
             size,
             total,
             hits,
+            aggregations,
         });
     } catch (e: any) {
         // ESエラーの見える化

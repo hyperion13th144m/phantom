@@ -1,0 +1,358 @@
+{
+    "settings": {
+        "analysis": {
+            "char_filter": {
+                "normalize": {
+                    "type": "icu_normalizer",
+                    "name": "nfkc",
+                    "mode": "compose"
+                }
+            },
+            "tokenizer": {
+                "my_ngram_tokenizer": {
+                    "type": "ngram",
+                    "min_gram": "2",
+                    "max_gram": "2",
+                    "token_chars": [
+                        "letter",
+                        "digit"
+                    ]
+                }
+            },
+            "analyzer": {
+                "my_kuromoji_analyzer": {
+                    "type": "custom",
+                    "char_filter": [
+                        "normalize"
+                    ],
+                    "tokenizer": "kuromoji_tokenizer",
+                    "filter": [
+                        "kuromoji_baseform",
+                        "kuromoji_part_of_speech",
+                        "ja_stop",
+                        "kuromoji_stemmer",
+                        "lowercase"
+                    ]
+                },
+                "my_ngram_analyzer": {
+                    "type": "custom",
+                    "char_filter": [
+                        "normalize"
+                    ],
+                    "tokenizer": "my_ngram_tokenizer",
+                    "filter": [
+                        "lowercase"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "docId": {
+                "type": "keyword"
+            },
+            "ext": {
+                "type": "keyword"
+            },
+            "kind": {
+                "type": "keyword"
+            },
+            "task": {
+                "type": "keyword"
+            },
+            "law": {
+                "type": "keyword"
+            },
+            "documentName": {
+                "type": "keyword"
+            },
+            "documentCode": {
+                "type": "keyword"
+            },
+            "fileReferenceId": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "registrationNumber": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "applicationNumber": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "internationalApplicationNumber": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "appealReferenceNumber": {
+                "type": "keyword"
+            },
+            "submissionDate": {
+                "type": "date",
+                "format": "epoch_millis"
+            },
+            "receiptNumber": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "images": {
+                "type": "nested",
+                "properties": {
+                    "number": {
+                        "type": "keyword"
+                    },
+                    "filename": {
+                        "type": "keyword"
+                    },
+                    "kind": {
+                        "type": "keyword"
+                    },
+                    "sizeTag": {
+                        "type": "keyword"
+                    },
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    },
+                    "representative": {
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "type": "text"
+                    }
+                }
+            },
+            "ocrText": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "inventors": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "applicants": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "agents": {
+                "type": "keyword",
+                "fields": {
+                    "analyzed": {
+                        "type": "text",
+                        "analyzer": "my_kuromoji_analyzer"
+                    },
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "specialMentionMatterArticle": {
+                "type": "keyword"
+            },
+            "inventionTitle": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "technicalField": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "backgroundArt": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "techProblem": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "techSolution": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "advantageousEffects": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "industrialApplicability": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "referenceToDepositedBiologicalMaterial": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "lawOfIndustrialRegenerate": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "descriptionOfEmbodiments": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "independentClaims": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "dependentClaims": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "abstract": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            }
+        }
+    }
+}

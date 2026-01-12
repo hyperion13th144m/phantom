@@ -73,7 +73,7 @@
             </xsl:element>
             <xsl:element name="representative">
                 <xsl:choose>
-                    <xsl:when test="@orig=$repr">
+                    <xsl:when test="$orig=$repr">
                         <xsl:value-of select="true()" />
                     </xsl:when>
                     <xsl:otherwise>
