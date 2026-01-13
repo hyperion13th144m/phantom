@@ -6,13 +6,13 @@ Usage:
     python create_index.py --index <index_name> --mapping <mapping_file> [--es-url <url>] [--recreate]
 """
 
-import argparse
 import json
 import sys
 from pathlib import Path
 from typing import Dict
 
 from elasticsearch import Elasticsearch
+from panther.es_client import create_es_client
 
 
 def load_mapping_file(path: Path) -> Dict:
@@ -20,6 +20,51 @@ def load_mapping_file(path: Path) -> Dict:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def cmd_create_index(args) -> int:
+    """Create or update Elasticsearch index with mappings."""
+    # Validate mapping file exists
+    mapping_path = Path(args.mapping)
+    if not mapping_path.exists():
+        print(f"Error: Mapping file not found: {mapping_path}", file=sys.stderr)
+        return 1
+
+    # Load mapping configuration
+    try:
+        mapping_config = load_mapping_file(mapping_path)
+    except Exception as e:
+        print(f"Error: Failed to load mapping file: {e}", file=sys.stderr)
+        return 1
+
+    # Connect to Elasticsearch
+    print(f"Connecting to Elasticsearch: {args.es}")
+    try:
+        es = create_es_client(args)
+
+        # Check connection
+        if not es.ping():
+            print("Error: Cannot connect to Elasticsearch", file=sys.stderr)
+            return 1
+
+        print("✓ Connected to Elasticsearch")
+
+        # Create or update index
+        create_or_update_index(es, args.index, mapping_config, args.recreate)
+
+        # Show index info
+        stats = es.indices.stats(index=args.index)
+        total_docs = stats["indices"][args.index]["total"]["docs"]["count"]
+        print(f"\nIndex info:")
+        print(f"  Name: {args.index}")
+        print(f"  Documents: {total_docs}")
+
+        return 0
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+    finally:
+        if "es" in locals():
+            es.close()
 
 def create_or_update_index(
     es: Elasticsearch, index_name: str, mapping_config: Dict, recreate: bool = False
@@ -63,85 +108,3 @@ def create_or_update_index(
                 "   Use --recreate flag to delete and recreate the index with new settings."
             )
 
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Create or update Elasticsearch index with mappings from JSON file"
-    )
-    parser.add_argument(
-        "--index", required=True, help="Name of the Elasticsearch index"
-    )
-    parser.add_argument(
-        "--mapping",
-        required=True,
-        type=Path,
-        help="Path to mapping JSON file (contains settings and mappings)",
-    )
-    parser.add_argument(
-        "--es-url",
-        default="http://localhost:9200",
-        help="Elasticsearch URL (default: http://localhost:9200)",
-    )
-    parser.add_argument(
-        "--user", help="Elasticsearch username (if authentication required)"
-    )
-    parser.add_argument(
-        "--password", help="Elasticsearch password (if authentication required)"
-    )
-    parser.add_argument(
-        "--recreate",
-        action="store_true",
-        help="Delete and recreate index if it exists (WARNING: deletes all data)",
-    )
-
-    args = parser.parse_args()
-
-    # Validate mapping file exists
-    if not args.mapping.exists():
-        print(f"Error: Mapping file not found: {args.mapping}", file=sys.stderr)
-        sys.exit(1)
-
-    # Load mapping configuration
-    try:
-        mapping_config = load_mapping_file(args.mapping)
-    except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON in mapping file: {e}", file=sys.stderr)
-        sys.exit(1)
-
-    # Connect to Elasticsearch
-    print(f"Connecting to Elasticsearch: {args.es_url}")
-
-    es_kwargs = {"hosts": [args.es_url]}
-    if args.user and args.password:
-        es_kwargs["basic_auth"] = (args.user, args.password)
-
-    try:
-        es = Elasticsearch(**es_kwargs)
-
-        # Check connection
-        if not es.ping():
-            print("Error: Cannot connect to Elasticsearch", file=sys.stderr)
-            sys.exit(1)
-
-        print("✓ Connected to Elasticsearch")
-
-        # Create or update index
-        create_or_update_index(es, args.index, mapping_config, args.recreate)
-
-        # Show index info
-        stats = es.indices.stats(index=args.index)
-        total_docs = stats["indices"][args.index]["total"]["docs"]["count"]
-        print(f"\nIndex info:")
-        print(f"  Name: {args.index}")
-        print(f"  Documents: {total_docs}")
-
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
-    finally:
-        if "es" in locals():
-            es.close()
-
-
-if __name__ == "__main__":
-    main()

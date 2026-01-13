@@ -5,30 +5,18 @@ Panther main CLI - Manage Elasticsearch index and upload documents
 Usage:
     python main.py create-index --index <name> --mapping <file>
     python main.py upload --index <name> --data-root <path>
+    python main.py upload-extra --index <name> --sqlite-db <file>
 """
 
 import argparse
 import os
 import sys
-from pathlib import Path
 
-# Import the main functions from submodules
-from panther.create_index import create_or_update_index, load_mapping_file
-from panther.upload_es import (
-    build_actions,
-    bulk_upsert_with_retries,
-)
-from elasticsearch import Elasticsearch
-
-
-def create_es_client(args) -> Elasticsearch:
-    """Create Elasticsearch client from common arguments."""
-    if args.api_key:
-        return Elasticsearch(args.es, api_key=args.api_key)
-    elif args.user and args.password:
-        return Elasticsearch(args.es, basic_auth=(args.user, args.password))
-    else:
-        return Elasticsearch(args.es)
+from panther.create_db import cmd_create_db
+from panther.create_index import cmd_create_index
+from panther.import_extra_data import cmd_import_extra_data
+from panther.upload_documents import cmd_upload
+from panther.upload_extra_data import cmd_upload_extra_data
 
 
 def add_common_arguments(parser: argparse.ArgumentParser):
@@ -60,107 +48,6 @@ def add_common_arguments(parser: argparse.ArgumentParser):
     )
 
 
-def cmd_create_index(args) -> int:
-    """Create or update Elasticsearch index with mappings."""
-    # Validate mapping file exists
-    mapping_path = Path(args.mapping)
-    if not mapping_path.exists():
-        print(f"Error: Mapping file not found: {mapping_path}", file=sys.stderr)
-        return 1
-
-    # Load mapping configuration
-    try:
-        mapping_config = load_mapping_file(mapping_path)
-    except Exception as e:
-        print(f"Error: Failed to load mapping file: {e}", file=sys.stderr)
-        return 1
-
-    # Connect to Elasticsearch
-    print(f"Connecting to Elasticsearch: {args.es}")
-    try:
-        es = create_es_client(args)
-
-        # Check connection
-        if not es.ping():
-            print("Error: Cannot connect to Elasticsearch", file=sys.stderr)
-            return 1
-
-        print("✓ Connected to Elasticsearch")
-
-        # Create or update index
-        create_or_update_index(es, args.index, mapping_config, args.recreate)
-
-        # Show index info
-        stats = es.indices.stats(index=args.index)
-        total_docs = stats["indices"][args.index]["total"]["docs"]["count"]
-        print(f"\nIndex info:")
-        print(f"  Name: {args.index}")
-        print(f"  Documents: {total_docs}")
-
-        return 0
-
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        return 1
-    finally:
-        if "es" in locals():
-            es.close()
-
-
-def cmd_upload(args) -> int:
-    """Upload documents to Elasticsearch."""
-    data_root = Path(args.data_root)
-    if not data_root.exists():
-        print(f"Error: Data root not found: {data_root}", file=sys.stderr)
-        return 1
-
-    # Connect to Elasticsearch
-    print(f"Connecting to Elasticsearch: {args.es}")
-    try:
-        es = create_es_client(args)
-
-        # Check connection
-        if not es.ping():
-            print("Error: Cannot connect to Elasticsearch", file=sys.stderr)
-            return 1
-
-        print("✓ Connected to Elasticsearch")
-        print(f"Uploading documents from: {data_root}")
-
-        # Build actions
-        actions = build_actions(
-            index=args.index,
-            data_root=data_root,
-            pipeline=args.pipeline,
-            refresh=args.refresh,
-            use_hash_guard=args.use_hash_guard,
-        )
-
-        # Bulk upsert with retries
-        success, failed = bulk_upsert_with_retries(
-            es,
-            actions,
-            chunk_size=args.chunk_size,
-            max_retries=args.max_retries,
-            initial_backoff=1.0,
-            max_backoff=30.0,
-        )
-
-        if args.refresh:
-            print("Refreshing index...")
-            es.indices.refresh(index=args.index)
-
-        print(f"\n[DONE] Success: {success}, Failed: {failed}")
-        return 0 if failed == 0 else 1
-
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        return 1
-    finally:
-        if "es" in locals():
-            es.close()
-
-
 def main():
     """Main entry point with subcommands."""
     parser = argparse.ArgumentParser(
@@ -170,6 +57,33 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
+    # create-db subcommand
+    create_db_parser = subparsers.add_parser(
+        "create-db",
+        help="Create table for storing extra data.",
+    )
+    create_db_parser.add_argument(
+        "--sqlite-db",
+        default="extra_patent_data.db",
+        help="SQLite database file for storing extra data (default: extra_patent_data.db)",
+    )
+    
+    # import-extra-data subcommand
+    import_extra_data_parser = subparsers.add_parser(
+        "import-extra-data",
+        help="Import document.json files into extra data database.",
+    )
+    import_extra_data_parser.add_argument(
+        "--data-dir",
+        required=True,
+        help="Directory containing docid/document.json files to import",
+    )
+    import_extra_data_parser.add_argument(
+        "--sqlite-db",
+        default="extra_patent_data.db",
+        help="SQLite database file for storing extra data (default: extra_patent_data.db)",
+    )
+    
     # create-index subcommand
     create_parser = subparsers.add_parser(
         "create-index",
@@ -189,7 +103,7 @@ def main():
 
     # upload subcommand
     upload_parser = subparsers.add_parser(
-        "upload",
+        "upload-documents",
         help="Upload documents to Elasticsearch",
     )
     add_common_arguments(upload_parser)
@@ -226,6 +140,16 @@ def main():
         help="Refresh index after bulk (slower but makes documents immediately searchable)",
     )
 
+    # upload extra-data subcommand
+    upload_extra_parser = subparsers.add_parser(
+        "upload-extra-data",
+        help="Upload extra data (assignees, tags) from SQLite to Elasticsearch",
+    )
+    add_common_arguments(upload_extra_parser)
+    upload_extra_parser.add_argument("--sqlite-db", required=True, help="Path to sqlite db")
+    upload_extra_parser.add_argument("--batch", type=int, default=500, help="Bulk batch size")
+    upload_extra_parser.add_argument("--dry-run", action="store_true", help="Do not write to ES")
+
     args = parser.parse_args()
 
     # Show help if no command specified
@@ -236,8 +160,14 @@ def main():
     # Route to appropriate command handler
     if args.command == "create-index":
         return cmd_create_index(args)
-    elif args.command == "upload":
+    elif args.command == "upload-documents":
         return cmd_upload(args)
+    elif args.command == "create-db":
+        return cmd_create_db(args.sqlite_db)
+    elif args.command == "import-extra-data":
+        return cmd_import_extra_data(args.data_dir, args.sqlite_db)
+    elif args.command == "upload-extra-data":
+        return cmd_upload_extra_data(args)
     else:
         parser.print_help()
         return 1
@@ -245,3 +175,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+ 

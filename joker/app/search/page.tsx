@@ -102,6 +102,7 @@ function SearchPageContent() {
                 throw new Error(json?.message || json?.error || `HTTP ${res.status}`);
             }
             setData(json);
+            console.log(json)
         } catch (e: unknown) {
             setErr((e as Error)?.message ?? String(e));
             setData(null);

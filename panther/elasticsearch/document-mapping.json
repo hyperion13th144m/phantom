@@ -220,6 +220,12 @@
                     }
                 }
             },
+            "assignees": {
+                "type": "keyword"
+            },
+            "tags": {
+                "type": "keyword"
+            },
             "specialMentionMatterArticle": {
                 "type": "keyword"
             },

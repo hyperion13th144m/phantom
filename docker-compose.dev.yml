@@ -18,12 +18,14 @@ services:
   
   panther-dev:
     container_name: panther-dev
-    image: panther-dev
-    build:
-      context: panther
-      dockerfile: Dockerfile.dev
+    image: python:3.14-bookworm
+    #image: panther-dev
+    #build:
+    #  context: panther
+    #  dockerfile: Dockerfile.dev
     volumes:
       - ${DATA_DIR}:/data_dir
+      - ${EXTRA_DATA_DIR}:/extra_dir
       - .:/workspaces:cached
     tty: true
     environment:

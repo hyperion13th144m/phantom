@@ -67,6 +67,8 @@ export async function GET(req: NextRequest) {
     // 任意フィルタ（UI側で渡せるようにしておく）
     const applicant = (searchParams.get("applicant") ?? "").trim();
     const inventor = (searchParams.get("inventor") ?? "").trim();
+    const assignees = (searchParams.get("assignees") ?? "").trim();
+    const tags = (searchParams.get("tags") ?? "").trim();
 
     const from = (page - 1) * size;
 
@@ -109,6 +111,8 @@ export async function GET(req: NextRequest) {
     const filter: estypes.QueryDslQueryContainer[] = [];
     if (applicant) filter.push({ match: { applicants: applicant } });
     if (inventor) filter.push({ match: { inventors: inventor } });
+    if (assignees) filter.push({ match: { assignees: assignees } });
+    if (tags) filter.push({ match: { tags: tags } });
 
     try {
         const result = await es.search({
@@ -132,9 +136,6 @@ export async function GET(req: NextRequest) {
                     dependentClaims: {},
                     abstract: {},
                     descriptionOfEmbodiments: {},
-                    applicants: {},
-                    assignee: {},
-                    tags: {},
                 },
             },
             aggs: {
@@ -147,6 +148,18 @@ export async function GET(req: NextRequest) {
                 inventors: {
                     terms: {
                         field: "inventors",
+                        size: 50,
+                    },
+                },
+                assignees: {
+                    terms: {
+                        field: "assignees",
+                        size: 50,
+                    },
+                },
+                tags: {
+                    terms: {
+                        field: "tags",
                         size: 50,
                     },
                 },
@@ -163,7 +176,7 @@ export async function GET(req: NextRequest) {
                 "abstract",
                 "applicants",
                 "inventors",
-                "assignee",
+                "assignees",
                 "tags",
                 "images",
             ],
@@ -200,6 +213,8 @@ export async function GET(req: NextRequest) {
         const aggregations = {
             applicants: (result.aggregations?.applicants as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
             inventors: (result.aggregations?.inventors as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
+            assignees: (result.aggregations?.assignees as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
+            tags: (result.aggregations?.tags as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
         };
 
         return NextResponse.json({
