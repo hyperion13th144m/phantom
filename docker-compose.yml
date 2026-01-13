@@ -64,8 +64,8 @@ services:
       ES_URL: http://es01:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
-      NEXT_PUBLIC_IMAGE_BASE_URL: /static/content
-      NEXT_PUBLIC_DOCUMENT_BASE_URL: /static/docs
+      IMAGE_BASE_URL: /static/content
+      DOCUMENT_BASE_URL: /static/docs
 
   es01:
     image: phantom-lasticsearch

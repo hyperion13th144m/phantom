@@ -1,4 +1,6 @@
+import { getEnv } from "@/lib/env";
 import { es } from "@/lib/es";
+import { buildImageUrl } from "@/lib/helpers";
 import type { estypes } from "@elastic/elasticsearch";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -167,12 +169,28 @@ export async function GET(req: NextRequest) {
             ],
         });
 
-        const hits = (result.hits.hits ?? []).map((h) => ({
-            id: h._id,
-            score: h._score ?? null,
-            source: h._source ?? {},
-            highlight: h.highlight ?? {},
-        }));
+        const hits = (result.hits.hits ?? [])
+            .map((h) => ({
+                id: h._id,
+                score: h._score ?? null,
+                source: h._source ?? {},
+                highlight: h.highlight ?? {},
+            }))
+            .map((h) => {
+                // 画像URLを構築
+                const images = (h.source as { images: Array<{ filename: string }> }).images.map((img) => ({
+                    ...img,
+                    filename: buildImageUrl(getEnv().IMAGE_BASE_URL, h.id ?? "", img.filename),
+                })) ?? [];
+                return {
+                    ...h,
+                    source: {
+                        ...h.source,
+                        images,
+                        documentUrl: getEnv().DOCUMENT_BASE_URL + "/" + h.id,
+                    },
+                };
+            });
 
         const total =
             typeof result.hits.total === "number"

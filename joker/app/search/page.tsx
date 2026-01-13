@@ -36,6 +36,7 @@ type Hit = {
             description: string;
             representative: boolean;
         }[];
+        documentUrl: string;
     };
     highlight: Record<string, string[]>;
 };
@@ -129,15 +130,10 @@ function SearchPageContent() {
     useEffect(() => {
         if (data?.hits) {
             const newImages: Record<string, (Hit["source"]["images"][number] & { largeFilename: string })[]> = {};
-            const baseUrl = getEnv().NEXT_PUBLIC_IMAGE_BASE_URL; // Next.jsのrewritesでプロキシされる相対パス
             data.hits.forEach((hit) => {
                 if (hit.source.images) {
                     const images = hit.source.images
                         .filter((img) => img.kind === "figure")
-                        .map((img) => ({
-                            ...img,
-                            filename: buildImageUrl(baseUrl, hit.id, img.filename),
-                        }))
                     const thumbnails = images
                         .filter((img) => img.sizeTag === "thumbnail")
                         .sort((a, b) => a.filename.localeCompare(b.filename))
@@ -158,7 +154,6 @@ function SearchPageContent() {
         }
     }, [data]);
 
-    const DOCUMENT_BASE_URL = getEnv().NEXT_PUBLIC_DOCUMENT_BASE_URL || "http://webserver:8080/docs";
 
     const totalPages = data ? Math.max(1, Math.ceil(data.total / data.size)) : 1;
 
@@ -259,7 +254,7 @@ function SearchPageContent() {
                                         {h.source.inventionTitle ?? "(no title)"}{" "}
                                     </div>
                                     <div>
-                                        <a href={`${DOCUMENT_BASE_URL}/${h.id}?q=${q0.split(/ /).join(',')}`}
+                                        <a href={`${h.source.documentUrl}?q=${q0.split(/ /).join(',')}`}
                                             target="_blank" rel="noopener noreferrer" className="ml-2 text-xs">
                                             詳細
                                         </a>

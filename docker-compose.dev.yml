@@ -77,8 +77,8 @@ services:
       ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
-      NEXT_PUBLIC_IMAGE_BASE_URL: /content
-      NEXT_PUBLIC_DOCUMENT_BASE_URL: http://192.168.11.250:38080/docs
+      IMAGE_BASE_URL: http://192.168.11.250:38080/content
+      DOCUMENT_BASE_URL: http://192.168.11.250:38080/docs
     tty: true
     networks:
       - dev-net
