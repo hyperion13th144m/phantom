@@ -7,8 +7,8 @@ import SimpleInput from "@/app/components/simple-input";
 import Pagination from "@/app/components/pagination";
 import Highlight from "@/app/components/highlight";
 import ImagesArray from "@/app/components/images-array";
-import { clamp, buildImageUrl, formatApplicationNumber, formatDate } from "@/lib/helpers";
-import { getEnv } from "@/lib/env";
+import { clamp, formatApplicationNumber, formatDate } from "@/lib/helpers";
+
 
 type Hit = {
     id: string;
@@ -148,11 +148,11 @@ function SearchPageContent() {
                     const thumbnails = images
                         .filter((img) => img.sizeTag === "thumbnail")
                         .sort((a, b) => a.filename.localeCompare(b.filename))
-                        .slice(0, 5);
+                    //.slice(0, 5);
                     const largeImages = images
                         .filter((img) => img.sizeTag === "large")
                         .sort((a, b) => a.filename.localeCompare(b.filename))
-                        .slice(0, 5);
+                    //.slice(0, 5);
                     newImages[hit.id] = thumbnails.map((thumb, idx) => (
                         {
                             ...thumb,
@@ -195,122 +195,77 @@ function SearchPageContent() {
 
                 {/* 絞り込みUI */}
                 <div className="flex gap-4 flex-wrap">
-                    {data?.aggregations?.applicants && data.aggregations.applicants.length > 0 && (
-                        <div className="flex-1 min-w-[250px]">
-                            <label className="text-sm font-semibold text-gray-700 mb-1 block">出願人で絞り込み</label>
-                            <select
-                                value={selectedApplicant}
-                                onChange={(e) => {
-                                    setSelectedApplicant(e.target.value);
-                                    const p = new URLSearchParams();
-                                    if (q.trim()) p.set("q", q.trim());
-                                    p.set("page", "1");
-                                    p.set("size", String(size));
-                                    if (e.target.value) p.set("applicant", e.target.value);
-                                    if (selectedInventor) p.set("inventor", selectedInventor);
-                                    if (selectedAssignee) p.set("assignee", selectedAssignee);
-                                    if (selectedTag) p.set("tag", selectedTag);
-                                    router.push(`/search?${p.toString()}`);
-                                }}
-                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                            >
-                                <option value="">すべて</option>
-                                {data.aggregations.applicants.slice(0, 20).map((bucket) => (
-                                    <option key={bucket.key} value={bucket.key}>
-                                        {bucket.key} ({bucket.doc_count})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
+                    {[
+                        {
+                            key: "applicants" as const,
+                            label: "出願人で絞り込み",
+                            param: "applicant",
+                            value: selectedApplicant,
+                            setValue: setSelectedApplicant
+                        },
+                        {
+                            key: "inventors" as const,
+                            label: "発明者で絞り込み",
+                            param: "inventor",
+                            value: selectedInventor,
+                            setValue: setSelectedInventor
+                        },
+                        {
+                            key: "assignees" as const,
+                            label: "担当者で絞り込み",
+                            param: "assignee",
+                            value: selectedAssignee,
+                            setValue: setSelectedAssignee
+                        },
+                        {
+                            key: "tags" as const,
+                            label: "タグで絞り込み",
+                            param: "tag",
+                            value: selectedTag,
+                            setValue: setSelectedTag
+                        },
+                    ].map((filter) => {
+                        const aggregation = data?.aggregations?.[filter.key];
+                        if (!aggregation || aggregation.length === 0) return null;
 
-                    {data?.aggregations?.inventors && data.aggregations.inventors.length > 0 && (
-                        <div className="flex-1 min-w-[250px]">
-                            <label className="text-sm font-semibold text-gray-700 mb-1 block">発明者で絞り込み</label>
-                            <select
-                                value={selectedInventor}
-                                onChange={(e) => {
-                                    setSelectedInventor(e.target.value);
-                                    const p = new URLSearchParams();
-                                    if (q.trim()) p.set("q", q.trim());
-                                    p.set("page", "1");
-                                    p.set("size", String(size));
-                                    if (selectedApplicant) p.set("applicant", selectedApplicant);
-                                    if (e.target.value) p.set("inventor", e.target.value);
-                                    if (selectedAssignee) p.set("assignee", selectedAssignee);
-                                    if (selectedTag) p.set("tag", selectedTag);
-                                    router.push(`/search?${p.toString()}`);
-                                }}
-                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                            >
-                                <option value="">すべて</option>
-                                {data.aggregations.inventors.slice(0, 20).map((bucket) => (
-                                    <option key={bucket.key} value={bucket.key}>
-                                        {bucket.key} ({bucket.doc_count})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
+                        return (
+                            <div key={filter.key} className="flex-1 min-w-[250px]">
+                                <label className="text-sm font-semibold text-gray-700 mb-1 block">{filter.label}</label>
+                                <select
+                                    value={filter.value}
+                                    onChange={(e) => {
+                                        const newValue = e.target.value;
+                                        filter.setValue(newValue);
+                                        const p = new URLSearchParams();
+                                        if (q.trim()) p.set("q", q.trim());
+                                        p.set("page", "1");
+                                        p.set("size", String(size));
 
-                    {data?.aggregations?.assignees && data.aggregations.assignees.length > 0 && (
-                        <div className="flex-1 min-w-[250px]">
-                            <label className="text-sm font-semibold text-gray-700 mb-1 block">担当者で絞り込み</label>
-                            <select
-                                value={selectedAssignee}
-                                onChange={(e) => {
-                                    setSelectedAssignee(e.target.value);
-                                    const p = new URLSearchParams();
-                                    if (q.trim()) p.set("q", q.trim());
-                                    p.set("page", "1");
-                                    p.set("size", String(size));
-                                    if (selectedApplicant) p.set("applicant", selectedApplicant);
-                                    if (selectedInventor) p.set("inventor", selectedInventor);
-                                    if (e.target.value) p.set("assignee", e.target.value);
-                                    if (selectedTag) p.set("tag", selectedTag);
-                                    router.push(`/search?${p.toString()}`);
-                                }}
-                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                            >
-                                <option value="">すべて</option>
-                                {data.aggregations.assignees.slice(0, 20).map((bucket) => (
-                                    <option key={bucket.key} value={bucket.key}>
-                                        {bucket.key} ({bucket.doc_count})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
+                                        // 現在変更中のパラメータは新しい値を、それ以外は既存の値を設定
+                                        const currentApplicant = filter.param === "applicant" ? newValue : selectedApplicant;
+                                        const currentInventor = filter.param === "inventor" ? newValue : selectedInventor;
+                                        const currentAssignee = filter.param === "assignee" ? newValue : selectedAssignee;
+                                        const currentTag = filter.param === "tag" ? newValue : selectedTag;
 
+                                        if (currentApplicant) p.set("applicant", currentApplicant);
+                                        if (currentInventor) p.set("inventor", currentInventor);
+                                        if (currentAssignee) p.set("assignee", currentAssignee);
+                                        if (currentTag) p.set("tag", currentTag);
 
-                    {data?.aggregations?.tags && data.aggregations.tags.length > 0 && (
-                        <div className="flex-1 min-w-[250px]">
-                            <label className="text-sm font-semibold text-gray-700 mb-1 block">タグで絞り込み</label>
-                            <select
-                                value={selectedTag}
-                                onChange={(e) => {
-                                    setSelectedTag(e.target.value);
-                                    const p = new URLSearchParams();
-                                    if (q.trim()) p.set("q", q.trim());
-                                    p.set("page", "1");
-                                    p.set("size", String(size));
-                                    if (selectedApplicant) p.set("applicant", selectedApplicant);
-                                    if (selectedInventor) p.set("inventor", selectedInventor);
-                                    if (selectedAssignee) p.set("assignee", selectedAssignee);
-                                    if (e.target.value) p.set("tag", e.target.value);
-                                    router.push(`/search?${p.toString()}`);
-                                }}
-                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                            >
-                                <option value="">すべて</option>
-                                {data.aggregations.tags.slice(0, 20).map((bucket) => (
-                                    <option key={bucket.key} value={bucket.key}>
-                                        {bucket.key} ({bucket.doc_count})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
+                                        router.push(`/search?${p.toString()}`);
+                                    }}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                                >
+                                    <option value="">すべて</option>
+                                    {aggregation.slice(0, 20).map((bucket) => (
+                                        <option key={bucket.key} value={bucket.key}>
+                                            {bucket.key} ({bucket.doc_count})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
