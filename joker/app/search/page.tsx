@@ -49,6 +49,8 @@ type ApiResponse = {
     aggregations: {
         applicants: { key: string; doc_count: number }[];
         inventors: { key: string; doc_count: number }[];
+        assignees: { key: string; doc_count: number }[];
+        tags: { key: string; doc_count: number }[];
     }
     error?: string;
     message?: string;
@@ -64,12 +66,16 @@ function SearchPageContent() {
     const size0 = Number(sp.get("size") ?? "10") || 10;
     const applicant0 = sp.get("applicant") ?? "";
     const inventor0 = sp.get("inventor") ?? "";
+    const assignee0 = sp.get("assignee") ?? "";
+    const tag0 = sp.get("tag") ?? "";
 
     const [q, setQ] = useState(q0);
     const [page, setPage] = useState(clamp(page0, 1, 100000));
     const [size, setSize] = useState(clamp(size0, 1, 100));
     const [selectedApplicant, setSelectedApplicant] = useState(applicant0);
     const [selectedInventor, setSelectedInventor] = useState(inventor0);
+    const [selectedAssignee, setSelectedAssignee] = useState(assignee0);
+    const [selectedTag, setSelectedTag] = useState(tag0);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ApiResponse | null>(null);
     const [err, setErr] = useState<string | null>(null);
@@ -82,13 +88,15 @@ function SearchPageContent() {
         setSize(clamp(size0, 1, 100));
     }, [q0, page0, size0]);
 
-    async function fetchSearch(params: { q: string; page: number; size: number; applicant?: string; inventor?: string }) {
+    async function fetchSearch(params: { q: string; page: number; size: number; applicant?: string; inventor?: string, assignee?: string; tag?: string }) {
         const usp = new URLSearchParams();
         if (params.q.trim()) usp.set("q", params.q.trim());
         usp.set("page", String(params.page));
         usp.set("size", String(params.size));
         if (params.applicant) usp.set("applicant", params.applicant);
         if (params.inventor) usp.set("inventor", params.inventor);
+        if (params.assignee) usp.set("assignee", params.assignee);
+        if (params.tag) usp.set("tag", params.tag);
 
         setLoading(true);
         setErr(null);
@@ -113,9 +121,9 @@ function SearchPageContent() {
 
     // URLクエリが変わったら検索実行
     useEffect(() => {
-        fetchSearch({ q: q0, page: clamp(page0, 1, 100000), size: clamp(size0, 1, 100), applicant: applicant0, inventor: inventor0 });
+        fetchSearch({ q: q0, page: clamp(page0, 1, 100000), size: clamp(size0, 1, 100), applicant: applicant0, inventor: inventor0, assignee: assignee0, tag: tag0 });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [q0, page0, size0, applicant0, inventor0]);
+    }, [q0, page0, size0, applicant0, inventor0, assignee0, tag0]);
 
     function submit() {
         // 新しい検索は1ページ目から
@@ -125,6 +133,8 @@ function SearchPageContent() {
         p.set("size", String(size));
         if (selectedApplicant) p.set("applicant", selectedApplicant);
         if (selectedInventor) p.set("inventor", selectedInventor);
+        if (selectedAssignee) p.set("assignee", selectedAssignee);
+        if (selectedTag) p.set("tag", selectedTag);
         router.push(`/search?${p.toString()}`);
     }
 
@@ -198,6 +208,8 @@ function SearchPageContent() {
                                     p.set("size", String(size));
                                     if (e.target.value) p.set("applicant", e.target.value);
                                     if (selectedInventor) p.set("inventor", selectedInventor);
+                                    if (selectedAssignee) p.set("assignee", selectedAssignee);
+                                    if (selectedTag) p.set("tag", selectedTag);
                                     router.push(`/search?${p.toString()}`);
                                 }}
                                 className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
@@ -225,12 +237,73 @@ function SearchPageContent() {
                                     p.set("size", String(size));
                                     if (selectedApplicant) p.set("applicant", selectedApplicant);
                                     if (e.target.value) p.set("inventor", e.target.value);
+                                    if (selectedAssignee) p.set("assignee", selectedAssignee);
+                                    if (selectedTag) p.set("tag", selectedTag);
                                     router.push(`/search?${p.toString()}`);
                                 }}
                                 className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
                             >
                                 <option value="">すべて</option>
                                 {data.aggregations.inventors.slice(0, 20).map((bucket) => (
+                                    <option key={bucket.key} value={bucket.key}>
+                                        {bucket.key} ({bucket.doc_count})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {data?.aggregations?.assignees && data.aggregations.assignees.length > 0 && (
+                        <div className="flex-1 min-w-[250px]">
+                            <label className="text-sm font-semibold text-gray-700 mb-1 block">担当者で絞り込み</label>
+                            <select
+                                value={selectedAssignee}
+                                onChange={(e) => {
+                                    setSelectedAssignee(e.target.value);
+                                    const p = new URLSearchParams();
+                                    if (q.trim()) p.set("q", q.trim());
+                                    p.set("page", "1");
+                                    p.set("size", String(size));
+                                    if (selectedApplicant) p.set("applicant", selectedApplicant);
+                                    if (selectedInventor) p.set("inventor", selectedInventor);
+                                    if (e.target.value) p.set("assignee", e.target.value);
+                                    if (selectedTag) p.set("tag", selectedTag);
+                                    router.push(`/search?${p.toString()}`);
+                                }}
+                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            >
+                                <option value="">すべて</option>
+                                {data.aggregations.assignees.slice(0, 20).map((bucket) => (
+                                    <option key={bucket.key} value={bucket.key}>
+                                        {bucket.key} ({bucket.doc_count})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+
+                    {data?.aggregations?.tags && data.aggregations.tags.length > 0 && (
+                        <div className="flex-1 min-w-[250px]">
+                            <label className="text-sm font-semibold text-gray-700 mb-1 block">タグで絞り込み</label>
+                            <select
+                                value={selectedTag}
+                                onChange={(e) => {
+                                    setSelectedTag(e.target.value);
+                                    const p = new URLSearchParams();
+                                    if (q.trim()) p.set("q", q.trim());
+                                    p.set("page", "1");
+                                    p.set("size", String(size));
+                                    if (selectedApplicant) p.set("applicant", selectedApplicant);
+                                    if (selectedInventor) p.set("inventor", selectedInventor);
+                                    if (selectedAssignee) p.set("assignee", selectedAssignee);
+                                    if (e.target.value) p.set("tag", e.target.value);
+                                    router.push(`/search?${p.toString()}`);
+                                }}
+                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            >
+                                <option value="">すべて</option>
+                                {data.aggregations.tags.slice(0, 20).map((bucket) => (
                                     <option key={bucket.key} value={bucket.key}>
                                         {bucket.key} ({bucket.doc_count})
                                     </option>
@@ -266,10 +339,10 @@ function SearchPageContent() {
                                 </div>
 
                                 <div className="flex flex-wrap justify-start text-gray-800 text-sm mt-2 gap-4">
-                                    <div>整理番号: {h.source.fileReferenceId ?? "-"}</div>
-                                    <div>出願番号: {formatApplicationNumber(h.source.law ?? "-", h.source.applicationNumber ?? "-")}</div>
+                                    <div>{formatApplicationNumber(h.source.law ?? "-", h.source.applicationNumber ?? "-")}</div>
                                     <div>出願日: {formatDate(h.source.submissionDate ?? "-")}</div>
-                                    <div>出願人: {(h.source.applicants ?? []).join(", ") || "-"}</div>
+                                    <div>{h.source.fileReferenceId ?? "-"}</div>
+                                    <div>{(h.source.applicants ?? []).join(", ") || "-"}</div>
                                 </div>
                             </div>
 

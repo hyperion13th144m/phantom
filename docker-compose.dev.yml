@@ -69,13 +69,16 @@ services:
 
   joker-dev:
     container_name: joker-dev
-    image: joker-dev
-    build:
-      context: joker
-      dockerfile: Dockerfile.dev
+    image: node:24-bookworm
+    #build:
+    #  context: joker
+    #  dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
     environment:
+      NODE_ENV: development
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
       ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}

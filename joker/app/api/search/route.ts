@@ -67,8 +67,8 @@ export async function GET(req: NextRequest) {
     // 任意フィルタ（UI側で渡せるようにしておく）
     const applicant = (searchParams.get("applicant") ?? "").trim();
     const inventor = (searchParams.get("inventor") ?? "").trim();
-    const assignees = (searchParams.get("assignees") ?? "").trim();
-    const tags = (searchParams.get("tags") ?? "").trim();
+    const assignee = (searchParams.get("assignee") ?? "").trim();
+    const tag = (searchParams.get("tag") ?? "").trim();
 
     const from = (page - 1) * size;
 
@@ -111,8 +111,8 @@ export async function GET(req: NextRequest) {
     const filter: estypes.QueryDslQueryContainer[] = [];
     if (applicant) filter.push({ match: { applicants: applicant } });
     if (inventor) filter.push({ match: { inventors: inventor } });
-    if (assignees) filter.push({ match: { assignees: assignees } });
-    if (tags) filter.push({ match: { tags: tags } });
+    if (assignee) filter.push({ match: { assignees: assignee } });
+    if (tag) filter.push({ match: { tags: tag } });
 
     try {
         const result = await es.search({
