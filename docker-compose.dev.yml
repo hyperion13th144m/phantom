@@ -1,10 +1,7 @@
 services:
   mona-dev:
     container_name: mona-dev
-    image: mona-dev
-    build:
-      context: mona
-      dockerfile: Dockerfile.dev
+    image: python:3.14-bookworm
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir
@@ -13,16 +10,14 @@ services:
     environment:
       SRC_DIR: /src_dir
       DATA_DIR: /data_dir
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
     networks:
       - dev-net
   
   panther-dev:
     container_name: panther-dev
     image: python:3.14-bookworm
-    #image: panther-dev
-    #build:
-    #  context: panther
-    #  dockerfile: Dockerfile.dev
     volumes:
       - ${DATA_DIR}:/data_dir
       - ${EXTRA_DATA_DIR}:/extra_dir
@@ -33,34 +28,32 @@ services:
       ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
     networks:
       - dev-net
 
   queen-dev:
     container_name: queen-dev
-    image: queen-dev
-    build:
-      context: queen
-      dockerfile: Dockerfile.dev
+    image: python:3.14-bookworm
     volumes:
       - .:/workspaces:cached
     tty: true
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
     restart: always
     networks:
       - dev-net
-
-    #environment:
-    #  GROONGA_URL: http://groonga-dev:10041/d
-    #ports:
-    #  - 28000:8000
  
   fox-dev:
     container_name: fox-dev
-    image: fox-dev
-    build:
-      context: fox
-      dockerfile: Dockerfile.dev
+    image: node:24-bookworm
     tty: true
+    environment:
+      NODE_ENV: development
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
     volumes:
       - .:/workspaces:cached
       - ${DATA_DIR}:/workspaces/fox/public/content
@@ -70,9 +63,6 @@ services:
   joker-dev:
     container_name: joker-dev
     image: node:24-bookworm
-    #build:
-    #  context: joker
-    #  dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
     environment:

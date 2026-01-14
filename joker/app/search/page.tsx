@@ -8,6 +8,7 @@ import Pagination from "@/app/components/pagination";
 import Highlight from "@/app/components/highlight";
 import ImagesArray from "@/app/components/images-array";
 import { clamp, formatApplicationNumber, formatDate } from "@/lib/helpers";
+import nextConfig from "../../next.config";
 
 
 type Hit = {
@@ -101,7 +102,7 @@ function SearchPageContent() {
         setLoading(true);
         setErr(null);
         try {
-            const res = await fetch(`/api/search?${usp.toString()}`, {
+            const res = await fetch(`${nextConfig.basePath}/api/search?${usp.toString()}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
@@ -110,7 +111,6 @@ function SearchPageContent() {
                 throw new Error(json?.message || json?.error || `HTTP ${res.status}`);
             }
             setData(json);
-            console.log(json)
         } catch (e: unknown) {
             setErr((e as Error)?.message ?? String(e));
             setData(null);
@@ -229,7 +229,7 @@ function SearchPageContent() {
                         if (!aggregation || aggregation.length === 0) return null;
 
                         return (
-                            <div key={filter.key} className="flex-1 min-w-[250px]">
+                            <div key={filter.key} className="flex-1 min-w-[220px]">
                                 <label className="text-sm font-semibold text-gray-700 mb-1 block">{filter.label}</label>
                                 <select
                                     value={filter.value}
