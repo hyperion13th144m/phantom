@@ -22,7 +22,7 @@ const { block } = Astro.props as {
     (checker.isPatcitBlock(block) ||
         checker.isNplcitBlock(block) ||
         checker.isFigRefBlock(block)) && (
-        <div class={block.tag}>
+        <div class={block.tag} style="display: flex;">
             <div class={`jpTag indentLevel-${block.indentLevel}`}>
                 {block.jpTag}
             </div>
@@ -30,3 +30,19 @@ const { block } = Astro.props as {
         </div>
     )
 }
+
+<style>
+    .patcit .jpTag,
+    .nplcit .jpTag {
+        min-width: 10em;
+    }
+    .figref .jpTag {
+        min-width: 7em;
+    }
+
+    .patcit .indentLevel-2,
+    .nplcit .indentLevel-2,
+    .figref .indentLevel-2 {
+        text-indent: 2em;
+    }
+</style>

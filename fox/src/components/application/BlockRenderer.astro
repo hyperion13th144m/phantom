@@ -9,13 +9,13 @@ const { block } = Astro.props as {
 ---
 
 {
-    // 発明の名称，図の説明
-    (checker.isInventionTitle(block) || checker.isFigRefBlock(block)) && (
-        <div class={block.tag}>
-            <span class={`jpTag indentLevel-${block.indentLevel}`}>
+    // 発明の名称
+    checker.isInventionTitle(block) && (
+        <div class={block.tag} style="display: flex;">
+            <div class={`jpTag indentLevel-${block.indentLevel}`}>
                 {block.jpTag}
-            </span>
-            <span class="text">{block.text}</span>
+            </div>
+            <div class="text">{block.text}</div>
         </div>
     )
 }
@@ -59,3 +59,9 @@ const { block } = Astro.props as {
     // 段落
     checker.isParagraph(block) && <Paragraph block={block} />
 }
+
+<style>
+    .figref {
+        @apply flex;
+    }
+</style>

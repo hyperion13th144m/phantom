@@ -7,8 +7,11 @@ const { block } = Astro.props as {
 
 {
     block.jpTag && block.convertedText && (
-        <div class="application-item">
-            <span class={`jpTag indentLevel-${block.indentLevel}`}>
+        <div class="application-item" style="display: flex;">
+            <span
+                class={`jpTag indentLevel-${block.indentLevel}`}
+                style="min-width: 11em;"
+            >
                 {block.jpTag}
             </span>
             <span class="convertedText">{block.convertedText}</span>
@@ -18,8 +21,11 @@ const { block } = Astro.props as {
 
 {
     block.jpTag && !block.convertedText && block.text && (
-        <div class="application-item">
-            <span class={`jpTag indentLevel-${block.indentLevel}`}>
+        <div class="application-item" style="display: flex;">
+            <span
+                class={`jpTag indentLevel-${block.indentLevel}`}
+                style="min-width: 11em;"
+            >
                 {block.jpTag}
             </span>
             <span class="text">{block.text}</span>
@@ -30,8 +36,11 @@ const { block } = Astro.props as {
 {
     block.jpTag && !block.convertedText && !block.text && (
         <>
-            <div class="application-item">
-                <span class={`jpTag indentLevel-${block.indentLevel}`}>
+            <div class="application-item" style="display: flex;">
+                <span
+                    class={`jpTag indentLevel-${block.indentLevel}`}
+                    style="min-width: 11em;"
+                >
                     {block.jpTag}
                 </span>
             </div>
@@ -49,3 +58,9 @@ const { block } = Astro.props as {
         "blocks" in block &&
         block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
 }
+
+<style>
+    .application-item :global(.indentLevel-2) {
+        text-indent: 2em;
+    }
+</style>
