@@ -1,0 +1,14 @@
+---
+import PrintIcon from "~/components/icons/PrintIcon.astro";
+
+export interface Props {
+    href: string;
+    size: string;
+}
+
+const { href, size = "3em" } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer">
+    <PrintIcon size={size} />
+</a>

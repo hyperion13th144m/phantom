@@ -13,3 +13,9 @@ const { description } = Astro.props as {
     <div class="jpTag">{description.jpTag}</div>
     {description.blocks.map((block) => <BlockRenderer block={block} />)}
 </div>
+
+<style>
+    .description {
+        break-before: page;
+    }
+</style>

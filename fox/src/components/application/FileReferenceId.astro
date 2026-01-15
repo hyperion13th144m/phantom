@@ -1,0 +1,18 @@
+---
+import type { IPDocument } from "~/interfaces/document";
+
+export interface Props {
+    ipDocument: IPDocument;
+}
+
+const { ipDocument } = Astro.props;
+---
+
+<div class="bg-violet-200 rounded-md shadow-md px-2">
+    <a
+        href={`/docs/fileReferenceId/${ipDocument.fileReferenceId}`}
+        class="hover:text-blue-600"
+    >
+        {ipDocument.fileReferenceId}
+    </a>
+</div>

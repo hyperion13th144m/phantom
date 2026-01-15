@@ -3,6 +3,7 @@ import Card from "~/components/ui/Card.astro";
 import ImageCarousel from "~/components/ui/ImageCarousel.astro";
 import type { IPDocument } from "~/interfaces/document";
 import { checker } from "~/interfaces/text-blocks-root";
+import KeywordHighlighter from "../ui/KeywordHighlighter.astro";
 import Abstract from "./Abstract.astro";
 import ApplicationForm from "./ApplicationForm.astro";
 import BibliographicData from "./BibliographicData.astro";
@@ -62,270 +63,100 @@ const foreignDrawings = ipDocument.textBlocksRoot
 ---
 
 <BibliographicData ipDocument={ipDocument} />
-<div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
-    <div data-search-root class="">
+<KeywordHighlighter urlParamKey="q">
+    <div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
+        <div data-search-root class="">
+            {
+                applicationForm && (
+                    <Card title={`${lawPrefix}願`}>
+                        <ApplicationForm applicationForm={applicationForm} />
+                    </Card>
+                )
+            }
+            {
+                description && (
+                    <Card title="明細書">
+                        <Description description={description} />
+                    </Card>
+                )
+            }
+            {
+                claims && (
+                    <Card title={lawPrefix + "請求の範囲"}>
+                        <Claims claims={claims} />
+                    </Card>
+                )
+            }
+            {
+                abstract && (
+                    <Card title="要約書">
+                        <Abstract {...abstract} />
+                    </Card>
+                )
+            }
+            {
+                drawings && (
+                    <Card title="図面">
+                        <Drawings drawings={drawings} />
+                    </Card>
+                )
+            }
+            {
+                foreignDescription && (
+                    <Card title="外国語明細書">
+                        <ForeignLanguageDocumentBlock
+                            block={foreignDescription}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+            {
+                foreignClaims && (
+                    <Card title={"外国語" + lawPrefix + "請求の範囲"}>
+                        <ForeignLanguageDocumentBlock
+                            block={foreignClaims}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+            {
+                foreignAbstract && (
+                    <Card title="外国語要約書">
+                        <ForeignLanguageDocumentBlock
+                            block={foreignAbstract}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+            {
+                foreignDrawings && (
+                    <Card title="外国語図面">
+                        <ForeignLanguageDocumentBlock
+                            block={foreignDrawings}
+                            sizeTag="large"
+                        />
+                    </Card>
+                )
+            }
+        </div>
         {
-            applicationForm && (
-                <Card title={`${lawPrefix}願`}>
-                    <ApplicationForm applicationForm={applicationForm} />
-                </Card>
-            )
-        }
-        {
-            description && (
-                <Card title="明細書">
-                    <Description description={description} />
-                </Card>
-            )
-        }
-        {
-            claims && (
-                <Card title={lawPrefix + "請求の範囲"}>
-                    <Claims claims={claims} />
-                </Card>
-            )
-        }
-        {
-            abstract && (
-                <Card title="要約書">
-                    <Abstract {...abstract} />
-                </Card>
-            )
-        }
-        {
-            drawings && (
-                <Card title="図面">
-                    <Drawings drawings={drawings} />
-                </Card>
-            )
-        }
-        {
-            foreignDescription && (
-                <Card title="外国語明細書">
-                    <ForeignLanguageDocumentBlock
-                        block={foreignDescription}
-                        sizeTag="large"
-                    />
-                </Card>
-            )
-        }
-        {
-            foreignClaims && (
-                <Card title={"外国語" + lawPrefix + "請求の範囲"}>
-                    <ForeignLanguageDocumentBlock
-                        block={foreignClaims}
-                        sizeTag="large"
-                    />
-                </Card>
-            )
-        }
-        {
-            foreignAbstract && (
-                <Card title="外国語要約書">
-                    <ForeignLanguageDocumentBlock
-                        block={foreignAbstract}
-                        sizeTag="large"
-                    />
-                </Card>
-            )
-        }
-        {
-            foreignDrawings && (
-                <Card title="外国語図面">
-                    <ForeignLanguageDocumentBlock
-                        block={foreignDrawings}
-                        sizeTag="large"
-                    />
-                </Card>
+            hasCarouselImages && (
+                <div class="hidden lg:block">
+                    <div class="sticky top-32 bg-white">
+                        <Card title="図面一覧">
+                            <ImageCarousel
+                                images={images}
+                                thumbnails={thumbnails}
+                                heightClass="h-[640px]"
+                                thumbHeight={128}
+                            />
+                        </Card>
+                    </div>
+                </div>
             )
         }
     </div>
-    {
-        hasCarouselImages && (
-            <div class="hidden lg:block">
-                <div class="sticky top-32 bg-white">
-                    <Card title="図面一覧">
-                        <ImageCarousel
-                            images={images}
-                            thumbnails={thumbnails}
-                            heightClass="h-[640px]"
-                            thumbHeight={128}
-                        />
-                    </Card>
-                </div>
-            </div>
-        )
-    }
-</div>
-
-<script>
-    const colors = [
-        { backgroundColor: "bg-orange-500", color: "text-black" },
-        { backgroundColor: "bg-green-500", color: "text-white" },
-        { backgroundColor: "bg-amber-500", color: "text-black" },
-        { backgroundColor: "bg-indigo-500", color: "text-white" },
-        { backgroundColor: "bg-blue-500", color: "text-white" },
-        { backgroundColor: "bg-emerald-500", color: "text-white" },
-        { backgroundColor: "bg-yellow-500", color: "text-black" },
-        { backgroundColor: "bg-cyan-500", color: "text-black" },
-        { backgroundColor: "bg-fuchsia-500", color: "text-white" },
-        { backgroundColor: "bg-violet-500", color: "text-white" },
-    ];
-    const numColors = colors.length;
-
-    (() => {
-        const nav = document.querySelector("[data-keyword-nav]");
-        const root =
-            document.querySelector("[data-search-root]") ?? document.body;
-        if (!nav || !root) return;
-
-        const statusEl = nav.querySelector("[data-status]");
-        const state = new Map<string, { hits: Element[]; index: number }>();
-        let currentHighlight: Element | null = null;
-
-        /* ========= q パラメータからキーワード取得 ========= */
-        function getKeywordsFromQuery() {
-            const params = new URLSearchParams(location.search);
-            const q = params.get("q");
-            if (!q) return [];
-            return q
-                .split(",")
-                .map((s) => s.trim())
-                .filter(Boolean)
-                .sort((a, b) => b.length - a.length); // 長い順
-        }
-
-        const keywords = getKeywordsFromQuery();
-        if (keywords.length === 0) {
-            //if (statusEl) statusEl.textContent = "検索キーワードがありません";
-            return;
-        }
-
-        /* ========= UI生成 ========= */
-        for (const kw of keywords) {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.dataset.kw = kw;
-            btn.innerHTML = `${kw} <span class="count" data-count="${kw}"></span>`;
-            btn.className = `rounded-md shadow-md px-2 py-1 ${colors[keywords.indexOf(kw) % numColors].backgroundColor} ${colors[keywords.indexOf(kw) % numColors].color}`;
-            nav.insertBefore(btn, statusEl);
-        }
-
-        /* ========= ユーティリティ ========= */
-        const escapeRegExp = (s: string) =>
-            s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-        function unwrap(node: Element) {
-            const p = node.parentNode;
-            while (node.firstChild) p?.insertBefore(node.firstChild, node);
-            p?.removeChild(node);
-        }
-
-        function clearHighlights() {
-            root.querySelectorAll('mark[data-kw-hit="1"]').forEach(unwrap);
-            currentHighlight = null;
-        }
-
-        function collectTextNodes(container: Element) {
-            const walker = document.createTreeWalker(
-                container,
-                NodeFilter.SHOW_TEXT,
-                {
-                    acceptNode(node) {
-                        if (!node.nodeValue?.trim())
-                            return NodeFilter.FILTER_REJECT;
-                        const p = node.parentElement;
-                        if (!p) return NodeFilter.FILTER_REJECT;
-                        if (
-                            p.closest(
-                                "script,style,textarea,code,pre,[data-keyword-nav]",
-                            )
-                        )
-                            return NodeFilter.FILTER_REJECT;
-                        return NodeFilter.FILTER_ACCEPT;
-                    },
-                },
-            );
-            const nodes = [];
-            let n;
-            while ((n = walker.nextNode())) nodes.push(n);
-            return nodes;
-        }
-
-        function highlightKeyword(kw: string) {
-            const re = new RegExp(escapeRegExp(kw), "g");
-            const hits = [];
-            const kwIndex = keywords.indexOf(kw);
-            for (const tn of collectTextNodes(root)) {
-                const text = tn.nodeValue;
-                if (!text) continue;
-                if (!re.test(text)) continue;
-                re.lastIndex = 0;
-
-                const frag = document.createDocumentFragment();
-                let last = 0,
-                    m;
-                while ((m = re.exec(text))) {
-                    if (m.index > last)
-                        frag.appendChild(
-                            document.createTextNode(text.slice(last, m.index)),
-                        );
-
-                    const mark = document.createElement("mark");
-                    mark.textContent = m[0];
-                    mark.dataset.kwHit = "1";
-                    mark.dataset.kw = kw;
-                    mark.className = `${colors[kwIndex % numColors].backgroundColor} ${colors[kwIndex % numColors].color}`;
-                    frag.appendChild(mark);
-                    hits.push(mark);
-
-                    last = m.index + m[0].length;
-                }
-                if (last < text.length)
-                    frag.appendChild(document.createTextNode(text.slice(last)));
-
-                tn.parentNode?.replaceChild(frag, tn);
-            }
-            return hits;
-        }
-
-        function setCurrent(el: Element) {
-            if (currentHighlight)
-                currentHighlight.classList.remove("px-5", "py-2", "text-lg/7");
-            currentHighlight = el;
-            if (el) el.classList.add("px-5", "py-2", "text-lg/7");
-        }
-
-        function jumpTo(kw: string) {
-            const st = state.get(kw);
-            if (!st || st.hits.length === 0) {
-                if (statusEl) statusEl.textContent = `"${kw}" は見つかりません`;
-                return;
-            }
-            st.index = (st.index + 1) % st.hits.length;
-            const el = st.hits[st.index];
-            setCurrent(el);
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-            if (statusEl)
-                statusEl.textContent = `"${kw}" ${st.index + 1}/${st.hits.length}`;
-        }
-
-        /* ========= 初期構築 ========= */
-        clearHighlights();
-        for (const kw of keywords) {
-            const hits = highlightKeyword(kw);
-            state.set(kw, { hits, index: -1 });
-            const c = nav?.querySelector(`[data-count="${CSS.escape(kw)}"]`);
-            if (c) c.textContent = `(${hits.length})`;
-        }
-
-        /* ========= クリック処理 ========= */
-        nav.addEventListener("click", (e) => {
-            const btn = (e.target as Element).closest(
-                "button[data-kw]",
-            ) as HTMLButtonElement;
-            if (!btn) return;
-            jumpTo(btn.dataset.kw as string);
-        });
-    })();
-</script>
+</KeywordHighlighter>

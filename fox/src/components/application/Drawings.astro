@@ -19,3 +19,13 @@ const { drawings, sizeTag = "middle" } = Astro.props as Props;
         ))
     }
 </div>
+
+<style>
+    .drawings {
+        break-before: page;
+    }
+
+    .drawings :global(.figure:not(:last-child)) {
+        break-after: page;
+    }
+</style>

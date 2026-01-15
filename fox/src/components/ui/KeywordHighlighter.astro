@@ -1,0 +1,420 @@
+---
+/*
+    KeywordHighlighter Component
+    URLパラメータで指定されたキーワードをハイライト表示するコンポーネント
+    URLパラメータ名は urlParamKey プロパティで指定する
+    スロット:
+      - control: キーワード入力欄や追加・削除ボタンのカスタムレイアウトを指定する場合に使用
+      - デフォルトスロット: ハイライト対象のコンテンツを指定する場合に使用
+
+    <!-- デフォルトのレイアウトを使う場合 -->
+    <KeywordHighlighter urlParamKey="kwd">
+      <div>検索対象のコンテンツ</div>
+    </KeywordHighlighter>
+    
+    <!-- カスタムレイアウトを使う場合 -->
+    <KeywordHighlighter urlParamKey="kwd">
+      <div slot="control" data-keyword-highlighter-control class="カスタムクラス">
+        <!-- 独自のレイアウト -->
+        <div data-keyword-buttons-area></div>
+        <input data-keyword-input />
+        <button data-keyword-add-button>追加</button>
+        <button data-keyword-remove-button>削除</button>
+        <div data-keyword-suggest-popover hidden></div>
+      </div>
+      
+      <div>検索対象のコンテンツ</div>
+    </KeywordHighlighter>
+*/
+import Minus from "~/components/icons/Minus.astro";
+import Plus from "~/components/icons/Plus.astro";
+interface Props {
+    // URL params のうちハイライト対象のキーワード(value)を含む パラメータ名(key)
+    urlParamKey: string;
+}
+const { urlParamKey } = Astro.props as Props;
+---
+
+<div data-keyword-highlighter>
+    <!-- ナビゲーション用キーワード検索 -->
+    <slot name="control">
+        <!-- デフォルトのレイアウト -->
+        <div
+            data-keyword-highlighter-control
+            class="mb-4 flex justify-between items-center gap-2"
+        >
+            <div class="flex items-center gap-2 p-2">
+                <div
+                    data-keyword-buttons-area
+                    class="flex items-center gap-2 px-2 py-1"
+                >
+                </div>
+            </div>
+            <div class="flex items-center gap-2 p-2">
+                <input
+                    type="search"
+                    placeholder="キーワード追加"
+                    aria-label="検索キーワード"
+                    class="border rounded-md w-40 bg-white"
+                    data-keyword-input
+                />
+                <button
+                    type="button"
+                    class="cursor-pointer"
+                    data-keyword-add-button
+                >
+                    <div class="pt-1">
+                        <Plus size="2em" />
+                    </div>
+                </button>
+                <button
+                    type="button"
+                    class="cursor-pointer"
+                    data-keyword-remove-button
+                >
+                    <div class="pt-1">
+                        <Minus size="2em" />
+                    </div>
+                </button>
+                <div
+                    role="listbox"
+                    aria-label="キーワード候補"
+                    hidden
+                    class="keyword-list-box"
+                    data-keyword-suggest-popover
+                >
+                </div>
+            </div>
+        </div>
+    </slot>
+
+    <div data-keyword-highlighter-target>
+        <!-- 検索対象 -->
+        <slot> fugafuga </slot>
+    </div>
+
+    <div data-url-param-key={urlParamKey} class="hidden"></div>
+</div>
+
+<style>
+    .keyword-list-box {
+        border: 1px solid #ccc;
+        background: #fff;
+        min-width: 14rem;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        padding: 0.25rem;
+        border-radius: 0.5rem;
+        z-index: 1000;
+    }
+</style>
+
+<script>
+    const colors = [
+        { backgroundColor: "bg-green-500", color: "text-white" },
+        { backgroundColor: "bg-amber-500", color: "text-black" },
+        { backgroundColor: "bg-indigo-500", color: "text-white" },
+        { backgroundColor: "bg-blue-500", color: "text-white" },
+        { backgroundColor: "bg-emerald-500", color: "text-white" },
+        { backgroundColor: "bg-yellow-500", color: "text-black" },
+        { backgroundColor: "bg-cyan-500", color: "text-black" },
+        { backgroundColor: "bg-fuchsia-500", color: "text-white" },
+        { backgroundColor: "bg-violet-500", color: "text-white" },
+    ];
+    const numColors = colors.length;
+
+    function createKeywordButton(
+        kw: string,
+        keywords: Array<string>,
+    ): HTMLButtonElement {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.dataset.kw = kw;
+        btn.innerHTML = `${kw} <span class="count" data-count="${kw}"></span>`;
+        btn.className = `rounded-md shadow-md px-2 py-1 ${colors[keywords.indexOf(kw) % numColors].backgroundColor} ${colors[keywords.indexOf(kw) % numColors].color}`;
+        return btn;
+    }
+
+    function getKeywordsFromURL(urlParamKey: string): Array<string> {
+        const keywords = new Set<string>();
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        const currentKeywords = params.get(urlParamKey);
+        if (currentKeywords) {
+            currentKeywords
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .forEach((kw) => {
+                    keywords.add(kw);
+                });
+        }
+        return Array.from(keywords).sort((a, b) => b.length - a.length); // 長い順
+    }
+
+    const escapeRegExp = (s: string) =>
+        s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    function unwrap(node: Element) {
+        const p = node.parentNode;
+        while (node.firstChild) p?.insertBefore(node.firstChild, node);
+        p?.removeChild(node);
+    }
+
+    function clearHighlights(root: HTMLDivElement, key: number) {
+        root.querySelectorAll(`mark[data-kw-hit="${key}"]`).forEach(unwrap);
+        //currentHighlight = null;
+    }
+
+    function collectTextNodes(container: Element) {
+        const walker = document.createTreeWalker(
+            container,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode(node) {
+                    if (!node.nodeValue?.trim())
+                        return NodeFilter.FILTER_REJECT;
+                    const p = node.parentElement;
+                    if (!p) return NodeFilter.FILTER_REJECT;
+                    if (
+                        p.closest(
+                            "script,style,textarea,code,pre,[data-keyword-nav]",
+                        )
+                    )
+                        return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                },
+            },
+        );
+        const nodes = [];
+        let n;
+        while ((n = walker.nextNode())) nodes.push(n);
+        return nodes;
+    }
+
+    function highlightKeyword(
+        root: HTMLDivElement,
+        keywords: string[],
+        key: number,
+    ) {
+        for (const kw of keywords) {
+            const re = new RegExp(escapeRegExp(kw), "g");
+            const kwIndex = keywords.indexOf(kw);
+            for (const tn of collectTextNodes(root)) {
+                const text = tn.nodeValue;
+                if (!text) continue;
+                if (!re.test(text)) continue;
+                re.lastIndex = 0;
+
+                const frag = document.createDocumentFragment();
+                let last = 0,
+                    m;
+                while ((m = re.exec(text))) {
+                    if (m.index > last)
+                        frag.appendChild(
+                            document.createTextNode(text.slice(last, m.index)),
+                        );
+
+                    const mark = document.createElement("mark");
+                    mark.textContent = m[0];
+                    mark.dataset.kwHit = key.toString();
+                    mark.dataset.kw = kw;
+                    mark.className = `${colors[kwIndex % numColors].backgroundColor} ${colors[kwIndex % numColors].color}`;
+                    frag.appendChild(mark);
+
+                    last = m.index + m[0].length;
+                }
+                if (last < text.length)
+                    frag.appendChild(document.createTextNode(text.slice(last)));
+
+                tn.parentNode?.replaceChild(frag, tn);
+            }
+        }
+    }
+
+    document
+        .querySelectorAll("[data-keyword-highlighter]")
+        .forEach((root, key) => {
+            const control = root.querySelector(
+                "[data-keyword-highlighter-control]",
+            ) as HTMLDivElement;
+            const target = root.querySelector(
+                "[data-keyword-highlighter-target]",
+            ) as HTMLDivElement;
+            const kwdArea = control.querySelector(
+                "[data-keyword-buttons-area]",
+            ) as HTMLDivElement;
+            const input = control.querySelector(
+                "[data-keyword-input]",
+            ) as HTMLInputElement;
+            const addBtn = control.querySelector(
+                "[data-keyword-add-button]",
+            ) as HTMLButtonElement;
+            const removeBtn = control.querySelector(
+                "[data-keyword-remove-button]",
+            ) as HTMLButtonElement;
+            const popover = control.querySelector(
+                "[data-keyword-suggest-popover]",
+            ) as HTMLDivElement;
+            const urlParamKeyDiv = root.querySelector(
+                "[data-url-param-key]",
+            ) as HTMLDivElement;
+
+            if (
+                !target ||
+                !kwdArea ||
+                !input ||
+                !addBtn ||
+                !removeBtn ||
+                !popover ||
+                !urlParamKeyDiv
+            )
+                return;
+
+            const urlParamKey = urlParamKeyDiv.dataset.urlParamKey;
+            if (!urlParamKey) return;
+
+            addBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const inputKeywords = input.value
+                    .split(/,|\s+/)
+                    .map((s) => s.trim())
+                    .filter((s) => s);
+                if (inputKeywords.length === 0) return;
+
+                // 既存のキーワードを取得
+                const existingKeywords = getKeywordsFromURL(urlParamKey);
+
+                // 新しいキーワードを追加
+                inputKeywords.forEach((kw) => {
+                    if (kw && !existingKeywords.includes(kw))
+                        existingKeywords.push(kw);
+                });
+
+                input.value = "";
+
+                // クエリパラメータを更新
+                const url = new URL(window.location.href);
+                url.searchParams.set(urlParamKey, existingKeywords.join(","));
+
+                // ページ遷移
+                history.replaceState(null, "", url.toString());
+            });
+
+            removeBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const existingKeywords = getKeywordsFromURL(urlParamKey);
+                if (existingKeywords.length === 0) return; // キーワードがなければ何もしない
+
+                if (popover.hidden) {
+                    // open popover
+                    // ポップオーバーの中身を作る（都度生成でOK）
+                    popover.innerHTML = "";
+                    existingKeywords.forEach((kw) => {
+                        const btn = document.createElement("button");
+                        btn.type = "button";
+                        btn.role = "option";
+                        btn.textContent = kw;
+                        btn.style.cssText = `
+            display:block; width:100%; text-align:left;
+            padding:.45rem .55rem; border:0; background:transparent;
+            border-radius:.35rem; cursor:pointer;
+          `;
+                        btn.addEventListener(
+                            "mouseenter",
+                            () => (btn.style.background = "#f3f3f3"),
+                        );
+                        btn.addEventListener(
+                            "mouseleave",
+                            () => (btn.style.background = "transparent"),
+                        );
+                        btn.addEventListener("click", () => {
+                            popover.hidden = true;
+                            removeBtn.setAttribute("aria-expanded", "false");
+                            const keywords = existingKeywords.filter(
+                                (k) => k !== kw,
+                            );
+
+                            const url = new URL(window.location.href);
+                            url.searchParams.set(
+                                urlParamKey,
+                                Array.from(keywords).join(","),
+                            );
+                            history.replaceState(null, "", url.toString());
+                        });
+                        popover.appendChild(btn);
+                    });
+
+                    popover.hidden = false;
+                    removeBtn.setAttribute("aria-expanded", "true");
+                } else {
+                    // close popover
+                    popover.hidden = true;
+                    removeBtn.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            // Enterキー対応
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    addBtn.click();
+                }
+            });
+
+            // 外側クリックで閉じる
+            document.addEventListener("click", (e) => {
+                const within =
+                    popover.contains(e.target as Node) ||
+                    removeBtn.contains(e.target as Node);
+                if (!within) {
+                    popover.hidden = true;
+                    removeBtn.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            // Escで閉じる
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    popover.hidden = true;
+                    removeBtn.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            function onURLParameterChange(urlParamKey: string) {
+                const keywords = getKeywordsFromURL(urlParamKey);
+
+                kwdArea.replaceChildren(); // clear all keywords
+                /* ========= create keyword buttons ========= */
+                for (const kw of keywords) {
+                    const btn = createKeywordButton(kw, keywords);
+                    kwdArea.appendChild(btn);
+                }
+
+                // do highlight to target area.
+                clearHighlights(target, key);
+                highlightKeyword(target, keywords, key);
+            }
+
+            // hook history api to detect back/forward navigation
+            const originalPushState = history.pushState;
+            const originalReplaceState = history.replaceState;
+            history.pushState = function (...args) {
+                originalPushState.apply(this, args);
+                onURLParameterChange(urlParamKey);
+            };
+            history.replaceState = function (...args) {
+                originalReplaceState.apply(this, args);
+                onURLParameterChange(urlParamKey);
+            };
+            window.addEventListener("popstate", () => {
+                onURLParameterChange(urlParamKey);
+            });
+
+            // initial
+            const url = new URL(window.location.href);
+            if (url.searchParams.get(urlParamKey)) {
+                // trigger initial highlight
+                history.replaceState(null, "", url.toString());
+            }
+        });
+</script>

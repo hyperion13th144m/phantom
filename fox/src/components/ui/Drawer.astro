@@ -1,0 +1,98 @@
+---
+// スマートフォン用のドロワーコンポーネント
+---
+
+<!-- ハンバーガーボタン：スマホだけ表示 -->
+<button
+    type="button"
+    class="md:hidden inline-flex items-center justify-center rounded-md border bg-white px-3 py-2 shadow-sm"
+    aria-label="メニューを開く"
+    aria-controls="mobileNavPanel"
+    aria-expanded="false"
+    data-nav-toggle
+>
+    <slot name="button">
+        <!-- デフォルトのアイコン -->
+        <span class="text-xl leading-none">☰</span>
+    </slot>
+</button>
+
+<!-- スマホ用 オーバーレイ＋パネル（ドロワー） -->
+<div class="md:hidden">
+    <!-- 背景オーバーレイ -->
+    <div
+        class="fixed inset-0 bg-black/40 hidden"
+        data-nav-overlay
+        aria-hidden="true"
+    >
+    </div>
+
+    <!-- パネル本体 -->
+    <div
+        id="mobileNavPanel"
+        class="fixed top-0 right-0 h-dvh w-[min(92vw,420px)] bg-gray-100 shadow-2xl p-4 hidden overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-label="ナビゲーション"
+        data-nav-panel
+    >
+        <div class="flex items-center justify-between">
+            <div class="font-semibold">メニュー</div>
+            <button
+                type="button"
+                class="rounded-md border bg-white px-3 py-2 shadow-sm"
+                aria-label="メニューを閉じる"
+                data-nav-close
+            >
+                ✕
+            </button>
+        </div>
+
+        <hr class="my-3 border-gray-300" />
+
+        <!-- ドロワーのコンテンツ -->
+        <slot name="content" />
+    </div>
+</div>
+
+<!-- トグル用JS（ページ内で完結） -->
+<script is:inline>
+    (() => {
+        const toggleBtn = document.querySelector("[data-nav-toggle]");
+        const panel = document.querySelector("[data-nav-panel]");
+        const overlay = document.querySelector("[data-nav-overlay]");
+        const closeBtn = document.querySelector("[data-nav-close]");
+
+        if (!toggleBtn || !panel || !overlay) return;
+
+        const open = () => {
+            panel.classList.remove("hidden");
+            overlay.classList.remove("hidden");
+            toggleBtn.setAttribute("aria-expanded", "true");
+            document.documentElement.style.overflow = "hidden";
+        };
+
+        const close = () => {
+            panel.classList.add("hidden");
+            overlay.classList.add("hidden");
+            toggleBtn.setAttribute("aria-expanded", "false");
+            document.documentElement.style.overflow = "";
+        };
+
+        toggleBtn.addEventListener("click", open);
+        overlay.addEventListener("click", close);
+        closeBtn?.addEventListener("click", close);
+
+        // ESCで閉じる
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && !panel.classList.contains("hidden"))
+                close();
+        });
+
+        // 画面がmd以上になったら強制的に閉じる（表示崩れ防止）
+        const mq = window.matchMedia("(min-width: 768px)");
+        mq.addEventListener?.("change", (e) => {
+            if (e.matches) close();
+        });
+    })();
+</script>

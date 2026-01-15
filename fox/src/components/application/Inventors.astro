@@ -1,0 +1,22 @@
+---
+import type { IPDocument } from "~/interfaces/document";
+export interface Props {
+    ipDocument: IPDocument;
+}
+
+const { ipDocument } = Astro.props;
+---
+
+{
+    ipDocument.inventors.length > 0 &&
+        ipDocument.inventors.map((inv) => (
+            <div class="bg-cyan-100 rounded-md shadow-md px-2">
+                <a
+                    href={`/docs/inventors/${encodeURIComponent(inv)}`}
+                    class="hover:text-blue-600"
+                >
+                    {inv}
+                </a>
+            </div>
+        ))
+}

@@ -13,3 +13,9 @@ const { claims } = Astro.props as {
     <div class="jpTag">{claims.jpTag}</div>
     {claims.blocks.map((claim) => <Claim claim={claim} />)}
 </div>
+
+<style>
+    .claims {
+        break-before: page;
+    }
+</style>
