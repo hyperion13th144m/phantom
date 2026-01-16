@@ -291,7 +291,9 @@
 
             <xsl:element name="representative">
                 <xsl:choose>
-                    <xsl:when test="//jp:procedure//jp:representation-image/jp:file-name = $image-file">true</xsl:when>
+                    <xsl:when
+                        test="//jp:procedure//jp:representation-image/jp:file-name = $image-file">
+                        true</xsl:when>
                     <xsl:otherwise>false</xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -453,12 +455,4 @@
         <item tag="tables" camel-tag="tables" jp-tag="表" />
         <item tag="maths" camel-tag="maths" jp-tag="数" />
     </xsl:variable>
-
-    <!-- 先頭と最後の空白/改行の除去 -->
-    <xsl:template
-        name="trim">
-        <xsl:param name="text" />
-        <xsl:value-of select="replace($text, '^[\s]+|[\s]+$', '')" />
-    </xsl:template>
-
 </xsl:stylesheet>

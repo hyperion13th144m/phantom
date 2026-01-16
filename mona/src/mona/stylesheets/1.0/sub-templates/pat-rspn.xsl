@@ -5,8 +5,9 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jp="http://www.jpo.go.jp">
 
-    <!-- this xslt was created with reference to pat_common.xsl
-         of Internet Application Software version i5.30 provided by JPO -->
+    <!-- this xslt was created with reference to pat_common.xsl at Apr  4  2023 
+         sha256sum:054dec3b453ed47edcc0732a4156c236344fbdece7d40d2eb669a8c0d1756d92 
+    -->
 
     <!-- 元は pat_common.xslだが pat-app-doc.xsl に特化させた.
          補正や発送、請求などを考慮した出力を削除した。-->
@@ -465,7 +466,7 @@
                         <xsl:when test="./@jp:kind-of-law = ''">
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="書誌編集エラー処理" />
+                            <xsl:value-of select="'書誌編集エラー処理'" />
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:element>
@@ -502,7 +503,7 @@
                     <xsl:when test="string-length($date-str) != 8" />
                     <xsl:when
                         test="(number(.//jp:date) != number($date-str)) or (number($date-str) &lt; 19260101)">
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:call-template name="gengo">
@@ -643,15 +644,20 @@
                         <xsl:value-of select="'【審判請求人】'" />
                     </xsl:when>
                     <xsl:when
-                        test="matches($doc-code, '^A263[2-6]?$')">
+                        test="matches($doc-code, '^A263[2-6]?$') or
+                              $doc-code = 'A253'">
                         <xsl:value-of select="'【実用新案登録出願人】'" />
                     </xsl:when>
                     <xsl:when
-                        test="matches($doc-code, '^A163[1245]?$')">
+                        test="matches($doc-code, '^A163[1245]?$') or
+                              $doc-code = 'A153'">
                         <xsl:value-of select="'【特許出願人】'" />
                     </xsl:when>
+                    <xsl:when test="$doc-code = 'A159' or $doc-code = 'A259'">
+                        <xsl:value-of select="'【弁明をする者】'" />
+                    </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -816,11 +822,13 @@
                         test="
                         matches($code, '^A[12]63$') or
                         matches($code, '^A[12]63[245]$') or
-                        $code = 'A1631' or $code = 'A2633'">
+                        $code = 'A1631' or $code = 'A2633' or
+                        $code = 'A153' or $code = 'A253' or
+                        $code = 'A159' or $code = 'A259'">
                         <xsl:value-of select="'【'" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -831,7 +839,7 @@
                         <xsl:value-of select="'【選任した'" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -886,11 +894,13 @@
                         test="
                         matches($code, '^A[12]63$') or
                         matches($code, '^A[12]63[245]$') or
-                        $code = 'A1631' or $code = 'A2633'">
+                        $code = 'A1631' or $code = 'A2633' or
+                        $code = 'A153' or $code = 'A253' or
+                        $code = 'A159' or $code = 'A259'">
                         <xsl:value-of select="'【代理人】'" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -902,7 +912,7 @@
                         <xsl:value-of select="'【選任した代理人】'" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -1301,7 +1311,7 @@
                     <xsl:when test="normalize-space(.) = ''">
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -1337,7 +1347,7 @@
                     <xsl:when test="normalize-space(.) = ''">
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー処理" />
+                        <xsl:value-of select="'書誌編集エラー処理'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -1516,6 +1526,154 @@
     </xsl:template>
 
     <!-- ====================================================================
+     jp:opinion-contents-article
+     ====================================================================-->
+    <!-- 意見の内容 -->
+    <xsl:template match="jp:opinion-contents-article">
+        <xsl:param name="document" />
+
+        <xsl:variable name="sikibetu">
+            <xsl:choose>
+                <xsl:when test="parent::jp:contents-of-amendment">
+                    <xsl:value-of select="parent::jp:contents-of-amendment/@jp:kind-of-document" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$document" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:choose>
+                    <xsl:when test="$sikibetu = 'jp:response-a59'">
+                        <xsl:value-of select="'【弁明の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a781'">
+                        <xsl:value-of select="'【上申の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a87'">
+                        <xsl:value-of select="'【実施の状況等】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a871'">
+                        <xsl:value-of select="'【早期審査に関する事情説明】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a872'">
+                        <xsl:value-of select="'【補充の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:amendment-a524'">
+                        <xsl:value-of select="'【訂正の理由等】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:response-a53'">
+                        <xsl:value-of select="'【意見の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a621'">
+                        <xsl:value-of select="'【手数料に関する特記事項】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test="$sikibetu = 'jp:etcetera-a623' or $sikibetu = 'jp:etcetera-a624'">
+                        <xsl:value-of select="'【請求人の意見】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a917'">
+                        <xsl:value-of select="'【回復の理由】'" />
+                    </xsl:when>
+                    <xsl:when test="$sikibetu = 'jp:etcetera-a918'">
+                        <xsl:value-of select="'【申出の理由】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【特許料等に関する特記事項】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indentLevel">
+                <xsl:value-of select="0" />
+            </xsl:element>
+            <xsl:for-each select="p">
+                <xsl:apply-templates select="." />
+            </xsl:for-each>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="text() | sup | sub | u">
+        <xsl:variable name="tag">
+            <xsl:choose>
+                <xsl:when test="self::text()">text</xsl:when>
+                <xsl:when test="self::sup">sup</xsl:when>
+                <xsl:when test="self::sub">sub</xsl:when>
+                <xsl:when test="self::u">underline</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- 次の「有意ノード」を見る -->
+        <xsl:variable name="nextNode"
+            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
+
+        <!-- 次が br か、次が存在しない（p末尾）なら true -->
+        <xsl:variable name="isLastSentence"
+            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
+
+        <xsl:if test="normalize-space() != ''">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="$tag" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:call-template name="trim">
+                        <xsl:with-param name="text" select="." />
+                    </xsl:call-template>
+                </xsl:element>
+                <xsl:element name="isLastSentence">
+                    <xsl:value-of select="$isLastSentence" />
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- 変換元XMLにある images/image のlookup -->
+    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
+
+    <!--  イメージ   -->
+    <xsl:template match="img">
+        <!-- 次の「有意ノード」を見る -->
+        <xsl:variable name="nextNode"
+            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
+
+        <!-- 次が br か、次が存在しない（p末尾）なら true -->
+        <xsl:variable name="isLastSentence"
+            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="isLastSentence">
+                <xsl:value-of select="$isLastSentence" />
+            </xsl:element>
+            <xsl:for-each select="key('images-table-key', @file)">
+                <xsl:element name="images">
+                    <xsl:element name="src">
+                        <xsl:value-of select="@new" />
+                    </xsl:element>
+                    <xsl:element name="width">
+                        <xsl:value-of select="@width" />
+                    </xsl:element>
+                    <xsl:element name="height">
+                        <xsl:value-of select="@height" />
+                    </xsl:element>
+                    <xsl:element name="kind">
+                        <xsl:value-of select="@kind" />
+                    </xsl:element>
+                    <xsl:element name="sizeTag">
+                        <xsl:value-of select="@sizeTag" />
+                    </xsl:element>
+                </xsl:element>
+            </xsl:for-each>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
          jp:representative-applicant 代表出願人 
          jp:office-address 就業場所 
          jp:attorney 弁理士 
@@ -1567,6 +1725,7 @@
          jp:addressed-to-person あて先
          jp:file-reference-id 整理番号
          jp:dtext その他 (のデフォルト(otherwise)を抽出)
+         jp:proof-means 証拠方法
          ==================================================================== -->
     <xsl:template
         match="jp:dispatch-number | jp:general-power-of-attorney-id |
@@ -1574,7 +1733,7 @@
          jp:relation-attorney-special-matter | jp:contact | jp:fax | jp:phone |
          jp:legal-entity-property | jp:office | jp:office-in-japan | jp:trust-relation |
          jp:name | jp:kana | jp:text | jp:registered-number | 
-         jp:addressed-to-person | jp:file-reference-id | jp:dtext">
+         jp:addressed-to-person | jp:file-reference-id | jp:dtext | jp:proof-means">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
@@ -1614,12 +1773,13 @@
         <item tag="addressed-to-person" value="【あて先】" indent-level="0" />
         <item tag="file-reference-id" value="【整理番号】" indent-level="0" />
         <item tag="dtext" value="【その他】" indent-level="0" />
+        <item tag="proof-means" value="【証拠方法】" indent-level="0" />
     </xsl:variable>
 
     <!-- override build-in template for text and attribute nodes. -->
-    <xsl:template match="text()|@*">
-        <!-- <xsl:value-of select="normalize-space(.)"/> -->
+    <!-- <xsl:template match="text()|@*">
+        <xsl:value-of select="normalize-space(.)"/>
     </xsl:template>
-
+ -->
 
 </xsl:stylesheet>

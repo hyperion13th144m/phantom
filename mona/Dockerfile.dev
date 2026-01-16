@@ -1,0 +1,16 @@
+FROM python:3.14-bookworm
+
+ARG USERNAME=pyuser
+ARG GROUPNAME=pygroup
+ARG UID=1000
+ARG GID=1000
+ENV TZ=Asia/Tokyo
+
+#RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/sh -u $UID -g $GID $USERNAME
+RUN apt-get update && \
+    apt-get install -y bash tesseract-ocr tesseract-ocr-jpn && \
+    rm -rf /var/lib/apt/lists/*
+RUN python -m pip install --upgrade pip
+RUN pip install --no-cache-dir poetry
+
+USER $USERNAME

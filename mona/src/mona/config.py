@@ -5,7 +5,7 @@ from libefiling.image.params import ImageConvertParam
 from .manifest_processor.xslt import TranslatorConfig
 
 SCHEMA_VER = "1.0"
-TARGET_DOCUMENT_CODES = ["A163"]
+TARGET_DOCUMENT_CODES = ["A163", "A153", "A159"]
 
 
 def postprocess_application_body(path: List[str], key: str, value: str) -> None:
@@ -51,14 +51,14 @@ translator_config = [
     ),
     TranslatorConfig(
         ### A163 日本語特許出願関連
-        ### 願書 テキストブロック SSG用
+        ### 願書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/pat-appd.xsl",
         force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-app-doc",
     ),
     TranslatorConfig(
-        ### 明細書 テキストブロック SSG用
+        ### 明細書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/application-body.xsl",
         force_list=["blocks"],
         namespace="",
@@ -80,5 +80,12 @@ translator_config = [
         namespace="",
         doctype="images",
         postprocessor=postprocess_application_body,
+    ),
+    TranslatorConfig(
+        ### A153/A159 意見書、弁明書 テキストブロック
+        xsl_path=f"{SCHEMA_VER}/pat-rspn.xsl",
+        force_list=["blocks"],
+        namespace="http://www.jpo.go.jp",
+        doctype="pat-rspns",
     ),
 ]

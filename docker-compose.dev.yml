@@ -1,7 +1,10 @@
 services:
   mona-dev:
     container_name: mona-dev
-    image: python:3.14-bookworm
+    image: mona-dev
+    build:
+      context: mona
+      dockerfile: Dockerfile.dev
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir

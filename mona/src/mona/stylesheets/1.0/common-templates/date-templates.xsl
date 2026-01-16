@@ -43,6 +43,7 @@
        ====================================================================-->
     <xsl:template name="format-date-jp">
         <xsl:param name="date-str" as="xs:string" />
+        <xsl:param name="law" as="xs:string" />
         <xsl:variable name="m" select="substring($date-str,5,2)" />
         <xsl:variable name="d" select="substring($date-str,7,2)" />
 
@@ -61,6 +62,38 @@
                 <xsl:value-of select="$d || '日'" />
             </xsl:otherwise>
         </xsl:choose>
+        <xsl:if
+            test="(ancestor::jp:application-reference
+                    and ancestor::jp:application-reference [@appl-type = 'application'])
+                    and ((ancestor::jp:parent-application-article and
+                          not(ancestor::jp:parent-application-article [@jp:kind-of-application = 'based-on-utility']))
+                     or ancestor::jp:declaration-priority-ear-app
+                     or ancestor::jp:indication-of-case-article)">
+            <!-- Y05M04　実用新案法改正　追加　End-->
+            <xsl:value-of select="'提出の'" />
+            <xsl:choose>
+                <xsl:when test="$law = 'patent'">
+                    <xsl:value-of select="'特許願'" />
+                </xsl:when>
+                <xsl:when test="$law = 'utility'">
+                    <xsl:value-of select="'実用新案登録願'" />
+                </xsl:when>
+                <xsl:when test="$law = 'design'">
+                    <xsl:value-of select="'意匠登録願'" />
+                </xsl:when>
+                <xsl:when test="$law = 'trademark'">
+                    <xsl:value-of select="'商標登録願'" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'書誌編集エラー処理'" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
+        <xsl:if
+            test="ancestor::jp:application-reference
+                    and ancestor::jp:application-reference [@appl-type = 'international-application']">
+            <xsl:value-of select="'提出'" />
+        </xsl:if>
     </xsl:template>
 
 
