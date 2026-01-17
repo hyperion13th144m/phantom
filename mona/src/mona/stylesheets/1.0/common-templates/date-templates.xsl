@@ -37,7 +37,7 @@
     <xsl:variable name="year-m0" select="1867" />
 
     <!-- ====================================================================
-       和暦日付編集
+       和暦日付編集  (pat_common.xsl 日付変換テンプレートを基に作成)
          input: xs:string date "YYYYMMDD"
          output: 令和NN年MM月DD日
        ====================================================================-->
@@ -96,6 +96,34 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- ====================================================================
+       和暦日付編集  (v4xva_ntc-pt-e.xsl 日付変換テンプレートを基に作成)
+       format-date-jp との差分は
+         xsl:if test="(ancestor...)" 以下の部分は削除
+         input: xs:string date "YYYYMMDD"
+         output: 令和NN年MM月DD日
+       ====================================================================-->
+    <xsl:template name="format-date-jp2">
+        <xsl:param name="date-str" as="xs:string" />
+        <xsl:variable name="m" select="substring($date-str,5,2)" />
+        <xsl:variable name="d" select="substring($date-str,7,2)" />
+
+        <xsl:choose>
+            <xsl:when test="string-length($date-str) != 8" />
+            <xsl:when test="number($date-str) &lt; 19260101" />
+            <xsl:otherwise>
+                <xsl:call-template name="gengo">
+                    <xsl:with-param name="date" select="$date-str" />
+                </xsl:call-template>
+                <xsl:call-template name="warekinen">
+                    <xsl:with-param name="date" select="$date-str" />
+                </xsl:call-template>
+                <xsl:value-of select="'年'" />
+                <xsl:value-of select="$m || '月'" />
+                <xsl:value-of select="$d || '日'" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <!-- ====================================================================
        元号編集

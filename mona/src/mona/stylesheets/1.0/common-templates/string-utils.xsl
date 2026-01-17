@@ -29,7 +29,13 @@
     <xsl:function name="f:to-fullwidth-digit" as="xs:string">
         <xsl:param name="s" as="xs:string" />
         <xsl:sequence
-            select="translate($s, '0123456789', '０１２３４５６７８９')" />
+            select="translate($s, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ')" />
+    </xsl:function>
+
+    <!-- &nbsp; (U+00A0) を通常の空白に変換して normalize-space を適用 -->
+    <xsl:function name="f:remove-nbsp" as="xs:string">
+        <xsl:param name="s" as="xs:string" />
+        <xsl:sequence select="normalize-space(translate($s, '&#160;', ' '))" />
     </xsl:function>
 
     <!-- 先頭と最後の空白/改行の除去 -->

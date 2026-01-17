@@ -23,18 +23,20 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    src_dir, output_dir_root, doc_code, log_level, multi_processors = get_args()
+    src_dir, output_dir_root, doc_code, log_level, multi_processors, overwrite = (
+        get_args()
+    )
     logger.setLevel(getattr(logging, log_level.upper(), None))
 
     if multi_processors > 1:
         multi_processes_parent(
-            src_dir, output_dir_root, doc_code, multi_processors, log_level
+            src_dir, output_dir_root, doc_code, multi_processors, log_level, overwrite
         )
     else:
-        single_process(src_dir, output_dir_root, doc_code)
+        single_process(src_dir, output_dir_root, doc_code, overwrite)
 
 
-def get_args() -> tuple[Path, Path, str, int]:
+def get_args() -> tuple[Path, Path, str, int, bool]:
     p = argparse.ArgumentParser(
         description="Batch parse e-filing archives in a directory"
     )
@@ -62,6 +64,9 @@ def get_args() -> tuple[Path, Path, str, int]:
         default=1,
         help="Number of processors to use",
     )
+    p.add_argument(
+        "-o", "--overwrite", action="store_true", help="Overwrite existing output"
+    )
     args = p.parse_args()
 
     src_dir = Path(args.src_dir)
@@ -79,12 +84,17 @@ def get_args() -> tuple[Path, Path, str, int]:
         args.doc_code,
         args.log_level,
         args.multi_processors,
+        args.overwrite,
     )
 
 
-def single_process(src_dir: Path, output_dir_root: Path, doc_code: List[str]):
+def single_process(
+    src_dir: Path, output_dir_root: Path, doc_code: List[str], overwrite: bool
+):
     for archive_path, procedure_path in find_archives(src_dir, doc_code):
-        common_processing_steps(archive_path, procedure_path, output_dir_root)
+        common_processing_steps(
+            archive_path, procedure_path, output_dir_root, overwrite
+        )
 
 
 def multi_processes_parent(
@@ -93,6 +103,7 @@ def multi_processes_parent(
     doc_code: List[str],
     num_processors: int,
     log_level: str,
+    overwrite: bool,
 ):
     from multiprocessing import Process, Queue
 
@@ -126,7 +137,7 @@ def multi_processes_parent(
             p.join()
 
 
-def multi_processes_child(output_dir_root, queue, log_level):
+def multi_processes_child(output_dir_root, queue, log_level, overwrite: bool):
     logger.setLevel(getattr(logging, log_level.upper(), None))
     while True:
         item = queue.get()
@@ -134,22 +145,28 @@ def multi_processes_child(output_dir_root, queue, log_level):
             break
         archive_path, procedure_path = item
 
-        common_processing_steps(archive_path, procedure_path, output_dir_root)
+        common_processing_steps(
+            archive_path, procedure_path, output_dir_root, overwrite
+        )
 
 
 def common_processing_steps(
     archive_path: Path,
     procedure_path: Path,
     output_dir_root: Path,
+    overwrite: bool,
 ):
     ### check if already processed
     doc_id = generate_sha256(str(archive_path))
     output_dir = get_output_dir(doc_id, output_dir_root)
-    if output_dir.exists():
+    if overwrite is False and output_dir.exists():
         logger.info(
             f"  Output directory {output_dir}, {archive_path} already exists. Skipping."
         )
         return
+    if overwrite is True and output_dir.exists():
+        pass
+        # shutil.rmtree(output_dir)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     try:
@@ -160,10 +177,10 @@ def common_processing_steps(
         shutil.rmtree(output_dir)
         sys.exit(0)
     except Exception as e:
-        logger.info(f"Failed to process {archive_path}: {e.with_traceback()}")
+        logger.info(f"Failed to process {archive_path}: {e}")
         logger.debug(f"doc_id: {doc_id}")
         logger.info(traceback.format_exc())
-        shutil.rmtree(output_dir)
+        # shutil.rmtree(output_dir)
 
 
 def process_archive(

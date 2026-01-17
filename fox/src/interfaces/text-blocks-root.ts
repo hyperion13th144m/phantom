@@ -66,6 +66,7 @@ export type Block =
     | AdvantageousEffectsBlock
     | EmbodimentExampleBlock
     | ModeForInventionBlock
+    | PatResponseBlock
     | UnknownBlock;
 
 /** 想定外 tag が来ても落ちないためのフォールバック */
@@ -117,7 +118,8 @@ export type KnownTag =
     | "tables"
     | "maths"
     | "chemistry"
-    | "image";
+    | "image"
+    | "patRspns";
 
 /** -----------------------------
  *  再帰の中心：paragraph / text runs
@@ -430,6 +432,15 @@ export interface ForeignDrawingsBlock extends BaseBlock {
     blocks: ImageBlock[];
 }
 
+/** -----------------------------
+ *  意見書・弁明書
+ * ---------------------------- */
+
+export interface PatResponseBlock extends BaseBlock {
+    tag: "patRspns";
+    blocks: FigureBlock[];
+}
+
 // --- 型ガードの汎用ファクトリー関数 ---
 // K は判定に使うキー、V はその値
 function createTypeGuard<T extends object, K extends keyof T>(
@@ -498,5 +509,6 @@ export const checker = {
     isReferenceSignsList: createTypeGuard<ReferenceSignsListBlock, 'tag'>('tag', 'referenceSignsList'),
     isReferenceToDepositedBiologicalMaterial: createTypeGuard<ReferenceToDepositedBiologicalMaterialBlock, 'tag'>('tag', 'referenceToDepositedBiologicalMaterial'),
     isDisclosure: createTypeGuard<DisclosureBlock, 'tag'>('tag', 'disclosure'),
+    isPatResponse: createTypeGuard<PatResponseBlock, 'tag'>('tag', 'patRspns'),
     isApplicationFormItemBlock,
 }

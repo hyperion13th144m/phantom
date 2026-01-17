@@ -5,7 +5,17 @@ from libefiling.image.params import ImageConvertParam
 from .manifest_processor.xslt import TranslatorConfig
 
 SCHEMA_VER = "1.0"
-TARGET_DOCUMENT_CODES = ["A163", "A153", "A159"]
+TARGET_DOCUMENT_CODES = [
+    "A101",
+    "A102",
+    "A1131",
+    "A1191",
+    "A1192",
+    "A130",
+    "A163",
+    "A153",
+    "A159",
+]
 
 
 def postprocess_application_body(path: List[str], key: str, value: str) -> None:
@@ -14,6 +24,9 @@ def postprocess_application_body(path: List[str], key: str, value: str) -> None:
     if key in ["width", "height"]:
         if value.isdigit():
             return key, int(value)
+    if len(path) > 0 and path[0][0] == "root" and key in ["images"]:
+        if value is None:
+            return key, []
     return key, value
 
 
@@ -84,8 +97,17 @@ translator_config = [
     TranslatorConfig(
         ### A153/A159 意見書、弁明書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/pat-rspn.xsl",
-        force_list=["blocks"],
+        force_list=["blocks", "textBlocksRoot"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-rspns",
+        postprocessor=postprocess_application_body,
+    ),
+    TranslatorConfig(
+        ### A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
+        xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-e.xsl",
+        force_list=["blocks", "textBlocksRoot"],
+        namespace="http://www.jpo.go.jp",
+        doctype="cpy-notice-pat-exam",
+        postprocessor=postprocess_application_body,
     ),
 ]

@@ -35,13 +35,16 @@ export const getIPDocument = async (docId: string) => {
 
     // document 内の FigureBlock の画像パスを更新
     updateFigureImagePaths(document, basePath);
+
     // 画像のパスを絶対パスに変換
-    document.images.forEach(img => {
+    const images = document.images.map(img => {
         img.filename = path.join(basePath, img.filename);
+        return img;
     });
 
     return {
         ...document,
+        images, // overwrite images of document
         applicants,
         inventors,
         agents,
@@ -59,33 +62,30 @@ export const getIPDocument = async (docId: string) => {
  */
 const getPersonNames = (
     document: DocumentJson,
-    groupTag: string,
     personTag: string,
     nameTag: string
 ): string[] => {
-    const names = document.textBlocksRoot
-        .filter((block) => block.tag === "applicationForm")
-        .flatMap((appForm) => appForm.blocks)
-        .filter((block) => block.tag === groupTag)
-        .flatMap((block) => block.blocks)
-        .filter((block) => block && block.tag === personTag)
-        .flatMap((block) => block && block.blocks)
-        .filter((block) => block && block.tag === nameTag)
-        .map((block) => block && 'text' in block ? block.text : undefined)
+    const names = searchNested<Block & { id: number; name: string }>(
+        document.textBlocksRoot,
+        (item) => item.tag === personTag
+    )
+        .flatMap((item) => item.blocks)
+        .filter((item) => item.tag === nameTag)
+        .map((item) => item && 'text' in item ? item.text : undefined)
         .filter((name): name is string => typeof name === "string");
     return names;
 }
 
 const getApplicants = (document: DocumentJson): string[] => {
-    return getPersonNames(document, "jp:applicants", "jp:applicant", "jp:name");
+    return getPersonNames(document, "jp:applicant", "jp:name");
 }
 
 const getInventors = (document: DocumentJson): string[] => {
-    return getPersonNames(document, "jp:inventors", "jp:inventor", "jp:name");
+    return getPersonNames(document, "jp:inventor", "jp:name");
 }
 
 const getAgents = (document: DocumentJson): string[] => {
-    return getPersonNames(document, "jp:agents", "jp:agent", "jp:name");
+    return getPersonNames(document, "jp:agent", "jp:name");
 }
 
 /**
@@ -114,3 +114,37 @@ const updateFigureImagePaths = (document: DocumentJson, basePath: string): void 
 
     traverse(document.textBlocksRoot);
 };
+
+/**
+ * ネストした JSON を再帰的に検索する関数
+ * @param data 検索対象の JSON（オブジェクトまたは配列）
+ * @param predicate 検索条件（true を返した要素を結果に含める）
+ * @returns 条件に一致した要素の配列
+ */
+function searchNested<T>(
+    data: unknown,
+    predicate: (item: any) => boolean
+): T[] {
+    const results: T[] = [];
+
+    function recurse(value: unknown) {
+        if (Array.isArray(value)) {
+            // 配列の場合は各要素を再帰的に探索
+            for (const item of value) {
+                recurse(item);
+            }
+        } else if (value !== null && typeof value === "object") {
+            // オブジェクトの場合
+            if (predicate(value)) {
+                results.push(value as T);
+            }
+            // 子要素を再帰的に探索
+            for (const key of Object.keys(value)) {
+                recurse((value as Record<string, unknown>)[key]);
+            }
+        }
+    }
+
+    recurse(data);
+    return results;
+}

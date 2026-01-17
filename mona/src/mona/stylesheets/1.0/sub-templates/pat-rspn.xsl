@@ -532,7 +532,7 @@
         <xsl:for-each select="jp:ipc">
             <xsl:element name="blocks">
                 <xsl:element name="tag">
-                    <xsl:text>ipc</xsl:text>
+                    <xsl:text>jp:ipc</xsl:text>
                 </xsl:element>
                 <xsl:choose>
                     <xsl:when test="position() = 1">
