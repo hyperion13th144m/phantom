@@ -28,10 +28,19 @@ export async function getStaticPaths() {
 
 const { applicationNumber } = Astro.params;
 const { ipDocuments } = Astro.props;
-const docs = ipDocuments.sort((a, b) =>
-    a.submissionDate.date > b.submissionDate.date ? 1 : -1,
-);
+const docs = ipDocuments.sort((a, b) => {
+    const aDate = a.submissionDate ?? a.dispatchDate;
+    const bDate = b.submissionDate ?? b.dispatchDate;
+    if (aDate == null || bDate == null) {
+        return 0;
+    }
+    return aDate.date > bDate.date ? 1 : -1;
+});
 const an = docs[0].applicationNumber.toString();
+const dateStr = (ipDocument: IPDocument) => {
+    const date = ipDocument.submissionDate ?? ipDocument.dispatchDate;
+    return date ? date.toString() : "";
+};
 ---
 
 <Layout title={`出願番号別文書一覧 | ${an}`}>
@@ -56,14 +65,14 @@ const an = docs[0].applicationNumber.toString();
         <section>
             <ul class="list-disc list-inside">
                 {
-                    docs.map(({ docId, documentName, submissionDate }) => (
+                    docs.map((ipDocument) => (
                         <li>
-                            <span>{submissionDate.toString()}</span>
+                            <span>{dateStr(ipDocument)}</span>
                             <a
-                                href={`/docs/${docId}`}
+                                href={`/docs/${ipDocument.docId}`}
                                 class="text-blue-600 hover:underline"
                             >
-                                {documentName}
+                                {ipDocument.documentName}
                             </a>
                         </li>
                     ))

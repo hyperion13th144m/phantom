@@ -114,7 +114,7 @@ def multi_processes_parent(
     for _ in range(num_processors):
         p = Process(
             target=multi_processes_child,
-            args=(output_dir_root, queue, log_level),
+            args=(output_dir_root, queue, log_level, overwrite),
         )
         p.start()
         processes.append(p)
@@ -165,8 +165,7 @@ def common_processing_steps(
         )
         return
     if overwrite is True and output_dir.exists():
-        pass
-        # shutil.rmtree(output_dir)
+        shutil.rmtree(output_dir)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     try:
@@ -180,7 +179,7 @@ def common_processing_steps(
         logger.info(f"Failed to process {archive_path}: {e}")
         logger.debug(f"doc_id: {doc_id}")
         logger.info(traceback.format_exc())
-        # shutil.rmtree(output_dir)
+        shutil.rmtree(output_dir)
 
 
 def process_archive(

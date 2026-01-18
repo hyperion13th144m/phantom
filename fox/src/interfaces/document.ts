@@ -49,11 +49,17 @@ export interface DocumentJson {
     // appeal reference number
     appealReferenceNumber: string | null;
 
-    // date of submission. Format: YYYYMMDD
-    submissionDate: string;
+    // submission date. Format: YYYYMMDD
+    submissionDate: string | null;
 
-    // time of submission. Format: HHMMSS
-    submissionTime: string;
+    // submission time. Format: HHMMSS
+    submissionTime: string | null;
+
+    // dispatched date. Format: YYYYMMDD
+    dispatchDate: string | null;
+
+    // dispatched time. Format: HHMMSS
+    dispatchTime: string | null;
 
     // receipt number
     receiptNumber: string;
@@ -79,12 +85,13 @@ export interface ImagesOfIPDocument {
     description: string | null;
 }
 
-export interface IPDocument extends Omit<DocumentJson, "submissionDate" | "applicationNumber"> {
+export interface IPDocument extends Omit<DocumentJson, "submissionDate" | "applicationNumber" | "dispatchDate"> {
     inventors: string[];
     applicants: string[];
     agents: string[];
 
-    submissionDate: DocumentDate;
+    submissionDate: DocumentDate | null;
+    dispatchDate: DocumentDate | null;
 
     applicationNumber: ApplicationNumber;
 };

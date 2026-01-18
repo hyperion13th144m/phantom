@@ -1,5 +1,6 @@
 ---
 import Application from "~/components/application/Application.astro";
+import NoticePatentExam from "~/components/application/NoticePatentExam.astro";
 import PatentResponse from "~/components/application/PatentResponse.astro";
 import Layout from "~/layouts/Layout.astro";
 import { getDocIds } from "~/lib/getDocPaths";
@@ -22,6 +23,12 @@ const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documen
             (ipDocument.documentCode == "A153" ||
                 ipDocument.documentCode == "A159") && (
                 <PatentResponse ipDocument={ipDocument} />
+            )
+        }
+        {
+            (ipDocument.documentCode == "A1131" ||
+                ipDocument.documentCode == "A102") && (
+                <NoticePatentExam ipDocument={ipDocument} />
             )
         }
     </main>

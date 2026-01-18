@@ -27,7 +27,8 @@ export const getIPDocument = async (docId: string) => {
     const applicants = getApplicants(document);
     const inventors = getInventors(document);
     const agents = getAgents(document);
-    const submissionDate = new DocumentDate(document.submissionDate);
+    const submissionDate = document.submissionDate ? new DocumentDate(document.submissionDate) : null;
+    const dispatchDate = document.dispatchDate ? new DocumentDate(document.dispatchDate) : null;
     const applicationNumber = new ApplicationNumber(
         document.law,
         document.applicationNumber || ""
@@ -49,6 +50,7 @@ export const getIPDocument = async (docId: string) => {
         inventors,
         agents,
         submissionDate,
+        dispatchDate,
         applicationNumber,
     } as IPDocument
 }

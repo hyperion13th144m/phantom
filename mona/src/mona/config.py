@@ -110,4 +110,12 @@ translator_config = [
         doctype="cpy-notice-pat-exam",
         postprocessor=postprocess_application_body,
     ),
+    TranslatorConfig(
+        ### 新形式 A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
+        xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-e-rn.xsl",
+        force_list=["blocks", "textBlocksRoot"],
+        namespace="http://www.jpo.go.jp",
+        doctype="cpy-notice-pat-exam-rn",
+        postprocessor=postprocess_application_body,
+    ),
 ]

@@ -21,6 +21,12 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             select="/root/jp:cpy-notice-pat-exam-rn/jp:notice-pat-exam-rn/*/@jp:kind-of-law[1]" />
     </xsl:variable>
 
+    <xsl:include href="ntc-ninsyo.xsl" />
+    <xsl:include href="common-templates/doc-number.xsl" />
+    <xsl:include href="common-templates/string-utils.xsl" />
+    <xsl:include href="common-templates/date-templates.xsl" />
+    <xsl:include href="common-templates/dispatch-control-article.xsl" />
+
 
     <!-- ====================================================================
      jp:notice-pat-exam
@@ -387,21 +393,20 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                         <xsl:value-of select="'特許庁審査官'" />
                     </xsl:otherwise>
                 </xsl:choose>
-
-                <xsl:choose>
-                    <xsl:when
-                        test="$node = 'jp:examiner-notification-a242623-rn' or
+            </xsl:element>
+            <xsl:choose>
+                <xsl:when
+                    test="$node = 'jp:examiner-notification-a242623-rn' or
                         $node = 'jp:examiner-notification-a2541-rn'  or
                         $node = 'jp:examiner-notification-a2542-rn'">
-                        <xsl:apply-templates select="jp:name" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="jp:name" />
-                        <xsl:apply-templates select="jp:staff-code" />
-                        <xsl:apply-templates select="jp:office-code" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
+                    <xsl:apply-templates select="jp:name" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="jp:name" />
+                    <xsl:apply-templates select="jp:staff-code" />
+                    <xsl:apply-templates select="jp:office-code" />
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:element>
     </xsl:template>
 
@@ -497,44 +502,44 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                                         test="./@jp:kind-of-representative = 'representative-application'">
                                         <xsl:choose>
                                             <xsl:when test="./@jp:kind-of-agent = 'representative'">
-                                                <xsl:value-of select="'　特許代表出願人代理人　　　'" />
+                                                <xsl:value-of select="'特許代表出願人代理人'" />
                                             </xsl:when>
                                             <xsl:when
                                                 test="./@jp:kind-of-agent = 'sub-representative'">
-                                                <xsl:value-of select="'　特許代表出願人復代理人　　'" />
+                                                <xsl:value-of select="'特許代表出願人復代理人'" />
                                             </xsl:when>
                                             <xsl:when
                                                 test="./@jp:kind-of-agent = 'legal-representative'">
-                                                <xsl:value-of select="'　特許代表出願人法定代理人　'" />
+                                                <xsl:value-of select="'特許代表出願人法定代理人'" />
                                             </xsl:when>
                                             <xsl:when
                                                 test="./@jp:kind-of-agent = 'designated-representative'">
-                                                <xsl:value-of select="'　特許代表出願人指定代理人　'" />
+                                                <xsl:value-of select="'特許代表出願人指定代理人'" />
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:value-of select="'　特許代表出願人　　　　　　'" />
+                                                <xsl:value-of select="'特許代表出願人'" />
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <xsl:choose>
                                             <xsl:when test="./@jp:kind-of-agent = 'representative'">
-                                                <xsl:value-of select="'　特許出願人代理人　　　　　'" />
+                                                <xsl:value-of select="'特許出願人代理人'" />
                                             </xsl:when>
                                             <xsl:when
                                                 test="./@jp:kind-of-agent = 'sub-representative'">
-                                                <xsl:value-of select="'　特許出願人復代理人　　　　'" />
+                                                <xsl:value-of select="'特許出願人復代理人'" />
                                             </xsl:when>
                                             <xsl:when
                                                 test="./@jp:kind-of-agent = 'legal-representative'">
-                                                <xsl:value-of select="'　特許出願人法定代理人　　　'" />
+                                                <xsl:value-of select="'特許出願人法定代理人'" />
                                             </xsl:when>
                                             <xsl:when
                                                 test="./@jp:kind-of-agent = 'designated-representative'">
-                                                <xsl:value-of select="'　特許出願人指定代理人　　　'" />
+                                                <xsl:value-of select="'特許出願人指定代理人'" />
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:value-of select="'　特許出願人　　　　　　　　'" />
+                                                <xsl:value-of select="'特許出願人'" />
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:otherwise>
@@ -543,25 +548,25 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                             <xsl:when test="./@jp:kind-of-person = 'attorney'">
                                 <xsl:choose>
                                     <xsl:when test="./@jp:kind-of-agent = 'representative'">
-                                        <xsl:value-of select="'　代理人　　　　　　　　　　'" />
+                                        <xsl:value-of select="'代理人'" />
                                     </xsl:when>
                                     <xsl:when test="./@jp:kind-of-agent = 'sub-representative'">
-                                        <xsl:value-of select="'　復代理人　　　　　　　　　'" />
+                                        <xsl:value-of select="'復代理人'" />
                                     </xsl:when>
                                     <xsl:when test="./@jp:kind-of-agent = 'legal-representative'">
-                                        <xsl:value-of select="'　法定代理人　　　　　　　　'" />
+                                        <xsl:value-of select="'法定代理人'" />
                                     </xsl:when>
                                     <xsl:when
                                         test="./@jp:kind-of-agent = 'designated-representative'">
-                                        <xsl:value-of select="'　指定代理人　　　　　　　　'" />
+                                        <xsl:value-of select="'指定代理人'" />
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:value-of select="'　　　　　　　　　　　　　　'" /><!--14-->
+                                        <xsl:value-of select="''" /><!--14-->
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="'　　　　　　　　　　　　　　'" /><!--14-->
+                                <xsl:value-of select="''" /><!--14-->
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
@@ -574,10 +579,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                                         test="./@jp:kind-of-representative = 'representative-application'">
                                         <xsl:choose>
                                             <xsl:when test="position() = 1">
-                                                <xsl:value-of select="'　　実用新案登録代表出願人　'" />
+                                                <xsl:value-of select="'実用新案登録代表出願人'" />
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:value-of select="'　　　　　　　　代表出願人　'" />
+                                                <xsl:value-of select="'代表出願人'" />
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:when>
@@ -586,10 +591,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                                             <xsl:when test="./@jp:kind-of-agent = 'representative'">
                                                 <xsl:choose>
                                                     <xsl:when test="position() = 1">
-                                                        <xsl:value-of select="'　実用新案登録出願人代理人　'" />
+                                                        <xsl:value-of select="'実用新案登録出願人代理人'" />
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <xsl:value-of select="'　　　　　　　出願人代理人　'" />
+                                                        <xsl:value-of select="'出願人代理人'" />
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </xsl:when>
@@ -597,10 +602,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                                                 test="./@jp:kind-of-agent = 'sub-representative'">
                                                 <xsl:choose>
                                                     <xsl:when test="position() = 1">
-                                                        <xsl:value-of select="'　実用新案登録出願人復代理人'" />
+                                                        <xsl:value-of select="'実用新案登録出願人復代理人'" />
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <xsl:value-of select="'　　　　　　出願人復代理人　'" />
+                                                        <xsl:value-of select="'出願人復代理人'" />
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </xsl:when>
@@ -608,10 +613,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                                                 test="./@jp:kind-of-agent = 'legal-representative'">
                                                 <xsl:choose>
                                                     <xsl:when test="position() = 1">
-                                                        <xsl:value-of select="'　実用新案登録出願人法定代理人'" />
+                                                        <xsl:value-of select="'実用新案登録出願人法定代理人'" />
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <xsl:value-of select="'　　　　　出願人法定代理人　'" />
+                                                        <xsl:value-of select="'出願人法定代理人'" />
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </xsl:when>
@@ -619,20 +624,20 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                                                 test="./@jp:kind-of-agent = 'designated-representative'">
                                                 <xsl:choose>
                                                     <xsl:when test="position() = 1">
-                                                        <xsl:value-of select="'　実用新案登録出願人指定代理人'" />
+                                                        <xsl:value-of select="'実用新案登録出願人指定代理人'" />
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <xsl:value-of select="'　　　　　出願人指定代理人　'" />
+                                                        <xsl:value-of select="'出願人指定代理人'" />
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </xsl:when>
                                             <xsl:otherwise>
                                                 <xsl:choose>
                                                     <xsl:when test="position() = 1">
-                                                        <xsl:value-of select="'　　　　実用新案登録出願人　'" />
+                                                        <xsl:value-of select="'実用新案登録出願人'" />
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <xsl:value-of select="'　　　　　　　　　　出願人　'" />
+                                                        <xsl:value-of select="'出願人'" />
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </xsl:otherwise>
@@ -643,50 +648,50 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                             <xsl:when test="./@jp:kind-of-applicant = 'right-holder'">
                                 <xsl:choose>
                                     <xsl:when test="./@jp:kind-of-agent = 'representative'">
-                                        <xsl:value-of select="'　　　　実用新案権者代理人　'" />
+                                        <xsl:value-of select="'実用新案権者代理人'" />
                                     </xsl:when>
                                     <xsl:when test="./@jp:kind-of-agent = 'sub-representative'">
-                                        <xsl:value-of select="'　　　実用新案権者復代理人　'" />
+                                        <xsl:value-of select="'実用新案権者復代理人'" />
                                     </xsl:when>
                                     <xsl:when test="./@jp:kind-of-agent = 'legal-representative'">
-                                        <xsl:value-of select="'　　実用新案権者法定代理人　'" />
+                                        <xsl:value-of select="'実用新案権者法定代理人'" />
                                     </xsl:when>
                                     <xsl:when
                                         test="./@jp:kind-of-agent = 'designated-representative'">
-                                        <xsl:value-of select="'　　実用新案権者指定代理人　'" />
+                                        <xsl:value-of select="'実用新案権者指定代理人'" />
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:value-of select="'　　　　　　　実用新案権者　'" />
+                                        <xsl:value-of select="'実用新案権者'" />
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:when test="./@jp:kind-of-applicant = 'evaluation-requester'">
                                 <xsl:choose>
                                     <xsl:when test="./@jp:kind-of-agent = 'representative'">
-                                        <xsl:value-of select="'　　　技術評価請求人代理人　'" />
+                                        <xsl:value-of select="'技術評価請求人代理人'" />
                                     </xsl:when>
                                     <xsl:when test="./@jp:kind-of-agent = 'sub-representative'">
-                                        <xsl:value-of select="'　　技術評価請求人復代理人　'" />
+                                        <xsl:value-of select="'技術評価請求人復代理人'" />
                                     </xsl:when>
                                     <xsl:when test="./@jp:kind-of-agent = 'legal-representative'">
-                                        <xsl:value-of select="'　技術評価請求人法定代理人　'" />
+                                        <xsl:value-of select="'技術評価請求人法定代理人'" />
                                     </xsl:when>
                                     <xsl:when
                                         test="./@jp:kind-of-agent = 'designated-representative'">
-                                        <xsl:value-of select="'　技術評価請求人指定代理人　'" />
+                                        <xsl:value-of select="'技術評価請求人指定代理人'" />
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:value-of select="'　　　　　　技術評価請求人　'" />
+                                        <xsl:value-of select="'技術評価請求人'" />
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="'　　　　　　　　　　　　　　'" /><!--14-->
+                                <xsl:value-of select="''" /><!--14-->
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'　　　　　　　　　　　　　　'" /><!--14-->
+                        <xsl:value-of select="''" /><!--14-->
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -800,58 +805,16 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:approval-column-article
+
+     <u>     <u> で区切りの下線を引いているように思われる。
+     XSLT はこのような出力はせず、のちのRendererで引かせる実装とする。
      ====================================================================-->
     <!-- 決裁欄 -->
     <xsl:template match="jp:approval-column-article">
-        <!--横幅２２カラム分の領域を使用
-        | 決裁欄編集開始位置 ８・１５カラム目-->
-
-        <xsl:element name="V4_INDENT">
-            <xsl:attribute name="COL">
-                <xsl:choose>
-                    <xsl:when test="$indent = 'yes'">
-                        <xsl:value-of select="1" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="1" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <xsl:attribute name="COE">
-                <xsl:choose>
-                    <xsl:when test="$indent = 'yes'">
-                        <xsl:value-of select="36" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="36" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-
-            <!-- 項目名の編集 -->
-            <xsl:choose>
-                <xsl:when test="$node = 'jp:decision-of-registration-a01-rn'">
-                    <xsl:value-of select="'　　　　　　　'" /><!--7-->
-                    <U>
-                        <xsl:value-of select="'　　　　　　　　　　　　　　　　　　　　　　'" />
-                    </U><!--22-->
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:value-of select="'　'" />
-                        <U>
-                            <xsl:value-of select="'　　　　　　'" />
-                        </U><!--6-->
-                    </xsl:if>
-                    <BR />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="'　　　　　　　　　　　　　　'" /><!--14-->
-                    <U>
-                        <xsl:value-of select="'　　　　　　　　　　　　　　　　　　　　　　'" />
-                    </U><!--22-->
-                    <BR />
-                </xsl:otherwise>
-            </xsl:choose>
-            <!-- 項目内容の編集 -->
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
             <xsl:choose>
                 <xsl:when test="$node = 'jp:decision-of-registration-a01-rn'">
                     <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
@@ -861,48 +824,36 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                         <xsl:apply-templates
                             select="following-sibling::jp:devider/jp:official-title" />
                     </xsl:if>
-                    <BR />
+
                     <xsl:apply-templates select="jp:staff2-group/jp:name" />
                     <xsl:apply-templates select="jp:staff3-group/jp:name" />
                     <xsl:apply-templates select="jp:staff4-group/jp:name" />
                     <xsl:if test="following-sibling::jp:devider">
                         <xsl:apply-templates select="following-sibling::jp:devider/jp:name" />
                     </xsl:if>
-                    <BR />
+
                     <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
                     <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
                     <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
                     <xsl:if test="following-sibling::jp:devider">
                         <xsl:apply-templates select="following-sibling::jp:devider/jp:staff-code" />
                     </xsl:if>
-                    <BR />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="'　　　　　　　'" />
-                    <!--7-->
                     <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
                     <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
                     <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
-                    <BR />
-                    <xsl:value-of select="'　　　　　　　'" />
-                    <!--7-->
+
                     <xsl:apply-templates select="jp:staff2-group/jp:name" />
                     <xsl:apply-templates select="jp:staff3-group/jp:name" />
                     <xsl:apply-templates select="jp:staff4-group/jp:name" />
-                    <BR />
-                    <xsl:value-of select="'　　　　　　　'" />
-                    <!--7-->
+
                     <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
                     <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
                     <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
-                    <BR />
                 </xsl:otherwise>
             </xsl:choose>
-
         </xsl:element>
-        <!--編集しない
-  <xsl:apply-templates select="jp:staff1-group" />
-  -->
     </xsl:template>
 
     <!-- ====================================================================
@@ -918,23 +869,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
      ====================================================================-->
     <!-- 行服部 -->
     <xsl:template match="jp:administrative-appeal-sentence">
-        <!-- 未サポート -->
-        <xsl:element name="SAMP">
-            <BR />
-            <xsl:value-of select="'　&lt;jp:administrative-appeal-sentence&gt;'" />
-            <xsl:apply-templates select="p" mode="misapo" />
-            <xsl:if test="jp:approval-column-article">
-                <xsl:value-of select="'　　&lt;jp:approval-column-article&gt;'" />
-                <xsl:apply-templates
-                    select="jp:staff1-group | jp:staff2-group | jp:staff3-group
-                                 | jp:staff4-group | jp:devider"
-                    mode="misapo" />
-                <xsl:value-of select="'　　&lt;/jp:approval-column-article&gt;'" />
-            </xsl:if>
-            <xsl:apply-templates select="jp:approval-without-contents" mode="misapo" />
-            <xsl:value-of select="'　&lt;/jp:administrative-appeal-sentence&gt;'" />
-        </xsl:element>
-        <BR />
+        <xsl:call-template name="unsupported-tag" />
     </xsl:template>
 
     <!-- ====================================================================
@@ -942,7 +877,6 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
      ====================================================================-->
     <!-- 参考文献有無 -->
     <xsl:template match="jp:exist-of-reference-doc">
-
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
@@ -1244,16 +1178,13 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:application-reference and $appl-type = 'application'">
-                        <xsl:element name="convertedText">
-                            <!-- 発送系は、出願番号の表示が「特許願」だけど、
+                        <!-- 発送系は、出願番号の表示が「特許願」だけど、
                     出願系は「特願」である。だけど、出願系の表示に変更（共用）-->
-                            <xsl:call-template name="translate-application-number">
-                                <xsl:with-param name="number" select="normalize-space(.)" />
-                                <xsl:with-param name="law" select="$kind-of-law" />
-                                <xsl:with-param name="kinddoc" select="$node" />
-                            </xsl:call-template>
-                        </xsl:element>
-
+                        <xsl:call-template name="translate-application-number">
+                            <xsl:with-param name="number" select="normalize-space(.)" />
+                            <xsl:with-param name="law" select="$kind-of-law" />
+                            <xsl:with-param name="kinddoc" select="$node" />
+                        </xsl:call-template>
                         <xsl:if
                             test="$node = 'jp:examiner-notification-a2541-rn' or 
                       $node = 'jp:examiner-notification-a2542-rn'">
@@ -1274,8 +1205,6 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                 </xsl:choose>
             </xsl:element>
         </xsl:element>
-
-
     </xsl:template>
 
     <!-- ====================================================================
@@ -1295,7 +1224,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             </xsl:element>
             <xsl:element name="convertedText">
                 <xsl:choose>
-                    <xsl:when test="normalize-space(.) &lt; 19261225" /><!--編集しない-->
+                    <xsl:when test="number(normalize-space(.)) &lt; 19261225" /><!--編集しない-->
                     <xsl:when test="string-length(normalize-space(.)) = 8">
                         <xsl:call-template name="format-date-jp2">
                             <xsl:with-param name="date-str" select="normalize-space(.)" />
@@ -1624,32 +1553,11 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
      ====================================================================-->
     <!-- 新規性喪失例外適用 -->
     <xsl:template match="jp:exceptions-to-lack-of-novelty">
-        <xsl:element name="V4_INDENT">
-            <xsl:attribute name="COL">
-                <xsl:choose>
-                    <xsl:when test="$indent = 'yes'">
-                        <xsl:value-of select="11" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="11" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <xsl:attribute name="COE">
-                <xsl:choose>
-                    <xsl:when test="$indent = 'yes'">
-                        <xsl:value-of select="36" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="36" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-
-            <!-- 項目名の編集 -->
-            <!-- 項目内容の編集 -->
-            <xsl:apply-templates select="p" mode="indentnasi" />
-
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
 
@@ -1657,40 +1565,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
      jp:addressbook
      ====================================================================-->
     <xsl:template match="jp:addressbook">
-
-        <!-- 未サポート -->
-        <xsl:if
-            test="jp:kana or prefix or last-name or first-name or midle-name or suffix or iid
-             or role or orgname or department or synonym or jp:address or jp:phone or jp:fax
-             or email or url or ead or dtext or text">
-            <xsl:element name="SAMP">
-                <BR />
-                <xsl:apply-templates
-                    select="jp:kana | prefix | last-name | first-name | midle-name | iid
-                                 | role | orgname | department | synonym"
-                    mode="misapo" />
-                <xsl:if test="jp:address">
-                    <xsl:value-of select="'　&lt;jp:address&gt;'" />
-                    <BR />
-                    <!--Y09M01
-                    明細書様式統一対応-->
-                    <!--jp:address-4/jp:address-5
-                    add-->
-                    <xsl:apply-templates
-                        select=".//address-1 | .//address-2 | .//address-3 | .//address-4 | .//address-5 | .//mailcode
-                                   | .//pobox | .//room | .//address-floor | .//building
-                                   | .//street | .//city | .//county | .//state | .//country
-                                   | .//postcode | .//jp:text
-                                   | .//jp:original-language-of-address"
-                        mode="misapo" />
-                    <xsl:value-of select="'　&lt;/jp:address&gt;'" />
-                    <BR />
-                </xsl:if>
-                <xsl:apply-templates select="jp:phone | jp:fax | email | url | ead | dtext | text"
-                    mode="misapo" />
-            </xsl:element>
-        </xsl:if>
-
+        <xsl:call-template name="unsupported-tag" />
     </xsl:template>
 
     <!-- ====================================================================
@@ -1720,15 +1595,15 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
         </xsl:choose>
     </xsl:template>
 
-
     <!-- ====================================================================
      未サポートタグ（全角空白１つあけて表示）
+     remove jp:file-reference-id from original matches.
      ====================================================================-->
     <xsl:template
         match="jp:kana | country | kind | name | last-name
                    | first-name | midle-name | iid | role | orgname | orgname | department
                    | synonym | jp:phone | jp:fax | email | url | ead | dtext | text
-                   | jp:approval-without-contents | jp:file-reference-id"
+                   | jp:approval-without-contents"
     >
 
         <xsl:call-template name="unsupported-tag" />
@@ -1737,10 +1612,6 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     <!-- ====================================================================
      未サポートタグ（全角空白２つあけて表示）
      ====================================================================-->
-    <!--Y09M01
-    明細書様式統一対応-->
-    <!--jp:address-4/jp:address-5
-    add-->
     <xsl:template
         match="jp:addressbook//address-1 | jp:addressbook//address-2 | jp:addressbook//address-3
                    | jp:addressbook//address-4 | jp:addressbook//address-5

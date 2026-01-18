@@ -1,0 +1,67 @@
+---
+/* 特許・実用新案の拒絶理由通知書など cpy-notice-pat-exam 系 コンポーネント
+ */
+import BlockRenderer from "~/components/application/NoticePatentExamBlockRenderer.astro";
+import Card from "~/components/ui/Card.astro";
+import ImageCarousel from "~/components/ui/ImageCarousel.astro";
+import type { IPDocument } from "~/interfaces/document";
+import KeywordHighlighter from "../ui/KeywordHighlighter.astro";
+import BibliographicData from "./BibliographicData.astro";
+
+const { ipDocument } = Astro.props as {
+    ipDocument: IPDocument;
+};
+const images = ipDocument.images
+    .filter((img) => img.kind.includes("figure"))
+    .filter((img) => img.sizeTag === "middle")
+    .sort((a, b) => a.number.localeCompare(b.number));
+const thumbnails = ipDocument.images
+    .filter((img) => img.kind.includes("figure"))
+    .filter((img) => img.sizeTag === "thumbnail")
+    .sort((a, b) => a.number.localeCompare(b.number));
+
+const hasCarouselImages =
+    images.length > 0 &&
+    thumbnails.length > 0 &&
+    images.length === thumbnails.length;
+
+const title = ipDocument.documentName;
+
+// 各セクションのブロックを抽出
+const ntcPatExam = ipDocument.textBlocksRoot
+    .filter((block) => block.tag == "ntcPatExam")
+    .at(0);
+---
+
+<BibliographicData ipDocument={ipDocument} />
+<KeywordHighlighter urlParamKey="q">
+    <div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
+        <div data-search-root class="">
+            {
+                ntcPatExam && (
+                    <Card title={title}>
+                        {ntcPatExam.blocks.map((block) => (
+                            <BlockRenderer block={block} />
+                        ))}
+                    </Card>
+                )
+            }
+        </div>
+        {
+            hasCarouselImages && (
+                <div class="hidden lg:block">
+                    <div class="sticky top-32 bg-white">
+                        <Card title="図面一覧">
+                            <ImageCarousel
+                                images={images}
+                                thumbnails={thumbnails}
+                                heightClass="h-[640px]"
+                                thumbHeight={128}
+                            />
+                        </Card>
+                    </div>
+                </div>
+            )
+        }
+    </div>
+</KeywordHighlighter>

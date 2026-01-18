@@ -14,11 +14,6 @@
     xmlns:jp="http://www.jpo.go.jp">
 
     <xsl:include href="v4xva_ntc-pt-e.xsl" />
-    <xsl:include href="ntc-ninsyo.xsl" />
-    <xsl:include href="common-templates/doc-number.xsl" />
-    <xsl:include href="common-templates/string-utils.xsl" />
-    <xsl:include href="common-templates/date-templates.xsl" />
-    <xsl:include href="common-templates/dispatch-control-article.xsl" />
 
     <!-- ====================================================================
      root

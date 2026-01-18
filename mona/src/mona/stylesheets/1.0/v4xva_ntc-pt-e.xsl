@@ -19,6 +19,13 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
         <xsl:value-of select="/root/jp:cpy-notice-pat-exam/jp:notice-pat-exam/*/@jp:kind-of-law[1]" />
     </xsl:variable>
 
+    <xsl:include href="ntc-ninsyo.xsl" />
+    <xsl:include href="common-templates/doc-number.xsl" />
+    <xsl:include href="common-templates/string-utils.xsl" />
+    <xsl:include href="common-templates/date-templates.xsl" />
+    <xsl:include href="common-templates/dispatch-control-article.xsl" />
+
+
     <!-- ====================================================================
      jp:notice-pat-exam
 
@@ -170,7 +177,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:apply-templates select="invention-title" />
             <xsl:apply-templates select="jp:number-of-claim" />
             <xsl:apply-templates select="jp:addressed-to-person-group" />
-            <!-- DTD, XLT に定義なし
+            <!-- 公式 DTD, XLT に定義なし
             <xsl:apply-templates select="jp:publication" />
             -->
             <xsl:apply-templates select="jp:article-group" />
@@ -902,17 +909,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!--   -->
     <xsl:template match="jp:administrative-appeal-sentence">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
-            </xsl:element>
-            <xsl:element name="isUnsupported">
-                <xsl:value-of select="'true'" />
-            </xsl:element>
-        </xsl:element>
+        <xsl:call-template name="unsupported-tag" />
     </xsl:template>
 
     <!-- 3 -->
@@ -1510,29 +1507,70 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
         </xsl:element>
     </xsl:template>
 
-
     <!-- ====================================================================
-     unsupported tags
-     jp:approval-column-article 決裁欄
-     jp:certification-column-article 認証欄  originally defined in ntc-ninsyo.xsl
-     jp:inquiry-article 問い合わせ文 originally defined in ntc-ninsyo.xsl
+     jp:approval-column-article
+
+     <u>     <u> で区切りの下線を引いているように思われる。
+     XSLT はこのような出力はせず、のちのRendererで引かせる実装とする。
      ====================================================================-->
-    <!--   -->
-    <xsl:template
-        match="jp:approval-column-article |
-        jp:certification-column-article |
-        jp:inquiry-article">
-        <xsl:call-template name="unsupported-tag" />
+    <!-- 決裁欄  -->
+    <xsl:template match="jp:approval-column-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:staff1-group/jp:official-title" />
+            <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
+            <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
+            <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
+            <xsl:choose>
+                <xsl:when test="//@jp:grant = 'post'">
+                    <xsl:if test="following-sibling::jp:devider">
+                        <xsl:apply-templates
+                            select="following-sibling::jp:devider/jp:official-title" />
+                    </xsl:if>
+                </xsl:when>
+            </xsl:choose>
+
+
+            <xsl:apply-templates select="jp:staff1-group/jp:name" />
+            <xsl:apply-templates select="jp:staff2-group/jp:name" />
+            <xsl:apply-templates select="jp:staff3-group/jp:name" />
+            <xsl:apply-templates select="jp:staff4-group/jp:name" />
+            <xsl:choose>
+                <xsl:when test="//@jp:grant = 'post'">
+                    <xsl:if test="following-sibling::jp:devider">
+                        <xsl:apply-templates select="following-sibling::jp:devider/jp:name" />
+                    </xsl:if>
+                </xsl:when>
+            </xsl:choose>
+
+
+            <xsl:apply-templates select="jp:staff1-group/jp:staff-code" />
+            <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
+            <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
+            <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
+
+            <xsl:choose>
+                <xsl:when test="//@jp:grant = 'post'">
+                    <xsl:if test="following-sibling::jp:devider">
+                        <xsl:apply-templates select="following-sibling::jp:devider/jp:staff-code" />
+                    </xsl:if>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:element>
     </xsl:template>
+
 
     <!-- ====================================================================
      未サポートタグ
+     remove jp:file-reference-id from original matches.
      ====================================================================-->
     <xsl:template
         match="jp:kana | country | kind | name | last-name
                    | first-name | midle-name | iid | role | orgname | orgname | department
                    | synonym | jp:phone | jp:fax | email | url | ead | dtext | text
-                   | jp:approval-without-contents | jp:file-reference-id"
+                   | jp:approval-without-contents"
     >
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
