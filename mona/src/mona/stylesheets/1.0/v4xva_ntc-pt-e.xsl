@@ -84,7 +84,6 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      jp:examiner-notification-a2522 | jp:examiner-notification-a2529 |
      jp:examiner-notification-a25110 | jp:examiner-notification-a25111
      ====================================================================-->
-    <!-- 2004.08.05 一部追加 -->
     <xsl:template
         match="jp:notice-of-rejection-a131 | jp:declining-the-amendment-a191
                    | jp:declining-the-amendment-a192 | jp:examiner-notification-a251
@@ -184,7 +183,12 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- イメージ -->
     <xsl:template match="jp:image-group">
-        <xsl:apply-templates select="img" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="img" />
+        </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
@@ -260,14 +264,19 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- 査定固有部 -->
     <xsl:template match="jp:final-decision-group">
-        <xsl:apply-templates select="jp:kind-of-application" />
-        <xsl:apply-templates select="jp:exist-of-reference-doc" />
-        <xsl:apply-templates select="jp:patent-law-section30" />
-        <xsl:apply-templates select="jp:change-flag-invention-title" />
-        <xsl:apply-templates select="jp:ipc-article" />
-        <xsl:apply-templates select="jp:classification-article" />
-        <xsl:apply-templates select="jp:deposit-article" />
-        <xsl:apply-templates select="jp:parent-application-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:kind-of-application" />
+            <xsl:apply-templates select="jp:exist-of-reference-doc" />
+            <xsl:apply-templates select="jp:patent-law-section30" />
+            <xsl:apply-templates select="jp:change-flag-invention-title" />
+            <xsl:apply-templates select="jp:ipc-article" />
+            <xsl:apply-templates select="jp:classification-article" />
+            <xsl:apply-templates select="jp:deposit-article" />
+            <xsl:apply-templates select="jp:parent-application-article" />
+        </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
@@ -275,9 +284,14 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- 査定メモ -->
     <xsl:template match="jp:final-decision-memo">
-        <xsl:apply-templates select="jp:document-name" />
-        <xsl:apply-templates select="jp:final-decision-bibliog" />
-        <xsl:apply-templates select="jp:final-decision-body" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-name" />
+            <xsl:apply-templates select="jp:final-decision-bibliog" />
+            <xsl:apply-templates select="jp:final-decision-body" />
+        </xsl:element>
     </xsl:template>
 
     <!-- 2 -->
@@ -409,6 +423,41 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- あて先  -->
     <xsl:template match="jp:addressed-to-person-group">
+        <!-- moved content of 
+            <xsl:call-template name="あて先取得" />
+        -->
+        <xsl:variable name="name" select="normalize-space(.//jp:name)" />
+        <xsl:variable name="persons0"
+            select="f:remove-nbsp(.//jp:number-of-other-persons)" />
+        <xsl:variable name="persons">
+            <xsl:choose>
+                <xsl:when test=".//jp:number-of-other-persons">
+                    <xsl:value-of select="'（ほか' || $persons0 || '名）'" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="''" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="sama">
+            <xsl:choose>
+                <xsl:when
+                    test="$node = 'jp:notice-of-rejection-a131-rn' 
+                   or $node = 'jp:examiner-notification-a2515-rn' or $node = 'jp:examiner-notification-a2516-rn'
+                   or $node = 'jp:examiner-notification-a251-rn'  or $node = 'jp:examiner-notification-a2522-rn'
+                   or $node = 'jp:examiner-notification-a252-rn'  or $node = 'jp:examiner-notification-a2529-rn'
+                   or $node = 'jp:examiner-notification-a2530-rn' or $node = 'jp:examiner-notification-a242623-rn'
+                   or $node = 'jp:examiner-notification-a2541-rn'  or $node = 'jp:examiner-notification-a2542-rn'">
+                    <xsl:value-of select="'　様'" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="''" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="allname" select="concat($name,$persons,$sama)" />
+
+
         <xsl:element name="blocks">
             <xsl:element name="sequence">
                 <xsl:value-of select="position()" />
@@ -542,15 +591,8 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                     </xsl:when>
                 </xsl:choose>
             </xsl:element>
-            <xsl:apply-templates select="jp:addressbook" />
-            <xsl:apply-templates select="jp:number-of-other-persons" />
-            <xsl:element name="blocks">
-                <xsl:element name="tag">
-                    <xsl:value-of select="'text'" />
-                </xsl:element>
-                <xsl:element name="text">
-                    <xsl:value-of select="'　様'" />
-                </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="$allname" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -843,11 +885,16 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- メモ内本文部  -->
     <xsl:template match="jp:final-decision-body">
-        <xsl:apply-templates select="jp:field-of-search-article" />
-        <xsl:apply-templates select="jp:patent-reference-article" />
-        <xsl:apply-templates select="jp:reference-books-article" />
-        <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-art" />
-        <xsl:apply-templates select="jp:deposit-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:field-of-search-article" />
+            <xsl:apply-templates select="jp:patent-reference-article" />
+            <xsl:apply-templates select="jp:reference-books-article" />
+            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-art" />
+            <xsl:apply-templates select="jp:deposit-article" />
+        </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
@@ -914,39 +961,25 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:call-template name="氏名編集" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:draft-person-group/jp:name
-    <xsl:template name="氏名編集" より関係箇所を抜き出した。
-     ====================================================================-->
-    <!-- 氏名、氏名または名称 -->
-    <xsl:template match="jp:draft-person-group/jp:name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:addressed-to-person-group/jp:addressbook/jp:name
-    <xsl:template name="氏名編集" より関係箇所を抜き出した。
-     ====================================================================-->
-    <xsl:template match="jp:addressed-to-person-group/jp:addressbook">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name(jp:name)" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(jp:name)" />
+                <xsl:choose>
+                    <xsl:when
+                        test="($node != 'jp:examiner-notification-a2515'
+                 and $node != 'jp:examiner-notification-a2516'
+                 and $node != 'jp:examiner-notification-a2522')
+                 and ancestor::jp:draft-person-group">
+                        <xsl:value-of select="normalize-space(.)" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:addressed-to-person-group">
+                        <xsl:value-of select="normalize-space(.)" />
+                    </xsl:when>
+                    <xsl:when
+                        test="ancestor::jp:staff1-group or ancestor::jp:staff2-group
+                 or ancestor::jp:staff3-group or ancestor::jp:staff4-group
+                 or ancestor::jp:devider">
+                        <xsl:value-of select="normalize-space(.)" />
+                    </xsl:when>
+                </xsl:choose>
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -969,35 +1002,10 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                     <xsl:when
                         test="ancestor::jp:staff1-group or ancestor::jp:staff2-group
                  or ancestor::jp:staff3-group or ancestor::jp:staff4-group">
-                        <U>
-                            <xsl:value-of select="'　'" />
-                            <xsl:choose>
-                                <xsl:when test="string-length($code) = 0">
-                                    <xsl:value-of select="'　　　　　　'" />
-                                </xsl:when>
-                                <xsl:when test="string-length($code) &gt; 6">
-                                    <xsl:value-of
-                                        select="f:to-fullwidth-digit(substring($code,1,6))" />
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="f:to-fullwidth-digit($code)" />
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </U>
+                        <xsl:value-of select="f:to-fullwidth-digit($code)" />
                     </xsl:when>
                     <xsl:when test="ancestor::jp:devider">
-                        <xsl:value-of select="'　'" />
-                        <U>
-                            <xsl:choose>
-                                <xsl:when test="string-length($code) &gt; 6">
-                                    <xsl:value-of
-                                        select="f:to-fullwidth-digit(substring($code,1,6))" />
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="f:to-fullwidth-digit($code)" />
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </U>
+                        <xsl:value-of select="f:to-fullwidth-digit($code)" />
                     </xsl:when>
                     <xsl:when test="ancestor::jp:draft-person-group">
                         <xsl:value-of select="f:to-fullwidth-digit($code)" />
@@ -1055,18 +1063,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="string-length($name) &gt; 6">
-                        <U>
-                            <xsl:value-of select="substring($name,1,6)" />
-                        </U>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <U>
-                            <xsl:value-of select="$name" />
-                        </U>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$name" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -1285,7 +1282,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'　　受託番号'" />
+                <xsl:value-of select="'受託番号'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
@@ -1384,7 +1381,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
     <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
 
     <!--  イメージ   -->
-    <xsl:template match="img | IMG">
+    <xsl:template match="img">
         <!-- 次の「有意ノード」を見る -->
         <xsl:variable name="nextNode"
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
@@ -1490,57 +1487,6 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:otherwise>
                 <xsl:value-of select="''" />
             </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-
-    <!-- ====================================================================
-     氏名編集
-     ====================================================================-->
-    <xsl:template name="氏名編集">
-        <xsl:choose>
-            <xsl:when
-                test="($node = 'jp:examiner-notification-a2515'
-                 or $node = 'jp:examiner-notification-a2516'
-                 or $node = 'jp:examiner-notification-a2522')
-                 and ancestor::jp:draft-person-group">
-                <xsl:value-of select="'　　　　　　　　　　　　　'" />
-            </xsl:when>
-            <xsl:when
-                test="($node != 'jp:examiner-notification-a2515'
-                 and $node != 'jp:examiner-notification-a2516'
-                 and $node != 'jp:examiner-notification-a2522')
-                 and ancestor::jp:draft-person-group">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:when>
-            <xsl:when test="ancestor::jp:addressed-to-person-group">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:when>
-
-            <xsl:when
-                test="ancestor::jp:staff1-group or ancestor::jp:staff2-group
-                 or ancestor::jp:staff3-group or ancestor::jp:staff4-group
-                 or ancestor::jp:devider">
-                <xsl:if
-                    test="ancestor::jp:staff1-group or ancestor::jp:staff2-group
-                   or ancestor::jp:staff3-group or ancestor::jp:staff4-group">
-                    <xsl:value-of select="'　'" />
-                </xsl:if>
-                <xsl:if test="ancestor::jp:devider">
-                    <xsl:value-of select="'　　'" />
-                </xsl:if>
-                <xsl:choose>
-                    <xsl:when test="string-length(normalize-space(.)) &gt; 6">
-                        <U>
-                            <xsl:value-of select="substring(normalize-space(.),1,6)" />
-                        </U>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <U>
-                            <xsl:value-of select="normalize-space(.)" />
-                        </U>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
         </xsl:choose>
     </xsl:template>
 

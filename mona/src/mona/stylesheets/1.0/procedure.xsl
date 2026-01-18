@@ -94,6 +94,18 @@
         </xsl:element>
     </xsl:template>
 
+    <!-- 発送日 -->
+    <xsl:template
+        match="jp:dispatch-date">
+        <xsl:element name="dispatchDate">
+            <xsl:value-of select="jp:date" />
+        </xsl:element>
+        <xsl:element name="dispatchTime">
+            <xsl:value-of select="jp:time" />
+        </xsl:element>
+    </xsl:template>
+
+
     <!-- override build-in template for text and attribute nodes. -->
     <xsl:template match="text()|@*">
         <!-- <xsl:value-of select="normalize-space(.)"/> -->
