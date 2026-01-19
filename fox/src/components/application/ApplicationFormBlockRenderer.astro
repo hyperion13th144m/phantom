@@ -38,6 +38,7 @@ const isUndefinedBlock = (tag: string) => {
         "jp:application-reference",
         "jp:general-power-of-attorney-id",
         "jp:special-mention-matter-article",
+        "jp:article",
         "jp:parent-application-article",
         "jp:date",
     ];
@@ -72,7 +73,7 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:fee" ||
         block.tag == "jp:document-name" ||
         block.tag == "jp:application-reference" ||
-        block.tag == "jp:special-mention-matter-article" ||
+        block.tag == "jp:article" ||
         block.tag == "jp:date") && (
         <div class="application-item" style="display: flex;">
             <span
@@ -142,6 +143,7 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:agents" ||
         block.tag == "jp:inventors" ||
         block.tag == "jp:attorney-change-article" ||
+        block.tag == "jp:special-mention-matter-article" ||
         block.tag == "jp:declaration-priority-ear-app") &&
         block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
 }

@@ -49,6 +49,19 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
+            <xsl:apply-templates select="jp:article" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+         jp:article
+         ====================================================================-->
+    <!-- 条文 -->
+    <xsl:template match="jp:article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
             </xsl:element>
