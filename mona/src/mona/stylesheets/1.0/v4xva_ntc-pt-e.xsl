@@ -203,19 +203,19 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- 前置審査 -->
     <xsl:template match="jp:reconsideration-before-appeal">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:if test="./@jp:true-or-false = 'true'">
+        <xsl:if test="./@jp:true-or-false = 'true'">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="name()" />
+                </xsl:element>
+                <xsl:element name="text">
                     <xsl:value-of select="'［前置審査］'" />
                     <xsl:if test="ancestor::jp:decision-of-registration-a01">
                         <xsl:value-of select="'　原査定を取消す。'" />
                     </xsl:if>
-                </xsl:if>
+                </xsl:element>
             </xsl:element>
-        </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- ====================================================================
@@ -238,12 +238,14 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      ====================================================================-->
     <!-- 本文部 -->
     <xsl:template match="jp:drafting-body">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+        <xsl:if test="p/* or jp:heading">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="name()" />
+                </xsl:element>
+                <xsl:apply-templates select="p | jp:heading" />
             </xsl:element>
-            <xsl:apply-templates select="p | jp:heading" />
-        </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- ====================================================================
@@ -395,9 +397,10 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
         </xsl:element>
-
-        <xsl:apply-templates />
     </xsl:template>
 
     <!-- ====================================================================
@@ -420,7 +423,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 </xsl:choose>
             </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="." />
+                <xsl:value-of select="f:remove-nbsp(.)" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -449,12 +452,12 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
         <xsl:variable name="sama">
             <xsl:choose>
                 <xsl:when
-                    test="$node = 'jp:notice-of-rejection-a131-rn' 
-                   or $node = 'jp:examiner-notification-a2515-rn' or $node = 'jp:examiner-notification-a2516-rn'
-                   or $node = 'jp:examiner-notification-a251-rn'  or $node = 'jp:examiner-notification-a2522-rn'
-                   or $node = 'jp:examiner-notification-a252-rn'  or $node = 'jp:examiner-notification-a2529-rn'
-                   or $node = 'jp:examiner-notification-a2530-rn' or $node = 'jp:examiner-notification-a242623-rn'
-                   or $node = 'jp:examiner-notification-a2541-rn'  or $node = 'jp:examiner-notification-a2542-rn'">
+                    test="$node = 'jp:notice-of-rejection-a131' 
+                   or $node = 'jp:examiner-notification-a2515' or $node = 'jp:examiner-notification-a2516'
+                   or $node = 'jp:examiner-notification-a251'  or $node = 'jp:examiner-notification-a2522'
+                   or $node = 'jp:examiner-notification-a252'  or $node = 'jp:examiner-notification-a2529'
+                   or $node = 'jp:examiner-notification-a2530' or $node = 'jp:examiner-notification-a242623'
+                   or $node = 'jp:examiner-notification-a2541'  or $node = 'jp:examiner-notification-a2542'">
                     <xsl:value-of select="'　様'" />
                 </xsl:when>
                 <xsl:otherwise>
@@ -1389,7 +1392,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'image'" />
             </xsl:element>
             <xsl:element name="isLastSentence">
                 <xsl:value-of select="$isLastSentence" />

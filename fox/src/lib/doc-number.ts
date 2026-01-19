@@ -11,6 +11,13 @@ export class ApplicationNumber {
         return `${this.law}-${this.number}`;
     }
 
+    get yearPart(): string | null {
+        if (this.number.match(/^[0-9]{10}$/)) {
+            return this.number.substring(0, 4);
+        }
+        return null;
+    }
+
     toString(): string {
         if (this.number.match(/^[0-9]{10}$/)) {
             // 西暦特許出願番号形式（例：2023001234）

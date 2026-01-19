@@ -25,13 +25,15 @@ export async function getStaticPaths() {
 
 const { inventor } = Astro.params;
 const { ipDocuments } = Astro.props;
-const docs = ipDocuments.sort((a, b) =>
-    a.submissionDate.date > b.submissionDate.date ? 1 : -1,
+const groupedDocs = Object.groupBy(
+    ipDocuments,
+    (doc) => doc.applicationNumber.yearPart ?? "出願年不明",
 );
+const indecies = Object.keys(groupedDocs).sort((a, b) => a.localeCompare(b));
 ---
 
 <Layout title={`発明者別文書一覧 | ${inventor}`}>
-    <main>
+    <main class="p-4">
         <BreadCrumbs
             crumbs={[
                 { title: "HOME", href: "/" },
@@ -44,20 +46,29 @@ const docs = ipDocuments.sort((a, b) =>
             ]}
         />
         <section>
-            <ul class="list-disc list-inside">
-                {
-                    docs.map(({ applicationNumber, fileReferenceId }) => (
-                        <li>
-                            <a
-                                href={`/docs/applicationNumbers/${applicationNumber.slug}`}
-                                class="text-blue-600 hover:underline"
-                            >
-                                {`${applicationNumber.toString()} (${fileReferenceId})`}
-                            </a>
-                        </li>
-                    ))
-                }
-            </ul>
-        </section>
+            <h1 class="text-2xl font-bold">{inventor}の出願一覧</h1>
+            <span class="text-sm text-gray-600">
+                総数: {ipDocuments.length} 件
+            </span>
+            {
+                indecies.map((index) => (
+                    <h2>{index}年</h2>
+                    <ul class="pl-[2em] list-disc list-inside">
+                        {groupedDocs[index]?.map((ipDocument) => (
+                            <li>
+                                <a
+                                    href={`/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`}
+                                    class="text-blue-600 hover:underline"
+                                >
+                                    {ipDocument.applicationNumber.toString()}
+                                    {ipDocument.fileReferenceId &&
+                                     ` (${ipDocument.fileReferenceId})`}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                ))
+            }
+       </section>
     </main>
 </Layout>

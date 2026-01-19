@@ -14,7 +14,8 @@ const { block } = Astro.props as {
     // 表n，化n, 数n
     (checker.isChemistry(block) ||
         checker.isMaths(block) ||
-        checker.isTables(block)) && <Figure block={block} />
+        checker.isTables(block) ||
+        checker.isImage(block)) && <Figure block={block} />
 }
 
 {

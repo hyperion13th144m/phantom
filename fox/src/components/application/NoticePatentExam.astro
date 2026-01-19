@@ -29,7 +29,7 @@ const title = ipDocument.documentName;
 
 // 各セクションのブロックを抽出
 const ntcPatExam = ipDocument.textBlocksRoot
-    .filter((block) => block.tag == "ntcPatExam")
+    .filter((block) => ["ntcPatExam", "ntcPatExamRn"].includes(block.tag))
     .at(0);
 ---
 

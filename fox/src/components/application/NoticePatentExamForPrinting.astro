@@ -1,0 +1,20 @@
+---
+import BlockRenderer from "~/components/application/NoticePatentExamBlockRenderer.astro";
+import type { IPDocument } from "~/interfaces/document";
+
+const { ipDocument } = Astro.props as {
+    ipDocument: IPDocument;
+};
+
+const title = ipDocument.documentName;
+
+// 各セクションのブロックを抽出
+const ntcPatExam = ipDocument.textBlocksRoot
+    .filter((block) => ["ntcPatExam", "ntcPatExamRn"].includes(block.tag))
+    .at(0);
+---
+
+{
+    ntcPatExam &&
+        ntcPatExam.blocks.map((block) => <BlockRenderer block={block} />)
+}

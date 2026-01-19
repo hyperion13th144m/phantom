@@ -1646,7 +1646,7 @@
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'image'" />
             </xsl:element>
             <xsl:element name="isLastSentence">
                 <xsl:value-of select="$isLastSentence" />

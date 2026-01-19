@@ -20,16 +20,14 @@ const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documen
             )
         }
         {
-            (ipDocument.documentCode == "A153" ||
-                ipDocument.documentCode == "A159") && (
+            ["A153", "A159"].includes(ipDocument.documentCode) && (
                 <PatentResponse ipDocument={ipDocument} />
             )
         }
         {
-            (ipDocument.documentCode == "A1131" ||
-                ipDocument.documentCode == "A102") && (
-                <NoticePatentExam ipDocument={ipDocument} />
-            )
+            ["A101", "A102", "A1131", "A130"].includes(
+                ipDocument.documentCode,
+            ) && <NoticePatentExam ipDocument={ipDocument} />
         }
     </main>
 </Layout>

@@ -5,54 +5,90 @@ import Layout from "~/layouts/Layout.astro";
 import { getDocIds } from "~/lib/getDocPaths";
 import { getIPDocument } from "~/lib/getIPDocument";
 
-// IPDocument[] にはしない。複数の出願番号があっても、ipDocumentを一つ得られればよい。
-const appNumbers: Record<string, IPDocument> = {};
 const docIdList = await getDocIds();
-for (const p of docIdList) {
-    const ipDocument = await getIPDocument(p.params.docId);
-    if (ipDocument.applicationNumber == null) {
-        continue;
-    }
-    if (!ipDocument.applicationNumber.slug) {
-        continue;
-    }
-    appNumbers[ipDocument.applicationNumber.slug] = ipDocument;
-}
-const sortedIPDocuments = Object.values(appNumbers).sort((a, b) => {
-    return a.applicationNumber.slug.localeCompare(b.applicationNumber.slug);
-});
+
+// 全ての文書を取得
+const ipDocuments = await Promise.all(
+    docIdList.map(async (p) => await getIPDocument(p.params.docId)),
+);
+
+// 出願番号で2段階グループ化
+// 1段階目=yearPart, 2段階目=applicationNumber.toString()
+const groupedByYearAndAppNumber: Record<
+    string,
+    Record<string, IPDocument[]>
+> = {};
+
+ipDocuments
+    .filter((ipDocument) => ipDocument.applicationNumber != null)
+    .forEach((ipDocument) => {
+        const yearPart = ipDocument.applicationNumber!.yearPart ?? "出願年不明";
+        const appNumberStr = ipDocument.applicationNumber!.toString();
+
+        if (!groupedByYearAndAppNumber[yearPart]) {
+            groupedByYearAndAppNumber[yearPart] = {};
+        }
+        if (!groupedByYearAndAppNumber[yearPart][appNumberStr]) {
+            groupedByYearAndAppNumber[yearPart][appNumberStr] = [];
+        }
+        groupedByYearAndAppNumber[yearPart][appNumberStr].push(ipDocument);
+    });
+
+const indecies = Object.keys(groupedByYearAndAppNumber).sort();
+
+// 出願番号に紐付く整理番号を取得する関数
+// 出願番号に複数の文書が紐付く場合がある。
+// 整整理番が空の場合を除去し、最初の文書の整理番号を返す。
+const getRefNumber = (ipDocuments: IPDocument[]) => {
+    const refNumber =
+        ipDocuments
+            .map((ipDocument) => ipDocument.fileReferenceId)
+            .filter((refNumber) => refNumber != null)
+            .at(0) ?? "";
+    return refNumber ? `(${refNumber})` : "";
+};
 ---
 
 <Layout title="出願番号の一覧">
-    <main>
-        <nav class="header-nav">
-            <BreadCrumbs
-                crumbs={[
-                    { title: "HOME", href: "/" },
-                    { title: "出願書類", href: "/docs" },
-                    {
-                        title: "出願番号の一覧",
-                        href: "/docs/applicationNumbers",
-                    },
-                ]}
-            />
-        </nav>
+    <main class="p-4">
+        <BreadCrumbs
+            crumbs={[
+                { title: "HOME", href: "/" },
+                { title: "出願書類", href: "/docs" },
+                { title: "出願番号の一覧", href: "/docs/applicationNumbers", },
+            ]}
+        />
 
         <section>
-            <ul class="list-disc list-inside">
-                {
-                    sortedIPDocuments.map((appNumber) => (
-                        <li>
-                            <a
-                                href={`/docs/applicationNumbers/${appNumber.applicationNumber.slug}`}
-                                class="text-blue-600 hover:underline"
-                            >
-                                {`${appNumber.applicationNumber.toString()} (${appNumber.fileReferenceId})`}
-                            </a>
-                        </li>
-                    ))
-                }
-            </ul>
+            <h1 class="text-2xl font-bold">出願番号の一覧</h1>
+            <span class="text-sm text-gray-600">
+                総数: {ipDocuments.length} 件
+            </span>
+            {
+                indecies.map((yearPart) => (
+                    <h2>{yearPart}年</h2>
+                    <ul class="pl-[2em] list-disc list-inside">
+                        {Object.entries(
+                            groupedByYearAndAppNumber[yearPart]
+                        ).map(([appNumber, ipDocs]) => (
+                            <li>
+                                <a
+                                    href={`/docs/applicationNumbers/${ipDocs[0].applicationNumber.slug}`}
+                                    class="text-blue-600 hover:underline"
+                                >
+                                    {appNumber}
+                                    {getRefNumber(ipDocs)}
+                                </a>
+                                {ipDocs.length > 1 && (
+                                    <span class="text-gray-500 text-sm">
+                                        (書類数: {ipDocs.length} 件)
+                                    </span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                ))
+            }
         </section>
     </main>
 </Layout>

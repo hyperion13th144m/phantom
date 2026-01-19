@@ -4,12 +4,13 @@
 import type {
     ChemistryBlock,
     FigureBlock,
+    ImageBlock,
     MathsBlock,
     TablesBlock,
 } from "~/interfaces/text-blocks-root";
 interface Props {
     sizeTag?: "thumbnail" | "middle" | "large";
-    block: FigureBlock | TablesBlock | MathsBlock | ChemistryBlock;
+    block: FigureBlock | TablesBlock | MathsBlock | ChemistryBlock | ImageBlock;
 }
 const { block, sizeTag = "middle" } = Astro.props as Props;
 const cls =
@@ -19,7 +20,9 @@ const cls =
           ? "tables"
           : block.tag === "maths"
             ? "maths"
-            : "chemistry";
+            : block.tag === "chemistry"
+              ? "chemistry"
+              : "image";
 ---
 
 <div class={cls}>

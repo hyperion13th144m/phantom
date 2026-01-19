@@ -1,14 +1,44 @@
 ---
-import type { ApplicationFormItemBlock } from "~/interfaces/text-blocks-root";
+import type { ApplicationFormItemBlock, ImageBlock } from "~/interfaces/text-blocks-root";
+import { checker } from "~/interfaces/text-blocks-root";
 import { concatBlocks } from "~/lib/blocks";
+import Figure from "./Figure.astro";
 import Inline from "./Inline.astro";
 
 const { block } = Astro.props as {
-    block: ApplicationFormItemBlock;
+    block: ApplicationFormItemBlock | ImageBlock;
 };
 
 const isUndefinedBlock = (tag: string) => {
-    const defined = ["jp:dispatch-control-article"];
+    const defined = [
+        "jp:dispatch-control-article",
+        "jp:document-name",
+        "jp:bibliog-in-ntc-pat-exam",
+        "jp:bibliog-in-ntc-pat-exam-rn",
+        "jp:application-reference",
+        "jp:document-id",
+        "jp:doc-number",
+        "jp:drafting-date",
+        "jp:date",
+        "jp:draft-person-group",
+        "jp:name",
+        "jp:staff-code",
+        "jp:office-code",
+        "jp:addressed-to-person-group",
+        "jp:article-group",
+        "jp:reconsideration-before-appeal",
+        "jp:conclusion-part-article",
+        "jp:drafting-body",
+        "jp:footer-article",
+        "invention-title",
+        "jp:number-of-claim",
+        "jp:footer-article",
+        "jp:certification-column-article",
+        "jp:certification-column-group",
+        "jp:certification-group",
+        "jp:image-group",
+        "image",
+    ];
     const flag = defined.includes(tag);
     return !flag;
 };
@@ -18,7 +48,7 @@ const isUndefinedBlock = (tag: string) => {
     block.tag == "jp:dispatch-control-article" && (
         <>
             {block.blocks.map((b) => (
-                <div class="flex gap-2 text-sm">
+                <div class="flex gap-2 text-xs">
                     <div class="min-w-[5em]">{b.jpTag}</div>
                     <div>{b.text}</div>
                 </div>
@@ -29,8 +59,17 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 {
-    block.tag == "jp:opinion-contents-article" && (
-        <div>
+    block.tag == "jp:document-name" && (
+        <div class="flex justify-center mt-2 text-2xl">
+            <div class="min-w-[5em]">{block.text}</div>
+        </div>
+    )
+}
+
+{
+    (block.tag == "jp:conclusion-part-article" ||
+        (block.tag == "jp:drafting-body" && block.blocks)) && (
+        <div class="my-6">
             <div class={`jpTag indentLevel-${block.indentLevel}`}>
                 {block.jpTag}
             </div>
@@ -48,22 +87,58 @@ const isUndefinedBlock = (tag: string) => {
 {
     /** jpTag ○, convertedText 〇
      */
-    (block.tag == "jp:document-code" ||
-        block.tag == "jp:doc-number" ||
-        block.tag == "jp:account" ||
-        block.tag == "jp:fee" ||
-        block.tag == "jp:document-name" ||
-        block.tag == "jp:application-reference" ||
-        block.tag == "jp:special-mention-matter-article" ||
-        block.tag == "jp:date") && (
-        <div class="application-item" style="display: flex;">
-            <span
+    (block.tag == "jp:doc-number" || block.tag == "jp:date") && (
+        <div class="flex gap-2">
+            <div
                 class={`jpTag indentLevel-${block.indentLevel}`}
-                style="min-width: 11em;"
+                style="min-width: 12em;"
             >
                 {block.jpTag}
-            </span>
-            <span class="convertedText">{block.convertedText}</span>
+            </div>
+            <div class="convertedText">{block.convertedText}</div>
+        </div>
+    )
+}
+
+{
+    block.tag == "jp:draft-person-group" && (
+        <div class="flex gap-2">
+            <div
+                class={`jpTag indentLevel-${block.indentLevel}`}
+                style="min-width: 12em;"
+            >
+                {block.jpTag}
+            </div>
+            <div class="flex justify-between gap-2">
+                <div>
+                    {block.blocks
+                        .filter((b2) => b2.tag == "jp:name")
+                        .map((b3) => (
+                            <div>{b3.text}</div>
+                        ))}
+                </div>
+                <div class="flex gap-2">
+                    {block.blocks
+                        .filter((b2) => b2.tag != "jp:name")
+                        .map((b3) => (
+                            <div>{b3.text}</div>
+                        ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+{
+    block.tag == "jp:article-group" && (
+        <div class="flex gap-2">
+            <div
+                class={`jpTag indentLevel-${block.indentLevel}`}
+                style="min-width: 12em;"
+            >
+                {block.jpTag}
+            </div>
+            <div>{block.blocks.map((b3) => b3.text).join("、")}</div>
         </div>
     )
 }
@@ -71,18 +146,13 @@ const isUndefinedBlock = (tag: string) => {
 {
     /** jpTag ○, text 〇,  convertedText ×
      */
-    (block.tag == "jp:addressed-to-person" ||
-        block.tag == "jp:file-reference-id" ||
-        block.tag == "jp:registered-number" ||
-        block.tag == "jp:name" ||
-        block.tag == "jp:dispatch-number" ||
-        block.tag == "jp:ipc" ||
-        block.tag == "jp:text" ||
-        block.tag == "jp:general-power-of-attorney-id") && (
-        <div class="application-item" style="display: flex;">
+    (block.tag == "jp:addressed-to-person-group" ||
+        block.tag == "invention-title" ||
+        block.tag =="jp:number-of-claim") && (
+        <div class="flex gap-2">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
-                style="min-width: 11em;"
+                style="min-width: 12em;"
             >
                 {block.jpTag}
             </span>
@@ -93,17 +163,9 @@ const isUndefinedBlock = (tag: string) => {
 
 {
     /** tag ○, jpTag ○, text ×, blocks ○ */
-    (block.tag == "jp:indication-of-case-article" ||
-        block.tag == "jp:applicant" ||
-        block.tag == "jp:agent" ||
-        block.tag == "jp:attorney" ||
-        block.tag == "jp:inventor" ||
-        block.tag == "jp:charge-article" ||
-        block.tag == "jp:submission-object-list-article" ||
-        block.tag == "jp:earlier-app" ||
-        block.tag == "jp:parent-application-article") && (
+    (block.tag == "jp:indication-of-case-article") && (
         <>
-            <div class="application-item" style="display: flex;">
+            <div class="flex">
                 <span
                     class={`jpTag indentLevel-${block.indentLevel}`}
                     style="min-width: 11em;"
@@ -120,12 +182,78 @@ const isUndefinedBlock = (tag: string) => {
 
 {
     /** tag ○, blocks ○ */
-    (block.tag == "jp:applicants" ||
-        block.tag == "jp:agents" ||
-        block.tag == "jp:inventors" ||
-        block.tag == "jp:attorney-change-article" ||
-        block.tag == "jp:declaration-priority-ear-app") &&
+    (block.tag == "jp:application-reference" ||
+        block.tag == "jp:document-id" ||
+        block.tag == "jp:drafting-date" ||
+        block.tag == "jp:certification-column-article" ||
+        block.tag =="jp:image-group") &&
         block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
+}
+
+{
+    (block.tag == "jp:bibliog-in-ntc-pat-exam" ||
+    block.tag == "jp:bibliog-in-ntc-pat-exam-rn") && (
+        <div class="px-[1em] my-10">
+            {block.blocks?.map((childBlock) => (
+                <Astro.self block={childBlock} />
+            ))}
+        </div>
+    )
+}
+
+{
+    block.tag == "jp:reconsideration-before-appeal" && (
+        <div>{block.text ?? ""}</div>
+    )
+}
+
+{
+    block.tag == "jp:footer-article" && (
+        <>
+            <hr />
+            <div>
+                {block.blocks?.map((childBlock) => (
+                    <Astro.self block={childBlock} />
+                ))}
+            </div>
+        </>
+    )
+}
+
+{
+    block.tag == "jp:certification-column-group" && (
+        <>
+            {block.blocks
+                .filter((b) => b.tag == "text")
+                .map((b) => (
+                    <div>{b.text}</div>
+                ))}
+            {block.blocks
+                .filter((b) => b.tag == "jp:certification-group")
+                .map((b) => (
+                    <Astro.self block={b} />
+                ))}
+        </>
+    )
+}
+
+{
+    block.tag == "jp:certification-group" && (
+        <div class="flex gap-10">
+            {block.blocks
+                .map((b) => (
+                    (b.jpTag && b.convertedText)
+                    ? <div>{b.jpTag}</div><div>{b.convertedText}</div>
+                    : <div>{b.text}</div>
+                ))}
+       </div>
+    )
+}
+
+{
+    checker.isImage(block) && (
+        <Figure block={block} sizeTag="large" />
+    )
 }
 
 {

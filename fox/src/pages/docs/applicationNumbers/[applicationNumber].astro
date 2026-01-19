@@ -28,14 +28,18 @@ export async function getStaticPaths() {
 
 const { applicationNumber } = Astro.params;
 const { ipDocuments } = Astro.props;
-const docs = ipDocuments.sort((a, b) => {
-    const aDate = a.submissionDate ?? a.dispatchDate;
-    const bDate = b.submissionDate ?? b.dispatchDate;
-    if (aDate == null || bDate == null) {
-        return 0;
-    }
-    return aDate.date > bDate.date ? 1 : -1;
-});
+const docs = ipDocuments
+    .sort((a, b) => {
+        const aDate = a.submissionDate ?? a.dispatchDate;
+        const bDate = b.submissionDate ?? b.dispatchDate;
+        if (aDate == null || bDate == null) {
+            return 0;
+        }
+        return aDate.date > bDate.date ? 1 : -1;
+    })
+    .sort((a, b) => {
+        return a.documentCode.localeCompare(b.documentCode);
+    });
 const an = docs[0].applicationNumber.toString();
 const dateStr = (ipDocument: IPDocument) => {
     const date = ipDocument.submissionDate ?? ipDocument.dispatchDate;
@@ -44,40 +48,40 @@ const dateStr = (ipDocument: IPDocument) => {
 ---
 
 <Layout title={`出願番号別文書一覧 | ${an}`}>
-    <main>
-        <nav class="header-nav">
-            <BreadCrumbs
-                crumbs={[
-                    { title: "HOME", href: "/" },
-                    { title: "出願書類", href: "/docs" },
-                    {
-                        title: "出願番号の一覧",
-                        href: "/docs/applicationNumbers",
-                    },
-                    {
-                        title: an,
-                        href: `/docs/applicationNumbers/${applicationNumber}`,
-                    },
-                ]}
-            />
-        </nav>
+    <main class="p-4">
+        <BreadCrumbs
+            crumbs={[
+                { title: "HOME", href: "/" },
+                { title: "出願書類", href: "/docs" },
+                {
+                    title: "出願番号の一覧",
+                    href: "/docs/applicationNumbers",
+                },
+                {
+                    title: an,
+                    href: `/docs/applicationNumbers/${applicationNumber}`,
+                },
+            ]}
+        />
 
         <section>
-            <ul class="list-disc list-inside">
-                {
-                    docs.map((ipDocument) => (
-                        <li>
-                            <span>{dateStr(ipDocument)}</span>
-                            <a
-                                href={`/docs/${ipDocument.docId}`}
-                                class="text-blue-600 hover:underline"
-                            >
-                                {ipDocument.documentName}
-                            </a>
-                        </li>
-                    ))
-                }
-            </ul>
+            <h1 class="text-2xl font-bold">{an} の出願書類一覧</h1>
+            <span class="text-sm text-gray-600">
+                総数: {docs.length} 件
+            </span>
+            {
+                docs.map((ipDocument) => (
+                    <div class="flex gap-4 items-center py-1">
+                        <div class="min-w-[10em]">{dateStr(ipDocument)}</div>
+                        <a
+                            href={`/docs/${ipDocument.docId}`}
+                            class="text-blue-600 hover:underline"
+                        >
+                            {ipDocument.documentName}
+                        </a>
+                    </div>
+                ))
+            }
         </section>
     </main>
 </Layout>

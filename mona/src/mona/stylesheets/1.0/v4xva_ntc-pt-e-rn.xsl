@@ -226,16 +226,16 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
      ====================================================================-->
     <!-- 前置審査 -->
     <xsl:template match="jp:reconsideration-before-appeal">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:if test="./@jp:true-or-false = 'true'">
+        <xsl:if test="./@jp:true-or-false = 'true'">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="name()" />
+                </xsl:element>
+                <xsl:element name="text">
                     <xsl:value-of select="'［前置審査］'" />
-                </xsl:if>
+                </xsl:element>
             </xsl:element>
-        </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- ====================================================================
@@ -258,12 +258,14 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
      ====================================================================-->
     <!-- 本文部 -->
     <xsl:template match="jp:drafting-body">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+        <xsl:if test="p/* or jp:heading">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="name()" />
+                </xsl:element>
+                <xsl:apply-templates select="p | jp:heading" />
             </xsl:element>
-            <xsl:apply-templates select="jp:heading | p" />
-        </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- ====================================================================
@@ -422,10 +424,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="jpTag">
                 <xsl:value-of select="'発明の名称'" />
             </xsl:element>
-
-            <xsl:apply-templates />
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
         </xsl:element>
-
     </xsl:template>
 
     <!-- ====================================================================
@@ -441,7 +443,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                 <xsl:value-of select="'請求項の数'" />
             </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="." />
+                <xsl:value-of select="f:remove-nbsp(.)" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -776,7 +778,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'image'" />
             </xsl:element>
             <xsl:element name="isLastSentence">
                 <xsl:value-of select="$isLastSentence" />

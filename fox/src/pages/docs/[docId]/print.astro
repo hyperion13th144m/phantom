@@ -1,5 +1,6 @@
 ---
 import PrintingApplication from "~/components/application/ApplicationForPrinting.astro";
+import PrintingNoticePatentExam from "~/components/application/NoticePatentExamForPrinting.astro";
 import PrintingPatentResponse from "~/components/application/PatentResponseForPrinting.astro";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
 import { getDocIds } from "~/lib/getDocPaths";
@@ -19,9 +20,13 @@ const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documen
         )
     }
     {
-        (ipDocument.documentCode == "A153" ||
-            ipDocument.documentCode == "A159") && (
+        ["A153", "A159"].includes(ipDocument.documentCode) && (
             <PrintingPatentResponse ipDocument={ipDocument} />
+        )
+    }
+    {
+        ["A1131", "A102", "A101", "A130"].includes(ipDocument.documentCode) && (
+            <PrintingNoticePatentExam ipDocument={ipDocument} />
         )
     }
 </PrintingLayout>

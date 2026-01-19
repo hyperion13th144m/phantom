@@ -16,16 +16,14 @@ const sortedApplicants = Array.from(applicants).sort();
 ---
 
 <Layout title="出願人の一覧">
-    <main>
-        <nav class="header-nav">
-            <BreadCrumbs
-                crumbs={[
-                    { title: "HOME", href: "/" },
-                    { title: "出願書類", href: "/docs" },
-                    { title: "出願人の一覧", href: "/docs/applicants" },
-                ]}
-            />
-        </nav>
+    <main class="p-4">
+        <BreadCrumbs
+            crumbs={[
+                { title: "HOME", href: "/" },
+                { title: "出願書類", href: "/docs" },
+                { title: "出願人の一覧", href: "/docs/applicants" },
+            ]}
+        />
 
         <section>
             <ul class="list-disc list-inside">
