@@ -2,6 +2,7 @@
 SQLiteデータベースにpatentDocumentテーブルを作成し、
 document.jsonファイルからデータをインポートするスクリプト
 """
+
 import sqlite3
 
 
@@ -59,9 +60,3 @@ if __name__ == "__main__":
 
     # テーブルを作成
     cmd_create_db(db_path)
-
-    # データをインポート
-    print("\n" + "=" * 60)
-    print("document.jsonのインポートを開始します...")
-    print("=" * 60 + "\n")
-    cmd_import_data(data_dir, db_path)

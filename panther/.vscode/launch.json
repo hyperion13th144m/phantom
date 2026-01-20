@@ -40,7 +40,7 @@
             "program": "src/panther/main.py",
             "console": "integratedTerminal",
             "args": [
-                "upload",
+                "upload-documents",
                 "--index",
                 "patent-documents",
                 "--data-root",
@@ -60,6 +60,41 @@
                 "patent-documents",
                 "--sqlite-db",
                 "/extra_dir/m-patent.db"
+            ]
+        },
+        {
+            "name": "create sqlitedb",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/panther/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "create-db",
+                "patent.db"
+            ]
+        },
+        {
+            "name": "import sqlitedb",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/panther/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "import-extra-data",
+                "--data-dir",
+                "/data_dir",
+                "--sqlite-db",
+                "patent.db"
+            ]
+        },
+        {
+            "name": "editor check",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/panther/patent_doc_editor.py",
+            "console": "integratedTerminal",
+            "args": [
+                "document-a1131.json",
             ]
         }
     ]

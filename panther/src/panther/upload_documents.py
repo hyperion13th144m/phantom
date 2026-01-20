@@ -18,8 +18,10 @@ from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
+from panther.document_json import DocumentJson
 from panther.es_client import create_es_client
 from panther.ip_document import load_ip_document
+from panther.patent_doc_editor import PatentDocEditor
 
 PRESERVE_FIELDS = {"assignees", "tags"}  # user-managed fields in ES
 
@@ -57,6 +59,12 @@ def iter_documents(root: Path) -> Iterator[Path]:
         yield p
 
 
+def load_document_json(path: Path) -> DocumentJson:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    # pydantic v2: model_validate
+    return DocumentJson.model_validate(data)
+
+
 def build_actions(
     index: str,
     data_root: Path,
@@ -69,8 +77,10 @@ def build_actions(
     """
     for path in iter_documents(data_root):
         try:
-            raw = load_ip_document(path)
-            doc = strip_preserve_fields(raw)
+            raw = load_document_json(path)
+            _doc = PatentDocEditor(raw).to_es_model()
+            edited = _doc.model_dump(exclude_none=True)  # ←ここが「dump_model」相当
+            doc = strip_preserve_fields(edited)
 
             # Put docid inside source too (optional but handy)
             docid = doc["docId"]

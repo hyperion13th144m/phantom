@@ -20,7 +20,8 @@
                 "KevinRose.vsc-python-indent",
                 "njpwerner.autodocstring",
                 "ms-python.python",
-                "ms-python.isort"
+                "ms-python.isort",
+                "ms-python.black-formatter"
             ]
         }
     },

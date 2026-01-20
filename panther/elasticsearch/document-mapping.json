@@ -52,9 +52,6 @@
             "docId": {
                 "type": "keyword"
             },
-            "ext": {
-                "type": "keyword"
-            },
             "kind": {
                 "type": "keyword"
             },
@@ -73,10 +70,6 @@
             "fileReferenceId": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -86,10 +79,6 @@
             "registrationNumber": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -99,10 +88,6 @@
             "applicationNumber": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -112,10 +97,6 @@
             "internationalApplicationNumber": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -123,24 +104,21 @@
                 }
             },
             "appealReferenceNumber": {
-                "type": "keyword"
-            },
-            "submissionDate": {
-                "type": "date",
-                "format": "epoch_millis"
-            },
-            "receiptNumber": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
                     }
                 }
+            },
+            "submissionDate": {
+                "type": "date",
+                "format": "epoch_millis"
+            },
+            "dispatchDate": {
+                "type": "date",
+                "format": "epoch_millis"
             },
             "images": {
                 "type": "nested",
@@ -229,6 +207,19 @@
             "specialMentionMatterArticle": {
                 "type": "keyword"
             },
+            "rejectionReasonArticle": {
+                "type": "keyword"
+            },
+            "lawOfIndustrialRegenerate": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
             "inventionTitle": {
                 "type": "text",
                 "analyzer": "my_kuromoji_analyzer",
@@ -309,17 +300,7 @@
                     }
                 }
             },
-            "lawOfIndustrialRegenerate": {
-                "type": "text",
-                "analyzer": "my_kuromoji_analyzer",
-                "fields": {
-                    "ngram": {
-                        "type": "text",
-                        "analyzer": "my_ngram_analyzer"
-                    }
-                }
-            },
-            "descriptionOfEmbodiments": {
+            "embodiments": {
                 "type": "text",
                 "analyzer": "my_kuromoji_analyzer",
                 "fields": {
@@ -350,6 +331,26 @@
                 }
             },
             "abstract": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "conclusionPartArticle": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "draftingBody": {
                 "type": "text",
                 "analyzer": "my_kuromoji_analyzer",
                 "fields": {
