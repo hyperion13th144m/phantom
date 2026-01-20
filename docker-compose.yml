@@ -12,6 +12,7 @@ services:
     environment:
       SRC_DIR: /src_dir
       DATA_DIR: /data_dir
+      OMP_THREAD_LIMIT: 1
   
   panther:
     container_name: panther
