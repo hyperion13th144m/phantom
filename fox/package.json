@@ -6,11 +6,17 @@
         "dev": "astro dev --host 0.0.0.0",
         "build": "astro build",
         "preview": "astro preview --host 0.0.0.0",
-        "astro": "astro"
+        "astro": "astro",
+        "build:applicant-index": "tsx ./src/scripts/build-applicant-index.ts",
+        "build:inventor-index": "tsx ./src/scripts/build-inventor-index.ts"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.1.18",
         "astro": "^5.16.6",
         "tailwindcss": "^4.1.18"
+    },
+    "devDependencies": {
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
     }
 }

@@ -1,38 +1,19 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
-import type { IPDocument } from "~/interfaces/document";
+import type { InventorIndexEntry } from "~/interfaces/index/inventor-index";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
-import { getIPDocument } from "~/lib/getIPDocument";
+import _inventorIndex from "../../../../public/content/_indexes/inventor-index.json";
 
 export async function getStaticPaths() {
-    const inventorProps: Record<string, IPDocument[]> = {};
-    const docIdList = await getDocIds();
-    for (const p of docIdList) {
-        const ipDocument = await getIPDocument(p.params.docId);
-        ipDocument.inventors.forEach((inventor) => {
-            if (!inventorProps[inventor]) {
-                inventorProps[inventor] = [];
-            }
-            inventorProps[inventor].push(ipDocument);
-        });
-    }
-    return Object.entries(inventorProps).map(([inventor, ipDocuments]) => ({
+    return Object.keys(_inventorIndex).map((inventor) => ({
         params: { inventor },
-        props: { ipDocuments },
     }));
 }
-
 const { inventor } = Astro.params;
-const { ipDocuments } = Astro.props;
-const groupedDocs = Object.groupBy(
-    ipDocuments,
-    (doc) => doc.applicationNumber.yearPart ?? "出願年不明",
-);
-const indecies = Object.keys(groupedDocs).sort((a, b) => a.localeCompare(b));
+const inventorIndex = _inventorIndex as Record<string, InventorIndexEntry>;
 ---
 
-<Layout title={`発明者別文書一覧 | ${inventor}`}>
+<Layout title={`発明者別文書一覧 | ${inventorIndex[inventor].name}`}>
     <main class="p-4">
         <BreadCrumbs
             crumbs={[
@@ -40,35 +21,34 @@ const indecies = Object.keys(groupedDocs).sort((a, b) => a.localeCompare(b));
                 { title: "出願書類", href: "/docs" },
                 { title: "発明者の一覧", href: "/docs/inventors" },
                 {
-                    title: inventor,
+                    title: inventorIndex[inventor].name,
                     href: `/docs/inventors/${inventor}`,
                 },
             ]}
         />
         <section>
-            <h1 class="text-2xl font-bold">{inventor}の出願一覧</h1>
+            <h1 class="text-2xl font-bold">
+                {inventorIndex[inventor].name}の出願一覧
+            </h1>
             <span class="text-sm text-gray-600">
-                総数: {ipDocuments.length} 件
+                総数: {inventorIndex[inventor].documents.length} 件
             </span>
             {
-                indecies.map((index) => (
-                    <h2>{index}年</h2>
+                inventorIndex[inventor].documents.map((row, index) => (
                     <ul class="pl-[2em] list-disc list-inside">
-                        {groupedDocs[index]?.map((ipDocument) => (
-                            <li>
-                                <a
-                                    href={`/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`}
-                                    class="text-blue-600 hover:underline"
-                                >
-                                    {ipDocument.applicationNumber.toString()}
-                                    {ipDocument.fileReferenceId &&
-                                     ` (${ipDocument.fileReferenceId})`}
-                                </a>
-                            </li>
-                        ))}
+                        <li>
+                            <a
+                                href={`/docs/applicationNumbers/${row.applicationNumberSlug}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {row.applicationNumberString}
+                                {row.fileReferenceId &&
+                                    ` (${row.fileReferenceId})`}
+                            </a>
+                        </li>
                     </ul>
                 ))
             }
-       </section>
+        </section>
     </main>
 </Layout>

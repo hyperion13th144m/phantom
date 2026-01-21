@@ -1,35 +1,17 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
-import type { IPDocument } from "~/interfaces/document";
+import type { ApplicantIndexEntry } from "~/interfaces/index/applicant-index";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
-import { getIPDocument } from "~/lib/getIPDocument";
+import _applicantIndex from "../../../../public/content/_indexes/applicant-index.json";
 
 export async function getStaticPaths() {
-    const applicantProps: Record<string, IPDocument[]> = {};
-    const docIdList = await getDocIds();
-    for (const p of docIdList) {
-        const ipDocument = await getIPDocument(p.params.docId);
-        ipDocument.applicants.forEach((applicant) => {
-            if (!applicantProps[applicant]) {
-                applicantProps[applicant] = [];
-            }
-            applicantProps[applicant].push(ipDocument);
-        });
-    }
-    return Object.entries(applicantProps).map(([applicant, ipDocuments]) => ({
+    return Object.keys(_applicantIndex).map((applicant) => ({
         params: { applicant },
-        props: { ipDocuments },
     }));
 }
 
 const { applicant } = Astro.params;
-const { ipDocuments } = Astro.props;
-const groupedDocs = Object.groupBy(
-    ipDocuments,
-    (doc) => doc.applicationNumber.yearPart ?? "出願年不明",
-);
-const indecies = Object.keys(groupedDocs).sort((a, b) => a.localeCompare(b));
+const applicantIndex = _applicantIndex as Record<string, ApplicantIndexEntry>;
 ---
 
 <Layout title={`出願人別文書一覧 | ${applicant}`}>
@@ -40,37 +22,35 @@ const indecies = Object.keys(groupedDocs).sort((a, b) => a.localeCompare(b));
                 { title: "出願書類", href: "/docs" },
                 { title: "出願人の一覧", href: "/docs/applicants" },
                 {
-                    title: applicant,
+                    title: applicantIndex[applicant].name,
                     href: `/docs/applicants/${applicant}`,
                 },
             ]}
         />
 
         <section>
-            <h1 class="text-2xl font-bold">{applicant}の出願一覧</h1>
+            <h1 class="text-2xl font-bold">
+                {applicantIndex[applicant].name}の出願一覧
+            </h1>
             <span class="text-sm text-gray-600">
-                総数: {ipDocuments.length} 件
+                総数: {applicantIndex[applicant].documents.length} 件
             </span>
             {
-                indecies.map((index) => (
-                    <h2>{index}年</h2>
+                applicantIndex[applicant].documents.map((row, index) => (
                     <ul class="pl-[2em] list-disc list-inside">
-                        {groupedDocs[index]?.map((ipDocument) => (
-                            <li>
-                                <a
-                                    href={`/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`}
-                                    class="text-blue-600 hover:underline"
-                                >
-                                    {ipDocument.applicationNumber.toString()}
-                                    {ipDocument.fileReferenceId &&
-                                        ` (${ipDocument.fileReferenceId})`}
-                                </a>
-                            </li>
-                        ))}
+                        <li>
+                            <a
+                                href={`/docs/applicationNumbers/${row.applicationNumberSlug}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {row.applicationNumberString}
+                                {row.fileReferenceId &&
+                                    ` (${row.fileReferenceId})`}
+                            </a>
+                        </li>
                     </ul>
                 ))
             }
         </section>
     </main>
 </Layout>
-

@@ -3,7 +3,7 @@ import PrintingApplication from "~/components/application/ApplicationForPrinting
 import PrintingNoticePatentExam from "~/components/application/NoticePatentExamForPrinting.astro";
 import PrintingPatentResponse from "~/components/application/PatentResponseForPrinting.astro";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
+import { getDocIds } from "~/lib/getDocIds";
 import { getIPDocument } from "~/lib/getIPDocument";
 
 export const getStaticPaths = getDocIds;

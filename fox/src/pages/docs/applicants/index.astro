@@ -1,18 +1,13 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
+import type { ApplicantIndexEntry } from "~/interfaces/index/applicant-index";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
-import { getIPDocument } from "~/lib/getIPDocument";
+import _applicantIndex from "../../../../public/content/_indexes/applicant-index.json";
 
-const applicants = new Set<string>();
-const docIdList = await getDocIds();
-for (const p of docIdList) {
-    const ipDocument = await getIPDocument(p.params.docId);
-    ipDocument.applicants.forEach((applicant) => {
-        applicants.add(applicant);
-    });
-}
-const sortedApplicants = Array.from(applicants).sort();
+const applicantIndex: Record<string, ApplicantIndexEntry> = _applicantIndex;
+const sortedApplicants = Object.keys(applicantIndex).sort((a, b) =>
+    applicantIndex[a].name.localeCompare(applicantIndex[b].name),
+);
 ---
 
 <Layout title="出願人の一覧">
@@ -26,20 +21,26 @@ const sortedApplicants = Array.from(applicants).sort();
         />
 
         <section>
-            <ul class="list-disc list-inside">
-                {
-                    sortedApplicants.map((applicant) => (
-                        <li>
+            <h1 class="text-xl font-bold">出願人の一覧</h1>
+            {
+                sortedApplicants.map((applicant) => (
+                    <div class="mt-6">
+                        <h2 class="text-gray-600 mb-2">
+                            {applicantIndex[applicant].idNumber ??
+                                applicantIndex[applicant].address ??
+                                "no adderss or identification number"}
+                        </h2>
+                        <div class="pl-4 flex flex-col gap-2">
                             <a
                                 href={`/docs/applicants/${applicant}`}
                                 class="text-blue-600 hover:underline"
                             >
-                                {applicant}
+                                {applicantIndex[applicant].name}
                             </a>
-                        </li>
-                    ))
-                }
-            </ul>
+                        </div>
+                    </div>
+                ))
+            }
         </section>
     </main>
 </Layout>

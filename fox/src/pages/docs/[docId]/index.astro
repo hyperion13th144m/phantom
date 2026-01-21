@@ -3,7 +3,7 @@ import Application from "~/components/application/Application.astro";
 import NoticePatentExam from "~/components/application/NoticePatentExam.astro";
 import PatentResponse from "~/components/application/PatentResponse.astro";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
+import { getDocIds } from "~/lib/getDocIds";
 import { getIPDocument } from "~/lib/getIPDocument";
 
 export const getStaticPaths = getDocIds;
