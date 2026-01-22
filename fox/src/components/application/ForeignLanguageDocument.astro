@@ -7,6 +7,9 @@ import type {
     ForeignDrawingsBlock,
 } from "~/interfaces/text-blocks-root";
 import { checker } from "~/interfaces/text-blocks-root";
+import { concatBlocks } from "~/lib/blocks";
+import { getBaseUrlPath } from "~/lib/path";
+import Inline from "./Inline.astro";
 
 interface Props {
     sizeTag?: "thumbnail" | "middle" | "large";
@@ -21,16 +24,29 @@ const images = block.blocks
     .filter((b) => checker.isImage(b))
     .flatMap((b) => b.images)
     .filter((img) => img.sizeTag === sizeTag);
+const baseUrlPath = Astro.params.docId
+    ? getBaseUrlPath(Astro.params.docId)
+    : "";
 ---
 
-<div class={block.tag}>
+<div class="wrap-anywhere">
     <div class={`jpTag indentLevel-${block.indentLevel}`}>
         {
             images.map((image) => (
                 <div>
-                    <img src={image.src} />
+                    <img src={baseUrlPath + "/" + image.src} />
                 </div>
             ))
+        }
+        {
+            block.blocks &&
+                concatBlocks(block.blocks).map((group) => (
+                    <div>
+                        {group.map((b) => (
+                            <Inline block={b} />
+                        ))}
+                    </div>
+                ))
         }
     </div>
 </div>

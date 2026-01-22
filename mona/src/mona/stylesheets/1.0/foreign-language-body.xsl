@@ -6,6 +6,8 @@
     xmlns:f="urn:libefiling:string-utils"
     exclude-result-prefixes="xs jp f">
 
+    <xsl:include href="common-templates/string-utils.xsl" />
+
     <xsl:variable name="law">
         <xsl:choose>
             <xsl:when
@@ -39,7 +41,7 @@
     </xsl:template>
 
     <xsl:template match="p">
-        <xsl:apply-templates select="img" />
+        <xsl:apply-templates />
     </xsl:template>
 
     <!-- 変換元XMLにある images/image のlookup -->
@@ -49,8 +51,10 @@
     <xsl:template match="img">
         <xsl:element name="blocks">
             <xsl:element name="tag">image</xsl:element>
-            <xsl:element name="number"><xsl:value-of select="position()"/></xsl:element>
-            <xsl:element name="jpTag"/>
+            <xsl:element name="number">
+                <xsl:value-of select="position()" />
+            </xsl:element>
+            <xsl:element name="jpTag" />
             <xsl:element name="indentLevel">0</xsl:element>
             <xsl:for-each select="key('images-table-key', @file)">
                 <xsl:element name="images">
@@ -73,4 +77,42 @@
             </xsl:for-each>
         </xsl:element>
     </xsl:template>
+
+    <xsl:template
+        match="text() | sup | sub | u">
+        <xsl:variable name="tag">
+            <xsl:choose>
+                <xsl:when test="self::text()">text</xsl:when>
+                <xsl:when test="self::sup">sup</xsl:when>
+                <xsl:when test="self::sub">sub</xsl:when>
+                <xsl:when test="self::u">underline</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- 次の「有意ノード」を見る -->
+        <xsl:variable name="nextNode"
+            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
+
+        <!-- 次が br か、次が存在しない（p末尾）なら true -->
+        <xsl:variable name="isLastSentence"
+            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
+
+        <xsl:if test="normalize-space() != ''">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="$tag" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:call-template name="trim">
+                        <xsl:with-param name="text" select="." />
+                    </xsl:call-template>
+                </xsl:element>
+                <xsl:element name="isLastSentence">
+                    <xsl:value-of select="$isLastSentence" />
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+
+
 </xsl:stylesheet>

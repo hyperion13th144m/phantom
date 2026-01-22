@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "-o -l debug /src_dir/ reference/A153 A153"
+            "args": "-o -l debug /src_dir/ reference/A163 A163"
         },
         {
             "name": "multi",
