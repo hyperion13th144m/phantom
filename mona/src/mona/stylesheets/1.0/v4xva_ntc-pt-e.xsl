@@ -1098,10 +1098,11 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="text">
+            <xsl:element name="jpTag">
                 <xsl:value-of select="'菌寄託'" />
-                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
+                <xsl:value-of select="f:to-fullwidth-digit(string(position()))" />
             </xsl:element>
+            <xsl:element name="indentLevel">1</xsl:element>
 
             <xsl:apply-templates select="jp:depository-ins-code" />
             <xsl:if test="jp:depository-number">
@@ -1269,6 +1270,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="convertedText">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -1290,6 +1292,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="convertedText">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -1317,28 +1320,8 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:apply-templates select="jp:document-number | jp:kind-of-document" />
-        </xsl:element>
-    </xsl:template>
-
-    <xsl:template match="jp:document-number">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <xsl:template match="jp:kind-of-document">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
+            <xsl:element name="convertedText">
+                <xsl:value-of select="jp:document-number || '　' || jp:kind-of-document" />
             </xsl:element>
         </xsl:element>
     </xsl:template>

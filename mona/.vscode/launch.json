@@ -18,7 +18,7 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "-m 1 -l debug /src_dir/ /data_dir A163"
+            "args": "-m 1 -l debug /src_dir/ /data_dir A101"
         }
     ]
 }

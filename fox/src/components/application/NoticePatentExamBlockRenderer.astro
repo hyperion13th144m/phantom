@@ -38,6 +38,27 @@ const isUndefinedBlock = (tag: string) => {
         "jp:certification-group",
         "jp:image-group",
         "image",
+        "jp:final-decision-group",
+        "jp:kind-of-application",
+        "jp:exist-of-reference-doc",
+        "jp:patent-law-section30",
+        "jp:change-flag-invention-title",
+        "jp:ipc-article",
+        "jp:ipc",
+        "jp:deposit-article",
+        "jp:deposit",
+        "jp:depository-ins-code",
+        "jp:depository-number",
+        "jp:parent-application-article",
+        "jp:final-decision-memo",
+        "jp:final-decision-bibliog",
+        "jp:final-decision-body",
+        "jp:field-of-search-article",
+        "jp:field-of-search",
+        "jp:patent-reference-article",
+        "jp:patent-reference-group",
+        "jp:reference-books-article",
+        "jp:reference-books",
     ];
     const flag = defined.includes(tag);
     return !flag;
@@ -88,7 +109,11 @@ const isUndefinedBlock = (tag: string) => {
 {
     /** jpTag ○, convertedText 〇
      */
-    (block.tag == "jp:doc-number" || block.tag == "jp:date") && (
+    (block.tag == "jp:doc-number" || block.tag == "jp:date" ||
+        block.tag == "jp:depository-ins-code" ||
+        block.tag == "jp:depository-number" ||
+        block.tag == "jp:patent-reference-group"
+    ) && (
         <div class="flex gap-2">
             <div
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -97,6 +122,23 @@ const isUndefinedBlock = (tag: string) => {
                 {block.jpTag}
             </div>
             <div class="convertedText">{block.convertedText}</div>
+        </div>
+    )
+}
+
+{
+    /** jpTag x, convertedText x, text o
+     */
+    (block.tag == "jp:ipc" || block.tag == "jp:field-of-search" ||
+        block.tag == "jp:document-number"
+    ) && (
+        <div class="flex gap-2">
+            <div
+                class={`jpTag indentLevel-${block.indentLevel}`}
+                style="min-width: 12em;"
+            >
+            </div>
+            <div class="text">{block.text}</div>
         </div>
     )
 }
@@ -149,7 +191,11 @@ const isUndefinedBlock = (tag: string) => {
      */
     (block.tag == "jp:addressed-to-person-group" ||
         block.tag == "invention-title" ||
-        block.tag =="jp:number-of-claim") && (
+        block.tag =="jp:number-of-claim" ||
+        block.tag == "jp:kind-of-application" ||
+        block.tag == "jp:exist-of-reference-doc" ||
+        block.tag == "jp:patent-law-section30" ||
+        block.tag == "jp:change-flag-invention-title") && (
         <div class="flex gap-2">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -164,11 +210,18 @@ const isUndefinedBlock = (tag: string) => {
 
 {
     /** tag ○, jpTag ○, text ×, blocks ○ */
-    (block.tag == "jp:indication-of-case-article") && (
+    (block.tag == "jp:indication-of-case-article" ||
+        block.tag == "jp:ipc-article" ||
+        block.tag == "jp:deposit-article" ||
+        block.tag == "jp:deposit" ||
+        block.tag == "jp:field-of-search-article" ||
+        block.tag == "jp:patent-reference-article" ||
+        block.tag == "jp:reference-books-article"
+    ) && (
         <>
             <div class="flex">
                 <span
-                    class={`jpTag indentLevel-${block.indentLevel}`}
+                    class={`jpTag indentLevel-${block.indentLevel} ${block.tag}`}
                     style="min-width: 11em;"
                 >
                     {block.jpTag}
@@ -187,7 +240,12 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:document-id" ||
         block.tag == "jp:drafting-date" ||
         block.tag == "jp:certification-column-article" ||
-        block.tag =="jp:image-group") &&
+        block.tag =="jp:image-group" ||
+        block.tag == "jp:final-decision-group" ||
+        block.tag == "jp:final-decision-memo" ||
+        block.tag == "jp:final-decision-bibliog" ||
+        block.tag == "jp:final-decision-body" ||
+        block.tag == "jp:patent-reference-group") &&
         block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
 }
 
@@ -203,7 +261,8 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 {
-    block.tag == "jp:reconsideration-before-appeal" && (
+    (block.tag == "jp:reconsideration-before-appeal" ||
+     block.tag == "jp:reference-books") && (
         <div>{block.text ?? ""}</div>
     )
 }
@@ -252,6 +311,32 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 {
+    /* tag o, jpTag o, text x, convertedText x, blocks x */
+    (block.tag == "jp:deposit-article" && block.blocks === undefined) && (
+        <div>
+            {block.jpTag}
+       </div>
+    )
+}
+
+{
+    /** tag ○, jpTag ○, text ×, blocks ○ */
+    block.tag == "jp:parent-application-article" && (
+        <div>
+            <div>
+                   {block.jpTag}
+            </div>
+            {block.text && (
+                <div>{block.text}</div>
+            )}
+            {block.blocks?.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </div>
+    )
+}
+
+{
     checker.isImage(block) && (
         <Figure block={block} sizeTag="large" />
     )
@@ -268,7 +353,14 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 <style>
-    .application-item :global(.indentLevel-2) {
+    .indentLevel-1 {
+        text-indent: 1em;
+    }
+    .indentLevel-2 {
         text-indent: 2em;
+    }
+    .jp\:deposit {
+        margin-top: 1em;
+        margin-bottom: 1em;
     }
 </style>

@@ -41,6 +41,10 @@ const isUndefinedBlock = (tag: string) => {
         "jp:article",
         "jp:parent-application-article",
         "jp:date",
+        "jp:original-language-of-name",
+        "jp:country",
+        "jp:priority-claims",
+        "jp:priority-claim",
     ];
     const flag = defined.includes(tag);
     return !flag;
@@ -68,13 +72,14 @@ const isUndefinedBlock = (tag: string) => {
     /** jpTag ○, convertedText 〇
      */
     (block.tag == "jp:document-code" ||
-        block.tag == "jp:doc-number" ||
+        (block.tag == "jp:doc-number" && block.convertedText) ||
         block.tag == "jp:account" ||
         block.tag == "jp:fee" ||
         block.tag == "jp:document-name" ||
         block.tag == "jp:application-reference" ||
         block.tag == "jp:article" ||
-        block.tag == "jp:date") && (
+        block.tag == "jp:date" ||
+        block.tag == "jp:country") && (
         <div class="application-item" style="display: flex;">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -97,7 +102,9 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:dispatch-number" ||
         block.tag == "jp:ipc" ||
         block.tag == "jp:text" ||
-        block.tag == "jp:general-power-of-attorney-id") && (
+        block.tag == "jp:general-power-of-attorney-id" ||
+        block.tag == "jp:original-language-of-name" ||
+        (block.tag == "jp:doc-number" && block.text)) && (
         <div class="application-item" style="display: flex;">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -120,7 +127,8 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:charge-article" ||
         block.tag == "jp:submission-object-list-article" ||
         block.tag == "jp:earlier-app" ||
-        block.tag == "jp:parent-application-article") && (
+        block.tag == "jp:parent-application-article" ||
+        block.tag == "jp:priority-claim") && (
         <>
             <div class="application-item" style="display: flex;">
                 <span
@@ -144,7 +152,8 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:inventors" ||
         block.tag == "jp:attorney-change-article" ||
         block.tag == "jp:special-mention-matter-article" ||
-        block.tag == "jp:declaration-priority-ear-app") &&
+        block.tag == "jp:declaration-priority-ear-app" ||
+        block.tag == "jp:priority-claims") &&
         block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
 }
 
