@@ -17,13 +17,17 @@ const { block } = Astro.props as {
             <div class={`jpTag indentLevel-${block.indentLevel}`}>
                 {block.jpTag}
             </div>
-            {concatBlocks(block.blocks).map((group) => (
-                <div>
-                    {group.map((b) => (
-                        <Inline block={b} />
-                    ))}
-                </div>
-            ))}
+            {
+                /** 空テキストのparagraphがある場合 blocks === undefined なのでこれをスキップする */
+                block.blocks &&
+                    concatBlocks(block.blocks).map((group) => (
+                        <div>
+                            {group.map((b) => (
+                                <Inline block={b} />
+                            ))}
+                        </div>
+                    ))
+            }
         </div>
     )
 }
