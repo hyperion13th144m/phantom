@@ -67,7 +67,8 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 {
-    (block.tag == "jp:conclusion-part-article" ||
+    /** conclusion-part-article, drafting-body は空(blocks無し)の場合がある */
+    ((block.tag == "jp:conclusion-part-article" && block.blocks) ||
         (block.tag == "jp:drafting-body" && block.blocks)) && (
         <div class="my-6">
             <div class={`jpTag indentLevel-${block.indentLevel}`}>
