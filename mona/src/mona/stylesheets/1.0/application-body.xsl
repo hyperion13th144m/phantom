@@ -168,7 +168,14 @@
                 <xsl:value-of select="@ex-num" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'【実施例】'" />
+                <xsl:choose>
+                    <xsl:when test="@ex-num">
+                        <xsl:value-of select="'【実施例' || f:to-fullwidth-digit(@ex-num) || '】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【実施例】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
             <xsl:apply-templates select="p" />
             <xsl:element name="indentLevel">1</xsl:element>
@@ -183,7 +190,14 @@
                 <xsl:value-of select="@mode-num" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'【実施例' || f:to-fullwidth-digit(@mode-num) || '】'" />
+                <xsl:choose>
+                    <xsl:when test="@mode-num">
+                        <xsl:value-of select="'【実施例' || f:to-fullwidth-digit(@mode-num) || '】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【実施例】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
             <xsl:apply-templates select="p" />
             <xsl:element name="indentLevel">1</xsl:element>
