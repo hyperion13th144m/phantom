@@ -39,6 +39,7 @@ const isUndefinedBlock = (tag: string) => {
         "jp:image-group",
         "image",
         "jp:final-decision-group",
+        "jp:final-decision-group-rn",
         "jp:kind-of-application",
         "jp:exist-of-reference-doc",
         "jp:patent-law-section30",
@@ -51,8 +52,11 @@ const isUndefinedBlock = (tag: string) => {
         "jp:depository-number",
         "jp:parent-application-article",
         "jp:final-decision-memo",
+        "jp:final-decision-memo-rn",
         "jp:final-decision-bibliog",
+        "jp:final-decision-bibliog-rn",
         "jp:final-decision-body",
+        "jp:final-decision-body-rn",
         "jp:field-of-search-article",
         "jp:field-of-search",
         "jp:patent-reference-article",
@@ -242,9 +246,13 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:certification-column-article" ||
         block.tag =="jp:image-group" ||
         block.tag == "jp:final-decision-group" ||
+        block.tag == "jp:final-decision-group-rn" ||
         block.tag == "jp:final-decision-memo" ||
+        block.tag == "jp:final-decision-memo-rn" ||
         block.tag == "jp:final-decision-bibliog" ||
+        block.tag == "jp:final-decision-bibliog-rn" ||
         block.tag == "jp:final-decision-body" ||
+        block.tag == "jp:final-decision-body-rn" ||
         block.tag == "jp:patent-reference-group") &&
         block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
 }
