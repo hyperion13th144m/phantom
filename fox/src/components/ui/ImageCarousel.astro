@@ -1,5 +1,6 @@
 ---
 import type { ImagesOfIPDocument } from "~/interfaces/document";
+import { getBaseUrlPath } from "~/lib/path";
 
 const {
     images,
@@ -19,6 +20,9 @@ const {
 
 // uid を確実にユニーク化（Node 18+ / Astro なら crypto.randomUUID() が普通に使えます）
 const uid = crypto.randomUUID();
+const baseUrlPath = Astro.params.docId
+    ? getBaseUrlPath(Astro.params.docId)
+    : "";
 ---
 
 <div id={`ic-${uid}`} class="w-full" data-ic-root data-loop={loop ? "1" : "0"}>
@@ -35,7 +39,7 @@ const uid = crypto.randomUUID();
                         aria-label={`Go to image ${i + 1}`}
                     >
                         <img
-                            src={img.filename}
+                            src={baseUrlPath + "/" + img.filename}
                             alt={img.description ?? `thumbnail ${i + 1}`}
                             loading="lazy"
                             decoding="async"
@@ -55,7 +59,7 @@ const uid = crypto.randomUUID();
             <!-- 画像 -->
             <img
                 data-ic-main-img
-                src={images[initialIndex].filename}
+                src={baseUrlPath + "/" + images[initialIndex].filename}
                 alt={images[initialIndex].description ?? `image 1`}
                 decoding="async"
                 fetchpriority="high"
@@ -131,7 +135,7 @@ const uid = crypto.randomUUID();
     </figure>
 </div>
 
-<script type="module" define:vars={{ uid, images, initialIndex }}>
+<script type="module" define:vars={{ uid, images, initialIndex, baseUrlPath }}>
     const root = document.getElementById(`ic-${uid}`);
     if (!root) throw new Error("ImageCarousel root not found");
 
@@ -193,7 +197,7 @@ const uid = crypto.randomUUID();
 
     function render() {
         const img = images[index];
-        mainImg.src = img.filename;
+        mainImg.src = baseUrlPath + "/" + img.filename;
         mainImg.alt = img.description ?? `image ${index + 1}`;
 
         indicator.textContent = `${index + 1} / ${images.length}`;

@@ -4,13 +4,21 @@
     "version": "0.0.1",
     "scripts": {
         "dev": "astro dev --host 0.0.0.0",
-        "build": "astro build",
+        "build": "yarn run build:an && yarn run build:ap && yarn run build:in && yarn run build:fr && astro build",
         "preview": "astro preview --host 0.0.0.0",
-        "astro": "astro"
+        "astro": "astro",
+        "build:an": "tsx ./src/scripts/build-application-number-index.ts",
+        "build:ap": "tsx ./src/scripts/build-applicant-index.ts",
+        "build:in": "tsx ./src/scripts/build-inventor-index.ts",
+        "build:fr": "tsx ./src/scripts/build-file-reference-id-index.ts"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.1.18",
         "astro": "^5.16.6",
         "tailwindcss": "^4.1.18"
+    },
+    "devDependencies": {
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
     }
 }

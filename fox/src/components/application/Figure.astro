@@ -1,6 +1,5 @@
 ---
 // 特許出願書類の図を表示するためのコンポーネント
-
 import type {
     ChemistryBlock,
     FigureBlock,
@@ -8,6 +7,7 @@ import type {
     MathsBlock,
     TablesBlock,
 } from "~/interfaces/text-blocks-root";
+import { getBaseUrlPath } from "~/lib/path";
 interface Props {
     sizeTag?: "thumbnail" | "middle" | "large";
     block: FigureBlock | TablesBlock | MathsBlock | ChemistryBlock | ImageBlock;
@@ -23,6 +23,9 @@ const cls =
             : block.tag === "chemistry"
               ? "chemistry"
               : "image";
+const baseUrlPath = Astro.params.docId
+    ? getBaseUrlPath(Astro.params.docId)
+    : "";
 ---
 
 <div class={cls}>
@@ -32,7 +35,7 @@ const cls =
             .filter((image) => image.sizeTag === sizeTag)
             .map((image) => (
                 <img
-                    src={image.src}
+                    src={baseUrlPath + "/" + image.src}
                     alt={"alt" in block ? (block.alt ?? "") : ""}
                 />
             ))

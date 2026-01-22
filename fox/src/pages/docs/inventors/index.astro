@@ -1,18 +1,22 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
+import type { InventorIndexEntry } from "~/interfaces/index/inventor-index";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
-import { getIPDocument } from "~/lib/getIPDocument";
+import _inventorIndex from "../../../../public/content/_indexes/inventor-index.json";
 
-const inventors = new Set<string>();
-const docIdList = await getDocIds();
-for (const p of docIdList) {
-    const ipDocument = await getIPDocument(p.params.docId);
-    ipDocument.inventors.forEach((inventor) => {
-        inventors.add(inventor);
-    });
-}
-const sortedInventors = Array.from(inventors).sort();
+const inventorIndex: Record<string, InventorIndexEntry> = _inventorIndex;
+
+const groupedInventors = Object.groupBy(
+    Object.keys(inventorIndex).map((inv) => ({
+        slug: inv,
+        name: inventorIndex[inv].name,
+        address: inventorIndex[inv].address,
+    })),
+    (item) => (item.address === "" ? "unknown address" : item.address),
+);
+const sortedKeys = Object.keys(groupedInventors).sort((a, b) =>
+    a.localeCompare(b),
+);
 ---
 
 <Layout title="発明者の一覧">
@@ -26,20 +30,28 @@ const sortedInventors = Array.from(inventors).sort();
         />
 
         <section>
-            <ul class="list-disc list-inside">
-                {
-                    sortedInventors.map((inventor) => (
-                        <li>
-                            <a
-                                href={`/docs/inventors/${inventor}`}
-                                class="text-blue-600 hover:underline"
-                            >
-                                {inventor}
-                            </a>
-                        </li>
-                    ))
-                }
-            </ul>
+            <h1 class="text-xl font-bold">発明者の一覧</h1>
+            {
+                sortedKeys.map((address) => (
+                    <div class="mt-6">
+                        <h2 class="text-gray-600 mb-2">
+                            {address === "unknown address"
+                                ? "住所不明"
+                                : address}
+                        </h2>
+                        <div class="pl-4 flex flex-col gap-2">
+                            {groupedInventors[address]?.map((inventor) => (
+                                <a
+                                    href={`/docs/inventors/${inventor.slug}`}
+                                    class="text-blue-600 hover:underline"
+                                >
+                                    {inventor.name}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                ))
+            }
         </section>
     </main>
 </Layout>

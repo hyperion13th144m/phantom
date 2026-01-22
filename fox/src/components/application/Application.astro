@@ -148,6 +148,7 @@ const foreignDrawings = ipDocument.textBlocksRoot
                     <div class="sticky top-32 bg-white">
                         <Card title="図面一覧">
                             <ImageCarousel
+                                docId={ipDocument.docId}
                                 images={images}
                                 thumbnails={thumbnails}
                                 heightClass="h-[640px]"

@@ -2,15 +2,13 @@
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
 import type { IPDocument } from "~/interfaces/document";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
-import { getIPDocument } from "~/lib/getIPDocument";
+import type { ApplicationNumberIndexEntry } from "~/interfaces/index/application-number-index";
+import _applicationNumberIndex from "../../../../public/content/_indexes/application-number-index.json";
 
-const docIdList = await getDocIds();
-
-// 全ての文書を取得
-const ipDocuments = await Promise.all(
-    docIdList.map(async (p) => await getIPDocument(p.params.docId)),
-);
+const applicationNumberIndex: Record<
+    string,
+    ApplicationNumberIndexEntry
+> = _applicationNumberIndex;
 
 // 出願番号で2段階グループ化
 // 1段階目=yearPart, 2段階目=applicationNumber.toString()
@@ -19,34 +17,26 @@ const groupedByYearAndAppNumber: Record<
     Record<string, IPDocument[]>
 > = {};
 
-ipDocuments
-    .filter((ipDocument) => ipDocument.applicationNumber != null)
-    .forEach((ipDocument) => {
-        const yearPart = ipDocument.applicationNumber!.yearPart ?? "出願年不明";
-        const appNumberStr = ipDocument.applicationNumber!.toString();
-
-        if (!groupedByYearAndAppNumber[yearPart]) {
-            groupedByYearAndAppNumber[yearPart] = {};
-        }
-        if (!groupedByYearAndAppNumber[yearPart][appNumberStr]) {
-            groupedByYearAndAppNumber[yearPart][appNumberStr] = [];
-        }
-        groupedByYearAndAppNumber[yearPart][appNumberStr].push(ipDocument);
-    });
-
-const indecies = Object.keys(groupedByYearAndAppNumber).sort();
-
-// 出願番号に紐付く整理番号を取得する関数
-// 出願番号に複数の文書が紐付く場合がある。
-// 整整理番が空の場合を除去し、最初の文書の整理番号を返す。
-const getRefNumber = (ipDocuments: IPDocument[]) => {
-    const refNumber =
-        ipDocuments
-            .map((ipDocument) => ipDocument.fileReferenceId)
-            .filter((refNumber) => refNumber != null)
-            .at(0) ?? "";
-    return refNumber ? `(${refNumber})` : "";
-};
+const appNumbers = Object.keys(applicationNumberIndex).map((slug) => (
+    {
+        slug: slug,
+        applicationNumberString:
+            applicationNumberIndex[slug].applicationNumberString,
+        yearPart: applicationNumberIndex[slug].yearPart,
+        numOfDocs: applicationNumberIndex[slug].documents.length,
+        fileReferenceId: applicationNumberIndex[slug].documents
+            .map(doc => doc.fileReferenceId)
+            .filter(ref => ref != null)
+            .at(0) ?? "",
+    }
+));
+const groupedAppNumbers = appNumbers.reduce((acc, appNum) => {
+    if (!acc[appNum.yearPart]) {
+        acc[appNum.yearPart] = [];
+    }
+    acc[appNum.yearPart].push(appNum);
+    return acc;
+}, {} as Record<string, typeof appNumbers>);
 ---
 
 <Layout title="出願番号の一覧">
@@ -62,26 +52,23 @@ const getRefNumber = (ipDocuments: IPDocument[]) => {
         <section>
             <h1 class="text-2xl font-bold">出願番号の一覧</h1>
             <span class="text-sm text-gray-600">
-                総数: {ipDocuments.length} 件
+                総数: {appNumbers.length} 件
             </span>
             {
-                indecies.map((yearPart) => (
+                Object.keys(groupedAppNumbers).map((yearPart) => (
                     <h2>{yearPart}年</h2>
                     <ul class="pl-[2em] list-disc list-inside">
-                        {Object.entries(
-                            groupedByYearAndAppNumber[yearPart]
-                        ).map(([appNumber, ipDocs]) => (
+                        {groupedAppNumbers[yearPart].map((appNumber) => (
                             <li>
                                 <a
-                                    href={`/docs/applicationNumbers/${ipDocs[0].applicationNumber.slug}`}
+                                    href={`/docs/applicationNumbers/${appNumber.slug}`}
                                     class="text-blue-600 hover:underline"
                                 >
-                                    {appNumber}
-                                    {getRefNumber(ipDocs)}
+                                    {appNumber.applicationNumberString} {appNumber.fileReferenceId && `(${appNumber.fileReferenceId})`}  
                                 </a>
-                                {ipDocs.length > 1 && (
+                                {appNumber.numOfDocs > 1 && (
                                     <span class="text-gray-500 text-sm">
-                                        (書類数: {ipDocs.length} 件)
+                                        (書類数: {appNumber.numOfDocs} 件)
                                     </span>
                                 )}
                             </li>

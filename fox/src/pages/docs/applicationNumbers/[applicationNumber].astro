@@ -1,50 +1,22 @@
 ---
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
-import type { IPDocument } from "~/interfaces/document";
+import type { ApplicationNumberIndexEntry } from "~/interfaces/index/application-number-index";
 import Layout from "~/layouts/Layout.astro";
-import { getDocIds } from "~/lib/getDocPaths";
-import { getIPDocument } from "~/lib/getIPDocument";
+import _applicationNumberIndex from "../../../../public/content/_indexes/application-number-index.json";
 
 export async function getStaticPaths() {
-    const appNumberProps: Record<string, IPDocument[]> = {};
-    const docIdList = await getDocIds();
-    for (const p of docIdList) {
-        const ipDocument = await getIPDocument(p.params.docId);
-        if (ipDocument.applicationNumber == null) {
-            continue;
-        }
-        if (!appNumberProps[ipDocument.applicationNumber.slug]) {
-            appNumberProps[ipDocument.applicationNumber.slug] = [];
-        }
-        appNumberProps[ipDocument.applicationNumber.slug].push(ipDocument);
-    }
-    return Object.entries(appNumberProps).map(
-        ([applicationNumber, ipDocuments]) => ({
-            params: { applicationNumber },
-            props: { ipDocuments },
-        }),
-    );
+    return Object.keys(_applicationNumberIndex).map((applicationNumber) => ({
+        params: { applicationNumber },
+    }));
 }
 
 const { applicationNumber } = Astro.params;
-const { ipDocuments } = Astro.props;
-const docs = ipDocuments
-    .sort((a, b) => {
-        const aDate = a.submissionDate ?? a.dispatchDate;
-        const bDate = b.submissionDate ?? b.dispatchDate;
-        if (aDate == null || bDate == null) {
-            return 0;
-        }
-        return aDate.date > bDate.date ? 1 : -1;
-    })
-    .sort((a, b) => {
-        return a.documentCode.localeCompare(b.documentCode);
-    });
-const an = docs[0].applicationNumber.toString();
-const dateStr = (ipDocument: IPDocument) => {
-    const date = ipDocument.submissionDate ?? ipDocument.dispatchDate;
-    return date ? date.toString() : "";
-};
+const applicationNumberIndex = _applicationNumberIndex as Record<
+    string,
+    ApplicationNumberIndexEntry
+>;
+const applicationNumberEntry = applicationNumberIndex[applicationNumber];
+const an = applicationNumberEntry.applicationNumberString;
 ---
 
 <Layout title={`出願番号別文書一覧 | ${an}`}>
@@ -67,17 +39,23 @@ const dateStr = (ipDocument: IPDocument) => {
         <section>
             <h1 class="text-2xl font-bold">{an} の出願書類一覧</h1>
             <span class="text-sm text-gray-600">
-                総数: {docs.length} 件
+                総数: {applicationNumberEntry.documents.length} 件
             </span>
             {
-                docs.map((ipDocument) => (
+                applicationNumberEntry.documents.map((entry) => (
                     <div class="flex gap-4 items-center py-1">
-                        <div class="min-w-[10em]">{dateStr(ipDocument)}</div>
+                        <div class="min-w-[10em]">
+                            {entry.submissionDate !== ""
+                                ? entry.submissionDate
+                                : entry.dispatchDate !== ""
+                                  ? entry.dispatchDate
+                                  : "日付不明"}
+                        </div>
                         <a
-                            href={`/docs/${ipDocument.docId}`}
+                            href={`/docs/${entry.docId}`}
                             class="text-blue-600 hover:underline"
                         >
-                            {ipDocument.documentName}
+                            {entry.documentName}
                         </a>
                     </div>
                 ))
