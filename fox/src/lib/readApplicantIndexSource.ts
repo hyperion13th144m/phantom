@@ -6,11 +6,11 @@ import type { DocumentJson } from "~/interfaces/document";
 import { type ApplicantIndexEntry } from "~/interfaces/index/applicant-index";
 import type { Block } from "~/interfaces/text-blocks-root";
 import { ApplicationNumber } from "~/lib/doc-number";
-import { id2dir } from "~/lib/docId";
+import { id2dir } from "~/lib/path";
 import { generateId } from "./generate-id";
 
 
-export async function readApplicantIndexSource(docId: string): Promise<Record<string, ApplicantIndexEntry>> {
+export async function readApplicantIndexSource(docId: string): Promise<Record<string, ApplicantIndexEntry> | null> {
     const contentRoot = path.join(process.cwd(), "public", "content", id2dir(docId));
     const documentPath = path.resolve(contentRoot, "document.json");
     const raw = await fs.readFile(documentPath, "utf-8");
@@ -20,12 +20,16 @@ export async function readApplicantIndexSource(docId: string): Promise<Record<st
     const applicantNames = extractNamesFromTextBlocks(document.textBlocksRoot, "jp:applicant", "jp:name");
     const applicantIdNumbers = extractNamesFromTextBlocks(document.textBlocksRoot, "jp:applicant", "jp:registered-number");
     const applicantAddrs = extractNamesFromTextBlocks(document.textBlocksRoot, "jp:applicant", "jp:text");
+
+    if (applicantNames.length === 0 || document.applicationNumber === null) {
+        return null;
+    }
     const applicantSlugs = applicantNames.map((name, index) => {
         const addrOrId = applicantIdNumbers[index] || applicantAddrs[index] || "";
         return generateId(`${name} ${addrOrId}`.trim());
     });
 
-    const app = new ApplicationNumber(document.law, document.applicationNumber || "");
+    const app = new ApplicationNumber(document.law, document.applicationNumber);
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
 

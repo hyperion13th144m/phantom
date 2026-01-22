@@ -14,6 +14,9 @@ async function main() {
         const docId = p.params.docId;
         const applicantEntries = await readApplicantIndexSource(docId);
 
+        if (applicantEntries === null) {
+            continue;
+        }
 
         for (const slug of Object.keys(applicantEntries)) {
             if (index[slug])

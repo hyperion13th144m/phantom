@@ -6,11 +6,11 @@ import type { DocumentJson } from "~/interfaces/document";
 import { type InventorIndexEntry } from "~/interfaces/index/inventor-index";
 import type { Block } from "~/interfaces/text-blocks-root";
 import { ApplicationNumber } from "~/lib/doc-number";
-import { id2dir } from "~/lib/docId";
+import { id2dir } from "~/lib/path";
 import { generateId } from "./generate-id";
 
 
-export async function readInventorIndexSource(docId: string): Promise<Record<string, InventorIndexEntry>> {
+export async function readInventorIndexSource(docId: string): Promise<Record<string, InventorIndexEntry> | null> {
     const contentRoot = path.join(process.cwd(), "public", "content", id2dir(docId));
     const documentPath = path.resolve(contentRoot, "document.json");
     const raw = await fs.readFile(documentPath, "utf-8");
@@ -19,12 +19,17 @@ export async function readInventorIndexSource(docId: string): Promise<Record<str
     // inventorsだけ抽出（重い searchNested は使わない）
     const inventorNames = extractNamesFromTextBlocks(document.textBlocksRoot, "jp:inventor", "jp:name");
     const inventorAddrs = extractNamesFromTextBlocks(document.textBlocksRoot, "jp:inventor", "jp:text");
+
+    // 発明者がいない場合はnullを返す
+    if (inventorNames.length === 0 || document.applicationNumber === null) {
+        return null
+    }
     const inventorSlugs = inventorNames.map((name, index) => {
         const addr = inventorAddrs[index] || "";
         return generateId(`${name} ${addr}`.trim());
     });
 
-    const app = new ApplicationNumber(document.law, document.applicationNumber || "");
+    const app = new ApplicationNumber(document.law, document.applicationNumber);
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
 

@@ -78,9 +78,11 @@
     <!-- 整理番号 -->
     <xsl:template
         match="jp:file-reference-id">
-        <xsl:element name="fileReferenceId">
-            <xsl:value-of select="." />
-        </xsl:element>
+        <xsl:if test="normalize-space(.) != ''">
+            <xsl:element name="fileReferenceId">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- 提出日(出願日) -->

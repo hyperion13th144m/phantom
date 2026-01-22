@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "-o -l debug /src_dir/ reference/A1131 {A101,A102,A1131,A130}"
+            "args": "-o -l debug /src_dir/ reference/A153 A153"
         },
         {
             "name": "multi",
@@ -18,7 +18,7 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": " -m 2 -l debug /src_dir/ /data_dir {A101,A102,A1131,A130,A163,A153}"
+            "args": "-m 1 -l debug /src_dir/ /data_dir {A101,A102,A1131,A130,A163,A153}"
         }
     ]
 }

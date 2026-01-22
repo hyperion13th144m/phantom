@@ -15,6 +15,9 @@ async function main() {
         const docId = p.params.docId;
         const inventorEntries = await readInventorIndexSource(docId);
 
+        if (inventorEntries === null) {
+            continue;
+        }
 
         for (const slug of Object.keys(inventorEntries)) {
             if (index[slug])
