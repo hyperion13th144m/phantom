@@ -12,7 +12,7 @@ const { block } = Astro.props as {
     // 発明の名称
     checker.isInventionTitle(block) && (
         <div class={block.tag} style="display: flex;">
-            <div class={`jpTag indentLevel-${block.indentLevel}`}>
+            <div class={`min-w-[7em] jpTag indentLevel-${block.indentLevel}`}>
                 {block.jpTag}
             </div>
             <div class="text">{block.text}</div>
