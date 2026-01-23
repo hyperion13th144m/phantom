@@ -1503,9 +1503,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'　新規性喪失の例外'" />
+                <xsl:value-of select="'新規性喪失の例外'" />
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
             </xsl:element>
+            <xsl:element name="indentLevel">1</xsl:element>
             <xsl:apply-templates select="jp:application-section" />
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
         </xsl:element>
@@ -1529,6 +1530,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="convertedText">
                 <xsl:value-of select="'特許法第３０条' || . || 'の規定の適用'" />
             </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -1541,7 +1543,15 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:apply-templates select="p" />
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'内容'" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:for-each select="p">
+                    <xsl:value-of select="normalize-space(.)" />
+                </xsl:for-each>
+            </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
         </xsl:element>
     </xsl:template>
 

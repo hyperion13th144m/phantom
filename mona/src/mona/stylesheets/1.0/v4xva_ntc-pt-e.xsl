@@ -1351,9 +1351,10 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'　新規性喪失の例外'" />
+                <xsl:value-of select="'新規性喪失の例外'" />
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
             </xsl:element>
+            <xsl:element name="indentLevel">1</xsl:element>
             <xsl:apply-templates select="jp:application-section" />
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
         </xsl:element>
@@ -1418,6 +1419,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
             <xsl:element name="convertedText">
                 <xsl:choose>
                     <xsl:when test="$kind-of-law = 'patent'">
@@ -1444,11 +1446,11 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 <xsl:value-of select="'内容'" />
             </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
+                <xsl:for-each select="p">
+                    <xsl:value-of select="normalize-space(.)" />
+                </xsl:for-each>
             </xsl:element>
-            <xsl:for-each select="p">
-                <xsl:apply-templates select="." />
-            </xsl:for-each>
+            <xsl:element name="indentLevel">2</xsl:element>
         </xsl:element>
     </xsl:template>
 

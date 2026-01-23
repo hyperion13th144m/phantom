@@ -44,6 +44,7 @@ const isUndefinedBlock = (tag: string) => {
         "jp:exist-of-reference-doc",
         "jp:patent-law-section30",
         "jp:change-flag-invention-title",
+        "jp:fi-article",
         "jp:ipc-article",
         "jp:ipc",
         "jp:deposit-article",
@@ -63,6 +64,10 @@ const isUndefinedBlock = (tag: string) => {
         "jp:patent-reference-group",
         "jp:reference-books-article",
         "jp:reference-books",
+        "jp:exceptions-to-lack-of-novelty-art",
+        "jp:exceptions-to-lack-of-novelty-grp",
+        "jp:exceptions-to-lack-of-novelty",
+        "jp:application-section"
     ];
     const flag = defined.includes(tag);
     return !flag;
@@ -116,7 +121,8 @@ const isUndefinedBlock = (tag: string) => {
     (block.tag == "jp:doc-number" || block.tag == "jp:date" ||
         block.tag == "jp:depository-ins-code" ||
         block.tag == "jp:depository-number" ||
-        block.tag == "jp:patent-reference-group"
+        block.tag == "jp:patent-reference-group" ||
+        block.tag == "jp:application-section"
     ) && (
         <div class="flex gap-2">
             <div
@@ -199,7 +205,8 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:kind-of-application" ||
         block.tag == "jp:exist-of-reference-doc" ||
         block.tag == "jp:patent-law-section30" ||
-        block.tag == "jp:change-flag-invention-title") && (
+        block.tag == "jp:change-flag-invention-title" ||
+        block.tag == "jp:exceptions-to-lack-of-novelty") && (
         <div class="flex gap-2">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -216,11 +223,14 @@ const isUndefinedBlock = (tag: string) => {
     /** tag ○, jpTag ○, text ×, blocks ○ */
     (block.tag == "jp:indication-of-case-article" ||
         block.tag == "jp:ipc-article" ||
-        block.tag == "jp:deposit-article" ||
+        block.tag == "jp:fi-article" ||
+        (block.tag == "jp:deposit-article" && block.blocks) ||
         block.tag == "jp:deposit" ||
         block.tag == "jp:field-of-search-article" ||
         block.tag == "jp:patent-reference-article" ||
-        block.tag == "jp:reference-books-article"
+        block.tag == "jp:reference-books-article" ||
+        block.tag == "jp:exceptions-to-lack-of-novelty-art" ||
+        block.tag == "jp:exceptions-to-lack-of-novelty-grp"
     ) && (
         <>
             <div class="flex">

@@ -45,6 +45,13 @@ const isUndefinedBlock = (tag: string) => {
         "jp:country",
         "jp:priority-claims",
         "jp:priority-claim",
+        "jp:proof-means",
+        "jp:citation",
+        "jp:dtext",
+        "jp:phone",
+        "jp:share",
+        "jp:share-rate",
+        "jp:law-of-industrial-regenerate",
     ];
     const flag = defined.includes(tag);
     return !flag;
@@ -79,7 +86,8 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:application-reference" ||
         block.tag == "jp:article" ||
         block.tag == "jp:date" ||
-        block.tag == "jp:country") && (
+        block.tag == "jp:country" ||
+        block.tag == "jp:application-section") && (
         <div class="application-item" style="display: flex;">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -104,7 +112,14 @@ const isUndefinedBlock = (tag: string) => {
         block.tag == "jp:text" ||
         block.tag == "jp:general-power-of-attorney-id" ||
         block.tag == "jp:original-language-of-name" ||
-        (block.tag == "jp:doc-number" && block.text)) && (
+        (block.tag == "jp:doc-number" && block.text) ||
+        block.tag == "jp:proof-means" ||
+        block.tag == "jp:citation" ||
+        block.tag == "jp:dtext" ||
+        block.tag == "jp:phone" ||
+        block.tag == "jp:share" ||
+        block.tag == "jp:share-rate" ||
+        block.tag == "jp:law-of-industrial-regenerate") && (
         <div class="application-item" style="display: flex;">
             <span
                 class={`jpTag indentLevel-${block.indentLevel}`}
@@ -168,7 +183,10 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 <style>
-    .application-item :global(.indentLevel-2) {
+    .indentLevel-2 {
         text-indent: 2em;
+    }
+    .indentLevel-3 {
+        text-indent: 3em;
     }
 </style>

@@ -1579,6 +1579,7 @@
          jp:registered-number 識別番号
          jp:addressed-to-person あて先
          jp:file-reference-id 整理番号
+         jp:share 持分
          jp:dtext その他 (のデフォルト(otherwise)を抽出)
          ==================================================================== -->
     <xsl:template
@@ -1587,7 +1588,7 @@
          jp:relation-attorney-special-matter | jp:contact | jp:fax | jp:phone |
          jp:legal-entity-property | jp:office | jp:office-in-japan | jp:trust-relation |
          jp:name | jp:kana | jp:text | jp:registered-number | 
-         jp:addressed-to-person | jp:file-reference-id | jp:dtext">
+         jp:addressed-to-person | jp:file-reference-id | jp:share | jp:dtext">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
@@ -1626,6 +1627,7 @@
         <item tag="registered-number" value="【識別番号】" indent-level="2" />
         <item tag="addressed-to-person" value="【あて先】" indent-level="0" />
         <item tag="file-reference-id" value="【整理番号】" indent-level="0" />
+        <item tag="share" value="【持分】" indent-level="2" />
         <item tag="dtext" value="【その他】" indent-level="0" />
     </xsl:variable>
 
