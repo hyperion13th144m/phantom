@@ -1,7 +1,7 @@
 ---
-import BlockRenderer from "~/components/application/ApplicationFormBlockRenderer.astro";
+import BlockRenderer from "~/components/document/pat-app-doc/ApplicationFormBlockRenderer.astro";
 import type { IPDocument } from "~/interfaces/document";
-import { checker } from "~/interfaces/text-blocks-root";
+import { commonTypeGuards } from "~/interfaces/text-blocks-root";
 
 const { ipDocument } = Astro.props as {
     ipDocument: IPDocument;
@@ -11,7 +11,7 @@ const title = ipDocument.documentName;
 
 // 各セクションのブロックを抽出
 const patResponse = ipDocument.textBlocksRoot
-    .filter((block) => checker.isPatResponse(block))
+    .filter((block) => commonTypeGuards.isPatResponse(block))
     .at(0);
 ---
 

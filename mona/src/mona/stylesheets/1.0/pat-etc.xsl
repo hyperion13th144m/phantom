@@ -21,7 +21,7 @@
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="textBlocksRoot">
-                <xsl:element name="tag">patEtc</xsl:element>
+                <xsl:element name="tag">pat-etc</xsl:element>
                 <!-- 上申書 -->
                 <xsl:apply-templates select="root/jp:pat-etc/jp:etcetera-a781" />
                 <!-- 早期審査に関する事情説明書 -->

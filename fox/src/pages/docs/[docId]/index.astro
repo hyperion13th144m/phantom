@@ -1,7 +1,7 @@
 ---
-import Application from "~/components/application/Application.astro";
-import NoticePatentExam from "~/components/application/NoticePatentExam.astro";
-import PatentResponse from "~/components/application/PatentResponse.astro";
+import NoticePatentExam from "~/components/document/notice-pat-exam/NoticePatentExam.astro";
+import PatAppDoc from "~/components/document/pat-app-doc/PatAppDoc.astro";
+import PatentResponse from "~/components/document/pat-rspns/PatentResponse.astro";
 import Layout from "~/layouts/Layout.astro";
 import { getDocIds } from "~/lib/getDocIds";
 import { getIPDocument } from "~/lib/getIPDocument";
@@ -17,7 +17,7 @@ const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documen
         {
             ["A163", "A1631", "A1632", "A1634"].includes(
                 ipDocument.documentCode,
-            ) && <Application ipDocument={ipDocument} />
+            ) && <PatAppDoc ipDocument={ipDocument} />
         }
         {
             ["A153", "A159"].includes(ipDocument.documentCode) && (

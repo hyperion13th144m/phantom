@@ -1,5 +1,64 @@
+import type { ParagraphBlock } from "./paragraph";
+
 /** text-blocks.json のトップレベル */
-export type TextBlocksRoot = Block[];
+export type TextBlocksRoot = DocumentBlock[];
+
+const documentTags = [
+    "pat-app-doc",
+    "description",
+    "claims",
+    "abstract",
+    "drawings",
+    "foreign-language-description",
+    "foreign-language-claims",
+    "foreign-language-abstract",
+    "foreign-language-drawings",
+    "pat-rspns",
+    "pat-amnd",
+    "pat-etc",
+    "notice-pat-exam",
+    "notice-pat-exam-rn",
+] as const;
+export type DocumentTag = typeof documentTags[number];
+export interface DocumentBlock {
+    tag: DocumentTag;
+    jpTag?: string;
+    indentLevel?: IndentLevelString;
+    text?: string;
+    blocks?: Block[];
+}
+interface PatAppDocBlock extends DocumentBlock {
+    tag: 'pat-app-doc';
+    blocks: Block[];
+}
+interface DefaultDocBlock extends DocumentBlock {
+    tag: 'description' | 'claims' | 'drawings';
+    jpTag: string;
+    indentLevel: IndentLevelString;
+    blocks: Block[];
+}
+export interface AbstractDocBlock extends DocumentBlock {
+    tag: 'abstract';
+    jpTag: string;
+    indentLevel: IndentLevelString;
+    text: string;
+}
+export const documentTypeGuards = {
+    isPatAppDoc: createTypeGuard<PatAppDocBlock, 'tag'>('tag', 'pat-app-doc'),
+    isDescription: createTypeGuard<DefaultDocBlock, 'tag'>('tag', 'description'),
+    isClaims: createTypeGuard<DefaultDocBlock, 'tag'>('tag', 'claims'),
+    isAbstract: createTypeGuard<AbstractDocBlock, 'tag'>('tag', 'abstract'),
+    isDrawings: createTypeGuard<DefaultDocBlock, 'tag'>('tag', 'drawings'),
+    isForeignDescription: createTypeGuard<DocumentBlock, 'tag'>('tag', 'foreign-language-description'),
+    isForeignClaims: createTypeGuard<DocumentBlock, 'tag'>('tag', 'foreign-language-claims'),
+    isForeignAbstract: createTypeGuard<DocumentBlock, 'tag'>('tag', 'foreign-language-abstract'),
+    isForeignDrawings: createTypeGuard<DocumentBlock, 'tag'>('tag', 'foreign-language-drawings'),
+    isPatResponse: createTypeGuard<DocumentBlock, 'tag'>('tag', 'pat-rspns'),
+    isPatAmendment: createTypeGuard<DocumentBlock, 'tag'>('tag', 'pat-amnd'),
+    isPatEtc: createTypeGuard<DocumentBlock, 'tag'>('tag', 'pat-etc'),
+    isNoticePatExam: createTypeGuard<DocumentBlock, 'tag'>('tag', 'notice-pat-exam'),
+    isNoticePatExamRn: createTypeGuard<DocumentBlock, 'tag'>('tag', 'notice-pat-exam-rn'),
+}
 
 /** -----------------------------
  *  共通ユーティリティ
@@ -11,43 +70,19 @@ export type IndentLevelString = string;
 /** "0001" / "1" など、数字っぽいが文字列 */
 export type NumberString = string;
 
-export interface ContainerBlock {
-    tag: string;
-    blocks: Block[];
-}
-
 /** 多くのブロックで共通する最小フィールド */
-export interface BaseBlock extends ContainerBlock {
-    jpTag: string;
-    indentLevel: IndentLevelString;
+export interface BaseBlock {
+    tag: string;
     blocks: Block[];
 }
 
 /** tag で判別する総称 Block（必要に応じて随時拡張してください） */
 export type Block =
     ApplicationFormBlock
-    | DescriptionBlock
-    | ClaimsBlock
-    | AbstractBlock
-    | DrawingsBlock
-    | ForeignDescriptionBlock
-    | ForeignClaimsBlock
-    | ForeignAbstractBlock
-    | ForeignDrawingsBlock
     | ApplicationFormItemBlock
     | InventionTitleBlock
-    | TechnicalFieldBlock
-    | BackgroundArtBlock
-    | CitationListBlock
-    | SummaryOfInventionBlock
-    | DisclosureBlock
+    | CommonDescriptionBlock
     | DescriptionOfDrawingsBlock
-    | DescriptionOfEmbodimentsBlock
-    | BestModeBlock
-    | IndustrialApplicabilityBlock
-    | SequenceListTextBlock
-    | ReferenceSignsListBlock
-    | ReferenceToDepositedBiologicalMaterialBlock
     | ParagraphBlock
     | ClaimBlock
     | ClaimTextBlock
@@ -61,11 +96,6 @@ export type Block =
     | PatcitBlock
     | PatentLiteratureBlock
     | NonPatentLiteratureBlock
-    | TechProblemBlock
-    | TechSolutionBlock
-    | AdvantageousEffectsBlock
-    | EmbodimentExampleBlock
-    | ModeForInventionBlock
     | PatResponseBlock
     | UnknownBlock;
 
@@ -78,103 +108,61 @@ export interface UnknownBlock extends BaseBlock {
 /** 既知 tag の集合（必要に応じて増やす） */
 export type KnownTag =
     | "applicationForm"
-    | "claims"
-    | "abstract"
-    | "drawings"
-    | "foreign-language-description"
-    | "foreign-language-claims"
-    | "foreign-language-abstract"
-    | "foreign-language-drawings"
-    | "description"
-    | "inventionTitle"
-    | "technicalField"
-    | "backgroundArt"
-    | "citationList"
-    | "patentLiterature"
-    | "nonPatentLiterature"
-    | "summaryOfInvention"
+    | "invention-title"
+    | "technical-field"
+    | "background-art"
+    | "citation-list"
+    | "patent-literature"
+    | "non-patent-literature"
+    | "summary-of-invention"
     | "disclosure"
-    | "techProblem"
-    | "techSolution"
-    | "advantageousEffects"
-    | "descriptionOfDrawings"
-    | "descriptionOfEmbodiments"
-    | "bestMode"
-    | "industrialApplicability"
-    | "referenceSignsList"
-    | "sequenceListText"
-    | "referenceToDepositedBiologicalMaterial"
+    | "tech-problem"
+    | "tech-solution"
+    | "advantageous-effects"
+    | "description-of-drawings"
+    | "description-of-embodiments"
+    | "best-mode"
+    | "industrial-applicability"
+    | "reference-signs-list"
+    | "sequence-list-text"
+    | "reference-to-deposited-biological-material"
     | "claim"
-    | "claimText"
+    | "claim-text"
     | "paragraph"
     | "text"
     | "sub"
     | "sup"
     | "figref"
     | "patcit"
-    | "embodimentExample"
-    | "modeForInvention"
+    | "embodiment-example"
+    | "mode-for-invention"
     | "figure"
     | "tables"
     | "maths"
     | "chemistry"
     | "image"
-    | "patRspns";
+    | "pat-rspns";
 
 /** -----------------------------
  *  再帰の中心：paragraph / text runs
  * ---------------------------- */
 
-export interface ParagraphBlock extends BaseBlock {
-    tag: "paragraph";
-    number?: NumberString;
-    blocks: Inline[];
+/** 文章の最小単位：text/sub/sup/underline */
+export type TextRun = TextBlock;
+export interface FigureBlock extends BaseBlock {
+    tag: "figure";
+    number: NumberString; // "1" / "2" ...
+    alt: string;
+    representative: boolean;
+    images: ImageSrcBlock[];
 }
 
-/** paragraph 内に出てくる inline 要素（text/sub/sup等） */
-export type Inline = TextRun | FigRefBlock | PatcitBlock | UnknownBlock;
-
-/** 文章の最小単位：text/sub/sup/underline */
-export type TextRun = TextBlock | SubBlock | SupBlock | UnderlineBlock;
 
 export interface TextBlock extends BaseBlock {
     tag: "text";
     text: string;
     isLastSentence: boolean;
 }
-
-export interface SubBlock extends BaseBlock {
-    tag: "sub";
-    text: string;
-    isLastSentence: boolean;
-}
-
-export interface SupBlock extends BaseBlock {
-    tag: "sup";
-    text: string;
-    isLastSentence: boolean;
-}
-
-export interface UnderlineBlock extends BaseBlock {
-    tag: "underline";
-    text: string;
-    isLastSentence: boolean;
-}
-
-/** 図参照（description-of-drawings などで出現） */
-export interface FigRefBlock extends BaseBlock {
-    tag: "figref";
-    number: NumberString; // "1" など
-    text: string;
-}
-
-/** 先行文献引用（citation-list 内で出現） */
-export interface PatcitBlock extends BaseBlock {
-    tag: "patcit" | "nplcit";
-    number: NumberString; // "1" / "2"
-    text: string;
-}
-
 /** -----------------------------
  *  特許出願願書系
  *  TODO: 願書はinterface とjsonがあってないかも
@@ -195,162 +183,94 @@ export interface ApplicationFormItemBlock extends BaseBlock {
  *  明細書系（description 配下）
  * ---------------------------- */
 
-export interface DescriptionBlock extends BaseBlock {
-    tag: "description";
-    blocks: Block[];
-}
-
-export interface InventionTitleBlock extends BaseBlock {
-    tag: "inventionTitle";
-    text: string;
-}
-
-/** 【技術分野】 */
-export interface TechnicalFieldBlock extends BaseBlock {
-    tag: "technicalField";
-    blocks: ParagraphBlock[];
-}
-
-/** 【背景技術】 */
-export interface BackgroundArtBlock extends BaseBlock {
-    tag: "backgroundArt";
-    blocks: ParagraphBlock[];
-}
-
-/** 【先行技術文献】 */
-export interface CitationListBlock extends BaseBlock {
-    tag: "citationList";
-    blocks: PatentLiteratureBlock[] | NonPatentLiteratureBlock[];
-}
-
 /** 【特許文献】 */
 export interface PatentLiteratureBlock extends BaseBlock {
-    tag: "patentLiterature";
+    tag: "patent-literature";
     blocks: ParagraphBlock[];
 }
 
 /** 【非特許文献】 */
 export interface NonPatentLiteratureBlock extends BaseBlock {
-    tag: "nonPatentLiterature";
+    tag: "non-patent-literature";
+    blocks: ParagraphBlock[];
+}
+/** 【図面の簡単な説明】 */
+export interface DescriptionOfDrawingsBlock extends BaseBlock {
+    tag: "description-of-drawings";
     blocks: ParagraphBlock[];
 }
 
-/** 【発明の概要】 */
-export interface SummaryOfInventionBlock extends BaseBlock {
-    tag: "summaryOfInvention";
-    blocks: (TechProblemBlock | TechSolutionBlock | AdvantageousEffectsBlock | UnknownBlock)[];
+
+export interface InventionTitleBlock extends BaseBlock {
+    tag: "invention-title";
+    jpTag: string;
+    indentLevel: IndentLevelString;
+    blocks: TextBlock[];
 }
 
-/** 【発明の開示】 */
-export interface DisclosureBlock extends BaseBlock {
-    tag: "disclosure";
-    blocks: (TechProblemBlock | TechSolutionBlock | AdvantageousEffectsBlock | UnknownBlock)[];
+const commonDescriptionTags = [
+    "technical-field",
+    "background-art",
+    "citation-list",
+    "patent-literature",
+    "non-patent-literature",
+    "summary-of-invention",
+    "disclosure",
+    "tech-problem",
+    "tech-solution",
+    "advantageous-effects",
+    "description-of-drawings",
+    "description-of-embodiments",
+    "best-mode",
+    "embodiment-example",
+    "mode-for-invention",
+    "industrial-applicability",
+    "sequence-list-text",
+    "reference-signs-list",
+    "reference-to-deposited-biological-material",
+] as const;
+export type CommonDescriptionTag = typeof commonDescriptionTags[number];
+export interface CommonDescriptionBlock extends BaseBlock {
+    tag: CommonDescriptionTag;
+    jpTag: string;
+    indentLevel: IndentLevelString;
+    blocks: ParagraphBlock[];
+}
+function isCommonDescriptionBlock(block: unknown): block is CommonDescriptionBlock {
+    if (
+        typeof block !== "object" ||
+        block === null ||
+        !("tag" in block) ||
+        typeof (block as any).tag !== "string"
+    ) {
+        return false;
+    }
+    return commonDescriptionTags.includes((block as any).tag);
 }
 
-/** 【発明が解決しようとする課題】 */
-export interface TechProblemBlock extends BaseBlock {
-    tag: "techProblem";
+// --- 各型専用の型ガードを生成 ---
+export const descriptionTypeGuards = {
+    isInventionTitle: createTypeGuard<InventionTitleBlock, 'tag'>('tag', 'invention-title'),
+    isCommonDescriptionBlock,
+}
+
+/** 【特許文献】 */
+export interface PatentLiteratureBlock extends BaseBlock {
+    tag: "patent-literature";
     blocks: ParagraphBlock[];
 }
 
-/** 【課題を発明する手段】 */
-export interface TechSolutionBlock extends BaseBlock {
-    tag: "techSolution";
-    blocks: ParagraphBlock[];
-}
-
-/** 【発明の効果】 */
-export interface AdvantageousEffectsBlock extends BaseBlock {
-    tag: "advantageousEffects";
+/** 【非特許文献】 */
+export interface NonPatentLiteratureBlock extends BaseBlock {
+    tag: "non-patent-literature";
     blocks: ParagraphBlock[];
 }
 
 /** 【図面の簡単な説明】 */
 export interface DescriptionOfDrawingsBlock extends BaseBlock {
-    tag: "descriptionOfDrawings";
+    tag: "description-of-drawings";
     blocks: ParagraphBlock[];
 }
-
-/** 【発明を実施するための形態】 */
-export interface DescriptionOfEmbodimentsBlock extends BaseBlock {
-    tag: "descriptionOfEmbodiments";
-    blocks: (ParagraphBlock | EmbodimentExampleBlock | ModeForInventionBlock | UnknownBlock)[];
-}
-
-/** 【発明を実施するための最良の形態】 */
-export interface BestModeBlock extends BaseBlock {
-    tag: "bestMode";
-    blocks: (ParagraphBlock | EmbodimentExampleBlock | ModeForInventionBlock | UnknownBlock)[];
-}
-
-/** 【実施例】 */
-export interface EmbodimentExampleBlock extends BaseBlock {
-    tag: "embodimentExample";
-    number: NumberString; // "1" / "2"
-    blocks: ParagraphBlock[];
-}
-
-/** 【実施例】 */
-export interface ModeForInventionBlock extends BaseBlock {
-    tag: "modeForInvention";
-    number: NumberString; // "1" / "2"
-    blocks: ParagraphBlock[];
-}
-
-/** 【産業上の利用可能性】 */
-export interface IndustrialApplicabilityBlock extends BaseBlock {
-    tag: "industrialApplicability";
-    blocks: ParagraphBlock[];
-}
-
-/** 【符号の説明】 */
-export interface ReferenceSignsListBlock extends BaseBlock {
-    tag: "referenceSignsList";
-    blocks: ParagraphBlock[];
-}
-
-/** 【配列表】 */
-export interface SequenceListTextBlock extends BaseBlock {
-    tag: "sequenceListText";
-    blocks: ParagraphBlock[];
-}
-
-/** 【受託番号】 */
-export interface ReferenceToDepositedBiologicalMaterialBlock extends BaseBlock {
-    tag: "referenceToDepositedBiologicalMaterial";
-    blocks: ParagraphBlock[];
-}
-
-/** -----------------------------
- *  特許請求の範囲（claims）
- * ---------------------------- */
-
-export interface ClaimsBlock extends BaseBlock {
-    tag: "claims";
-    blocks: ClaimBlock[];
-}
-
-export interface ClaimBlock extends BaseBlock {
-    tag: "claim";
-    number: NumberString; // "1" / "2" ...
-    isIndependent: boolean;
-    blocks: ClaimTextBlock[];
-}
-
-export interface ClaimTextBlock extends BaseBlock {
-    tag: "claimText";
-    blocks: TextRun[];
-}
-
-/** -----------------------------
- *  要約書（abstract）
- * ---------------------------- */
-
-export interface AbstractBlock extends BaseBlock {
-    tag: "abstract";
-    text: string;
-}
-
 /** -----------------------------
  *  図面（drawings）
  * ---------------------------- */
@@ -368,27 +288,11 @@ export interface FigureBlock extends BaseBlock {
     images: ImageSrcBlock[];
 }
 
-export interface TablesBlock extends BaseBlock {
-    tag: "tables";
-    number: NumberString; // "1" / "2" ...
-    images: ImageSrcBlock[];
-}
-
-export interface MathsBlock extends BaseBlock {
-    tag: "maths";
-    number: NumberString; // "1" / "2" ...
-    images: ImageSrcBlock[];
-}
-
-export interface ChemistryBlock extends BaseBlock {
-    tag: "chemistry";
-    number: NumberString; // "1" / "2" ...
-    images: ImageSrcBlock[];
-}
 
 export interface ImageBlock extends BaseBlock {
     tag: "image";
     number: NumberString; // "1" / "2" ...
+    indentLevel: IndentLevelString;
     images: ImageSrcBlock[];
 }
 
@@ -443,7 +347,7 @@ export interface PatResponseBlock extends BaseBlock {
 
 // --- 型ガードの汎用ファクトリー関数 ---
 // K は判定に使うキー、V はその値
-function createTypeGuard<T extends object, K extends keyof T>(
+export function createTypeGuard<T extends object, K extends keyof T>(
     key: K,
     value: T[K]
 ): (obj: unknown) => obj is T {
@@ -464,51 +368,15 @@ const isApplicationFormItemBlock = (obj: unknown): obj is ApplicationFormItemBlo
 };
 
 // --- 各型専用の型ガードを生成 ---
-export const checker = {
+export const commonTypeGuards = {
     isApplicationForm: createTypeGuard<ApplicationFormBlock, 'tag'>('tag', 'applicationForm'),
-    isClaims: createTypeGuard<ClaimsBlock, 'tag'>('tag', 'claims'),
-    isAbstract: createTypeGuard<AbstractBlock, 'tag'>('tag', 'abstract'),
-    isDrawings: createTypeGuard<DrawingsBlock, 'tag'>('tag', 'drawings'),
-    isForeignDescription: createTypeGuard<ForeignDescriptionBlock, 'tag'>('tag', 'foreign-language-description'),
-    isForeignClaims: createTypeGuard<ForeignClaimsBlock, 'tag'>('tag', 'foreign-language-claims'),
-    isForeignAbstract: createTypeGuard<ForeignAbstractBlock, 'tag'>('tag', 'foreign-language-abstract'),
-    isForeignDrawings: createTypeGuard<ForeignDrawingsBlock, 'tag'>('tag', 'foreign-language-drawings'),
-    isDescription: createTypeGuard<DescriptionBlock, 'tag'>('tag', 'description'),
-    isInventionTitle: createTypeGuard<InventionTitleBlock, 'tag'>('tag', 'inventionTitle'),
-    isTechnicalField: createTypeGuard<TechnicalFieldBlock, 'tag'>('tag', 'technicalField'),
-    isBackgroundArt: createTypeGuard<BackgroundArtBlock, 'tag'>('tag', 'backgroundArt'),
-    isCitationList: createTypeGuard<CitationListBlock, 'tag'>('tag', 'citationList'),
-    isPatentLiterature: createTypeGuard<PatentLiteratureBlock, 'tag'>('tag', 'patentLiterature'),
-    isNonPatentLiterature: createTypeGuard<NonPatentLiteratureBlock, 'tag'>('tag', 'nonPatentLiterature'),
-    isSummaryOfInvention: createTypeGuard<SummaryOfInventionBlock, 'tag'>('tag', 'summaryOfInvention'),
-    isTechProblem: createTypeGuard<TechProblemBlock, 'tag'>('tag', 'techProblem'),
-    isTechSolution: createTypeGuard<TechSolutionBlock, 'tag'>('tag', 'techSolution'),
-    isAdvantageousEffects: createTypeGuard<AdvantageousEffectsBlock, 'tag'>('tag', 'advantageousEffects'),
-    isDescriptionOfDrawings: createTypeGuard<DescriptionOfDrawingsBlock, 'tag'>('tag', 'descriptionOfDrawings'),
-    isDescriptionOfEmbodiments: createTypeGuard<DescriptionOfEmbodimentsBlock, 'tag'>('tag', 'descriptionOfEmbodiments'),
-    isBestMode: createTypeGuard<BestModeBlock, 'tag'>('tag', 'bestMode'),
-    isIndustrialApplicability: createTypeGuard<IndustrialApplicabilityBlock, 'tag'>('tag', 'industrialApplicability'),
-    isClaim: createTypeGuard<ClaimBlock, 'tag'>('tag', 'claim'),
-    isClaimText: createTypeGuard<ClaimTextBlock, 'tag'>('tag', 'claimText'),
+    isInventionTitle: createTypeGuard<InventionTitleBlock, 'tag'>('tag', 'invention-title'),
+    isPatentLiterature: createTypeGuard<PatentLiteratureBlock, 'tag'>('tag', 'patent-literature'),
+    isNonPatentLiterature: createTypeGuard<NonPatentLiteratureBlock, 'tag'>('tag', 'non-patent-literature'),
+    isDescriptionOfDrawings: createTypeGuard<DescriptionOfDrawingsBlock, 'tag'>('tag', 'description-of-drawings'),
     isFigure: createTypeGuard<FigureBlock, 'tag'>('tag', 'figure'),
-    isTables: createTypeGuard<TablesBlock, 'tag'>('tag', 'tables'),
-    isMaths: createTypeGuard<MathsBlock, 'tag'>('tag', 'maths'),
-    isChemistry: createTypeGuard<ChemistryBlock, 'tag'>('tag', 'chemistry'),
     isImage: createTypeGuard<ImageBlock, 'tag'>('tag', 'image'),
     isParagraph: createTypeGuard<ParagraphBlock, 'tag'>('tag', 'paragraph'),
     isTextBlock: createTypeGuard<TextBlock, 'tag'>('tag', 'text'),
-    isSubBlock: createTypeGuard<SubBlock, 'tag'>('tag', 'sub'),
-    isSupBlock: createTypeGuard<SupBlock, 'tag'>('tag', 'sup'),
-    isUnderlineBlock: createTypeGuard<UnderlineBlock, 'tag'>('tag', 'underline'),
-    isFigRefBlock: createTypeGuard<FigRefBlock, 'tag'>('tag', 'figref'),
-    isPatcitBlock: createTypeGuard<PatcitBlock, 'tag'>('tag', 'patcit'),
-    isNplcitBlock: createTypeGuard<PatcitBlock, 'tag'>('tag', 'nplcit'),
-    isEmbodimentExample: createTypeGuard<EmbodimentExampleBlock, 'tag'>('tag', 'embodimentExample'),
-    isModeForInvention: createTypeGuard<ModeForInventionBlock, 'tag'>('tag', 'modeForInvention'),
-    isSequenceListText: createTypeGuard<SequenceListTextBlock, 'tag'>('tag', 'sequenceListText'),
-    isReferenceSignsList: createTypeGuard<ReferenceSignsListBlock, 'tag'>('tag', 'referenceSignsList'),
-    isReferenceToDepositedBiologicalMaterial: createTypeGuard<ReferenceToDepositedBiologicalMaterialBlock, 'tag'>('tag', 'referenceToDepositedBiologicalMaterial'),
-    isDisclosure: createTypeGuard<DisclosureBlock, 'tag'>('tag', 'disclosure'),
-    isPatResponse: createTypeGuard<PatResponseBlock, 'tag'>('tag', 'patRspns'),
     isApplicationFormItemBlock,
 }

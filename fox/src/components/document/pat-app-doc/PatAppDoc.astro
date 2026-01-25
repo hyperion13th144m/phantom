@@ -2,15 +2,14 @@
 import Card from "~/components/ui/Card.astro";
 import ImageCarousel from "~/components/ui/ImageCarousel.astro";
 import type { IPDocument } from "~/interfaces/document";
-import { checker } from "~/interfaces/text-blocks-root";
-import KeywordHighlighter from "../ui/KeywordHighlighter.astro";
+import { documentTypeGuards as g } from "~/interfaces/text-blocks-root";
+import KeywordHighlighter from "../../ui/KeywordHighlighter.astro";
+import BibliographicData from "../common/BibliographicData.astro";
+//import ApplicationForm from "./ApplicationForm.astro";
 import Abstract from "./Abstract.astro";
-import ApplicationForm from "./ApplicationForm.astro";
-import BibliographicData from "./BibliographicData.astro";
 import Claims from "./Claims.astro";
 import Description from "./Description.astro";
 import Drawings from "./Drawings.astro";
-import ForeignLanguageDocumentBlock from "./ForeignLanguageDocument.astro";
 
 const { ipDocument } = Astro.props as {
     ipDocument: IPDocument;
@@ -31,34 +30,34 @@ const hasCarouselImages =
     images.length === thumbnails.length;
 
 // 各セクションのブロックを抽出
-const applicationForm = ipDocument.textBlocksRoot
-    .filter((block) => checker.isApplicationForm(block))
+const patAppDoc = ipDocument.textBlocksRoot
+    .filter((block) => g.isPatAppDoc(block))
     .at(0);
 const description = ipDocument.textBlocksRoot
-    .filter((block) => checker.isDescription(block))
+    .filter((block) => g.isDescription(block))
     .at(0);
 const claims = ipDocument.textBlocksRoot
-    .filter((block) => checker.isClaims(block))
+    .filter((block) => g.isClaims(block))
     .at(0);
 const abstract = ipDocument.textBlocksRoot
-    .filter((block) => checker.isAbstract(block))
+    .filter((block) => g.isAbstract(block))
     .at(0);
 const drawings = ipDocument.textBlocksRoot
-    .filter((block) => checker.isDrawings(block))
+    .filter((block) => g.isDrawings(block))
     .at(0);
 
 // 外国語書面出願
 const foreignDescription = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignDescription(block))
+    .filter((block) => g.isForeignDescription(block))
     .at(0);
 const foreignClaims = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignClaims(block))
+    .filter((block) => g.isForeignClaims(block))
     .at(0);
 const foreignAbstract = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignAbstract(block))
+    .filter((block) => g.isForeignAbstract(block))
     .at(0);
 const foreignDrawings = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignDrawings(block))
+    .filter((block) => g.isForeignDrawings(block))
     .at(0);
 ---
 
@@ -67,9 +66,9 @@ const foreignDrawings = ipDocument.textBlocksRoot
     <div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
         <div data-search-root class="">
             {
-                applicationForm && (
+                patAppDoc && (
                     <Card title={`${lawPrefix}願`}>
-                        <ApplicationForm applicationForm={applicationForm} />
+                        {/* <ApplicationForm applicationForm={patAppDoc} /> */}
                     </Card>
                 )
             }
@@ -90,7 +89,7 @@ const foreignDrawings = ipDocument.textBlocksRoot
             {
                 abstract && (
                     <Card title="要約書">
-                        <Abstract {...abstract} />
+                        <Abstract abstract={abstract} />
                     </Card>
                 )
             }
@@ -104,40 +103,44 @@ const foreignDrawings = ipDocument.textBlocksRoot
             {
                 foreignDescription && (
                     <Card title="外国語明細書">
+                        {/*
                         <ForeignLanguageDocumentBlock
                             block={foreignDescription}
                             sizeTag="large"
-                        />
+                        /> */}
                     </Card>
                 )
             }
             {
                 foreignClaims && (
                     <Card title={"外国語" + lawPrefix + "請求の範囲"}>
+                        {/*
                         <ForeignLanguageDocumentBlock
                             block={foreignClaims}
                             sizeTag="large"
-                        />
+                        /> */}
                     </Card>
                 )
             }
             {
                 foreignAbstract && (
                     <Card title="外国語要約書">
+                        {/*
                         <ForeignLanguageDocumentBlock
                             block={foreignAbstract}
                             sizeTag="large"
-                        />
+                        /> */}
                     </Card>
                 )
             }
             {
                 foreignDrawings && (
                     <Card title="外国語図面">
+                        {/*
                         <ForeignLanguageDocumentBlock
                             block={foreignDrawings}
                             sizeTag="large"
-                        />
+                        /> */}
                     </Card>
                 )
             }

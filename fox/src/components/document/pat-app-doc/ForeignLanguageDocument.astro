@@ -1,15 +1,15 @@
 ---
 // 外国語書面出願の各書類を表示するためのコンポーネント
+import Inline from "~/components/document/common/Inline.astro";
 import type {
     ForeignAbstractBlock,
     ForeignClaimsBlock,
     ForeignDescriptionBlock,
     ForeignDrawingsBlock,
 } from "~/interfaces/text-blocks-root";
-import { checker } from "~/interfaces/text-blocks-root";
+import { commonTypeGuards } from "~/interfaces/text-blocks-root";
 import { concatBlocks } from "~/lib/blocks";
 import { getBaseUrlPath } from "~/lib/path";
-import Inline from "./Inline.astro";
 
 interface Props {
     sizeTag?: "thumbnail" | "middle" | "large";
@@ -21,7 +21,7 @@ interface Props {
 }
 const { block, sizeTag = "middle" } = Astro.props as Props;
 const images = block.blocks
-    .filter((b) => checker.isImage(b))
+    .filter((b) => commonTypeGuards.isImage(b))
     .flatMap((b) => b.images)
     .filter((img) => img.sizeTag === sizeTag);
 const baseUrlPath = Astro.params.docId

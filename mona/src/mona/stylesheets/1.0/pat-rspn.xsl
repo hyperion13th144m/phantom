@@ -19,7 +19,7 @@
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="textBlocksRoot">
-                <xsl:element name="tag">patRspns</xsl:element>
+                <xsl:element name="tag">pat-rspns</xsl:element>
                 <xsl:apply-templates select="root/jp:pat-rspns" />
             </xsl:element>
         </xsl:element>

@@ -1,7 +1,7 @@
 ---
-import type { ClaimTextBlock } from "~/interfaces/text-blocks-root";
+import Inline from "~/components/document/common/Inline.astro";
+import type { ClaimTextBlock } from "~/interfaces/claims";
 import { concatBlocks } from "~/lib/blocks";
-import Inline from "./Inline.astro";
 
 const { claimText } = Astro.props as {
     claimText: ClaimTextBlock;

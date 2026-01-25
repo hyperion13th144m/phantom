@@ -1,5 +1,5 @@
 ---
-import { type Block, checker } from "~/interfaces/text-blocks-root";
+import { type Block, commonTypeGuards } from "~/interfaces/text-blocks-root";
 import { concatBlocks } from "~/lib/blocks";
 import Inline from "./Inline.astro";
 
@@ -12,7 +12,7 @@ const { block } = Astro.props as {
 
 {
     // 段落
-    checker.isParagraph(block) && (
+    commonTypeGuards.isParagraph(block) && (
         <div>
             <div class={`jpTag indentLevel-${block.indentLevel}`}>
                 {block.jpTag}

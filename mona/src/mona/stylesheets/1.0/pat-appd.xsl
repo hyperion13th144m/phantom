@@ -17,7 +17,7 @@
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="textBlocksRoot">
-                <xsl:element name="tag">applicationForm</xsl:element>
+                <xsl:element name="tag">pat-app-doc</xsl:element>
                 <xsl:apply-templates select="root/jp:pat-app-doc" />
             </xsl:element>
         </xsl:element>

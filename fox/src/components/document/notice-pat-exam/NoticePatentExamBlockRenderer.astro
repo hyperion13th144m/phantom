@@ -1,9 +1,9 @@
 ---
+import Figure from "~/components/document/common/Figure.astro";
+import Inline from "~/components/document/common/Inline.astro";
 import type { ApplicationFormItemBlock, ImageBlock } from "~/interfaces/text-blocks-root";
-import { checker } from "~/interfaces/text-blocks-root";
+import { commonTypeGuards } from "~/interfaces/text-blocks-root";
 import { concatBlocks } from "~/lib/blocks";
-import Figure from "./Figure.astro";
-import Inline from "./Inline.astro";
 
 const { block } = Astro.props as {
     block: ApplicationFormItemBlock | ImageBlock;
@@ -355,7 +355,7 @@ const isUndefinedBlock = (tag: string) => {
 }
 
 {
-    checker.isImage(block) && (
+    commonTypeGuards.isImage(block) && (
         <Figure block={block} sizeTag="large" />
     )
 }

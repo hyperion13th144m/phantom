@@ -1,0 +1,34 @@
+---
+// 特許出願書類の図面を表示するためのコンポーネント
+
+import Figure from "~/components/document/common/Figure.astro";
+import {
+    type DocumentBlock,
+    documentTypeGuards,
+} from "~/interfaces/text-blocks-root";
+
+const { drawings, sizeTag = "middle" } = Astro.props as {
+    sizeTag?: "thumbnail" | "middle" | "large";
+    drawings: DocumentBlock;
+};
+---
+
+{
+    documentTypeGuards.isDrawings(drawings) && (
+        <div class="drawings">
+            <div class="jpTag">{drawings.jpTag}</div>
+            {drawings.blocks.map((figure) => (
+                <Figure block={figure} sizeTag={sizeTag} />
+            ))}
+        </div>
+    )
+}
+<style>
+    .drawings {
+        break-before: page;
+    }
+
+    .drawings :global(.figure:not(:last-child)) {
+        break-after: page;
+    }
+</style>

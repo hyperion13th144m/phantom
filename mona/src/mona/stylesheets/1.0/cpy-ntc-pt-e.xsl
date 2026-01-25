@@ -25,7 +25,7 @@
                     select="root/jp:cpy-notice-pat-exam/jp:dispatch-control-article/jp:file-reference-id" />
             </xsl:element>
             <xsl:element name="textBlocksRoot">
-                <xsl:element name="tag">ntcPatExam</xsl:element>
+                <xsl:element name="tag">notice-pat-exam</xsl:element>
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam" />
             </xsl:element>
         </xsl:element>

@@ -1,0 +1,49 @@
+---
+import { paragraphTypeGuards } from "~/interfaces/paragraph";
+import { type Block } from "~/interfaces/text-blocks-root";
+import Figure from "./Figure.astro";
+const { block } = Astro.props as {
+    block: Block;
+};
+---
+
+{paragraphTypeGuards.isTextBlock(block) && <span>{block.text}</span>}
+{paragraphTypeGuards.isSubBlock(block) && <sub>{block.text}</sub>}
+{paragraphTypeGuards.isSupBlock(block) && <sup>{block.text}</sup>}
+{paragraphTypeGuards.isUnderlineBlock(block) && <u>{block.text}</u>}
+{
+    // 表n，化n, 数n
+    (paragraphTypeGuards.isTables(block) ||
+        paragraphTypeGuards.isMaths(block) ||
+        paragraphTypeGuards.isChemistry(block)) && <Figure block={block} />
+}
+
+{
+    // 特許文献n，非特許文献n, 図面の簡単な説明
+    (paragraphTypeGuards.isPatcitBlock(block) ||
+        paragraphTypeGuards.isNplcitBlock(block) ||
+        paragraphTypeGuards.isFigRefBlock(block)) && (
+        <div class={block.tag} style="display: flex;">
+            <div class={`jpTag indentLevel-${block.indentLevel}`}>
+                {block.jpTag}
+            </div>
+            <div class="text">{block.text}</div>
+        </div>
+    )
+}
+
+<style>
+    .patcit .jpTag,
+    .nplcit .jpTag {
+        min-width: 10em;
+    }
+    .figref .jpTag {
+        min-width: 7em;
+    }
+
+    .patcit .indentLevel-2,
+    .nplcit .indentLevel-2,
+    .figref .indentLevel-2 {
+        text-indent: 2em;
+    }
+</style>

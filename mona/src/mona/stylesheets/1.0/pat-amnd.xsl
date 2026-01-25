@@ -21,7 +21,7 @@
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="textBlocksRoot">
-                <xsl:element name="tag">patAmnd</xsl:element>
+                <xsl:element name="tag">pat-amnd</xsl:element>
                 <xsl:apply-templates select="root/jp:pat-amnd" />
             </xsl:element>
         </xsl:element>

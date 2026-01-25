@@ -1,12 +1,13 @@
 ---
-/* 特許・実用新案の拒絶理由通知書など cpy-notice-pat-exam 系 コンポーネント
+/* 特許・実用新案の意見書(A153)・弁明書(A159) コンポーネント
  */
-import BlockRenderer from "~/components/application/NoticePatentExamBlockRenderer.astro";
+import BlockRenderer from "~/components/document/common/ApplicationFormBlockRenderer.astro";
+import BibliographicData from "~/components/document/common/BibliographicData.astro";
 import Card from "~/components/ui/Card.astro";
 import ImageCarousel from "~/components/ui/ImageCarousel.astro";
+import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import type { IPDocument } from "~/interfaces/document";
-import KeywordHighlighter from "../ui/KeywordHighlighter.astro";
-import BibliographicData from "./BibliographicData.astro";
+import { commonTypeGuards } from "~/interfaces/text-blocks-root";
 
 const { ipDocument } = Astro.props as {
     ipDocument: IPDocument;
@@ -28,8 +29,8 @@ const hasCarouselImages =
 const title = ipDocument.documentName;
 
 // 各セクションのブロックを抽出
-const ntcPatExam = ipDocument.textBlocksRoot
-    .filter((block) => ["ntcPatExam", "ntcPatExamRn"].includes(block.tag))
+const patResponse = ipDocument.textBlocksRoot
+    .filter((block) => commonTypeGuards.isPatResponse(block))
     .at(0);
 ---
 
@@ -38,9 +39,9 @@ const ntcPatExam = ipDocument.textBlocksRoot
     <div class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}>
         <div data-search-root class="">
             {
-                ntcPatExam && (
+                patResponse && (
                     <Card title={title}>
-                        {ntcPatExam.blocks.map((block) => (
+                        {patResponse.blocks.map((block) => (
                             <BlockRenderer block={block} />
                         ))}
                     </Card>

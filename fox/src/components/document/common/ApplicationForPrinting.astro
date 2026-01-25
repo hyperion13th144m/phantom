@@ -5,7 +5,7 @@ import Claims from "~/components/application/Claims.astro";
 import Description from "~/components/application/Description.astro";
 import Drawings from "~/components/application/Drawings.astro";
 import type { IPDocument } from "~/interfaces/document";
-import { checker } from "~/interfaces/text-blocks-root";
+import { commonTypeGuards } from "~/interfaces/text-blocks-root";
 import ForeignLanguageDocumentBlock from "./ForeignLanguageDocument.astro";
 
 const { ipDocument } = Astro.props as {
@@ -14,33 +14,33 @@ const { ipDocument } = Astro.props as {
 
 // 各セクションのブロックを抽出
 const application = ipDocument.textBlocksRoot
-    .filter((block) => checker.isApplicationForm(block))
+    .filter((block) => commonTypeGuards.isApplicationForm(block))
     .at(0);
 const description = ipDocument.textBlocksRoot
-    .filter((block) => checker.isDescription(block))
+    .filter((block) => commonTypeGuards.isDescription(block))
     .at(0);
 const claims = ipDocument.textBlocksRoot
-    .filter((block) => checker.isClaims(block))
+    .filter((block) => commonTypeGuards.isClaims(block))
     .at(0);
 const abstract = ipDocument.textBlocksRoot
-    .filter((block) => checker.isAbstract(block))
+    .filter((block) => commonTypeGuards.isAbstract(block))
     .at(0);
 const drawings = ipDocument.textBlocksRoot
-    .filter((block) => checker.isDrawings(block))
+    .filter((block) => commonTypeGuards.isDrawings(block))
     .at(0);
 
 // 外国語書面出願
 const foreignDescription = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignDescription(block))
+    .filter((block) => commonTypeGuards.isForeignDescription(block))
     .at(0);
 const foreignClaims = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignClaims(block))
+    .filter((block) => commonTypeGuards.isForeignClaims(block))
     .at(0);
 const foreignAbstract = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignAbstract(block))
+    .filter((block) => commonTypeGuards.isForeignAbstract(block))
     .at(0);
 const foreignDrawings = ipDocument.textBlocksRoot
-    .filter((block) => checker.isForeignDrawings(block))
+    .filter((block) => commonTypeGuards.isForeignDrawings(block))
     .at(0);
 ---
 

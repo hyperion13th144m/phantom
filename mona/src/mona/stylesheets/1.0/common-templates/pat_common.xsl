@@ -2471,7 +2471,7 @@
         <xsl:variable name="node">
             <xsl:choose>
                 <xsl:when test="ancestor::jp:contents-of-amendment">
-                    <xsl:value-of 
+                    <xsl:value-of
                         select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
                 </xsl:when>
                 <xsl:otherwise>
@@ -5458,7 +5458,7 @@
      ====================================================================-->
     <xsl:template
         match="@num | @mode-num | @ex-num">
-        <xsl:value-of select="f:to-fullwidth-alnum" />
+        <xsl:value-of select="f:to-fullwidth-alnum(.)" />
     </xsl:template>
 
     <!-- ==明細書関係====start===============================================-->
@@ -5495,7 +5495,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【書類名】請求の範囲'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【書類名】特許請求の範囲'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【書類名】実用新案登録請求の範囲'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【書類名】請求の範囲'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
