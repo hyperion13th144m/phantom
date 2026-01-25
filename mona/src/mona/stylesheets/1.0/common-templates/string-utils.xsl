@@ -2,7 +2,7 @@
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jp="http://www.jpo.go.jp"
-    xmlns:f="urn:libefiling:string-utils"
+    xmlns:f="urn:phantom-mona:string-utils"
     exclude-result-prefixes="xs jp f">
 
     <!-- 文字列処理関連のテンプレート -->
@@ -31,6 +31,13 @@
         <xsl:sequence
             select="translate($s, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ')" />
     </xsl:function>
+
+    <xsl:function name="f:to-fullwidth-alnum" as="xs:string">
+        <xsl:param name="s" as="xs:string" />
+        <xsl:sequence
+            select="translate($s, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ')" />
+    </xsl:function>
+
 
     <!-- &nbsp; (U+00A0) を通常の空白に変換して normalize-space を適用 -->
     <xsl:function name="f:remove-nbsp" as="xs:string">

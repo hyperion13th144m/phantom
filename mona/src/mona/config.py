@@ -7,6 +7,8 @@ from libefiling.image.params import ImageConvertParam
 from .manifest_processor.xslt import TranslatorConfig
 
 SCHEMA_VER = "1.0"
+
+# ひとまず Patentのみ
 TARGET_DOCUMENT_CODES = [
     "A101",
     "A102",
@@ -14,9 +16,18 @@ TARGET_DOCUMENT_CODES = [
     "A1191",
     "A1192",
     "A130",
+    "A1523",
     "A163",
+    "A1631",  # 翻訳文提出書
+    "A1632",  # 国内書面
+    # "A1633", # 図面の提出書（実案）は対象外(データないので確認できない)
+    "A1634",  # 国際出願翻訳文提出書
+    # "A1635", # 国際出願翻訳文提出書（職権）は対象外(データないので確認できない)
     "A153",
     "A159",
+    "A1781",
+    "A1871",
+    "A1872",
 ]
 
 # 全角記号と半角記号の対応表
@@ -124,11 +135,27 @@ translator_config = [
         postprocessor=postprocess_application_body,
     ),
     TranslatorConfig(
+        ### A1523 手続補正書
+        xsl_path=f"{SCHEMA_VER}/pat-amnd.xsl",
+        force_list=["blocks", "textBlocksRoot"],
+        namespace="http://www.jpo.go.jp",
+        doctype="pat-amnd",
+        postprocessor=postprocess_application_body,
+    ),
+    TranslatorConfig(
         ### A153/A159 意見書、弁明書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/pat-rspn.xsl",
         force_list=["blocks", "textBlocksRoot"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-rspns",
+        postprocessor=postprocess_application_body,
+    ),
+    TranslatorConfig(
+        ### A1781, A871, A872 上申書, 早期審査に関する事情説明書, 早期審査に関する事情説明補充書
+        xsl_path=f"{SCHEMA_VER}/pat-etc.xsl",
+        force_list=["blocks", "textBlocksRoot"],
+        namespace="http://www.jpo.go.jp",
+        doctype="pat-etc",
         postprocessor=postprocess_application_body,
     ),
     TranslatorConfig(

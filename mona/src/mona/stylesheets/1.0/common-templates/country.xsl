@@ -6,302 +6,868 @@
     xmlns:jp="http://www.jpo.go.jp">
 
     <!-- this xslt was created with reference to pat_common.xsl
-         of Internet Application Software version i5.30 provided by JPO -->
+         of Internet Application Software-->
 
     <!-- ====================================================================
          original: 国名県名変換
+         長いのでこっちに移した
             INPUT: country-code (value-of jp:country) e.g. "01", "JP", "US"
             OUTPUT: e.g. "北海道", "日本", "アメリカ合衆国"
          ====================================================================-->
-    <xsl:template name="convert-country">
-        <xsl:param name="country-code" as="xs:string" />
-        <xsl:value-of select="key('countries-table-key', $country-code, $countries-table)/@value" />
+    <xsl:template
+        name="国名県名変換">
+        <xsl:variable name="kuni" select="normalize-space(.)" />
+        <xsl:choose>
+            <xsl:when test="$kuni = ''" />
+            <xsl:when test="$kuni = '00'">
+                <xsl:value-of select="'住所無し'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '01'">
+                <xsl:value-of select="'北海道'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '02'">
+                <xsl:value-of select="'青森県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '03'">
+                <xsl:value-of select="'岩手県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '04'">
+                <xsl:value-of select="'宮城県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '05'">
+                <xsl:value-of select="'秋田県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '06'">
+                <xsl:value-of select="'山形県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '07'">
+                <xsl:value-of select="'福島県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '08'">
+                <xsl:value-of select="'茨城県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '09'">
+                <xsl:value-of select="'栃木県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '10'">
+                <xsl:value-of select="'群馬県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '11'">
+                <xsl:value-of select="'埼玉県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '12'">
+                <xsl:value-of select="'千葉県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '13'">
+                <xsl:value-of select="'東京都'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '14'">
+                <xsl:value-of select="'神奈川県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '15'">
+                <xsl:value-of select="'新潟県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '16'">
+                <xsl:value-of select="'富山県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '17'">
+                <xsl:value-of select="'石川県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '18'">
+                <xsl:value-of select="'福井県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '19'">
+                <xsl:value-of select="'山梨県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '20'">
+                <xsl:value-of select="'長野県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '21'">
+                <xsl:value-of select="'岐阜県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '22'">
+                <xsl:value-of select="'静岡県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '23'">
+                <xsl:value-of select="'愛知県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '24'">
+                <xsl:value-of select="'三重県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '25'">
+                <xsl:value-of select="'滋賀県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '26'">
+                <xsl:value-of select="'京都府'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '27'">
+                <xsl:value-of select="'大阪府'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '28'">
+                <xsl:value-of select="'兵庫県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '29'">
+                <xsl:value-of select="'奈良県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '30'">
+                <xsl:value-of select="'和歌山県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '31'">
+                <xsl:value-of select="'鳥取県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '32'">
+                <xsl:value-of select="'島根県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '33'">
+                <xsl:value-of select="'岡山県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '34'">
+                <xsl:value-of select="'広島県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '35'">
+                <xsl:value-of select="'山口県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '36'">
+                <xsl:value-of select="'徳島県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '37'">
+                <xsl:value-of select="'香川県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '38'">
+                <xsl:value-of select="'愛媛県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '39'">
+                <xsl:value-of select="'高知県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '40'">
+                <xsl:value-of select="'福岡県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '41'">
+                <xsl:value-of select="'佐賀県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '42'">
+                <xsl:value-of select="'長崎県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '43'">
+                <xsl:value-of select="'熊本県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '44'">
+                <xsl:value-of select="'大分県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '45'">
+                <xsl:value-of select="'宮崎県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '46'">
+                <xsl:value-of select="'鹿児島県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '47'">
+                <xsl:value-of select="'沖縄県'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'JP'">
+                <xsl:value-of select="'日本'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AD'">
+                <xsl:value-of select="'アンドラ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AE'">
+                <xsl:value-of select="'アラブ首長国連邦'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AF'">
+                <xsl:value-of select="'アフガニスタン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AG'">
+                <xsl:value-of select="'アンティグア・バーブーダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AI'">
+                <xsl:value-of select="'アンギラ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AL'">
+                <xsl:value-of select="'アルバニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AM'">
+                <xsl:value-of select="'アルメニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AO'">
+                <xsl:value-of select="'アンゴラ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AP'">
+                <xsl:value-of select="'アフリカ地域工業所有権機関'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AR'">
+                <xsl:value-of select="'アルゼンチン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AT'">
+                <xsl:value-of select="'オーストリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AU'">
+                <xsl:value-of select="'オーストラリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AW'">
+                <xsl:value-of select="'アルバ島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'AZ'">
+                <xsl:value-of select="'アゼルバイジャン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BA'">
+                <xsl:value-of select="'ボスニア・ヘルツェゴビナ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BB'">
+                <xsl:value-of select="'バルバドス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BD'">
+                <xsl:value-of select="'バングラデシュ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BE'">
+                <xsl:value-of select="'ベルギー'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BF'">
+                <xsl:value-of select="'ブルキナファソ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BG'">
+                <xsl:value-of select="'ブルガリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BH'">
+                <xsl:value-of select="'バーレーン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BI'">
+                <xsl:value-of select="'ブルンジ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BJ'">
+                <xsl:value-of select="'ベナン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BM'">
+                <xsl:value-of select="'バーミューダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BN'">
+                <xsl:value-of select="'ブルネイ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BO'">
+                <xsl:value-of select="'ボリビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BQ'">
+                <xsl:value-of select="'ボネール島、シント・ユースタティウス島、サバ島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BR'">
+                <xsl:value-of select="'ブラジル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BS'">
+                <xsl:value-of select="'バハマ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BT'">
+                <xsl:value-of select="'ブータン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BU'">
+                <xsl:value-of select="'ビルマ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BW'">
+                <xsl:value-of select="'ボツワナ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BX'">
+                <xsl:value-of select="'ベネルクス商標庁及びベネルクス意匠庁'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BY'">
+                <xsl:value-of select="'ベラルーシ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'BZ'">
+                <xsl:value-of select="'ベリーズ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CA'">
+                <xsl:value-of select="'カナダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CD'">
+                <xsl:value-of select="'コンゴ民主共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CF'">
+                <xsl:value-of select="'中央アフリカ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CG'">
+                <xsl:value-of select="'コンゴ共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CH'">
+                <xsl:value-of select="'スイス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CI'">
+                <xsl:value-of select="'コートジボワール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CK'">
+                <xsl:value-of select="'クック諸島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CL'">
+                <xsl:value-of select="'チリ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CM'">
+                <xsl:value-of select="'カメルーン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CN'">
+                <xsl:value-of select="'中華人民共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CO'">
+                <xsl:value-of select="'コロンビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CR'">
+                <xsl:value-of select="'コスタリカ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CS'">
+                <xsl:value-of select="'チェッコ・スロヴァキア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CU'">
+                <xsl:value-of select="'キューバ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CV'">
+                <xsl:value-of select="'カーボヴェルデ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CW'">
+                <xsl:value-of select="'キュラソー島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CY'">
+                <xsl:value-of select="'キプロス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'CZ'">
+                <xsl:value-of select="'チェコ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DD'">
+                <xsl:value-of select="'ドイツ民主共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DE'">
+                <xsl:value-of select="'ドイツ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DJ'">
+                <xsl:value-of select="'ジブチ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DK'">
+                <xsl:value-of select="'デンマーク'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DM'">
+                <xsl:value-of select="'ドミニカ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DO'">
+                <xsl:value-of select="'ドミニカ共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'DZ'">
+                <xsl:value-of select="'アルジェリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'EA'">
+                <xsl:value-of select="'ユーラシア特許庁'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'EC'">
+                <xsl:value-of select="'エクアドル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'EE'">
+                <xsl:value-of select="'エストニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'EG'">
+                <xsl:value-of select="'エジプト'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'EM'">
+                <xsl:value-of select="'欧州連合知的財産庁'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'EP'">
+                <xsl:value-of select="'欧州特許庁'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ER'">
+                <xsl:value-of select="'エリトリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ES'">
+                <xsl:value-of select="'スペイン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ET'">
+                <xsl:value-of select="'エチオピア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'FI'">
+                <xsl:value-of select="'フィンランド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'FJ'">
+                <xsl:value-of select="'フィジー'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'FK'">
+                <xsl:value-of select="'フォークランド諸島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'FO'">
+                <xsl:value-of select="'フェロー諸島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'FR'">
+                <xsl:value-of select="'フランス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GA'">
+                <xsl:value-of select="'ガボン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GB'">
+                <xsl:value-of select="'英国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GC'">
+                <xsl:value-of select="'湾岸協力理事会特許庁'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GD'">
+                <xsl:value-of select="'グレナダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GE'">
+                <xsl:value-of select="'ジョージア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GG'">
+                <xsl:value-of select="'ガーンジー島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GH'">
+                <xsl:value-of select="'ガーナ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GI'">
+                <xsl:value-of select="'ジブラルタル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GM'">
+                <xsl:value-of select="'ガンビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GN'">
+                <xsl:value-of select="'ギニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GQ'">
+                <xsl:value-of select="'赤道ギニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GR'">
+                <xsl:value-of select="'ギリシャ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GT'">
+                <xsl:value-of select="'グアテマラ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GW'">
+                <xsl:value-of select="'ギニアビサウ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'GY'">
+                <xsl:value-of select="'ガイアナ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'HK'">
+                <xsl:value-of select="'香港'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'HN'">
+                <xsl:value-of select="'ホンジュラス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'HR'">
+                <xsl:value-of select="'クロアチア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'HT'">
+                <xsl:value-of select="'ハイチ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'HU'">
+                <xsl:value-of select="'ハンガリー'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'HV'">
+                <xsl:value-of select="'上ヴォルタ共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IB'">
+                <xsl:value-of select="'国際事務局'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ID'">
+                <xsl:value-of select="'インドネシア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IE'">
+                <xsl:value-of select="'アイルランド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IL'">
+                <xsl:value-of select="'イスラエル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IM'">
+                <xsl:value-of select="'マン島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IN'">
+                <xsl:value-of select="'インド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IQ'">
+                <xsl:value-of select="'イラク'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IR'">
+                <xsl:value-of select="'イラン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IS'">
+                <xsl:value-of select="'アイスランド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'IT'">
+                <xsl:value-of select="'イタリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'JE'">
+                <xsl:value-of select="'ジャージー島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'JM'">
+                <xsl:value-of select="'ジャマイカ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'JO'">
+                <xsl:value-of select="'ヨルダン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KE'">
+                <xsl:value-of select="'ケニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KG'">
+                <xsl:value-of select="'キルギス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KH'">
+                <xsl:value-of select="'カンボジア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KI'">
+                <xsl:value-of select="'キリバス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KM'">
+                <xsl:value-of select="'コモロ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KN'">
+                <xsl:value-of select="'セントクリストファー・ネーヴィス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KP'">
+                <xsl:value-of select="'北朝鮮'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KR'">
+                <xsl:value-of select="'大韓民国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KW'">
+                <xsl:value-of select="'クウェート'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KY'">
+                <xsl:value-of select="'ケイマン諸島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'KZ'">
+                <xsl:value-of select="'カザフスタン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LA'">
+                <xsl:value-of select="'ラオス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LB'">
+                <xsl:value-of select="'レバノン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LC'">
+                <xsl:value-of select="'セントルシア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LI'">
+                <xsl:value-of select="'リヒテンシュタイン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LK'">
+                <xsl:value-of select="'スリランカ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LR'">
+                <xsl:value-of select="'リベリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LS'">
+                <xsl:value-of select="'レソト'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LT'">
+                <xsl:value-of select="'リトアニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LU'">
+                <xsl:value-of select="'ルクセンブルク'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LV'">
+                <xsl:value-of select="'ラトビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'LY'">
+                <xsl:value-of select="'リビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MA'">
+                <xsl:value-of select="'モロッコ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MC'">
+                <xsl:value-of select="'モナコ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MD'">
+                <xsl:value-of select="'モルドバ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MG'">
+                <xsl:value-of select="'マダガスカル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MK'">
+                <xsl:value-of select="'北マケドニア共和国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ML'">
+                <xsl:value-of select="'マリ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MM'">
+                <xsl:value-of select="'ミャンマー'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MN'">
+                <xsl:value-of select="'モンゴル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MO'">
+                <xsl:value-of select="'マカオ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MR'">
+                <xsl:value-of select="'モーリタニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MS'">
+                <xsl:value-of select="'モンセラット'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MT'">
+                <xsl:value-of select="'マルタ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MU'">
+                <xsl:value-of select="'モーリシャス'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MV'">
+                <xsl:value-of select="'モルディブ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MW'">
+                <xsl:value-of select="'マラウイ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MX'">
+                <xsl:value-of select="'メキシコ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MY'">
+                <xsl:value-of select="'マレーシア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'MZ'">
+                <xsl:value-of select="'モザンビーク'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ME'">
+                <xsl:value-of select="'モンテネグロ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NA'">
+                <xsl:value-of select="'ナミビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NE'">
+                <xsl:value-of select="'ニジェール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NG'">
+                <xsl:value-of select="'ナイジェリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NI'">
+                <xsl:value-of select="'ニカラグア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NL'">
+                <xsl:value-of select="'オランダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NO'">
+                <xsl:value-of select="'ノルウェー'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NP'">
+                <xsl:value-of select="'ネパール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NR'">
+                <xsl:value-of select="'ナウル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NU'">
+                <xsl:value-of select="'ニウエ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'NZ'">
+                <xsl:value-of select="'ニュージーランド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'OA'">
+                <xsl:value-of select="'アフリカ知的所有権機関'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'OM'">
+                <xsl:value-of select="'オマーン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PA'">
+                <xsl:value-of select="'パナマ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PE'">
+                <xsl:value-of select="'ペルー'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PG'">
+                <xsl:value-of select="'パプアニューギニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PH'">
+                <xsl:value-of select="'フィリピン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PK'">
+                <xsl:value-of select="'パキスタン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PL'">
+                <xsl:value-of select="'ポーランド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PR'">
+                <xsl:value-of select="'プエルトリコ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PT'">
+                <xsl:value-of select="'ポルトガル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PW'">
+                <xsl:value-of select="'パラオ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'PY'">
+                <xsl:value-of select="'パラグアイ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'QA'">
+                <xsl:value-of select="'カタール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'RH'">
+                <xsl:value-of select="'南ローデシア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'RO'">
+                <xsl:value-of select="'ルーマニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'RU'">
+                <xsl:value-of select="'ロシア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'RW'">
+                <xsl:value-of select="'ルワンダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'RS'">
+                <xsl:value-of select="'セルビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SA'">
+                <xsl:value-of select="'サウジアラビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SB'">
+                <xsl:value-of select="'ソロモン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SC'">
+                <xsl:value-of select="'セーシェル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SD'">
+                <xsl:value-of select="'スーダン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SE'">
+                <xsl:value-of select="'スウェーデン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SG'">
+                <xsl:value-of select="'シンガポール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SH'">
+                <xsl:value-of select="'セントヘレナ島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SI'">
+                <xsl:value-of select="'スロベニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SK'">
+                <xsl:value-of select="'スロバキア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SL'">
+                <xsl:value-of select="'シエラレオネ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SM'">
+                <xsl:value-of select="'サンマリノ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SN'">
+                <xsl:value-of select="'セネガル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SO'">
+                <xsl:value-of select="'ソマリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SR'">
+                <xsl:value-of select="'スリナム'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ST'">
+                <xsl:value-of select="'サントメ・プリンシペ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SU'">
+                <xsl:value-of select="'ソヴィエト連邦'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SV'">
+                <xsl:value-of select="'エルサルバドル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SX'">
+                <xsl:value-of select="'シント・マールテン島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SY'">
+                <xsl:value-of select="'シリア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'SZ'">
+                <xsl:value-of select="'エスワティニ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TD'">
+                <xsl:value-of select="'チャド'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TG'">
+                <xsl:value-of select="'トーゴ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TH'">
+                <xsl:value-of select="'タイ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TJ'">
+                <xsl:value-of select="'タジキスタン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TK'">
+                <xsl:value-of select="'トケラウ諸島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TL'">
+                <xsl:value-of select="'東ティモール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TM'">
+                <xsl:value-of select="'トルクメニスタン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TN'">
+                <xsl:value-of select="'チュニジア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TO'">
+                <xsl:value-of select="'トンガ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TR'">
+                <xsl:value-of select="'トルコ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TT'">
+                <xsl:value-of select="'トリニダード・トバゴ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TV'">
+                <xsl:value-of select="'ツバル'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TW'">
+                <xsl:value-of select="'台湾'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'TZ'">
+                <xsl:value-of select="'タンザニア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'UA'">
+                <xsl:value-of select="'ウクライナ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'UG'">
+                <xsl:value-of select="'ウガンダ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'US'">
+                <xsl:value-of select="'アメリカ合衆国'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'UY'">
+                <xsl:value-of select="'ウルグアイ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'UZ'">
+                <xsl:value-of select="'ウズベキスタン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'VA'">
+                <xsl:value-of select="'バチカン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'VC'">
+                <xsl:value-of select="'セントビンセント'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'VE'">
+                <xsl:value-of select="'ベネズエラ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'VG'">
+                <xsl:value-of select="'ヴァージン諸島'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'VN'">
+                <xsl:value-of select="'ベトナム'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'VU'">
+                <xsl:value-of select="'バヌアツ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'WO'">
+                <xsl:value-of select="'世界知的所有権機関'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'WS'">
+                <xsl:value-of select="'サモア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'XX'">
+                <xsl:value-of select="'無国籍、その他の国名及び地域名'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'YD'">
+                <xsl:value-of select="'南イエメン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'YE'">
+                <xsl:value-of select="'イエメン'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'YU'">
+                <xsl:value-of select="'セルビア・モンテネグロ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ZA'">
+                <xsl:value-of select="'南アフリカ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ZM'">
+                <xsl:value-of select="'ザンビア'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ZR'">
+                <xsl:value-of select="'ザイール'" />
+            </xsl:when>
+            <xsl:when test="$kuni = 'ZW'">
+                <xsl:value-of select="'ジンバブエ'" />
+            </xsl:when>
+            <xsl:when test="$kuni = '99'">
+                <xsl:value-of select="'９９'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
-
-    <xsl:key name="countries-table-key" match="item" use="@key" />
-    <xsl:variable name="countries-table">
-        <item key="00" value="住所無し" />
-        <item key="01" value="北海道" />
-        <item key="02" value="青森県" />
-        <item key="03" value="岩手県" />
-        <item key="04" value="宮城県" />
-        <item key="05" value="秋田県" />
-        <item key="06" value="山形県" />
-        <item key="07" value="福島県" />
-        <item key="08" value="茨城県" />
-        <item key="09" value="栃木県" />
-        <item key="10" value="群馬県" />
-        <item key="11" value="埼玉県" />
-        <item key="12" value="千葉県" />
-        <item key="13" value="東京都" />
-        <item key="14" value="神奈川県" />
-        <item key="15" value="新潟県" />
-        <item key="16" value="富山県" />
-        <item key="17" value="石川県" />
-        <item key="18" value="福井県" />
-        <item key="19" value="山梨県" />
-        <item key="20" value="長野県" />
-        <item key="21" value="岐阜県" />
-        <item key="22" value="静岡県" />
-        <item key="23" value="愛知県" />
-        <item key="24" value="三重県" />
-        <item key="25" value="滋賀県" />
-        <item key="26" value="京都府" />
-        <item key="27" value="大阪府" />
-        <item key="28" value="兵庫県" />
-        <item key="29" value="奈良県" />
-        <item key="30" value="和歌山県" />
-        <item key="31" value="鳥取県" />
-        <item key="32" value="島根県" />
-        <item key="33" value="岡山県" />
-        <item key="34" value="広島県" />
-        <item key="35" value="山口県" />
-        <item key="36" value="徳島県" />
-        <item key="37" value="香川県" />
-        <item key="38" value="愛媛県" />
-        <item key="39" value="高知県" />
-        <item key="40" value="福岡県" />
-        <item key="41" value="佐賀県" />
-        <item key="42" value="長崎県" />
-        <item key="43" value="熊本県" />
-        <item key="44" value="大分県" />
-        <item key="45" value="宮崎県" />
-        <item key="46" value="鹿児島県" />
-        <item key="47" value="沖縄県" />
-        <item key="JP" value="日本" />
-        <item key="AD" value="アンドラ" />
-        <item key="AE" value="アラブ首長国連邦" />
-        <item key="AF" value="アフガニスタン" />
-        <item key="AG" value="アンティグア・バーブーダ" />
-        <item key="AI" value="アンギラ" />
-        <item key="AL" value="アルバニア" />
-        <item key="AM" value="アルメニア" />
-        <item key="AO" value="アンゴラ" />
-        <item key="AP" value="アフリカ地域工業所有権機関" />
-        <item key="AR" value="アルゼンチン" />
-        <item key="AT" value="オーストリア" />
-        <item key="AU" value="オーストラリア" />
-        <item key="AW" value="アルバ島" />
-        <item key="AZ" value="アゼルバイジャン" />
-        <item key="BA" value="ボスニア・ヘルツェゴビナ" />
-        <item key="BB" value="バルバドス" />
-        <item key="BD" value="バングラデシュ" />
-        <item key="BE" value="ベルギー" />
-        <item key="BF" value="ブルキナファソ" />
-        <item key="BG" value="ブルガリア" />
-        <item key="BH" value="バーレーン" />
-        <item key="BI" value="ブルンジ" />
-        <item key="BJ" value="ベナン" />
-        <item key="BM" value="バーミューダ" />
-        <item key="BN" value="ブルネイ" />
-        <item key="BO" value="ボリビア" />
-        <item key="BQ" value="ボネール島、シント・ユースタティウス島、サバ島" />
-        <item key="BR" value="ブラジル" />
-        <item key="BS" value="バハマ" />
-        <item key="BT" value="ブータン" />
-        <item key="BU" value="ビルマ" />
-        <item key="BW" value="ボツワナ" />
-        <item key="BX" value="ベネルクス商標庁及びベネルクス意匠庁" />
-        <item key="BY" value="ベラルーシ" />
-        <item key="BZ" value="ベリーズ" />
-        <item key="CA" value="カナダ" />
-        <item key="CD" value="コンゴ民主共和国" />
-        <item key="CF" value="中央アフリカ" />
-        <item key="CG" value="コンゴ共和国" />
-        <item key="CH" value="スイス" />
-        <item key="CI" value="コートジボワール" />
-        <item key="CK" value="クック諸島" />
-        <item key="CL" value="チリ" />
-        <item key="CM" value="カメルーン" />
-        <item key="CN" value="中華人民共和国" />
-        <item key="CO" value="コロンビア" />
-        <item key="CR" value="コスタリカ" />
-        <item key="CS" value="チェッコ・スロヴァキア" />
-        <item key="CU" value="キューバ" />
-        <item key="CV" value="カーボヴェルデ" />
-        <item key="CW" value="キュラソー島" />
-        <item key="CY" value="キプロス" />
-        <item key="CZ" value="チェコ" />
-        <item key="DD" value="ドイツ民主共和国" />
-        <item key="DE" value="ドイツ" />
-        <item key="DJ" value="ジブチ" />
-        <item key="DK" value="デンマーク" />
-        <item key="DM" value="ドミニカ" />
-        <item key="DO" value="ドミニカ共和国" />
-        <item key="DZ" value="アルジェリア" />
-        <item key="EA" value="ユーラシア特許庁" />
-        <item key="EC" value="エクアドル" />
-        <item key="EE" value="エストニア" />
-        <item key="EG" value="エジプト" />
-        <item key="EM" value="欧州連合知的財産庁" />
-        <item key="EP" value="欧州特許庁" />
-        <item key="ER" value="エリトリア" />
-        <item key="ES" value="スペイン" />
-        <item key="ET" value="エチオピア" />
-        <item key="FI" value="フィンランド" />
-        <item key="FJ" value="フィジー" />
-        <item key="FK" value="フォークランド諸島" />
-        <item key="FO" value="フェロー諸島" />
-        <item key="FR" value="フランス" />
-        <item key="GA" value="ガボン" />
-        <item key="GB" value="英国" />
-        <item key="GC" value="湾岸協力理事会特許庁" />
-        <item key="GD" value="グレナダ" />
-        <item key="GE" value="ジョージア" />
-        <item key="GG" value="ガーンジー島" />
-        <item key="GH" value="ガーナ" />
-        <item key="GI" value="ジブラルタル" />
-        <item key="GM" value="ガンビア" />
-        <item key="GN" value="ギニア" />
-        <item key="GQ" value="赤道ギニア" />
-        <item key="GR" value="ギリシャ" />
-        <item key="GT" value="グアテマラ" />
-        <item key="GW" value="ギニアビサウ" />
-        <item key="GY" value="ガイアナ" />
-        <item key="HK" value="香港" />
-        <item key="HN" value="ホンジュラス" />
-        <item key="HR" value="クロアチア" />
-        <item key="HT" value="ハイチ" />
-        <item key="HU" value="ハンガリー" />
-        <item key="HV" value="上ヴォルタ共和国" />
-        <item key="IB" value="国際事務局" />
-        <item key="ID" value="インドネシア" />
-        <item key="IE" value="アイルランド" />
-        <item key="IL" value="イスラエル" />
-        <item key="IM" value="マン島" />
-        <item key="IN" value="インド" />
-        <item key="IQ" value="イラク" />
-        <item key="IR" value="イラン" />
-        <item key="IS" value="アイスランド" />
-        <item key="IT" value="イタリア" />
-        <item key="JE" value="ジャージー島" />
-        <item key="JM" value="ジャマイカ" />
-        <item key="JO" value="ヨルダン" />
-        <item key="KE" value="ケニア" />
-        <item key="KG" value="キルギス" />
-        <item key="KH" value="カンボジア" />
-        <item key="KI" value="キリバス" />
-        <item key="KM" value="コモロ" />
-        <item key="KN" value="セントクリストファー・ネーヴィス" />
-        <item key="KP" value="北朝鮮" />
-        <item key="KR" value="大韓民国" />
-        <item key="KW" value="クウェート" />
-        <item key="KY" value="ケイマン諸島" />
-        <item key="KZ" value="カザフスタン" />
-        <item key="LA" value="ラオス" />
-        <item key="LB" value="レバノン" />
-        <item key="LC" value="セントルシア" />
-        <item key="LI" value="リヒテンシュタイン" />
-        <item key="LK" value="スリランカ" />
-        <item key="LR" value="リベリア" />
-        <item key="LS" value="レソト" />
-        <item key="LT" value="リトアニア" />
-        <item key="LU" value="ルクセンブルク" />
-        <item key="LV" value="ラトビア" />
-        <item key="LY" value="リビア" />
-        <item key="MA" value="モロッコ" />
-        <item key="MC" value="モナコ" />
-        <item key="MD" value="モルドバ" />
-        <item key="MG" value="マダガスカル" />
-        <item key="MK" value="北マケドニア共和国" />
-        <item key="ML" value="マリ" />
-        <item key="MM" value="ミャンマー" />
-        <item key="MN" value="モンゴル" />
-        <item key="MO" value="マカオ" />
-        <item key="MR" value="モーリタニア" />
-        <item key="MS" value="モンセラット" />
-        <item key="MT" value="マルタ" />
-        <item key="MU" value="モーリシャス" />
-        <item key="MV" value="モルディブ" />
-        <item key="MW" value="マラウイ" />
-        <item key="MX" value="メキシコ" />
-        <item key="MY" value="マレーシア" />
-        <item key="MZ" value="モザンビーク" />
-        <item key="ME" value="モンテネグロ" />
-        <item key="NA" value="ナミビア" />
-        <item key="NE" value="ニジェール" />
-        <item key="NG" value="ナイジェリア" />
-        <item key="NI" value="ニカラグア" />
-        <item key="NL" value="オランダ" />
-        <item key="NO" value="ノルウェー" />
-        <item key="NP" value="ネパール" />
-        <item key="NR" value="ナウル" />
-        <item key="NU" value="ニウエ" />
-        <item key="NZ" value="ニュージーランド" />
-        <item key="OA" value="アフリカ知的所有権機関" />
-        <item key="OM" value="オマーン" />
-        <item key="PA" value="パナマ" />
-        <item key="PE" value="ペルー" />
-        <item key="PG" value="パプアニューギニア" />
-        <item key="PH" value="フィリピン" />
-        <item key="PK" value="パキスタン" />
-        <item key="PL" value="ポーランド" />
-        <item key="PR" value="プエルトリコ" />
-        <item key="PT" value="ポルトガル" />
-        <item key="PW" value="パラオ" />
-        <item key="PY" value="パラグアイ" />
-        <item key="QA" value="カタール" />
-        <item key="RH" value="南ローデシア" />
-        <item key="RO" value="ルーマニア" />
-        <item key="RU" value="ロシア" />
-        <item key="RW" value="ルワンダ" />
-        <item key="RS" value="セルビア" />
-        <item key="SA" value="サウジアラビア" />
-        <item key="SB" value="ソロモン" />
-        <item key="SC" value="セーシェル" />
-        <item key="SD" value="スーダン" />
-        <item key="SE" value="スウェーデン" />
-        <item key="SG" value="シンガポール" />
-        <item key="SH" value="セントヘレナ島" />
-        <item key="SI" value="スロベニア" />
-        <item key="SK" value="スロバキア" />
-        <item key="SL" value="シエラレオネ" />
-        <item key="SM" value="サンマリノ" />
-        <item key="SN" value="セネガル" />
-        <item key="SO" value="ソマリア" />
-        <item key="SR" value="スリナム" />
-        <item key="ST" value="サントメ・プリンシペ" />
-        <item key="SU" value="ソヴィエト連邦" />
-        <item key="SV" value="エルサルバドル" />
-        <item key="SX" value="シント・マールテン島" />
-        <item key="SY" value="シリア" />
-        <item key="SZ" value="エスワティニ" />
-        <item key="TD" value="チャド" />
-        <item key="TG" value="トーゴ" />
-        <item key="TH" value="タイ" />
-        <item key="TJ" value="タジキスタン" />
-        <item key="TK" value="トケラウ諸島" />
-        <item key="TL" value="東ティモール" />
-        <item key="TM" value="トルクメニスタン" />
-        <item key="TN" value="チュニジア" />
-        <item key="TO" value="トンガ" />
-        <item key="TR" value="トルコ" />
-        <item key="TT" value="トリニダード・トバゴ" />
-        <item key="TV" value="ツバル" />
-        <item key="TW" value="台湾" />
-        <item key="TZ" value="タンザニア" />
-        <item key="UA" value="ウクライナ" />
-        <item key="UG" value="ウガンダ" />
-        <item key="US" value="アメリカ合衆国" />
-        <item key="UY" value="ウルグアイ" />
-        <item key="UZ" value="ウズベキスタン" />
-        <item key="VA" value="バチカン" />
-        <item key="VC" value="セントビンセント" />
-        <item key="VE" value="ベネズエラ" />
-        <item key="VG" value="ヴァージン諸島" />
-        <item key="VN" value="ベトナム" />
-        <item key="VU" value="バヌアツ" />
-        <item key="WO" value="世界知的所有権機関" />
-        <item key="WS" value="サモア" />
-        <item key="XX" value="無国籍、その他の国名及び地域名" />
-        <item key="YD" value="南イエメン" />
-        <item key="YE" value="イエメン" />
-        <item key="YU" value="セルビア・モンテネグロ" />
-        <item key="ZA" value="南アフリカ" />
-        <item key="ZM" value="ザンビア" />
-        <item key="ZR" value="ザイール" />
-        <item key="ZW" value="ジンバブエ" />
-        <item key="99" value="９９" />
-    </xsl:variable>
-
 </xsl:stylesheet>

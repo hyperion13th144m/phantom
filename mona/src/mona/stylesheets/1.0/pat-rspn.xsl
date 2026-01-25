@@ -12,14 +12,9 @@
 
     <xsl:variable name="node" select="name(//jp:pat-rspns/*)" />
     <xsl:variable name="kind-of-law" select="//jp:pat-rspns/*/@jp:kind-of-law" />
+    <xsl:variable name="payment" select="substring($node,1,11)" />
 
-    <xsl:include href="sub-templates/pat-rspn.xsl" />
-    <xsl:include href="common-templates/date-templates.xsl" />
-    <xsl:include href="common-templates/string-utils.xsl" />
-    <xsl:include href="common-templates/doc-code.xsl" />
-    <xsl:include href="common-templates/special-mention-matter-article.xsl" />
-    <xsl:include href="common-templates/country.xsl" />
-    <xsl:include href="common-templates/doc-number.xsl" />
+    <xsl:include href="common-templates/pat_common.xsl" />
 
     <xsl:template match="/">
         <xsl:element name="root">

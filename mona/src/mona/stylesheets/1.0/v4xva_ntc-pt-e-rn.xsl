@@ -11,7 +11,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
-    xmlns:f="urn:libefiling:string-utils"
+    xmlns:f="urn:phantom-mona:string-utils"
     exclude-result-prefixes="f jp"
 >
 
@@ -24,8 +24,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     <xsl:include href="ntc-ninsyo.xsl" />
     <xsl:include href="common-templates/doc-number.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
-    <xsl:include href="common-templates/date-templates.xsl" />
+    <xsl:include href="common-templates/v4xva_prm.xsl" />
     <xsl:include href="common-templates/dispatch-control-article.xsl" />
+    <xsl:include href="common-templates/date-templates.xsl" />
 
 
     <!-- ====================================================================
@@ -1184,11 +1185,14 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                         test="ancestor::jp:application-reference and $appl-type = 'application'">
                         <!-- 発送系は、出願番号の表示が「特許願」だけど、
                     出願系は「特願」である。だけど、出願系の表示に変更（共用）-->
+                        <xsl:call-template name="文書番号内容編集" />
+                        <!--
                         <xsl:call-template name="translate-application-number">
                             <xsl:with-param name="number" select="normalize-space(.)" />
                             <xsl:with-param name="law" select="$kind-of-law" />
                             <xsl:with-param name="kinddoc" select="$node" />
                         </xsl:call-template>
+-->
                         <xsl:if
                             test="$node = 'jp:examiner-notification-a2541-rn' or 
                       $node = 'jp:examiner-notification-a2542-rn'">

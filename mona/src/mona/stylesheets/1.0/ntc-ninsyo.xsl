@@ -8,7 +8,7 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
-    xmlns:f="urn:libefiling:string-utils"
+    xmlns:f="urn:phantom-mona:string-utils"
     exclude-result-prefixes="f jp"
 >
 

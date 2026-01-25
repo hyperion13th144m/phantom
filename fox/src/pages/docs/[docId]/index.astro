@@ -15,9 +15,9 @@ const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documen
 <Layout title={title}>
     <main class="w-full my-2">
         {
-            ipDocument.documentCode == "A163" && (
-                <Application ipDocument={ipDocument} />
-            )
+            ["A163", "A1631", "A1632", "A1634"].includes(
+                ipDocument.documentCode,
+            ) && <Application ipDocument={ipDocument} />
         }
         {
             ["A153", "A159"].includes(ipDocument.documentCode) && (

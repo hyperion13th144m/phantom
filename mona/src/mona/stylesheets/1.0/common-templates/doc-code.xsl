@@ -6,634 +6,996 @@
     xmlns:jp="http://www.jpo.go.jp">
 
     <!-- this xslt was created with reference to pat_common.xsl
-         of Internet Application Software version i5.30 provided by JPO -->
+         of Internet Application Software -->
 
 
     <!-- ====================================================================
-            書類識別コード変換
+            書類名変換
+            長いのでこっちに移した
             INPUT: code e.g. A151
             OUTPUT: 書類名 e.g. 手続補正書（方式）
          ====================================================================-->
-    <xsl:template name="convert-document-code">
-        <xsl:param name="code" as="xs:string" />
-        <xsl:value-of
-            select="key('doc-code-table-key', $code, $doc-code-table)/@value" />
+    <xsl:template
+        name="書類名変換">
+
+        <xsl:choose>
+            <xsl:when test="parent::jp:amendment-group">
+                <xsl:call-template name="書類名振り分け">
+                    <xsl:with-param name="code"
+                        select="normalize-space(parent::jp:amendment-group/jp:document-code)" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="parent::jp:contents-of-amendment">
+                <xsl:call-template name="書類名振り分け">
+                    <xsl:with-param name="code"
+                        select="normalize-space(parent::jp:contents-of-amendment/jp:document-code)" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="parent::jp:amendment-charge-article">
+                <xsl:call-template name="書類名振り分け">
+                    <xsl:with-param name="code"
+                        select="normalize-space(parent::jp:amendment-charge-article/jp:document-code)" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="parent::jp:target-document">
+                <xsl:call-template name="書類名振り分け">
+                    <xsl:with-param name="code"
+                        select="normalize-space(parent:: jp:target-document/jp:document-code)" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書類名振り分け">
+                    <xsl:with-param name="code" select="normalize-space($doc-code)" />
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+
     </xsl:template>
 
-    <xsl:key name="doc-code-table-key" match="item" use="@code" />
-    <xsl:variable name="doc-code-table">
-        <!-- 特許 出願系 -->
-        <item code="A151" value="手続補正書（方式）" />
-        <item code="A1521" value="手続補正書" />
-        <item code="A1522" value="手続補正書" />
-        <item code="A1523" value="手続補正書" />
-        <item code="A15210" value="特許協力条約第３４条補正の翻訳文提出書（職権）" />
-        <item code="A15211" value="特許協力条約第３４条補正の写し提出書" />
-        <item code="A15212" value="特許協力条約第３４条補正の写し提出書（職権）" />
-        <item code="A1524" value="誤訳訂正書" />
-        <item code="A1525" value="特許協力条約第１９条補正の翻訳文提出書" />
-        <item code="A1526" value="特許協力条約第１９条補正の翻訳文提出書（職権）" />
-        <item code="A1527" value="特許協力条約第１９条補正の写し提出書" />
-        <item code="A1528" value="特許協力条約第１９条補正の写し提出書（職権）" />
-        <item code="A1529" value="特許協力条約第３４条補正の翻訳文提出書" />
-        <item code="A153" value="意見書" />
-        <item code="A155" value="受継申立書" />
-        <item code="A159" value="弁明書" />
-        <item code="A1601" value="期間延長請求書" />
-        <item code="A1621" value="出願審査請求書" />
-        <item code="A1625" value="出願審査請求書（他人）" />
-        <item code="A1627" value="出願公開請求書" />
-        <item code="A163" value="特許願" />
-        <item code="A1631" value="翻訳文提出書" />
-        <item code="A1632" value="国内書面" />
-        <item code="A1634" value="国際出願翻訳文提出書" />
-        <item code="A1635" value="国際出願翻訳文提出書（職権）" />
-        <item code="A167" value="受託番号変更届" />
-        <item code="A1681" value="代表者選定届" />
-        <item code="A1691" value="雑書類" />
-        <item code="A1711" value="出願人名義変更届" />
-        <item code="A1712" value="出願人名義変更届（一般承継）" />
-        <item code="A17421" value="代理人変更届" />
-        <item code="A17422" value="代理人受任届" />
-        <item code="A17423" value="代理人選任届" />
-        <item code="A17424" value="代理人辞任届" />
-        <item code="A17425" value="代理人解任届" />
-        <item code="A17426" value="代理権変更届" />
-        <item code="A17427" value="代理権消滅届" />
-        <item code="A17428" value="包括委任状援用制限届" />
-        <item code="A17431" value="復代理人変更届" />
-        <item code="A17432" value="復代理人受任届" />
-        <item code="A17433" value="復代理人選任届" />
-        <item code="A17434" value="復代理人辞任届" />
-        <item code="A17435" value="復代理人解任届" />
-        <item code="A17436" value="復代理権変更届" />
-        <item code="A17437" value="復代理権消滅届" />
-        <item code="A1761" value="出願取下書" />
-        <item code="A1762" value="出願放棄書" />
-        <item code="A1764" value="先の出願に基づく優先権主張取下書" />
-        <item code="A1765" value="パリ条約による優先権主張放棄書" />
-        <item code="A1781" value="上申書" />
-        <item code="A179" value="優先権証明書提出書" />
-        <item code="A180" value="新規性の喪失の例外証明書提出書" />
-        <item code="A1801" value="新規性喪失の例外適用申請書" />
-        <item code="A181" value="出願日証明書提出書" />
-        <item code="A182" value="物件提出書" />
-        <item code="A1821" value="手続補足書" />
-        <item code="A1822" value="証明書類提出書" />
-        <item code="A1831" value="刊行物等提出書" />
-        <item code="A187" value="優先審査に関する事情説明書" />
-        <item code="A1871" value="早期審査に関する事情説明書" />
-        <item code="A1872" value="早期審査に関する事情説明補充書" />
-        <item code="A1IB101" value="国際出願の写し" />
-        <item code="A1IB101J" value="国際出願の願書の写し" />
-        <item code="A1IB210" value="国際調査報告" />
-        <item code="A1IB21J" value="国際調査報告（日本語）" />
-        <item code="A1IB304" value="優先権主張の書類提出に関する通知" />
-        <item code="A1IB305" value="先の出願番号の遅れた提出の通知" />
-        <item code="A1IB306" value="記録の変更通知" />
-        <item code="A1IB307" value="国際出願又は指定の取り下げの通知" />
-        <item code="A1IB310" value="送達書類に関する通知（その他雑通知等）" />
-        <item code="A1IB317" value="優先権に関する取下の通知" />
-        <item code="A1IB31A" value="優先権書類" />
-        <item code="A1IB31B" value="条約１９条補正" />
-        <item code="A1IB31B1" value="条約１９条補正（職権）" />
-        <item code="A1IB31C" value="条約３４条補正" />
-        <item code="A1IB31C1" value="条約３４条補正（職権）" />
-        <item code="A1IB31E" value="国際予備審査報告（日本語／英語以外の言語）" />
-        <item code="A1IB31J" value="国際予備審査報告（日本語）" />
-        <item code="A1IB324" value="指定が取り下げられたものとみなす旨の通知" />
-        <item code="A1IB325" value="国際出願が取り下げられたものとみなす通知" />
-        <item code="A1IB331" value="選択の通知" />
-        <item code="A1IB334" value="後にする選択の届出が提出・選択無とみなす通知" />
-        <item code="A1IB338" value="国際予備審査報告（英語）" />
-        <item code="A1IB339" value="予備審査請求又は選択の取り下げの通知" />
-        <item code="A1IB345" value="他に使用すべき様式がない場合の通知" />
-        <item code="A1IB349" value="国際公開" />
-        <item code="A1IB3491" value="日本語国際公開（職権）" />
-        <item code="A1IB3492" value="外国語国際公開図面（職権）" />
-        <item code="A1IB3493" value="外国語国際公開配列表（職権）" />
-        <item code="A1IB350" value="予備審査請求書の提出又は選択無とみなす通知" />
-        <item code="A1IB500" value="ＩＢ回答書" />
-        <item code="A1IBC101" value="訂正／国際出願の写し" />
-        <item code="A1IBC210" value="訂正／国際調査報告" />
-        <item code="A1IBC21J" value="訂正／国際調査報告（日本語）" />
-        <item code="A1IBC304" value="訂正／優先権主張の書類提出に関する通知" />
-        <item code="A1IBC305" value="訂正／先の出願番号の遅れた提出の通知" />
-        <item code="A1IBC306" value="訂正／記録の変更通知" />
-        <item code="A1IBC307" value="訂正／国際出願又は指定の取り下げの通知" />
-        <item code="A1IBC310" value="訂正／送達書類に関する通知（その他雑通知等）" />
-        <item code="A1IBC317" value="訂正／優先権に関する取下の通知" />
-        <item code="A1IBC31A" value="訂正／優先権書類" />
-        <item code="A1IBC31B" value="訂正／条約１９条補正" />
-        <item code="A1IBC31C" value="訂正／条約３４条補正" />
-        <item code="A1IBC31E" value="訂正／国際予備審査報告（日本語／英語以外の言語）" />
-        <item code="A1IBC31J" value="訂正／国際予備審査報告（日本語）" />
-        <item code="A1IBC324" value="訂正／指定が取り下げられたものとみなす旨の通知" />
-        <item code="A1IBC325" value="訂正／国際出願が取り下げられたものとみなす通知" />
-        <item code="A1IBC331" value="訂正／選択の通知" />
-        <item code="A1IBC334" value="訂正／後にする選択の届出が提出・選択無とみなす通知" />
-        <item code="A1IBC338" value="訂正／国際予備審査報告（英語）" />
-        <item code="A1IBC339" value="訂正／予備審査請求又は選択の取り下げの通知" />
-        <item code="A1IBC345" value="訂正／他に使用すべき様式がない場合の通知" />
-        <item code="A1IBC349" value="訂正／国際公開" />
-        <item code="A1IBC350" value="訂正／予備審査請求書の提出又は選択無とみなす通知" />
-        <item code="A1IB318" value="優先権主張に関する通知" />
-        <item code="A1IB335" value="指定または選択の取り消しの通知" />
-        <item code="A1IB346" value="請求の範囲の補正書の提出に関する通知" />
-        <item code="A1IB369" value="予備審査請求がされなかった旨の通知" />
-        <item code="A1IB373" value="特許性に関する国際予備報告（第Ｉ章）" />
-        <item code="A1IB374" value="国際調査機関の見解の翻訳の写しの送付通知" />
-        <item code="A1IB399" value="国際出願経過情報様式" />
-        <item code="A1IB3494" value="日本語国際公開要約図（職権）" />
-        <item code="A1IB3495" value="外国語国際公開要約図（職権）" />
-        <item code="A1IB3731" value="非公式コメント" />
-        <item code="A1IB501" value="補充国際調査報告" />
-        <item code="A1IB502" value="補充国際調査報告を作成しない旨の決定" />
-        <item code="A16330" value="明細書" />
-        <item code="A16331" value="図面" />
-        <item code="A16332" value="要約書" />
-        <item code="A16333" value="特許請求の範囲" />
-        <item code="A1914" value="出願審査請求手数料返還請求書" />
-        <item code="A1915" value="既納手数料返還請求書" />
-        <item code="A1916" value="世界知的所有権機関へのアクセスコード付与請求書" />
-        <item code="A1603" value="期間延長請求書（期間徒過）" />
-        <item code="A1917" value="回復理由書" />
-        <item code="A1918" value="保全審査に付することを求める申出書" />
-        <item code="A1919" value="不送付通知申出書" />
+    <!-- ====================================================================
+     書類名振り分け
+     ====================================================================-->
+    <xsl:template
+        name="書類名振り分け">
+        <xsl:param name="code" />
+        <xsl:variable name="firstChar" select="substring($code,1,1)" />
+        <xsl:choose>
+            <xsl:when test="$firstChar = 'A' ">
+                <xsl:call-template name="書類名出願">
+                    <xsl:with-param name="code" select="$code" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="$firstChar = 'R' ">
+                <xsl:call-template name="書類名登録">
+                    <xsl:with-param name="code" select="$code" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="$firstChar = 'E' ">
+                <xsl:call-template name="書類名請求">
+                    <xsl:with-param name="code" select="$code" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="$firstChar = 'C' ">
+                <xsl:call-template name="書類名審判">
+                    <xsl:with-param name="code" select="$code" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
-        <!-- 実用新案 出願系 -->
-        <item code="A251" value="'手続補正書（方式）'" />
-        <item code="A2521" value="'手続補正書'" />
-        <item code="A2522" value="'手続補正書'" />
-        <item code="A2523" value="'手続補正書'" />
-        <item code="A25210" value="'特許協力条約第３４条補正の翻訳文提出書（職権）'" />
-        <item code="A25211" value="'特許協力条約第３４条補正の写し提出書'" />
-        <item code="A25212" value="'特許協力条約第３４条補正の写し提出書（職権）'" />
-        <item code="A2524" value="'誤訳訂正書'" />
-        <item code="A2525" value="'特許協力条約第１９条補正の翻訳文提出書'" />
-        <item code="A2526" value="'特許協力条約第１９条補正の翻訳文提出書（職権）'" />
-        <item code="A2527" value="'特許協力条約第１９条補正の写し提出書'" />
-        <item code="A2528" value="'特許協力条約第１９条補正の写し提出書（職権）'" />
-        <item code="A2529" value="'特許協力条約第３４条補正の翻訳文提出書'" />
-        <item code="A253" value="'意見書'" />
-        <item code="A255" value="'受継申立書'" />
-        <item code="A259" value="'弁明書'" />
-        <item code="A2601" value="'期間延長請求書'" />
-        <item code="A2621" value="'出願審査請求書'" />
-        <item code="A2623" value="'実用新案技術評価請求書'" />
-        <item code="A2625" value="'出願審査請求書（他人）'" />
-        <item code="A2626" value="'国内処理請求書'" />
-        <item code="A263" value="'実用新案登録願'" />
-        <item code="A2632" value="'国内書面'" />
-        <item code="A2633" value="'図面の提出書'" />
-        <item code="A2634" value="'国際出願翻訳文提出書'" />
-        <item code="A2635" value="'国際出願翻訳文提出書（職権）'" />
-        <item code="A2681" value="'代表者選定届'" />
-        <item code="A2691" value="'雑書類'" />
-        <item code="A2711" value="'出願人名義変更届'" />
-        <item code="A2712" value="'出願人名義変更届（一般承継）'" />
-        <item code="A27421" value="'代理人変更届'" />
-        <item code="A27422" value="'代理人受任届'" />
-        <item code="A27423" value="'代理人選任届'" />
-        <item code="A27424" value="'代理人辞任届'" />
-        <item code="A27425" value="'代理人解任届'" />
-        <item code="A27426" value="'代理権変更届'" />
-        <item code="A27427" value="'代理権消滅届'" />
-        <item code="A27428" value="'包括委任状援用制限届'" />
-        <item code="A27431" value="'復代理人変更届'" />
-        <item code="A27432" value="'復代理人受任届'" />
-        <item code="A27433" value="'復代理人選任届'" />
-        <item code="A27434" value="'復代理人辞任届'" />
-        <item code="A27435" value="'復代理人解任届'" />
-        <item code="A27436" value="'復代理権変更届'" />
-        <item code="A27437" value="'復代理権消滅届'" />
-        <item code="A2761" value="'出願取下書'" />
-        <item code="A2762" value="'出願放棄書'" />
-        <item code="A2764" value="'先の出願に基づく優先権主張取下書'" />
-        <item code="A2765" value="'パリ条約による優先権主張放棄書'" />
-        <item code="A2781" value="'上申書'" />
-        <item code="A279" value="'優先権証明書提出書'" />
-        <item code="A280" value="'新規性の喪失の例外証明書提出書'" />
-        <item code="A2801" value="'新規性喪失の例外適用申請書'" />
-        <item code="A281" value="'出願日証明書提出書'" />
-        <item code="A282" value="'物件提出書'" />
-        <item code="A2821" value="'手続補足書'" />
-        <item code="A2822" value="'証明書類提出書'" />
-        <item code="A2831" value="'刊行物等提出書'" />
-        <item code="A287" value="'優先審査に関する事情説明書'" />
-        <item code="A2871" value="'早期審査に関する事情説明書'" />
-        <item code="A2872" value="'早期審査に関する事情説明補充書'" />
-        <item code="A2IB101" value="'国際出願の写し'" />
-        <item code="A2IB101J" value="'国際出願の願書の写し'" />
-        <item code="A2IB210" value="'国際調査報告'" />
-        <item code="A2IB21J" value="'国際調査報告（日本語）'" />
-        <item code="A2IB304" value="'優先権主張の書類提出に関する通知'" />
-        <item code="A2IB305" value="'先の出願番号の遅れた提出の通知'" />
-        <item code="A2IB306" value="'記録の変更通知'" />
-        <item code="A2IB307" value="'国際出願又は指定の取り下げの通知'" />
-        <item code="A2IB310" value="'送達書類に関する通知（その他雑通知等）'" />
-        <item code="A2IB317" value="'優先権に関する取下の通知'" />
-        <item code="A2IB31A" value="'優先権書類'" />
-        <item code="A2IB31B" value="'条約１９条補正'" />
-        <item code="A2IB31B1" value="'条約１９条補正（職権）'" />
-        <item code="A2IB31C" value="'条約３４条補正'" />
-        <item code="A2IB31C1" value="'条約３４条補正（職権）'" />
-        <item code="A2IB31E" value="'国際予備審査報告（日本語／英語以外の言語）'" />
-        <item code="A2IB31J" value="'国際予備審査報告（日本語）'" />
-        <item code="A2IB324" value="'指定が取り下げられたものとみなす旨の通知'" />
-        <item code="A2IB325" value="'国際出願が取り下げられたものとみなす通知'" />
-        <item code="A2IB331" value="'選択の通知'" />
-        <item code="A2IB334" value="'後にする選択の届出が提出・選択無とみなす通知'" />
-        <item code="A2IB338" value="'国際予備審査報告（英語）'" />
-        <item code="A2IB339" value="'予備審査請求又は選択の取り下げの通知'" />
-        <item code="A2IB345" value="'他に使用すべき様式がない場合の通知'" />
-        <item code="A2IB349" value="'国際公開'" />
-        <item code="A2IB3491" value="'日本語国際公開（職権）'" />
-        <item code="A2IB3492" value="'外国語国際公開図面（職権）'" />
-        <item code="A2IB3493" value="'外国語国際公開配列表（職権）'" />
-        <item code="A2IB350" value="'予備審査請求書の提出又は選択無とみなす通知'" />
-        <item code="A2IB500" value="'ＩＢ回答書'" />
-        <item code="A2IBC101" value="'訂正／国際出願の写し'" />
-        <item code="A2IBC210" value="'訂正／国際調査報告'" />
-        <item code="A2IBC21J" value="'訂正／国際調査報告（日本語）'" />
-        <item code="A2IBC304" value="'訂正／優先権主張の書類提出に関する通知'" />
-        <item code="A2IBC305" value="'訂正／先の出願番号の遅れた提出の通知'" />
-        <item code="A2IBC306" value="'訂正／記録の変更通知'" />
-        <item code="A2IBC307" value="'訂正／国際出願又は指定の取り下げの通知'" />
-        <item code="A2IBC310" value="'訂正／送達書類に関する通知（その他雑通知等）'" />
-        <item code="A2IBC317" value="'訂正／優先権に関する取下の通知'" />
-        <item code="A2IBC31A" value="'訂正／優先権書類'" />
-        <item code="A2IBC31B" value="'訂正／条約１９条補正'" />
-        <item code="A2IBC31C" value="'訂正／条約３４条補正'" />
-        <item code="A2IBC31E" value="'訂正／国際予備審査報告（日本語／英語以外の言語）'" />
-        <item code="A2IBC31J" value="'訂正／国際予備審査報告（日本語）'" />
-        <item code="A2IBC324" value="'訂正／指定が取り下げられたものとみなす旨の通知'" />
-        <item code="A2IBC325" value="'訂正／国際出願が取り下げられたものとみなす通知'" />
-        <item code="A2IBC331" value="'訂正／選択の通知'" />
-        <item code="A2IBC334" value="'訂正／後にする選択の届出が提出・選択無とみなす通知'" />
-        <item code="A2IBC338" value="'訂正／国際予備審査報告（英語）'" />
-        <item code="A2IBC339" value="'訂正／予備審査請求又は選択の取り下げの通知'" />
-        <item code="A2IBC345" value="'訂正／他に使用すべき様式がない場合の通知'" />
-        <item code="A2IBC349" value="'訂正／国際公開'" />
-        <item code="A2IBC350" value="'訂正／予備審査請求書の提出又は選択無とみなす通知'" />
-        <item code="A2IB318" value="'優先権主張に関する通知'" />
-        <item code="A2IB335" value="'指定または選択の取り消しの通知'" />
-        <item code="A2IB346" value="'請求の範囲の補正書の提出に関する通知'" />
-        <item code="A2IB369" value="'予備審査請求がされなかった旨の通知'" />
-        <item code="A2IB373" value="'特許性に関する国際予備報告（第Ｉ章）'" />
-        <item code="A2IB374" value="'国際調査機関の見解の翻訳の写しの送付通知'" />
-        <item code="A2IB399" value="'国際出願経過情報様式'" />
-        <item code="A2IB3494" value="'日本語国際公開要約図（職権）'" />
-        <item code="A2IB3495" value="'外国語国際公開要約図（職権）'" />
-        <item code="A2IB3731" value="'非公式コメント'" />
-        <item code="A2IB501" value="'補充国際調査報告'" />
-        <item code="A2IB502" value="'補充国際調査報告を作成しない旨の決定'" />
-        <item code="A26330" value="'明細書'" />
-        <item code="A26331" value="'図面'" />
-        <item code="A26332" value="'要約書'" />
-        <item code="A26333" value="'実用新案登録請求の範囲'" />
-        <item code="A2915" value="'既納手数料（登録料）返還請求書'" />
-        <item code="A2624" value="'実用新案技術評価請求書（他人）'" />
-        <item code="A2916" value="'世界知的所有権機関へのアクセスコード付与請求書'" />
-        <item code="A2603" value="'期間延長請求書（期間徒過）'" />
-        <item code="A2917" value="'回復理由書'" />
+    <!-- ====================================================================
+     書類名出願（Ａで始まる書類識別コード）
+     ====================================================================-->
+    <xsl:template
+        name="書類名出願">
+        <xsl:param name="code" />
+        <xsl:choose>
+            <xsl:when
+                test="$code = 'A151' or $code = 'A251'
+                 or $code = 'A351' or $code = 'A451'">
+                <xsl:value-of select="'手続補正書（方式）'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1521' or $code = 'A2521'
+                 or $code = 'A1522' or $code = 'A2522'
+                 or $code = 'A1523' or $code = 'A2523'
+                 or $code = 'A3523' or $code = 'A4523'">
+                <xsl:value-of select="'手続補正書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A35231'">
+                <xsl:value-of select="'手続補正書（複数）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A15210' or $code = 'A25210'">
+                <xsl:value-of select="'特許協力条約第３４条補正の翻訳文提出書（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A15211' or $code = 'A25211'">
+                <xsl:value-of select="'特許協力条約第３４条補正の写し提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A15212' or $code = 'A25212'">
+                <xsl:value-of select="'特許協力条約第３４条補正の写し提出書（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1524' or $code = 'A2524'">
+                <xsl:value-of select="'誤訳訂正書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1525' or $code = 'A2525'">
+                <xsl:value-of select="'特許協力条約第１９条補正の翻訳文提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1526' or $code = 'A2526'">
+                <xsl:value-of select="'特許協力条約第１９条補正の翻訳文提出書（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1527' or $code = 'A2527'">
+                <xsl:value-of select="'特許協力条約第１９条補正の写し提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1528' or $code = 'A2528'">
+                <xsl:value-of select="'特許協力条約第１９条補正の写し提出書（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1529' or $code = 'A2529'">
+                <xsl:value-of select="'特許協力条約第３４条補正の翻訳文提出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A153' or $code = 'A253'
+                 or $code = 'A353' or $code = 'A453'">
+                <xsl:value-of select="'意見書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A155' or $code = 'A255'
+                 or $code = 'A355' or $code = 'A455'">
+                <xsl:value-of select="'受継申立書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A159' or $code = 'A259'
+                 or $code = 'A359' or $code = 'A459'">
+                <xsl:value-of select="'弁明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1601' or $code = 'A2601'
+                 or $code = 'A3601' or $code = 'A4601'">
+                <xsl:value-of select="'期間延長請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1621' or $code = 'A2621'">
+                <xsl:value-of select="'出願審査請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A2623'">
+                <xsl:value-of select="'実用新案技術評価請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1625' or $code = 'A2625'">
+                <xsl:value-of select="'出願審査請求書（他人）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A2626'">
+                <xsl:value-of select="'国内処理請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1627'">
+                <xsl:value-of select="'出願公開請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A163'">
+                <xsl:value-of select="'特許願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A263'">
+                <xsl:value-of select="'実用新案登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A363'">
+                <xsl:value-of select="'意匠登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A463'">
+                <xsl:value-of select="'商標登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A3630'">
+                <xsl:value-of select="'意匠登録願（複数）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A3636'">
+                <xsl:value-of select="'類似意匠登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4639'">
+                <xsl:value-of select="'団体商標登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1631'">
+                <xsl:value-of select="'翻訳文提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1632' or $code = 'A2632'">
+                <xsl:value-of select="'国内書面'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4632'">
+                <xsl:value-of select="'防護標章登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A2633'">
+                <xsl:value-of select="'図面の提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4633'">
+                <xsl:value-of select="'防護標章登録に基づく権利存続期間更新登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1634' or $code = 'A2634'">
+                <xsl:value-of select="'国際出願翻訳文提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4634'">
+                <xsl:value-of select="'書換登録申請書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A46341'">
+                <xsl:value-of select="'外国語図面'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A46342'">
+                <xsl:value-of select="'外国語要約書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1635' or $code = 'A2635'">
+                <xsl:value-of select="'国際出願翻訳文提出書（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4635'">
+                <xsl:value-of select="'防護標章登録に基づく権利書換登録申請書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4637'">
+                <xsl:value-of select="'重複登録商標に係る商標権存続期間更新登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4638'">
+                <xsl:value-of select="'地域団体商標登録願'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A167'">
+                <xsl:value-of select="'受託番号変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1681' or $code = 'A2681'
+                 or $code = 'A3681' or $code = 'A4681'">
+                <xsl:value-of select="'代表者選定届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1691' or $code = 'A2691'
+                 or $code = 'A3691' or $code = 'A4691'">
+                <xsl:value-of select="'雑書類'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1711' or $code = 'A2711'
+                 or $code = 'A3711' or $code = 'A4711'">
+                <xsl:value-of select="'出願人名義変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1712' or $code = 'A2712'
+                 or $code = 'A3712' or $code = 'A4712'">
+                <xsl:value-of select="'出願人名義変更届（一般承継）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4713'">
+                <xsl:value-of select="'出願人名義変更届（特例商標登録出願）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4714'">
+                <xsl:value-of select="'出願人名義変更届（特例商標登録出願）（一般承継）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4715'">
+                <xsl:value-of select="'書換登録申請者名義変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17421' or $code = 'A27421'
+                 or $code = 'A37421' or $code = 'A47421'">
+                <xsl:value-of select="'代理人変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17422' or $code = 'A27422'
+                 or $code = 'A37422' or $code = 'A47422'">
+                <xsl:value-of select="'代理人受任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17423' or $code = 'A27423'
+                 or $code = 'A37423' or $code = 'A47423'">
+                <xsl:value-of select="'代理人選任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17424' or $code = 'A27424'
+                 or $code = 'A37424' or $code = 'A47424'">
+                <xsl:value-of select="'代理人辞任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17425' or $code = 'A27425'
+                 or $code = 'A37425' or $code = 'A47425'">
+                <xsl:value-of select="'代理人解任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17426' or $code = 'A27426'
+                 or $code = 'A37426' or $code = 'A47426'">
+                <xsl:value-of select="'代理権変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17427' or $code = 'A27427'
+                 or $code = 'A37427' or $code = 'A47427'">
+                <xsl:value-of select="'代理権消滅届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17428' or $code = 'A27428'
+                 or $code = 'A37428' or $code = 'A47428'">
+                <xsl:value-of select="'包括委任状援用制限届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17431' or $code = 'A27431'
+                 or $code = 'A37431' or $code = 'A47431'">
+                <xsl:value-of select="'復代理人変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17432' or $code = 'A27432'
+                 or $code = 'A37432' or $code = 'A47432'">
+                <xsl:value-of select="'復代理人受任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17433' or $code = 'A27433'
+                 or $code = 'A37433' or $code = 'A47433'">
+                <xsl:value-of select="'復代理人選任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17434' or $code = 'A27434'
+                 or $code = 'A37434' or $code = 'A47434'">
+                <xsl:value-of select="'復代理人辞任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17435' or $code = 'A27435'
+                 or $code = 'A37435' or $code = 'A47435'">
+                <xsl:value-of select="'復代理人解任届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17436' or $code = 'A27436'
+                 or $code = 'A37436' or $code = 'A47436'">
+                <xsl:value-of select="'復代理権変更届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A17437' or $code = 'A27437'
+                 or $code = 'A37437' or $code = 'A47437'">
+                <xsl:value-of select="'復代理権消滅届'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1761' or $code = 'A2761'
+                 or $code = 'A3761' or $code = 'A4761'">
+                <xsl:value-of select="'出願取下書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1762' or $code = 'A2762'
+                 or $code = 'A3762' or $code = 'A4762'">
+                <xsl:value-of select="'出願放棄書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1764' or $code = 'A2764'">
+                <xsl:value-of select="'先の出願に基づく優先権主張取下書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1765' or $code = 'A2765'
+                 or $code = 'A3765' or $code = 'A4765'">
+                <xsl:value-of select="'パリ条約による優先権主張放棄書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4766'">
+                <xsl:value-of select="'書換登録申請取下書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4768'">
+                <xsl:value-of select="'使用に基づく特例の適用の主張取下書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A37731'">
+                <xsl:value-of select="'出願変更届（独立→類似）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A37732'">
+                <xsl:value-of select="'出願変更届（類似→独立）'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1781' or $code = 'A2781'
+                 or $code = 'A3781' or $code = 'A4781'">
+                <xsl:value-of select="'上申書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A179' or $code = 'A279'
+                 or $code = 'A379' or $code = 'A479'">
+                <xsl:value-of select="'優先権証明書提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A180' or $code = 'A280'
+                 or $code = 'A380'">
+                <xsl:value-of select="'新規性の喪失の例外証明書提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A480'">
+                <xsl:value-of select="'出願時の特例証明書提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1801' or $code = 'A2801'">
+                <xsl:value-of select="'新規性喪失の例外適用申請書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A181' or $code = 'A281'
+                 or $code = 'A381' or $code = 'A481'">
+                <xsl:value-of select="'出願日証明書提出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A182' or $code = 'A282'
+                 or $code = 'A382' or $code = 'A482'">
+                <xsl:value-of select="'物件提出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1821' or $code = 'A2821'
+                 or $code = 'A3821' or $code = 'A4821'">
+                <xsl:value-of select="'手続補足書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1822' or $code = 'A2822'
+                 or $code = 'A3822' or $code = 'A4822'">
+                <xsl:value-of select="'証明書類提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A3824'">
+                <xsl:value-of select="'ひな形又は見本補足書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A3833'">
+                <xsl:value-of select="'特徴記載書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A3826'">
+                <xsl:value-of select="'意匠法第９条第５項に基づく協議の結果届'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1831' or $code = 'A2831'
+                 or $code = 'A4831'">
+                <xsl:value-of select="'刊行物等提出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A187' or $code = 'A287'">
+                <xsl:value-of select="'優先審査に関する事情説明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1871' or $code = 'A2871'
+                 or $code = 'A3871' or $code = 'A4871'">
+                <xsl:value-of select="'早期審査に関する事情説明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1872' or $code = 'A2872'
+                 or $code = 'A3872' or $code = 'A4872'">
+                <xsl:value-of select="'早期審査に関する事情説明補充書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A3907'">
+                <xsl:value-of select="'秘密意匠期間変更請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A4908'">
+                <xsl:value-of select="'協議の結果届'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB101' or $code = 'A2IB101'">
+                <xsl:value-of select="'国際出願の写し'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB101J' or $code = 'A2IB101J'">
+                <xsl:value-of select="'国際出願の願書の写し'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB210' or $code = 'A2IB210'">
+                <xsl:value-of select="'国際調査報告'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB21J' or $code = 'A2IB21J'">
+                <xsl:value-of select="'国際調査報告（日本語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB304' or $code = 'A2IB304'">
+                <xsl:value-of select="'優先権主張の書類提出に関する通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB305' or $code = 'A2IB305'">
+                <xsl:value-of select="'先の出願番号の遅れた提出の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB306' or $code = 'A2IB306'">
+                <xsl:value-of select="'記録の変更通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB307' or $code = 'A2IB307'">
+                <xsl:value-of select="'国際出願又は指定の取り下げの通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB310' or $code = 'A2IB310'">
+                <xsl:value-of select="'送達書類に関する通知（その他雑通知等）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB317' or $code = 'A2IB317'">
+                <xsl:value-of select="'優先権に関する取下の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31A' or $code = 'A2IB31A'">
+                <xsl:value-of select="'優先権書類'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31B' or $code = 'A2IB31B'">
+                <xsl:value-of select="'条約１９条補正'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31B1' or $code = 'A2IB31B1'">
+                <xsl:value-of select="'条約１９条補正（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31C' or $code = 'A2IB31C'">
+                <xsl:value-of select="'条約３４条補正'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31C1' or $code = 'A2IB31C1'">
+                <xsl:value-of select="'条約３４条補正（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31E' or $code = 'A2IB31E'">
+                <xsl:value-of select="'国際予備審査報告（日本語／英語以外の言語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB31J' or $code = 'A2IB31J'">
+                <xsl:value-of select="'国際予備審査報告（日本語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB324' or $code = 'A2IB324'">
+                <xsl:value-of select="'指定が取り下げられたものとみなす旨の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB325' or $code = 'A2IB325'">
+                <xsl:value-of select="'国際出願が取り下げられたものとみなす通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB331' or $code = 'A2IB331'">
+                <xsl:value-of select="'選択の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB334' or $code = 'A2IB334'">
+                <xsl:value-of select="'後にする選択の届出が提出・選択無とみなす通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB338' or $code = 'A2IB338'">
+                <xsl:value-of select="'国際予備審査報告（英語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB339' or $code = 'A2IB339'">
+                <xsl:value-of select="'予備審査請求又は選択の取り下げの通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB345' or $code = 'A2IB345'">
+                <xsl:value-of select="'他に使用すべき様式がない場合の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB349' or $code = 'A2IB349'">
+                <xsl:value-of select="'国際公開'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB3491' or $code = 'A2IB3491'">
+                <xsl:value-of select="'日本語国際公開（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB3492' or $code = 'A2IB3492'">
+                <xsl:value-of select="'外国語国際公開図面（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB3493' or $code = 'A2IB3493'">
+                <xsl:value-of select="'外国語国際公開配列表（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB350' or $code = 'A2IB350'">
+                <xsl:value-of select="'予備審査請求書の提出又は選択無とみなす通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB500' or $code = 'A2IB500'">
+                <xsl:value-of select="'ＩＢ回答書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC101' or $code = 'A2IBC101'">
+                <xsl:value-of select="'訂正／国際出願の写し'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC210' or $code = 'A2IBC210'">
+                <xsl:value-of select="'訂正／国際調査報告'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC21J' or $code = 'A2IBC21J'">
+                <xsl:value-of select="'訂正／国際調査報告（日本語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC304' or $code = 'A2IBC304'">
+                <xsl:value-of select="'訂正／優先権主張の書類提出に関する通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC305' or $code = 'A2IBC305'">
+                <xsl:value-of select="'訂正／先の出願番号の遅れた提出の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC306' or $code = 'A2IBC306'">
+                <xsl:value-of select="'訂正／記録の変更通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC307' or $code = 'A2IBC307'">
+                <xsl:value-of select="'訂正／国際出願又は指定の取り下げの通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC310' or $code = 'A2IBC310'">
+                <xsl:value-of select="'訂正／送達書類に関する通知（その他雑通知等）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC317' or $code = 'A2IBC317'">
+                <xsl:value-of select="'訂正／優先権に関する取下の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC31A' or $code = 'A2IBC31A'">
+                <xsl:value-of select="'訂正／優先権書類'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC31B' or $code = 'A2IBC31B'">
+                <xsl:value-of select="'訂正／条約１９条補正'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC31C' or $code = 'A2IBC31C'">
+                <xsl:value-of select="'訂正／条約３４条補正'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC31E' or $code = 'A2IBC31E'">
+                <xsl:value-of select="'訂正／国際予備審査報告（日本語／英語以外の言語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC31J' or $code = 'A2IBC31J'">
+                <xsl:value-of select="'訂正／国際予備審査報告（日本語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC324' or $code = 'A2IBC324'">
+                <xsl:value-of select="'訂正／指定が取り下げられたものとみなす旨の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC325' or $code = 'A2IBC325'">
+                <xsl:value-of select="'訂正／国際出願が取り下げられたものとみなす通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC331' or $code = 'A2IBC331'">
+                <xsl:value-of select="'訂正／選択の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC334' or $code = 'A2IBC334'">
+                <xsl:value-of select="'訂正／後にする選択の届出が提出・選択無とみなす通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC338' or $code = 'A2IBC338'">
+                <xsl:value-of select="'訂正／国際予備審査報告（英語）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC339' or $code = 'A2IBC339'">
+                <xsl:value-of select="'訂正／予備審査請求又は選択の取り下げの通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC345' or $code = 'A2IBC345'">
+                <xsl:value-of select="'訂正／他に使用すべき様式がない場合の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC349' or $code = 'A2IBC349'">
+                <xsl:value-of select="'訂正／国際公開'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IBC350' or $code = 'A2IBC350'">
+                <xsl:value-of select="'訂正／予備審査請求書の提出又は選択無とみなす通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB318' or $code = 'A2IB318'">
+                <xsl:value-of select="'優先権主張に関する通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB335' or $code = 'A2IB335'">
+                <xsl:value-of select="'指定または選択の取り消しの通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB346' or $code = 'A2IB346'">
+                <xsl:value-of select="'請求の範囲の補正書の提出に関する通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB369' or $code = 'A2IB369'">
+                <xsl:value-of select="'予備審査請求がされなかった旨の通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB373' or $code = 'A2IB373'">
+                <xsl:value-of select="'特許性に関する国際予備報告（第Ｉ章）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB374' or $code = 'A2IB374'">
+                <xsl:value-of select="'国際調査機関の見解の翻訳の写しの送付通知'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB399' or $code = 'A2IB399'">
+                <xsl:value-of select="'国際出願経過情報様式'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB3494' or $code = 'A2IB3494'">
+                <xsl:value-of select="'日本語国際公開要約図（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB3495' or $code = 'A2IB3495'">
+                <xsl:value-of select="'外国語国際公開要約図（職権）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB3731' or $code = 'A2IB3731'">
+                <xsl:value-of select="'非公式コメント'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB501' or $code = 'A2IB501'">
+                <xsl:value-of select="'補充国際調査報告'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1IB502' or $code = 'A2IB502'">
+                <xsl:value-of select="'補充国際調査報告を作成しない旨の決定'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A16330' or $code = 'A26330'">
+                <xsl:value-of select="'明細書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A16331' or $code = 'A26331'">
+                <xsl:value-of select="'図面'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A16332' or $code = 'A26332'">
+                <xsl:value-of select="'要約書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A16333'">
+                <xsl:value-of select="'特許請求の範囲'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A26333'">
+                <xsl:value-of select="'実用新案登録請求の範囲'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1914'">
+                <xsl:value-of select="'出願審査請求手数料返還請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1915' or $code = 'A3915' or $code = 'A4915'">
+                <xsl:value-of select="'既納手数料返還請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A2915'">
+                <xsl:value-of select="'既納手数料（登録料）返還請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A2624'">
+                <xsl:value-of select="'実用新案技術評価請求書（他人）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1916' or $code = 'A2916'">
+                <xsl:value-of select="'世界知的所有権機関へのアクセスコード付与請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'A1603' or $code = 'A2603'
+                 or $code = 'A3603' or $code = 'A4603'">
+                <xsl:value-of select="'期間延長請求書（期間徒過）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1917' or $code = 'A2917' or $code = 'A3917'">
+                <xsl:value-of select="'回復理由書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1918'">
+                <xsl:value-of select="'保全審査に付することを求める申出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'A1919'">
+                <xsl:value-of select="'不送付通知申出書'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
-        <!-- 意匠 出願系 -->
-        <item code="A351" value="'手続補正書（方式）'" />
-        <item code="A3523" value="'手続補正書'" />
-        <item code="A35231" value="'手続補正書（複数）'" />
-        <item code="A353" value="'意見書'" />
-        <item code="A355" value="'受継申立書'" />
-        <item code="A359" value="'弁明書'" />
-        <item code="A3601" value="'期間延長請求書'" />
-        <item code="A363" value="'意匠登録願'" />
-        <item code="A3630" value="'意匠登録願（複数）'" />
-        <item code="A3636" value="'類似意匠登録願'" />
-        <item code="A3681" value="'代表者選定届'" />
-        <item code="A3691" value="'雑書類'" />
-        <item code="A3711" value="'出願人名義変更届'" />
-        <item code="A3712" value="'出願人名義変更届（一般承継）'" />
-        <item code="A37421" value="'代理人変更届'" />
-        <item code="A37422" value="'代理人受任届'" />
-        <item code="A37423" value="'代理人選任届'" />
-        <item code="A37424" value="'代理人辞任届'" />
-        <item code="A37425" value="'代理人解任届'" />
-        <item code="A37426" value="'代理権変更届'" />
-        <item code="A37427" value="'代理権消滅届'" />
-        <item code="A37428" value="'包括委任状援用制限届'" />
-        <item code="A37431" value="'復代理人変更届'" />
-        <item code="A37432" value="'復代理人受任届'" />
-        <item code="A37433" value="'復代理人選任届'" />
-        <item code="A37434" value="'復代理人辞任届'" />
-        <item code="A37435" value="'復代理人解任届'" />
-        <item code="A37436" value="'復代理権変更届'" />
-        <item code="A37437" value="'復代理権消滅届'" />
-        <item code="A3761" value="'出願取下書'" />
-        <item code="A3762" value="'出願放棄書'" />
-        <item code="A3765" value="'パリ条約による優先権主張放棄書'" />
-        <item code="A37731" value="'出願変更届（独立→類似）'" />
-        <item code="A37732" value="'出願変更届（類似→独立）'" />
-        <item code="A3781" value="'上申書'" />
-        <item code="A379" value="'優先権証明書提出書'" />
-        <item code="A380" value="'新規性の喪失の例外証明書提出書'" />
-        <item code="A381" value="'出願日証明書提出書'" />
-        <item code="A382" value="'物件提出書'" />
-        <item code="A3821" value="'手続補足書'" />
-        <item code="A3822" value="'証明書類提出書'" />
-        <item code="A3824" value="'ひな形又は見本補足書'" />
-        <item code="A3833" value="'特徴記載書'" />
-        <item code="A3826" value="'意匠法第９条第５項に基づく協議の結果届'" />
-        <item code="A3871" value="'早期審査に関する事情説明書'" />
-        <item code="A3872" value="'早期審査に関する事情説明補充書'" />
-        <item code="A3907" value="'秘密意匠期間変更請求書'" />
-        <item code="A3915" value="'既納手数料返還請求書'" />
-        <item code="A3603" value="'期間延長請求書（期間徒過）'" />
-        <item code="A3917" value="'回復理由書'" />
+    <!-- ====================================================================
+     書類名登録（Ｒで始まる書類識別コード）
+     ====================================================================-->
+    <xsl:template
+        name="書類名登録">
+        <xsl:param name="code" />
+        <xsl:choose>
+            <xsl:when test="$code = 'R1100' or $code = 'R120'">
+                <xsl:value-of select="'特許料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R2100' or $code = 'R220'">
+                <xsl:value-of select="'実用新案登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R3100' or $code = 'R320'">
+                <xsl:value-of select="'意匠登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4100' or $code = 'R4200'">
+                <xsl:value-of select="'商標登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R1101'">
+                <xsl:value-of select="'追加の特許の特許料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R3102'">
+                <xsl:value-of select="'類似意匠登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4103'">
+                <xsl:value-of select="'防護標章登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4104'">
+                <xsl:value-of select="'商標更新登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4105'">
+                <xsl:value-of select="'防護標章更新登録料納付書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R1110'">
+                <xsl:value-of select="'特許料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R2110'">
+                <xsl:value-of select="'実用新案登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R3110'">
+                <xsl:value-of select="'意匠登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4110'">
+                <xsl:value-of select="'商標登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R1111'">
+                <xsl:value-of select="'追加の特許の特許料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R3112'">
+                <xsl:value-of select="'類似意匠登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4113'">
+                <xsl:value-of select="'防護標章登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4114'">
+                <xsl:value-of select="'商標更新登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4115'">
+                <xsl:value-of select="'防護標章更新登録料納付書（設定補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R121'">
+                <xsl:value-of select="'特許料納付書（補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R221'">
+                <xsl:value-of select="'実用新案登録料納付書（補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R321'">
+                <xsl:value-of select="'意匠登録料納付書（補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4210'">
+                <xsl:value-of select="'商標登録料納付書（分納補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4201'">
+                <xsl:value-of select="'商標権存続期間更新登録申請書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4211'">
+                <xsl:value-of select="'商標権存続期間更新登録申請書（補充）'" />
+            </xsl:when>
+            <xsl:when test="$code = 'R4220'">
+                <xsl:value-of select="'手続補足書'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
-        <!-- 商標 出願系-->
-        <item code="A451" value="'手続補正書（方式）'" />
-        <item code="A4523" value="'手続補正書'" />
-        <item code="A453" value="'意見書'" />
-        <item code="A455" value="'受継申立書'" />
-        <item code="A459" value="'弁明書'" />
-        <item code="A4601" value="'期間延長請求書'" />
-        <item code="A463" value="'商標登録願'" />
-        <item code="A4639" value="'団体商標登録願'" />
-        <item code="A4632" value="'防護標章登録願'" />
-        <item code="A4633" value="'防護標章登録に基づく権利存続期間更新登録願'" />
-        <item code="A4634" value="'書換登録申請書'" />
-        <item code="A46341" value="'外国語図面'" />
-        <item code="A46342" value="'外国語要約書'" />
-        <item code="A4635" value="'防護標章登録に基づく権利書換登録申請書'" />
-        <item code="A4637" value="'重複登録商標に係る商標権存続期間更新登録願'" />
-        <item code="A4638" value="'地域団体商標登録願'" />
-        <item code="A4681" value="'代表者選定届'" />
-        <item code="A4691" value="'雑書類'" />
-        <item code="A4711" value="'出願人名義変更届'" />
-        <item code="A4712" value="'出願人名義変更届（一般承継）'" />
-        <item code="A4713" value="'出願人名義変更届（特例商標登録出願）'" />
-        <item code="A4714" value="'出願人名義変更届（特例商標登録出願）（一般承継）'" />
-        <item code="A4715" value="'書換登録申請者名義変更届'" />
-        <item code="A47421" value="'代理人変更届'" />
-        <item code="A47422" value="'代理人受任届'" />
-        <item code="A47423" value="'代理人選任届'" />
-        <item code="A47424" value="'代理人辞任届'" />
-        <item code="A47425" value="'代理人解任届'" />
-        <item code="A47426" value="'代理権変更届'" />
-        <item code="A47427" value="'代理権消滅届'" />
-        <item code="A47428" value="'包括委任状援用制限届'" />
-        <item code="A47431" value="'復代理人変更届'" />
-        <item code="A47432" value="'復代理人受任届'" />
-        <item code="A47433" value="'復代理人選任届'" />
-        <item code="A47434" value="'復代理人辞任届'" />
-        <item code="A47435" value="'復代理人解任届'" />
-        <item code="A47436" value="'復代理権変更届'" />
-        <item code="A47437" value="'復代理権消滅届'" />
-        <item code="A4761" value="'出願取下書'" />
-        <item code="A4762" value="'出願放棄書'" />
-        <item code="A4765" value="'パリ条約による優先権主張放棄書'" />
-        <item code="A4766" value="'書換登録申請取下書'" />
-        <item code="A4768" value="'使用に基づく特例の適用の主張取下書'" />
-        <item code="A4781" value="'上申書'" />
-        <item code="A479" value="'優先権証明書提出書'" />
-        <item code="A480" value="'出願時の特例証明書提出書'" />
-        <item code="A481" value="'出願日証明書提出書'" />
-        <item code="A482" value="'物件提出書'" />
-        <item code="A4821" value="'手続補足書'" />
-        <item code="A4822" value="'証明書類提出書'" />
-        <item code="A4831" value="'刊行物等提出書'" />
-        <item code="A4871" value="'早期審査に関する事情説明書'" />
-        <item code="A4872" value="'早期審査に関する事情説明補充書'" />
-        <item code="A4908" value="'協議の結果届'" />
-        <item code="A4915" value="'既納手数料返還請求書'" />
-        <item code="A4603" value="'期間延長請求書（期間徒過）'" />
+    <!-- ====================================================================
+     書類名請求（Ｅで始まる書類識別コード）
+     ====================================================================-->
+    <xsl:template
+        name="書類名請求">
+        <xsl:param name="code" />
+        <xsl:choose>
+            <xsl:when test="$code = 'E1841' or $code = 'E2841'">
+                <xsl:value-of select="'優先権証明請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'E1842' or $code = 'E2842'">
+                <xsl:value-of select="'証明請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'E1851' or $code = 'E2851'">
+                <xsl:value-of select="'ファイル記録事項記載書類の交付請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'E1852' or $code = 'E2852'">
+                <xsl:value-of select="'認証付ファイル記録事項記載書類の交付請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'E1853' or $code = 'E2853'
+                 or $code = 'E3853' or $code = 'E4853'">
+                <xsl:value-of select="'登録事項記載書類の交付請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'E1854' or $code = 'E2854'
+                 or $code = 'E3854' or $code = 'E4854'">
+                <xsl:value-of select="'認証付登録事項記載書類の交付請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'E1861' or $code = 'E2861'">
+                <xsl:value-of select="'ファイル記録事項の閲覧（縦覧）請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'E1862' or $code = 'E2862'
+                 or $code = 'E3862' or $code = 'E4862'">
+                <xsl:value-of select="'登録事項の閲覧請求書'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
-        <!-- 登録系 -->
-        <item code="R1100" value="特許料納付書" />
-        <item code="R120" value="特許料納付書" />
-        <item code="R2100" value="実用新案登録料納付書" />
-        <item code="R220" value="実用新案登録料納付書" />
-        <item code="R3100" value="意匠登録料納付書" />
-        <item code="R320" value="意匠登録料納付書" />
-        <item code="R4100" value="商標登録料納付書" />
-        <item code="R4200" value="商標登録料納付書" />
-        <item code="R1101" value="追加の特許の特許料納付書" />
-        <item code="R3102" value="類似意匠登録料納付書" />
-        <item code="R4103" value="防護標章登録料納付書" />
-        <item code="R4104" value="商標更新登録料納付書" />
-        <item code="R4105" value="防護標章更新登録料納付書" />
-        <item code="R1110" value="特許料納付書（設定補充）" />
-        <item code="R2110" value="実用新案登録料納付書（設定補充）" />
-        <item code="R3110" value="意匠登録料納付書（設定補充）" />
-        <item code="R4110" value="商標登録料納付書（設定補充）" />
-        <item code="R1111" value="追加の特許の特許料納付書（設定補充）" />
-        <item code="R3112" value="類似意匠登録料納付書（設定補充）" />
-        <item code="R4113" value="防護標章登録料納付書（設定補充）" />
-        <item code="R4114" value="商標更新登録料納付書（設定補充）" />
-        <item code="R4115" value="防護標章更新登録料納付書（設定補充）" />
-        <item code="R121" value="特許料納付書（補充）" />
-        <item code="R221" value="実用新案登録料納付書（補充）" />
-        <item code="R321" value="意匠登録料納付書（補充）" />
-        <item code="R4210" value="商標登録料納付書（分納補充）" />
-        <item code="R4201" value="商標権存続期間更新登録申請書" />
-        <item code="R4211" value="商標権存続期間更新登録申請書（補充）" />
-        <item code="R4220" value="手続補足書" />
-
-        <!-- 請求系 -->
-        <item code="E1841" value="優先権証明請求書" />
-        <item code="E2841" value="優先権証明請求書" />
-        <item code="E1842" value="証明請求書" />
-        <item code="E2842" value="証明請求書" />
-        <item code="E1851" value="ファイル記録事項記載書類の交付請求書" />
-        <item code="E2851" value="ファイル記録事項記載書類の交付請求書" />
-        <item code="E1852" value="認証付ファイル記録事項記載書類の交付請求書" />
-        <item code="E2852" value="認証付ファイル記録事項記載書類の交付請求書" />
-        <item code="E1853" value="登録事項記載書類の交付請求書" />
-        <item code="E2853" value="登録事項記載書類の交付請求書" />
-        <item code="E3853" value="登録事項記載書類の交付請求書" />
-        <item code="E4853" value="登録事項記載書類の交付請求書" />
-        <item code="E1854" value="認証付登録事項記載書類の交付請求書" />
-        <item code="E2854" value="認証付登録事項記載書類の交付請求書" />
-        <item code="E3854" value="認証付登録事項記載書類の交付請求書" />
-        <item code="E4854" value="認証付登録事項記載書類の交付請求書" />
-        <item code="E1861" value="ファイル記録事項の閲覧（縦覧）請求書" />
-        <item code="E2861" value="ファイル記録事項の閲覧（縦覧）請求書" />
-        <item code="E1862" value="登録事項の閲覧請求書" />
-        <item code="E2862" value="登録事項の閲覧請求書" />
-        <item code="E3862" value="登録事項の閲覧請求書" />
-        <item code="E4862" value="登録事項の閲覧請求書" />
-
-        <!-- 審判系 -->
-        <item code="C154" value="回答書" />
-        <item code="C254" value="回答書" />
-        <item code="C354" value="回答書" />
-        <item code="C454" value="回答書" />
-
-        <item code="C1561" value="異議申立書" />
-        <item code="C2561" value="異議申立書" />
-        <item code="C4561" value="異議申立書" />
-
-        <item code="C157" value="答弁書" />
-        <item code="C257" value="答弁書" />
-        <item code="C357" value="答弁書" />
-        <item code="C457" value="答弁書" />
-
-        <item code="C158" value="弁駁書" />
-        <item code="C258" value="弁駁書" />
-        <item code="C358" value="弁駁書" />
-        <item code="C458" value="弁駁書" />
-
-        <item code="C160" value="審判請求書" />
-        <item code="C260" value="審判請求書" />
-        <item code="C360" value="審判請求書" />
-        <item code="C460" value="審判請求書" />
-
-        <item code="C1601" value="判定請求書" />
-        <item code="C2601" value="判定請求書" />
-        <item code="C3601" value="判定請求書" />
-        <item code="C4601" value="判定請求書" />
-
-        <item code="C1609" value="請求取下書" />
-        <item code="C2609" value="請求取下書" />
-        <item code="C3609" value="請求取下書" />
-        <item code="C4609" value="請求取下書" />
-
-        <item code="C16091" value="一部請求取下書" />
-        <item code="C26091" value="一部請求取下書" />
-        <item code="C36091" value="一部請求取下書" />
-        <item code="C46091" value="一部請求取下書" />
-
-        <item code="C1611" value="訂正請求書" />
-        <item code="C2611" value="訂正請求書" />
-
-        <item code="C1619" value="訂正請求取下書" />
-        <item code="C2619" value="訂正請求取下書" />
-
-        <item code="C164" value="審理再開申立書" />
-        <item code="C264" value="審理再開申立書" />
-        <item code="C364" value="審理再開申立書" />
-        <item code="C464" value="審理再開申立書" />
-
-        <item code="C16511" value="書面審理申立書" />
-        <item code="C26511" value="書面審理申立書" />
-        <item code="C36511" value="書面審理申立書" />
-        <item code="C46511" value="書面審理申立書" />
-
-        <item code="C16512" value="口頭審理申立書" />
-        <item code="C26512" value="口頭審理申立書" />
-        <item code="C36512" value="口頭審理申立書" />
-        <item code="C46512" value="口頭審理申立書" />
-
-        <item code="C16513" value="口頭審理陳述要領書" />
-        <item code="C26513" value="口頭審理陳述要領書" />
-        <item code="C36513" value="口頭審理陳述要領書" />
-        <item code="C46513" value="口頭審理陳述要領書" />
-
-        <item code="C16514" value="証拠申出書" />
-        <item code="C26514" value="証拠申出書" />
-        <item code="C36514" value="証拠申出書" />
-        <item code="C46514" value="証拠申出書" />
-
-        <item code="C16515" value="証拠説明書" />
-        <item code="C26515" value="証拠説明書" />
-        <item code="C36515" value="証拠説明書" />
-        <item code="C46515" value="証拠説明書" />
-
-        <item code="C16517" value="録音テープ等の内容説明書" />
-        <item code="C26517" value="録音テープ等の内容説明書" />
-        <item code="C36517" value="録音テープ等の内容説明書" />
-        <item code="C46517" value="録音テープ等の内容説明書" />
-
-        <item code="C1652" value="証拠調申立書" />
-        <item code="C2652" value="証拠調申立書" />
-        <item code="C3652" value="証拠調申立書" />
-        <item code="C4652" value="証拠調申立書" />
-
-        <item code="C16541" value="尋問事項書" />
-        <item code="C26541" value="尋問事項書" />
-        <item code="C36541" value="尋問事項書" />
-        <item code="C46541" value="尋問事項書" />
-
-        <item code="C1654" value="証人尋問申出書" />
-        <item code="C2654" value="証人尋問申出書" />
-        <item code="C3654" value="証人尋問申出書" />
-        <item code="C4654" value="証人尋問申出書" />
-
-        <item code="C16542" value="回答希望事項記載書面" />
-        <item code="C26542" value="回答希望事項記載書面" />
-        <item code="C36542" value="回答希望事項記載書面" />
-        <item code="C46542" value="回答希望事項記載書面" />
-
-        <item code="C16543" value="尋問に代わる書面の提出書" />
-        <item code="C26543" value="尋問に代わる書面の提出書" />
-        <item code="C36543" value="尋問に代わる書面の提出書" />
-        <item code="C46543" value="尋問に代わる書面の提出書" />
-
-        <item code="C16544" value="書証の申出書" />
-        <item code="C26544" value="書証の申出書" />
-        <item code="C36544" value="書証の申出書" />
-        <item code="C46544" value="書証の申出書" />
-
-        <item code="C16546" value="文書特定の申出書" />
-        <item code="C26546" value="文書特定の申出書" />
-        <item code="C36546" value="文書特定の申出書" />
-        <item code="C46546" value="文書特定の申出書" />
-
-        <item code="C1655" value="検証申出書" />
-        <item code="C2655" value="検証申出書" />
-        <item code="C3655" value="検証申出書" />
-        <item code="C4655" value="検証申出書" />
-
-        <item code="C1657" value="鑑定の申出書" />
-        <item code="C2657" value="鑑定の申出書" />
-        <item code="C3657" value="鑑定の申出書" />
-        <item code="C4657" value="鑑定の申出書" />
-
-        <item code="C16572" value="鑑定事項書" />
-        <item code="C26572" value="鑑定事項書" />
-        <item code="C36572" value="鑑定事項書" />
-        <item code="C46572" value="鑑定事項書" />
-
-        <item code="C16573" value="鑑定書" />
-        <item code="C26573" value="鑑定書" />
-        <item code="C36573" value="鑑定書" />
-        <item code="C46573" value="鑑定書" />
-
-        <item code="C1659" value="期日変更請求書" />
-        <item code="C2659" value="期日変更請求書" />
-        <item code="C3659" value="期日変更請求書" />
-        <item code="C4659" value="期日変更請求書" />
-
-        <item code="C16591" value="証拠調申請取下書" />
-        <item code="C26591" value="証拠調申請取下書" />
-        <item code="C36591" value="証拠調申請取下書" />
-        <item code="C46591" value="証拠調申請取下書" />
-
-        <item code="C16592" value="不出頭の届出書" />
-        <item code="C26592" value="不出頭の届出書" />
-        <item code="C36592" value="不出頭の届出書" />
-        <item code="C46592" value="不出頭の届出書" />
-
-        <item code="C1661" value="異議取下書" />
-        <item code="C2661" value="異議取下書" />
-        <item code="C4661" value="異議取下書" />
-
-        <item code="C1662" value="一部異議取下書" />
-        <item code="C2662" value="一部異議取下書" />
-        <item code="C4662" value="一部異議取下書" />
-
-        <item code="C1875" value="優先審理に関する事情説明書" />
-        <item code="C2875" value="優先審理に関する事情説明書" />
-
-        <item code="C1876" value="早期審理に関する事情説明書" />
-        <item code="C2876" value="早期審理に関する事情説明書" />
-        <item code="C3876" value="早期審理に関する事情説明書" />
-        <item code="C4876" value="早期審理に関する事情説明書" />
-
-        <item code="C1877" value="早期審理に関する事情説明補充書" />
-        <item code="C2877" value="早期審理に関する事情説明補充書" />
-        <item code="C3877" value="早期審理に関する事情説明補充書" />
-        <item code="C4877" value="早期審理に関する事情説明補充書" />
-    </xsl:variable>
-
+    <!-- ====================================================================
+     書類名審判（Ｃで始まる書類識別コード）
+     ====================================================================-->
+    <xsl:template
+        name="書類名審判">
+        <xsl:param name="code" />
+        <xsl:choose>
+            <xsl:when
+                test="$code = 'C154' or $code = 'C254'
+                 or $code = 'C354' or $code = 'C454'">
+                <xsl:value-of select="'回答書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'C1561' or $code = 'C2561'
+                 or $code = 'C4561'">
+                <xsl:value-of select="'異議申立書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C157' or $code = 'C257'
+                 or $code = 'C357' or $code = 'C457'">
+                <xsl:value-of select="'答弁書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C158' or $code = 'C258'
+                 or $code = 'C358' or $code = 'C458'">
+                <xsl:value-of select="'弁駁書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C160' or $code = 'C260'
+                 or $code = 'C360' or $code = 'C460'">
+                <xsl:value-of select="'審判請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1601' or $code = 'C2601'
+                 or $code = 'C3601' or $code = 'C4601'">
+                <xsl:value-of select="'判定請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1609' or $code = 'C2609'
+                 or $code = 'C3609' or $code = 'C4609'">
+                <xsl:value-of select="'請求取下書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16091' or $code = 'C26091'
+                 or $code = 'C36091' or $code = 'C46091'">
+                <xsl:value-of select="'一部請求取下書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'C1611' or $code = 'C2611'">
+                <xsl:value-of select="'訂正請求書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'C1619' or $code = 'C2619'">
+                <xsl:value-of select="'訂正請求取下書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C164' or $code = 'C264'
+                 or $code = 'C364' or $code = 'C464'">
+                <xsl:value-of select="'審理再開申立書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16511' or $code = 'C26511'
+                 or $code = 'C36511' or $code = 'C46511'">
+                <xsl:value-of select="'書面審理申立書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16512' or $code = 'C26512'
+                 or $code = 'C36512' or $code = 'C46512'">
+                <xsl:value-of select="'口頭審理申立書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16513' or $code = 'C26513'
+                 or $code = 'C36513' or $code = 'C46513'">
+                <xsl:value-of select="'口頭審理陳述要領書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16514' or $code = 'C26514'
+                 or $code = 'C36514' or $code = 'C46514'">
+                <xsl:value-of select="'証拠申出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16515' or $code = 'C26515'
+                 or $code = 'C36515' or $code = 'C46515'">
+                <xsl:value-of select="'証拠説明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16517' or $code = 'C26517'
+                 or $code = 'C36517' or $code = 'C46517'">
+                <xsl:value-of select="'録音テープ等の内容説明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1652' or $code = 'C2652'
+                 or $code = 'C3652' or $code = 'C4652'">
+                <xsl:value-of select="'証拠調申立書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16541' or $code = 'C26541'
+                 or $code = 'C36541' or $code = 'C46541'">
+                <xsl:value-of select="'尋問事項書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1654' or $code = 'C2654'
+                 or $code = 'C3654' or $code = 'C4654'">
+                <xsl:value-of select="'証人尋問申出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16542' or $code = 'C26542'
+                 or $code = 'C36542' or $code = 'C46542'">
+                <xsl:value-of select="'回答希望事項記載書面'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16543' or $code = 'C26543'
+                 or $code = 'C36543' or $code = 'C46543'">
+                <xsl:value-of select="'尋問に代わる書面の提出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16544' or $code = 'C26544'
+                 or $code = 'C36544' or $code = 'C46544'">
+                <xsl:value-of select="'書証の申出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16546' or $code = 'C26546'
+                 or $code = 'C36546' or $code = 'C46546'">
+                <xsl:value-of select="'文書特定の申出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1655' or $code = 'C2655'
+                 or $code = 'C3655' or $code = 'C4655'">
+                <xsl:value-of select="'検証申出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1657' or $code = 'C2657'
+                 or $code = 'C3657' or $code = 'C4657'">
+                <xsl:value-of select="'鑑定の申出書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16572' or $code = 'C26572'
+                 or $code = 'C36572' or $code = 'C46572'">
+                <xsl:value-of select="'鑑定事項書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16573' or $code = 'C26573'
+                 or $code = 'C36573' or $code = 'C46573'">
+                <xsl:value-of select="'鑑定書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1659' or $code = 'C2659'
+                 or $code = 'C3659' or $code = 'C4659'">
+                <xsl:value-of select="'期日変更請求書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16591' or $code = 'C26591'
+                 or $code = 'C36591' or $code = 'C46591'">
+                <xsl:value-of select="'証拠調申請取下書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C16592' or $code = 'C26592'
+                 or $code = 'C36592' or $code = 'C46592'">
+                <xsl:value-of select="'不出頭の届出書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'C1661' or $code = 'C2661'
+                 or $code = 'C4661'">
+                <xsl:value-of select="'異議取下書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'C1662' or $code = 'C2662'
+                 or $code = 'C4662'">
+                <xsl:value-of select="'一部異議取下書'" />
+            </xsl:when>
+            <xsl:when test="$code = 'C1875' or $code = 'C2875'">
+                <xsl:value-of select="'優先審理に関する事情説明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1876' or $code = 'C2876'
+                 or $code = 'C3876' or $code = 'C4876'">
+                <xsl:value-of select="'早期審理に関する事情説明書'" />
+            </xsl:when>
+            <xsl:when
+                test="$code = 'C1877' or $code = 'C2877'
+                 or $code = 'C3877' or $code = 'C4877'">
+                <xsl:value-of select="'早期審理に関する事情説明補充書'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 </xsl:stylesheet>

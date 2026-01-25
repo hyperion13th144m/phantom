@@ -10,14 +10,9 @@
     <xsl:variable name="node" select="name(//jp:pat-app-doc/*)" />
     <xsl:variable name="kind-of-law" select="//jp:pat-app-doc/*/@jp:kind-of-law" />
     <xsl:variable name="kinddoc" select="name(//jp:pat-app-doc/*)" />
+    <xsl:variable name="payment" select="substring($node,1,11)" />
 
-    <xsl:include href="sub-templates/pat-appd.xsl" />
-    <xsl:include href="common-templates/date-templates.xsl" />
-    <xsl:include href="common-templates/string-utils.xsl" />
-    <xsl:include href="common-templates/doc-code.xsl" />
-    <xsl:include href="common-templates/special-mention-matter-article.xsl" />
-    <xsl:include href="common-templates/country.xsl" />
-    <xsl:include href="common-templates/doc-number.xsl" />
+    <xsl:include href="common-templates/pat_common.xsl" />
 
     <xsl:template match="/">
         <xsl:element name="root">
@@ -29,7 +24,7 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-a63
+     jp:application-a63 特許願,実用新案登録願
      ====================================================================-->
     <xsl:template match="jp:application-a63">
         <xsl:apply-templates select="jp:document-code" />
@@ -57,7 +52,7 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-a631
+     jp:application-a631 翻訳文提出書
      ====================================================================-->
     <xsl:template match="jp:application-a631">
         <xsl:apply-templates select="jp:document-code" />
@@ -77,7 +72,7 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-a632
+     jp:application-a632 国内書面
      ====================================================================-->
     <xsl:template match="jp:application-a632">
         <xsl:apply-templates select="jp:document-code" />
@@ -102,7 +97,7 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-a633
+     jp:application-a633 図面の提出書（実案）
      ====================================================================-->
     <xsl:template match="jp:application-a633">
         <xsl:apply-templates select="jp:document-code" />
@@ -119,7 +114,7 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-a634
+     jp:application-a634 国際出願翻訳文提出書
      ====================================================================-->
     <xsl:template match="jp:application-a634">
         <xsl:apply-templates select="jp:document-code" />
@@ -135,7 +130,7 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-a635
+     jp:application-a635 国際出願翻訳文提出書（職権）
      ====================================================================-->
     <xsl:template match="jp:application-a635">
         <xsl:apply-templates select="jp:document-code" />
