@@ -24,7 +24,7 @@ class OCRProcessor(ManifestProcessor):
 
     def translate(self) -> list[dict]:
         ocr_results = []
-        ocr_files = [image.ocr.path for image in self.manifest.images]
+        ocr_files = [image.ocr.path for image in self.manifest.images if image.ocr]
         for ocr_file in ocr_files:
             ocr_path = self.manifest_dir / ocr_file
             with open(ocr_path, "r", encoding="utf-8") as f:

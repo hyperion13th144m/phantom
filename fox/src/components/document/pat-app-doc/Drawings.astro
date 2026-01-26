@@ -5,7 +5,7 @@ import Figure from "~/components/document/common/Figure.astro";
 import {
     type DocumentBlock,
     documentTypeGuards,
-} from "~/interfaces/text-blocks-root";
+} from "~/interfaces/document-block";
 
 const { drawings, sizeTag = "middle" } = Astro.props as {
     sizeTag?: "thumbnail" | "middle" | "large";

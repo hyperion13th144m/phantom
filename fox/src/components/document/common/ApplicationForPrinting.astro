@@ -5,7 +5,7 @@ import Claims from "~/components/application/Claims.astro";
 import Description from "~/components/application/Description.astro";
 import Drawings from "~/components/application/Drawings.astro";
 import type { IPDocument } from "~/interfaces/document";
-import { commonTypeGuards } from "~/interfaces/text-blocks-root";
+import { documentTypeGuards } from "~/interfaces/document-block";
 import ForeignLanguageDocumentBlock from "./ForeignLanguageDocument.astro";
 
 const { ipDocument } = Astro.props as {
@@ -14,40 +14,40 @@ const { ipDocument } = Astro.props as {
 
 // 各セクションのブロックを抽出
 const application = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isApplicationForm(block))
+    .filter((block) => documentTypeGuards.isApplicationForm(block))
     .at(0);
 const description = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isDescription(block))
+    .filter((block) => documentTypeGuards.isDescription(block))
     .at(0);
 const claims = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isClaims(block))
+    .filter((block) => documentTypeGuards.isClaims(block))
     .at(0);
 const abstract = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isAbstract(block))
+    .filter((block) => documentTypeGuards.isAbstract(block))
     .at(0);
 const drawings = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isDrawings(block))
+    .filter((block) => documentTypeGuards.isDrawings(block))
     .at(0);
 
 // 外国語書面出願
 const foreignDescription = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isForeignDescription(block))
+    .filter((block) => documentTypeGuards.isForeignDescription(block))
     .at(0);
 const foreignClaims = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isForeignClaims(block))
+    .filter((block) => documentTypeGuards.isForeignClaims(block))
     .at(0);
 const foreignAbstract = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isForeignAbstract(block))
+    .filter((block) => documentTypeGuards.isForeignAbstract(block))
     .at(0);
 const foreignDrawings = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isForeignDrawings(block))
+    .filter((block) => documentTypeGuards.isForeignDrawings(block))
     .at(0);
 ---
 
 {application && <ApplicationForm applicationForm={application} />}
 {description && <Description description={description} />}
 {claims && <Claims claims={claims} />}
-{abstract && <Abstract {...abstract} />}
+{abstract && <Abstract abstract={abstract} />}
 {drawings && <Drawings drawings={drawings} />}
 {
     foreignDescription && (

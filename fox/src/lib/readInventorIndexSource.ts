@@ -3,8 +3,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { DocumentJson } from "~/interfaces/document";
+import type { Block } from "~/interfaces/document-block";
 import { type InventorIndexEntry } from "~/interfaces/index/inventor-index";
-import type { Block } from "~/interfaces/text-blocks-root";
 import { ApplicationNumber } from "~/lib/doc-number";
 import { id2dir } from "~/lib/path";
 import { generateId } from "./generate-id";

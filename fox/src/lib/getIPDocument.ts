@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { DocumentJson, IPDocument } from "~/interfaces/document";
-import { type Block } from "~/interfaces/text-blocks-root";
+import { type Block } from "~/interfaces/document-block";
 import { DocumentDate } from "~/lib/doc-date";
 import { ApplicationNumber } from "~/lib/doc-number";
 import { getContentRoot } from "~/lib/path";

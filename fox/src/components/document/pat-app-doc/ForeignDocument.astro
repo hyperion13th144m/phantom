@@ -1,0 +1,17 @@
+---
+// 外国語書面出願の各書類を表示するためのコンポーネント
+import { type ForeignDocumentBlock } from "~/interfaces/document-block";
+import Paragraph from "../common/Paragraph.astro";
+
+interface Props {
+    sizeTag?: "thumbnail" | "middle" | "large";
+    block: ForeignDocumentBlock;
+}
+const { block, sizeTag = "middle" } = Astro.props as Props;
+---
+
+<div class="wrap-anywhere">
+    <div class={`jpTag indentLevel-${block.indentLevel}`}>
+        {block.blocks && block.blocks.map((b) => <Paragraph block={b} />)}
+    </div>
+</div>

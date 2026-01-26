@@ -193,6 +193,7 @@ def process_archive(
         str(procedure_path),
         str(output_dir),
         image_params=image_params,
+        skip_ocr=False,
     )
 
     manifest_path = output_dir / "manifest.json"

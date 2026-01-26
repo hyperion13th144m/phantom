@@ -40,14 +40,14 @@ python-dotenv = "*"
 
 [[package]]
 name = "libefiling"
-version = "0.1.33"
+version = "0.1.37"
 description = "A Python library for e-filing systems."
 optional = false
 python-versions = ">=3.12"
 groups = ["main"]
 files = [
-    {file = "libefiling-0.1.33-py3-none-any.whl", hash = "sha256:e583bf1b2ea67cf055d51a31578ea114732abbe5f2cd5a8460e0ae3923b7dd7a"},
-    {file = "libefiling-0.1.33.tar.gz", hash = "sha256:49ee13d39aa1c50eeb7b46504909d4cc6aa6fb0d28c57e56a63da9d2a47958f4"},
+    {file = "libefiling-0.1.37-py3-none-any.whl", hash = "sha256:dd03f382dd1f5442bcde90830fe8f1c52ea6e74da4cf15085c8a304b7f58c756"},
+    {file = "libefiling-0.1.37.tar.gz", hash = "sha256:fe94f18716a39439a6c13162383099a2ff234e2f1f89f6ba77fe813ffec1ee60"},
 ]
 
 [package.dependencies]

@@ -1,5 +1,4 @@
-import { paragraphTypeGuards } from "~/interfaces/paragraph";
-import { type Block } from "~/interfaces/text-blocks-root";
+import { paragraphItemTypeGuards, type Block } from "~/interfaces/document-block";
 
 // ClaimText や Paragraph 下の連続する textBlock, subBlock, supBlock, underlineBlock をまとめる
 // Paragraph 下のそれ以外のブロックは個別に扱う
@@ -9,10 +8,10 @@ export function concatBlocks(blocks: Block[]): Block[][] {
     for (let i = 0; i < blocks.length; i++) {
         const currentBlock = blocks[i];
         if (
-            paragraphTypeGuards.isTextBlock(currentBlock) ||
-            paragraphTypeGuards.isSubBlock(currentBlock) ||
-            paragraphTypeGuards.isSupBlock(currentBlock) ||
-            paragraphTypeGuards.isUnderlineBlock(currentBlock)
+            paragraphItemTypeGuards.isTextBlock(currentBlock) ||
+            paragraphItemTypeGuards.isSubBlock(currentBlock) ||
+            paragraphItemTypeGuards.isSupBlock(currentBlock) ||
+            paragraphItemTypeGuards.isUnderlineBlock(currentBlock)
         ) {
             currentGroup.push(currentBlock);
             if (currentBlock.isLastSentence === true) {

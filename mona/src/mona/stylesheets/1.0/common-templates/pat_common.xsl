@@ -3588,7 +3588,7 @@
     <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
 
     <!--  イメージ   -->
-    <xsl:template match="img">
+    <xsl:template match="maths/img | tables/img | figures/img | chemistry/img">
         <xsl:for-each select="key('images-table-key', @file)">
             <xsl:element name="images">
                 <xsl:element name="src">
@@ -3608,6 +3608,38 @@
                 </xsl:element>
             </xsl:element>
         </xsl:for-each>
+    </xsl:template>
+
+    <!--  イメージ   -->
+    <xsl:template match="p/img">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="'other-images'" />
+            </xsl:element>
+            <xsl:element name="indentLevel">
+                <xsl:sequence select="0" />
+            </xsl:element>
+
+            <xsl:for-each select="key('images-table-key', @file)">
+                <xsl:element name="images">
+                    <xsl:element name="src">
+                        <xsl:value-of select="@new" />
+                    </xsl:element>
+                    <xsl:element name="width">
+                        <xsl:value-of select="@width" />
+                    </xsl:element>
+                    <xsl:element name="height">
+                        <xsl:value-of select="@height" />
+                    </xsl:element>
+                    <xsl:element name="kind">
+                        <xsl:value-of select="@kind" />
+                    </xsl:element>
+                    <xsl:element name="sizeTag">
+                        <xsl:value-of select="@sizeTag" />
+                    </xsl:element>
+                </xsl:element>
+            </xsl:for-each>
+        </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
@@ -6275,9 +6307,6 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
 
             <xsl:apply-templates select="p" />
         </xsl:element>
@@ -6499,8 +6528,9 @@
     <xsl:template
         match="application-body//chemistry | jp:contents-of-amendment//chemistry">
         <xsl:element name="blocks">
+            <!-- tag 名は html renderer の識別用に分かりやすい名前に変えている-->
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'chemical-formulas'" />
             </xsl:element>
             <xsl:element name="number">
                 <xsl:value-of select="@num" />
@@ -6524,7 +6554,7 @@
         match="application-body//maths | jp:contents-of-amendment//maths">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'equations'" />
             </xsl:element>
             <xsl:element name="number">
                 <xsl:value-of select="@num" />
@@ -6548,7 +6578,7 @@
         match="application-body//tables | jp:contents-of-amendment//tables">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'tables'" />
             </xsl:element>
             <xsl:element name="number">
                 <xsl:value-of select="@num" />
@@ -6578,7 +6608,7 @@
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'figures'" />
             </xsl:element>
             <xsl:element name="number">
                 <xsl:value-of select="@num" />

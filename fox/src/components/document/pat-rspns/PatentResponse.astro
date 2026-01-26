@@ -7,7 +7,7 @@ import Card from "~/components/ui/Card.astro";
 import ImageCarousel from "~/components/ui/ImageCarousel.astro";
 import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import type { IPDocument } from "~/interfaces/document";
-import { commonTypeGuards } from "~/interfaces/text-blocks-root";
+import { documentTypeGuards } from "~/interfaces/document-block";
 
 const { ipDocument } = Astro.props as {
     ipDocument: IPDocument;
@@ -30,7 +30,7 @@ const title = ipDocument.documentName;
 
 // 各セクションのブロックを抽出
 const patResponse = ipDocument.textBlocksRoot
-    .filter((block) => commonTypeGuards.isPatResponse(block))
+    .filter((block) => documentTypeGuards.isPatResponse(block))
     .at(0);
 ---
 

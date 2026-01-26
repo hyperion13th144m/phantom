@@ -1,28 +1,22 @@
 ---
 // 特許出願書類の図を表示するためのコンポーネント
-import type {
-    ChemistryBlock,
-    FigureBlock,
-    ImageBlock,
-    MathsBlock,
-    TablesBlock,
-} from "~/interfaces/text-blocks-root";
+import type { ImageContainerBlock } from "~/interfaces/document-block";
 import { getBaseUrlPath } from "~/lib/path";
 interface Props {
     sizeTag?: "thumbnail" | "middle" | "large";
-    block: FigureBlock | TablesBlock | MathsBlock | ChemistryBlock | ImageBlock;
+    block: ImageContainerBlock;
 }
 const { block, sizeTag = "middle" } = Astro.props as Props;
 const cls =
-    block.tag === "figure"
-        ? "figure"
+    block.tag === "figures"
+        ? "figures"
         : block.tag === "tables"
           ? "tables"
-          : block.tag === "maths"
-            ? "maths"
-            : block.tag === "chemistry"
-              ? "chemistry"
-              : "image";
+          : block.tag === "equations"
+            ? "equations"
+            : block.tag === "chemical-formulas"
+              ? "chemical-formulas"
+              : "other-images";
 const baseUrlPath = Astro.params.docId
     ? getBaseUrlPath(Astro.params.docId)
     : "";

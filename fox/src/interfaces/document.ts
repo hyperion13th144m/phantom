@@ -1,6 +1,6 @@
 import { DocumentDate } from "~/lib/doc-date";
 import { ApplicationNumber } from "~/lib/doc-number";
-import type { TextBlocksRoot } from "./text-blocks-root";
+import type { TextBlocksRoot } from "./document-block";
 
 // document.json Interface
 export interface DocumentJson {
