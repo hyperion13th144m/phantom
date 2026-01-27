@@ -29,7 +29,8 @@ export async function readApplicantIndexSource(docId: string): Promise<Record<st
         return generateId(`${name} ${addrOrId}`.trim());
     });
 
-    const app = new ApplicationNumber(document.law, document.applicationNumber);
+    const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";
+    const app = new ApplicationNumber(document.law, an);
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
 

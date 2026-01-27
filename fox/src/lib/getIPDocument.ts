@@ -21,9 +21,10 @@ export const getIPDocument = async (docId: string) => {
     const agents = getAgents(document);
     const submissionDate = document.submissionDate ? new DocumentDate(document.submissionDate) : null;
     const dispatchDate = document.dispatchDate ? new DocumentDate(document.dispatchDate) : null;
+    const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";
     const applicationNumber = new ApplicationNumber(
         document.law,
-        document.applicationNumber || ""
+        an
     );
 
     return {

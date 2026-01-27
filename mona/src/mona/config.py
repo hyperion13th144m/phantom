@@ -106,7 +106,7 @@ translator_config = [
         ### A163 日本語特許出願関連
         ### 願書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/pat-appd.xsl",
-        force_list=["blocks"],
+        force_list=["blocks", "textBlocksRoot"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-app-doc",
     ),

@@ -15,14 +15,14 @@ export async function readFileReferenceIdIndexSource(docId: string): Promise<Rec
     const document: DocumentJson = JSON.parse(raw);
 
     // fileReferenceIdがない場合はnullそのまま返す
-    if (!document.fileReferenceId || document.applicationNumber === null) {
+    if (!document.fileReferenceId) {
         return null;
     }
     const fileReferenceId = document.fileReferenceId;
-    const app = new ApplicationNumber(document.law, document.applicationNumber);
+    const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";
+    const app = new ApplicationNumber(document.law, an);
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
-
 
     return {
         [fileReferenceId]: {

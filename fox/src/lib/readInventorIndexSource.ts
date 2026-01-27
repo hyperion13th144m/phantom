@@ -29,7 +29,8 @@ export async function readInventorIndexSource(docId: string): Promise<Record<str
         return generateId(`${name} ${addr}`.trim());
     });
 
-    const app = new ApplicationNumber(document.law, document.applicationNumber);
+    const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";
+    const app = new ApplicationNumber(document.law, an);
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
 

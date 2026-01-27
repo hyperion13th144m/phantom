@@ -15,10 +15,11 @@ export async function readApplicationNumberIndexSource(docId: string): Promise<R
     const raw = await fs.readFile(documentPath, "utf-8");
     const document: DocumentJson = JSON.parse(raw);
 
-    if (!document.applicationNumber) {
+    if (!document.applicationNumber && !document.internationalApplicationNumber && !document.receiptNumber) {
         return null;
     }
-    const app = new ApplicationNumber(document.law, document.applicationNumber);
+    const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";
+    const app = new ApplicationNumber(document.law, an);
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
 
