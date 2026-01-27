@@ -1,15 +1,17 @@
 ---
+import BibBlock from "~/components/block-renderer/common/BibliographicBlock.astro";
+import NoticeBibBlock from "~/components/block-renderer/common/NoticeBibliographicBlock.astro";
+import Abstract from "~/components/block-renderer/pat-app-doc/Abstract.astro";
+import Claims from "~/components/block-renderer/pat-app-doc/Claims.astro";
+import Description from "~/components/block-renderer/pat-app-doc/Description.astro";
+import Drawings from "~/components/block-renderer/pat-app-doc/Drawings.astro";
+import ForeignDocument from "~/components/block-renderer/pat-app-doc/ForeignDocument.astro";
+import BibliographicData from "~/components/document/BibliographicData.astro";
 import Card from "~/components/ui/Card.astro";
 import ImageCarousel from "~/components/ui/ImageCarousel.astro";
+import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import type { IPDocument } from "~/interfaces/document";
 import { documentTypeGuards as g } from "~/interfaces/document-block";
-import KeywordHighlighter from "../../ui/KeywordHighlighter.astro";
-import BibliographicData from "../common/BibliographicData.astro";
-import Abstract from "./Abstract.astro";
-import Claims from "./Claims.astro";
-import Description from "./Description.astro";
-import Drawings from "./Drawings.astro";
-import ForeignDocument from "./ForeignDocument.astro";
 
 const { ipDocument } = Astro.props as {
     ipDocument: IPDocument;
@@ -59,6 +61,26 @@ const foreignAbstract = ipDocument.textBlocksRoot
 const foreignDrawings = ipDocument.textBlocksRoot
     .filter((block) => g.isForeignDrawings(block))
     .at(0);
+
+// 意見書のブロックを抽出
+const patResponse = ipDocument.textBlocksRoot
+    .filter((block) => g.isPatResponse(block))
+    .at(0);
+
+// 補正書のブロックを抽出
+const patAmnd = ipDocument.textBlocksRoot
+    .filter((block) => g.isPatAmnd(block))
+    .at(0);
+
+// 上申書のブロックを抽出
+const patEtc = ipDocument.textBlocksRoot
+    .filter((block) => g.isPatEtc(block))
+    .at(0);
+
+// 拒絶理由通知書等のブロックを抽出
+const ntcPatExam = ipDocument.textBlocksRoot
+    .filter((block) => g.isNoticePatExam(block) || g.isNoticePatExamRn(block))
+    .at(0);
 ---
 
 <BibliographicData ipDocument={ipDocument} />
@@ -67,8 +89,10 @@ const foreignDrawings = ipDocument.textBlocksRoot
         <div data-search-root class="">
             {
                 patAppDoc && (
-                    <Card title={`${lawPrefix}願`}>
-                        {/* <ApplicationForm applicationForm={patAppDoc} /> */}
+                    <Card title={ipDocument.documentName}>
+                        {patAppDoc.blocks.map((block) => (
+                            <BibBlock block={block} />
+                        ))}
                     </Card>
                 )
             }
@@ -137,6 +161,42 @@ const foreignDrawings = ipDocument.textBlocksRoot
                             block={foreignDrawings}
                             sizeTag="large"
                         />
+                    </Card>
+                )
+            }
+            {
+                patResponse && (
+                    <Card title={ipDocument.documentName}>
+                        {patResponse.blocks.map((block) => (
+                            <BibBlock block={block} />
+                        ))}
+                    </Card>
+                )
+            }
+            {
+                patAmnd && (
+                    <Card title={ipDocument.documentName}>
+                        {patAmnd.blocks.map((block) => (
+                            <BibBlock block={block} />
+                        ))}
+                    </Card>
+                )
+            }
+            {
+                patEtc && (
+                    <Card title={ipDocument.documentName}>
+                        {patEtc.blocks.map((block) => (
+                            <BibBlock block={block} />
+                        ))}
+                    </Card>
+                )
+            }
+            {
+                ntcPatExam && (
+                    <Card title={ipDocument.documentName}>
+                        {ntcPatExam.blocks.map((block) => (
+                            <NoticeBibBlock block={block} />
+                        ))}
                     </Card>
                 )
             }

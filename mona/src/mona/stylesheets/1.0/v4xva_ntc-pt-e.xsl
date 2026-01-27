@@ -1379,7 +1379,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="'image'" />
+                <xsl:value-of select="'other-images'" />
             </xsl:element>
             <xsl:element name="isLastSentence">
                 <xsl:value-of select="$isLastSentence" />
@@ -1622,6 +1622,19 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             </xsl:element>
         </xsl:element>
     </xsl:template>
+
+    <!-- ====================================================================
+     p
+     ====================================================================-->
+    <!-- 段落 ,段落内テキスト -->
+    <xsl:template
+        match="p">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">paragraph</xsl:element>
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+
 
     <xsl:template match="text() | sup | sub | u">
         <xsl:variable name="tag">

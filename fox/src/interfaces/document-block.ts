@@ -1,5 +1,10 @@
 /** text-blocks.json のトップレベル */
 export type TextBlocksRoot = DocumentBlock[];
+export type DocumentBlock = PatAppDocBlock | ClaimsDocBlock |
+    DescriptionDocBlock | DrawingsDocBlock | AbstractDocBlock |
+    ForeignDocumentBlock |
+    NoticePatExamBlock |
+    PatResponseBlock | PatAmndBlock | PatEtcBlock;
 
 /** -----------------------------
         特許文書のブロック定義
@@ -24,24 +29,14 @@ const documentTags = [
 ] as const;
 export type DocumentTag = typeof documentTags[number];
 
-/** 文書ブロックの基本型 */
-export interface DocumentBlock {
-    tag: DocumentTag;
-    jpTag?: string;
-    indentLevel?: string;
-    text?: string;
-    blocks?: Block[];
-}
-
 /* 特許願 */
-interface PatAppDocBlock extends DocumentBlock {
+interface PatAppDocBlock {
     tag: 'pat-app-doc';
     blocks: BibliographicBlock[];
 }
 
-
 /* 特許請求の範囲 */
-interface ClaimsDocBlock extends DocumentBlock {
+interface ClaimsDocBlock {
     tag: 'claims';
     jpTag: string;
     indentLevel: string;
@@ -49,7 +44,7 @@ interface ClaimsDocBlock extends DocumentBlock {
 }
 
 /* 明細書 */
-interface DescriptionDocBlock extends DocumentBlock {
+interface DescriptionDocBlock {
     tag: 'description';
     jpTag: string;
     indentLevel: string;
@@ -57,7 +52,7 @@ interface DescriptionDocBlock extends DocumentBlock {
 }
 
 /* 図面 */
-export interface DrawingsDocBlock extends DocumentBlock {
+export interface DrawingsDocBlock {
     tag: "drawings";
     jpTag: string;
     indentLevel: string;
@@ -65,7 +60,7 @@ export interface DrawingsDocBlock extends DocumentBlock {
 }
 
 /* 要約書 */
-export interface AbstractDocBlock extends DocumentBlock {
+export interface AbstractDocBlock {
     tag: 'abstract';
     jpTag: string;
     indentLevel: string;
@@ -73,7 +68,7 @@ export interface AbstractDocBlock extends DocumentBlock {
 }
 
 /** 外国語書面出願：外国語明細書等 */
-export interface ForeignDocumentBlock extends DocumentBlock {
+export interface ForeignDocumentBlock {
     tag: "jp:foreign-language-description" |
     "jp:foreign-language-claims" |
     "jp:foreign-language-abstract" |
@@ -83,47 +78,42 @@ export interface ForeignDocumentBlock extends DocumentBlock {
 }
 
 /* 意見書・弁明書 */
-export interface PatResponseBlock extends DocumentBlock {
+export interface PatResponseBlock {
     tag: "pat-rspns";
     blocks: BibliographicBlock[];
 }
 
 /* 補正書 */
-export interface PatAmndBlock extends DocumentBlock {
+export interface PatAmndBlock {
     tag: "pat-amnd";
     blocks: BibliographicBlock[];
 }
 
 /* 上申書 */
-export interface PatEtcBlock extends DocumentBlock {
+export interface PatEtcBlock {
     tag: "pat-etc";
     blocks: BibliographicBlock[];
 }
 
 /* 特許査定・拒絶査定・拒絶理由通知書 */
-export interface isNoticePatExam extends DocumentBlock {
+export interface NoticePatExamBlock {
     tag: "notice-pat-exam" | "notice-pat-exam-rn";
-    blocks: FigureBlock[];
-}
-
-/** 多くのブロックで共通する最小フィールド */
-export interface BaseBlock {
-    tag: string;
-    blocks: Block[];
+    blocks: NoticeBibliographicBlock[];
 }
 
 export interface UnknownBlock {
-    //tag: Exclude<string, DocumentTag>;
     tag: string;
     [key: string]: unknown;
 }
 
+export type Block = BibliographicBlock | ClaimBlock | DescriptionBlock |
+    FiguresContainerBlock | ParagraphBlock;
 
 /** -----------------------------
  *  特許請求の範囲（claims） の子ブロック
  * ---------------------------- */
 
-export interface ClaimBlock extends BaseBlock {
+export interface ClaimBlock {
     tag: "claim";
     jpTag: string;
     number: string;
@@ -132,7 +122,7 @@ export interface ClaimBlock extends BaseBlock {
     blocks: ClaimTextBlock[];
 }
 
-export interface ClaimTextBlock extends BaseBlock {
+export interface ClaimTextBlock {
     tag: "claim-text";
     blocks: ParagraphItem[];
 }
@@ -162,7 +152,7 @@ const commonDescriptionTags = [
     "reference-to-deposited-biological-material",
 ] as const;
 export type CommonDescriptionTag = typeof commonDescriptionTags[number];
-export interface CommonDescriptionBlock extends BaseBlock {
+export interface CommonDescriptionBlock {
     tag: CommonDescriptionTag;
     jpTag: string;
     indentLevel: string;
@@ -170,7 +160,7 @@ export interface CommonDescriptionBlock extends BaseBlock {
 }
 
 /** 発明の名称 */
-export interface InventionTitleBlock extends BaseBlock {
+export interface InventionTitleBlock {
     tag: "invention-title";
     jpTag: string;
     indentLevel: string;
@@ -184,7 +174,7 @@ export type DescriptionBlock = CommonDescriptionBlock | InventionTitleBlock;
  *  段落関連ブロック
  * ---------------------------- */
 
-export interface ParagraphBlock extends BaseBlock {
+export interface ParagraphBlock {
     tag: "paragraph";
     jpTag: string
     number: string;
@@ -193,17 +183,17 @@ export interface ParagraphBlock extends BaseBlock {
 }
 
 export type ParagraphItem = InlineText | PatcitBlock |
-    FigRefBlock | FiguresContainerBlock;
+    FigRefBlock | ImageContainerBlock;
 
 /** インラインテキスト（paragraph 内で出現） */
-export interface InlineText extends BaseBlock {
+export interface InlineText {
     tag: "text" | "sub" | "sup" | "underline";
     text: string;
     isLastSentence: boolean;
 }
 
 /** 先行文献引用（paragraph 内で出現） */
-export interface PatcitBlock extends BaseBlock {
+export interface PatcitBlock {
     tag: "patcit" | "nplcit";
     jpTag: string;
     number: string;
@@ -212,7 +202,7 @@ export interface PatcitBlock extends BaseBlock {
 }
 
 /** 図参照（paragraph 内で出現） */
-export interface FigRefBlock extends BaseBlock {
+export interface FigRefBlock {
     tag: "figref";
     jpTag: string;
     number: string;
@@ -224,7 +214,7 @@ export interface FigRefBlock extends BaseBlock {
  *  画像関連ブロック
  * ---------------------------- */
 
-export interface ImageContainerBlock extends BaseBlock {
+export interface ImageContainerBlock {
     tag: "figures" | "tables" | "equations" | "chemical-formulas" | "other-images";
     number?: string;
     jpTag?: string;
@@ -292,7 +282,7 @@ const bibliographicTags1 = [
     "jp:law-of-industrial-regenerate",
 ] as const;
 type BibliographicItemTags1 = typeof bibliographicTags1[number];
-export interface BibliographicBlock1 extends BaseBlock {
+export interface BibliographicBlock1 {
     tag: BibliographicItemTags1;
     jpTag: string;
     text: string;
@@ -313,7 +303,7 @@ const bibliographicTags2 = [
     "jp:priority-claim"
 ] as const;
 type BibliographicItemTags2 = typeof bibliographicTags2[number];
-export interface BibliographicBlock2 extends BaseBlock {
+export interface BibliographicBlock2 {
     tag: BibliographicItemTags2;
     jpTag: string;
     indentLevel: string;
@@ -328,12 +318,12 @@ const bibliographicTags3 = [
     "jp:special-mention-matter-article",
     "jp:declaration-priority-ear-app",
     "jp:priority-claims",
+    "jp:payment",
+    "jp:list-group",
 ] as const;
 type BibliographicItemTags3 = typeof bibliographicTags3[number];
-export interface BibliographicBlock3 extends BaseBlock {
+export interface BibliographicBlock3 {
     tag: BibliographicItemTags3;
-    jpTag: string;
-    indentLevel: string;
     blocks: BibliographicBlock[];
 }
 
@@ -341,7 +331,7 @@ const bibliographicTags4 = [
     "jp:opinion-contents-article",
 ] as const;
 type BibliographicItemTags4 = typeof bibliographicTags4[number];
-export interface BibliographicBlock4 extends BaseBlock {
+export interface BibliographicBlock4 {
     tag: BibliographicItemTags4;
     jpTag: string;
     indentLevel: string;
@@ -352,14 +342,177 @@ export type BibliographicBlock = BibliographicBlock1 | BibliographicBlock2 | Bib
 
 
 
+/** -----------------------------
+ *  書誌事項関連ブロック
+ *  拒絶理由通知、拒絶査定、特許査定など発送系
+ * ---------------------------- */
+// jpTag o, convertedText o / jpTag o, text o, convertedText x
+// あわせた。renderer は、 convertedText ?? text を使う。
+const noticeBibliographicTags1 = [
+    "jp:doc-number",
+    "jp:date",
+    "jp:depository-ins-code",
+    "jp:depository-number",
+    "jp:patent-reference-group",
+    "jp:application-section",
+    "jp:addressed-to-person-group",
+    "invention-title",
+    "jp:number-of-claim",
+    "jp:kind-of-application",
+    "jp:exist-of-reference-doc",
+    "jp:patent-law-section30",
+    "jp:change-flag-invention-title",
+    "jp:exceptions-to-lack-of-novelty",
+    "jp:ipc",
+    "jp:field-of-search",
+    "jp:document-number",
+] as const;
+type NoticeBibliographicItemTags1 = typeof noticeBibliographicTags1[number];
+export interface NoticeBibliographicBlock1 {
+    tag: NoticeBibliographicItemTags1;
+    jpTag: string;
+    text: string;
+    convertedText?: string;
+    indentLevel: string;
+}
+
+const noticeBibliographicTags2 = [
+    "jp:indication-of-case-article",
+    "jp:ipc-article",
+    "jp:fi-article",
+    "jp:deposit-article",
+    "jp:deposit",
+    "jp:field-of-search-article",
+    "jp:patent-reference-article",
+    "jp:reference-books-article",
+    "jp:exceptions-to-lack-of-novelty-art",
+    "jp:exceptions-to-lack-of-novelty-grp",
+] as const;
+type NoticeBibliographicItemTags2 = typeof noticeBibliographicTags2[number];
+export interface NoticeBibliographicBlock2 {
+    tag: NoticeBibliographicItemTags2;
+    jpTag: string;
+    indentLevel: string;
+    blocks?: BibliographicBlock[];
+}
+
+const noticeBibliographicTags3 = [
+    "jp:application-reference",
+    "jp:document-id",
+    "jp:drafting-date",
+    "jp:certification-column-article",
+    "jp:certification-column-group",
+    "jp:image-group",
+    "jp:final-decision-group",
+    "jp:final-decision-group-rn",
+    "jp:final-decision-memo",
+    "jp:final-decision-memo-rn",
+    "jp:final-decision-bibliog",
+    "jp:final-decision-bibliog-rn",
+    "jp:final-decision-body",
+    "jp:final-decision-body-rn",
+] as const;
+type NoticeBibliographicItemTags3 = typeof noticeBibliographicTags3[number];
+export interface NoticeBibliographicBlock3 {
+    tag: NoticeBibliographicItemTags3;
+    blocks: BibliographicBlock[];
+}
+
+const noticeBibliographicTags4 = [
+    "jp:bibliog-in-ntc-pat-exam",
+    "jp:bibliog-in-ntc-pat-exam-rn",
+] as const;
+type NoticeBibliographicItemTags4 = typeof noticeBibliographicTags4[number];
+
+interface NoticeBibliographicBlock4 {
+    tag: NoticeBibliographicItemTags4;
+    blocks: BibliographicBlock[];
+}
+
+const noticeBibliographicTags5 = [
+    "jp:conclusion-part-article",
+    "jp:drafting-body",
+] as const;
+type NoticeBibliographicItemTags5 = typeof noticeBibliographicTags5[number];
+export interface NoticeBibliographicBlock5 {
+    tag: NoticeBibliographicItemTags5;
+    blocks?: ParagraphBlock[];
+}
+
+const noticeBibliographicTags6 = [
+    "jp:reconsideration-before-appeal",
+    "jp:reference-books",
+] as const;
+type NoticeBibliographicItemTags6 = typeof noticeBibliographicTags6[number];
+export interface NoticeBibliographicBlock6 {
+    tag: NoticeBibliographicItemTags6;
+    text: string;
+}
+
+interface NoticeDispatchControlArticleBlock {
+    tag: "jp:dispatch-control-article";
+    blocks: {
+        tag: string;
+        jpTag: string;
+        text: string;
+    }[];
+}
+
+interface NoticeDocumentNameBlock {
+    tag: "jp:document-name";
+    text: string;
+}
 
 
+interface NoticeFooterArticleBlock {
+    tag: "jp:footer-article";
+    blocks?: NoticeBibliographicBlock[];
+}
+
+interface NoticeCertificationGroupBlock {
+    tag: "jp:certification-group";
+    blocks: {
+        tag: "jp:date" | "jp:official-title" | "jp:name";
+        jpTag?: string;
+        text: string;
+        convertedText?: string;
+    }[];
+}
+
+interface NoticeDraftPersonGroupBlock {
+    tag: "jp:draft-person-group";
+    jpTag: string;
+    blocks: {
+        tag: "jp:name" | "jp:staff-code" | "jp:office-code";
+        text: string;
+        convertedText?: string;
+    }[];
+}
+
+interface NoticeArticleGroupBlock {
+    tag: "jp:article-group";
+    jpTag: string;
+    blocks: {
+        tag: "jp:article";
+        text: string;
+    }[];
+}
+
+interface NoticeParentApplicationArticleBlock {
+    tag: "jp:parent-application-article";
+    jpTag: string;
+    text?: string;
+    blocks?: NoticeBibliographicBlock[];
+}
 
 
-
-
-
-
+export type NoticeBibliographicBlock = NoticeBibliographicBlock1 | NoticeBibliographicBlock2 |
+    NoticeBibliographicBlock3 | NoticeBibliographicBlock4 | NoticeBibliographicBlock5 |
+    NoticeBibliographicBlock6 |
+    NoticeDispatchControlArticleBlock | NoticeDocumentNameBlock | NoticeFooterArticleBlock |
+    NoticeDraftPersonGroupBlock | NoticeCertificationGroupBlock | NoticeArticleGroupBlock |
+    NoticeParentApplicationArticleBlock |
+    ParagraphBlock | OtherImagesContainerBlock;
 
 
 
@@ -380,6 +533,36 @@ function createTypeGuard<T extends object, K extends keyof T>(
         (obj as T)[key] === value;
 }
 
+// タグのリストに基づいて型ガードを作成するヘルパー関数
+function createTypeGuardWithTags<T>(tags: readonly string[]) {
+    return (block: unknown): block is T => {
+        if (
+            typeof block !== "object" ||
+            block === null ||
+            !("tag" in block) ||
+            typeof (block as any).tag !== "string"
+        ) {
+            return false;
+        }
+        return tags.includes((block as any).tag);
+    };
+}
+
+// タグのリストに基づいて型ガードを作成するヘルパー関数
+function createUnknownBlockWithTags<T>(tags: readonly string[]) {
+    return (block: unknown): block is T => {
+        if (
+            typeof block !== "object" ||
+            block === null ||
+            !("tag" in block) ||
+            typeof (block as any).tag !== "string"
+        ) {
+            return false;
+        }
+        return !tags.includes((block as any).tag);
+    };
+}
+
 // --- 文書関連の型ガードを生成 ---
 export const documentTypeGuards = {
     isPatAppDoc: createTypeGuard<PatAppDocBlock, 'tag'>('tag', 'pat-app-doc'),
@@ -391,56 +574,24 @@ export const documentTypeGuards = {
     isForeignClaims: createTypeGuard<ForeignDocumentBlock, 'tag'>('tag', 'jp:foreign-language-claims'),
     isForeignAbstract: createTypeGuard<ForeignDocumentBlock, 'tag'>('tag', 'jp:foreign-language-abstract'),
     isForeignDrawings: createTypeGuard<ForeignDocumentBlock, 'tag'>('tag', 'jp:foreign-language-drawings'),
-    isPatResponse: createTypeGuard<DocumentBlock, 'tag'>('tag', 'pat-rspns'),
-    isPatAmendment: createTypeGuard<DocumentBlock, 'tag'>('tag', 'pat-amnd'),
-    isPatEtc: createTypeGuard<DocumentBlock, 'tag'>('tag', 'pat-etc'),
-    isNoticePatExam: createTypeGuard<DocumentBlock, 'tag'>('tag', 'notice-pat-exam'),
-    isNoticePatExamRn: createTypeGuard<DocumentBlock, 'tag'>('tag', 'notice-pat-exam-rn'),
-    isUnknownDocumentBlock: (block: unknown): block is UnknownBlock => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-
-        return !documentTags.includes((block as any).tag);
-    }
+    isPatResponse: createTypeGuard<PatResponseBlock, 'tag'>('tag', 'pat-rspns'),
+    isPatAmnd: createTypeGuard<PatAmndBlock, 'tag'>('tag', 'pat-amnd'),
+    isPatEtc: createTypeGuard<PatEtcBlock, 'tag'>('tag', 'pat-etc'),
+    isNoticePatExam: createTypeGuard<NoticePatExamBlock, 'tag'>('tag', 'notice-pat-exam'),
+    isNoticePatExamRn: createTypeGuard<NoticePatExamBlock, 'tag'>('tag', 'notice-pat-exam-rn'),
+    isUnknownDocumentBlock: createUnknownBlockWithTags<UnknownBlock>(documentTags),
 }
 
 // --- 明細書関連の型ガードを生成 ---
 export const descriptionTypeGuards = {
     isInventionTitle: createTypeGuard<InventionTitleBlock, 'tag'>('tag', 'invention-title'),
     isParagraph: createTypeGuard<ParagraphBlock, 'tag'>('tag', 'paragraph'),
-    isCommonDescriptionBlock: (block: unknown): block is CommonDescriptionBlock => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-        return commonDescriptionTags.includes((block as any).tag);
-    },
-    isUnknownDescriptionBlock: (block: unknown): block is UnknownBlock => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-
-        return ![
-            ...commonDescriptionTags,
-            "paragraph",
-            "invention-title"
-        ].includes((block as any).tag);
-    }
+    isCommonDescriptionBlock: createTypeGuardWithTags<CommonDescriptionBlock>(commonDescriptionTags),
+    isUnknownDescriptionBlock: createUnknownBlockWithTags<UnknownBlock>([
+        ...commonDescriptionTags,
+        "paragraph",
+        "invention-title"
+    ]),
 }
 
 // --- 段落関連の型ガードを生成 ---
@@ -448,7 +599,7 @@ export const paragraphItemTypeGuards = {
     isTables: createTypeGuard<ImageContainerBlock, 'tag'>('tag', 'tables'),
     isEquations: createTypeGuard<ImageContainerBlock, 'tag'>('tag', 'equations'),
     isChemicalFormulas: createTypeGuard<ImageContainerBlock, 'tag'>('tag', 'chemical-formulas'),
-    isOtherImages: createTypeGuard<ImageContainerBlock, 'tag'>('tag', 'other-images'),
+    isOtherImages: createTypeGuard<OtherImagesContainerBlock, 'tag'>('tag', 'other-images'),
     isTextBlock: createTypeGuard<InlineText, 'tag'>('tag', 'text'),
     isSubBlock: createTypeGuard<InlineText, 'tag'>('tag', 'sub'),
     isSupBlock: createTypeGuard<InlineText, 'tag'>('tag', 'sup'),
@@ -456,125 +607,70 @@ export const paragraphItemTypeGuards = {
     isFigRefBlock: createTypeGuard<FigRefBlock, 'tag'>('tag', 'figref'),
     isPatcitBlock: createTypeGuard<PatcitBlock, 'tag'>('tag', 'patcit'),
     isNplcitBlock: createTypeGuard<PatcitBlock, 'tag'>('tag', 'nplcit'),
-    isUnknownParagraphItemBlock: (block: unknown): block is UnknownBlock => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-
-        return ![
-            "text",
-            "sub",
-            "sup",
-            "underline",
-            "figref",
-            "patcit",
-            "nplcit",
-            "figures",
-            "tables",
-            "equations",
-            "chemical-formulas",
-            "other-images"
-        ].includes((block as any).tag);
-    }
+    isUnknownParagraphItemBlock: createUnknownBlockWithTags<UnknownBlock>([
+        "text",
+        "sub",
+        "sup",
+        "underline",
+        "figref",
+        "patcit",
+        "nplcit",
+        "figures",
+        "tables",
+        "equations",
+        "chemical-formulas",
+        "other-images"
+    ]),
 }
 
 // --- 書誌事項関連の型ガードを生成 ---
 export const bibliographicTypeGuards = {
-    isBibliographicBlock1: (block: unknown): block is BibliographicBlock1 => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-        return bibliographicTags1.includes((block as any).tag);
-    },
-    isBibliographicBlock2: (block: unknown): block is BibliographicBlock2 => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-        return bibliographicTags2.includes((block as any).tag);
-    },
-    isBibliographicBlock3: (block: unknown): block is BibliographicBlock3 => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-        return bibliographicTags3.includes((block as any).tag);
-    },
-    isBibliographicBlock4: (block: unknown): block is BibliographicBlock4 => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-        return bibliographicTags4.includes((block as any).tag);
-    },
-    isUnknownBibliographicBlock: (block: unknown): block is UnknownBlock => {
-        if (
-            typeof block !== "object" ||
-            block === null ||
-            !("tag" in block) ||
-            typeof (block as any).tag !== "string"
-        ) {
-            return false;
-        }
-
-        return ![
-            ...bibliographicTags1,
-            ...bibliographicTags2,
-            ...bibliographicTags3,
-            ...bibliographicTags4
-        ].includes((block as any).tag);
-    }
+    isBibliographicBlock1: createTypeGuardWithTags<BibliographicBlock1>(bibliographicTags1),
+    isBibliographicBlock2: createTypeGuardWithTags<BibliographicBlock2>(bibliographicTags2),
+    isBibliographicBlock3: createTypeGuardWithTags<BibliographicBlock3>(bibliographicTags3),
+    isBibliographicBlock4: createTypeGuardWithTags<BibliographicBlock4>(bibliographicTags4),
+    isUnknownBibliographicBlock: createUnknownBlockWithTags<UnknownBlock>([
+        ...bibliographicTags1,
+        ...bibliographicTags2,
+        ...bibliographicTags3,
+        ...bibliographicTags4
+    ]),
 }
 
-
-
-
-/** tag で判別する総称 Block（必要に応じて随時拡張してください） */
-export type Block =
-    ApplicationFormBlock
-    | ApplicationFormItemBlock
-    | InventionTitleBlock
-    | CommonDescriptionBlock
-    | ParagraphBlock
-    | ClaimBlock
-    | ClaimTextBlock
-    | FigRefBlock
-    | PatcitBlock
-    | PatResponseBlock
-    | UnknownBlock;
-
-
-//export interface ApplicationFormBlock extends BaseBlock {
-//    tag: "applicationForm";
-//    blocks: ApplicationFormItemBlock[];
-//}
-//
-interface ApplicationFormItemBlock extends BaseBlock {
-    tag: string;
-    text?: string;
-    convertedText?: string;
-    blocks: ApplicationFormItemBlock[];
+// --- 発送系 書誌事項関連の型ガードを生成 ---
+export const noticeBibliographicTypeGuards = {
+    isNoticeDispatchControlArticleBlock: createTypeGuard<NoticeDispatchControlArticleBlock, 'tag'>('tag', 'jp:dispatch-control-article'),
+    isNoticeDocumentNameBlock: createTypeGuard<NoticeDocumentNameBlock, 'tag'>('tag', 'jp:document-name'),
+    isNoticeFooterArticleBlock: createTypeGuard<NoticeFooterArticleBlock, 'tag'>('tag', 'jp:footer-article'),
+    isNoticeCertificationGroupBlock: createTypeGuard<NoticeCertificationGroupBlock, 'tag'>('tag', 'jp:certification-group'),
+    isNoticeDraftPersonGroupBlock: createTypeGuard<NoticeDraftPersonGroupBlock, 'tag'>('tag', 'jp:draft-person-group'),
+    isNoticeArticleGroupBlock: createTypeGuard<NoticeArticleGroupBlock, 'tag'>('tag', 'jp:article-group'),
+    isNoticeParentApplicationArticleBlock: createTypeGuard<NoticeParentApplicationArticleBlock, 'tag'>('tag', 'jp:parent-application-article'),
+    isNoticeBibliographicBlock1: createTypeGuardWithTags<NoticeBibliographicBlock1>(noticeBibliographicTags1),
+    isNoticeBibliographicBlock2: createTypeGuardWithTags<NoticeBibliographicBlock2>(noticeBibliographicTags2),
+    isNoticeBibliographicBlock3: createTypeGuardWithTags<NoticeBibliographicBlock3>(noticeBibliographicTags3),
+    isNoticeBibliographicBlock4: createTypeGuardWithTags<NoticeBibliographicBlock4>(noticeBibliographicTags4),
+    isNoticeBibliographicBlock5: createTypeGuardWithTags<NoticeBibliographicBlock5>(noticeBibliographicTags5),
+    isNoticeBibliographicBlock6: createTypeGuardWithTags<NoticeBibliographicBlock6>(noticeBibliographicTags6),
+    isUnknownNoticeBibliographicBlock: createUnknownBlockWithTags<UnknownBlock>([
+        "jp:dispatch-control-article",
+        "jp:document-name",
+        "jp:certification-group",
+        "jp:footer-article",
+        "jp:draft-person-group",
+        "jp:article-group",
+        "jp:parent-application-article",
+        "paragraph",
+        "other-images",
+        // paragraphItem の other-images を流用した。ゆえに、ここに追加しておく。
+        // 本来的には jp:image-group の子要素(type NoticeBibliographicBlock)として
+        //  other-images のinterface を作成すべき.
+        ...noticeBibliographicTags1,
+        ...noticeBibliographicTags2,
+        ...noticeBibliographicTags3,
+        ...noticeBibliographicTags4,
+        ...noticeBibliographicTags5,
+        ...noticeBibliographicTags6
+    ]),
 }
 

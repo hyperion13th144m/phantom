@@ -1,0 +1,89 @@
+---
+import Paragraph from "./Paragraph.astro";
+
+import {
+    type BibliographicBlock,
+    bibliographicTypeGuards as g,
+} from "~/interfaces/document-block";
+
+const { block } = Astro.props as {
+    block: BibliographicBlock;
+};
+---
+
+{
+    /** jpTag ○, convertedText 〇orX, text o, blocks x
+     */
+    g.isBibliographicBlock1(block) && (
+        <div class="flex">
+            <span
+                class={`jpTag indentLevel-${block.indentLevel}`}
+                style="min-width: 11em;"
+            >
+                {block.jpTag}
+            </span>
+            <span class="convertedText">
+                {block.convertedText ?? block.text}
+            </span>
+        </div>
+    )
+}
+
+{
+    /** tag ○, jpTag ○, text ×, blocks ○ */
+    g.isBibliographicBlock2(block) && (
+        <>
+            <div class="flex">
+                <span
+                    class={`jpTag indentLevel-${block.indentLevel}`}
+                    style="min-width: 11em;"
+                >
+                    {block.jpTag}
+                </span>
+            </div>
+            {block?.blocks?.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </>
+    )
+}
+
+{
+    /** tag ○, blocks ○ */
+    g.isBibliographicBlock3(block) &&
+        block.blocks?.map((childBlock) => <Astro.self block={childBlock} />)
+}
+
+{
+    /** jpTag o, text x, convertedText x, blocks: ParagraphBlock o */
+    g.isBibliographicBlock4(block) && (
+        <div>
+            <div class={`jpTag indentLevel-${block.indentLevel}`}>
+                {block.jpTag}
+            </div>
+            {block.blocks && block.blocks.map((b) => <Paragraph block={b} />)}
+        </div>
+    )
+}
+
+{
+    /** 未対応のブロックタグ */
+    g.isUnknownBibliographicBlock(block) && (
+        <div>
+            <h1>no renderer for this block</h1>
+            <pre>{JSON.stringify(block, null, 2)}</pre>
+        </div>
+    )
+}
+
+<style>
+    .indentLevel-1 {
+        text-indent: 1em;
+    }
+    .indentLevel-2 {
+        text-indent: 2em;
+    }
+    .indentLevel-3 {
+        text-indent: 3em;
+    }
+</style>

@@ -1,8 +1,8 @@
-import { paragraphItemTypeGuards, type Block } from "~/interfaces/document-block";
+import { paragraphItemTypeGuards, type ParagraphItem } from "~/interfaces/document-block";
 
 // ClaimText や Paragraph 下の連続する textBlock, subBlock, supBlock, underlineBlock をまとめる
 // Paragraph 下のそれ以外のブロックは個別に扱う
-export function concatBlocks(blocks: Block[]): Block[][] {
+export function concatBlocks(blocks: ParagraphItem[]): ParagraphItem[][] {
     const results = [];
     let currentGroup = [];
     for (let i = 0; i < blocks.length; i++) {

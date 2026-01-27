@@ -94,9 +94,11 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
                 <xsl:value-of select="name()" />
             </xsl:element>
 
-            <xsl:apply-templates select="p[1]" />
+            <!-- <xsl:apply-templates select="p[1]" /> -->
+            <xsl:apply-templates select="p" />
             <xsl:apply-templates select="jp:certification-group" />
 
+            <!--
             <xsl:choose>
                 <xsl:when test="p[2]">
                     <xsl:apply-templates select="p[2]" />
@@ -116,6 +118,7 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
                     </xsl:choose>
                 </xsl:otherwise>
             </xsl:choose>
+            -->
         </xsl:element>
     </xsl:template>
 

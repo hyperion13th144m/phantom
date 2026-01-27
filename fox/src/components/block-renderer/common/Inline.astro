@@ -1,12 +1,12 @@
 ---
 import {
     paragraphItemTypeGuards,
-    type Block,
+    type ParagraphItem,
 } from "~/interfaces/document-block";
 import Figure from "./Figure.astro";
 
 const { block } = Astro.props as {
-    block: Block;
+    block: ParagraphItem;
 };
 ---
 
@@ -52,8 +52,12 @@ const { block } = Astro.props as {
         min-width: 7em;
     }
 
-    .patcit .indentLevel-2,
-    .nplcit .indentLevel-2,
+    .patcit .indentLevel-2 {
+        text-indent: 2em;
+    }
+    .nplcit .indentLevel-2 {
+        text-indent: 0em;
+    }
     .figref .indentLevel-2 {
         text-indent: 2em;
     }

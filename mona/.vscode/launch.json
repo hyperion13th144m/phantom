@@ -19,7 +19,7 @@
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
             "args": "-m 1 -l debug /src_dir/ /data_dir {A101,A102,A1131,A1191,A1192,A130,A1523,A163,A1631,A1632,A1634,A153,A159,A1781,A1871,A1872}"
-            //"args": "-m 1 -l debug /src_dir/ /data_dir {A1631,A1632,A1634}"
+            //"args": "-m 1 -l debug /src_dir/ /data_dir A163"
         }
     ]
 }

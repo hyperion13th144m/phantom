@@ -3588,7 +3588,7 @@
     <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
 
     <!--  イメージ   -->
-    <xsl:template match="maths/img | tables/img | figures/img | chemistry/img">
+    <xsl:template match="maths/img | tables/img | figure/img | chemistry/img">
         <xsl:for-each select="key('images-table-key', @file)">
             <xsl:element name="images">
                 <xsl:element name="src">
