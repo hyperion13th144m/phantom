@@ -15,8 +15,15 @@ const applicationNumberIndex = _applicationNumberIndex as Record<
     string,
     ApplicationNumberIndexEntry
 >;
+
 const applicationNumberEntry = applicationNumberIndex[applicationNumber];
 const an = applicationNumberEntry.applicationNumberString;
+
+type DocumentEntry = ApplicationNumberIndexEntry["documents"][number];
+
+const sorter = (a: DocumentEntry, b: DocumentEntry) => {
+    return a.documentDate.localeCompare(b.documentDate);
+};
 ---
 
 <Layout title={`出願番号別文書一覧 | ${an}`}>
@@ -42,23 +49,23 @@ const an = applicationNumberEntry.applicationNumberString;
                 総数: {applicationNumberEntry.documents.length} 件
             </span>
             {
-                applicationNumberEntry.documents.map((entry) => (
-                    <div class="flex gap-4 items-center py-1">
-                        <div class="min-w-[10em]">
-                            {entry.submissionDate !== ""
-                                ? entry.submissionDate
-                                : entry.dispatchDate !== ""
-                                  ? entry.dispatchDate
-                                  : "日付不明"}
+                applicationNumberEntry.documents
+                    .sort((a, b) => sorter(a, b))
+                    .map((entry) => (
+                        <div class="flex gap-4 items-center py-1">
+                            <div class="min-w-[10em]">
+                                {entry.documentDateFormatted !== ""
+                                    ? entry.documentDateFormatted
+                                    : "日付不明"}
+                            </div>
+                            <a
+                                href={`/docs/${entry.docId}`}
+                                class="text-blue-600 hover:underline"
+                            >
+                                {entry.documentName}
+                            </a>
                         </div>
-                        <a
-                            href={`/docs/${entry.docId}`}
-                            class="text-blue-600 hover:underline"
-                        >
-                            {entry.documentName}
-                        </a>
-                    </div>
-                ))
+                    ))
             }
         </section>
     </main>

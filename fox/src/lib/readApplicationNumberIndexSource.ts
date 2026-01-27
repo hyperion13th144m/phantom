@@ -22,8 +22,8 @@ export async function readApplicationNumberIndexSource(docId: string): Promise<R
     const applicationNumberString = app.toString();
     const applicationNumberSlug = app.slug;
 
-    const submissionDate = document.submissionDate ? new DocumentDate(document.submissionDate) : null;
-    const dispatchDate = document.dispatchDate ? new DocumentDate(document.dispatchDate) : null;
+    const documentDate = document.submissionDate ?? document.dispatchDate ?? "";
+    const documentDateFormatted = documentDate ? new DocumentDate(documentDate).toJapaneseString() : "";
 
     return {
         [applicationNumberSlug]: {
@@ -33,8 +33,8 @@ export async function readApplicationNumberIndexSource(docId: string): Promise<R
                 {
                     docId,
                     documentName: document.documentName ?? "",
-                    submissionDate: submissionDate?.toString() ?? "",
-                    dispatchDate: dispatchDate?.toString() ?? "",
+                    documentDate,
+                    documentDateFormatted,
                     fileReferenceId: document.fileReferenceId ?? "",
                 }
             ]

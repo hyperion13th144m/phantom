@@ -10,12 +10,6 @@ const applicationNumberIndex: Record<
     ApplicationNumberIndexEntry
 > = _applicationNumberIndex;
 
-// 出願番号で2段階グループ化
-// 1段階目=yearPart, 2段階目=applicationNumber.toString()
-const groupedByYearAndAppNumber: Record<
-    string,
-    Record<string, IPDocument[]>
-> = {};
 
 const appNumbers = Object.keys(applicationNumberIndex).map((slug) => (
     {
@@ -58,7 +52,7 @@ const groupedAppNumbers = appNumbers.reduce((acc, appNum) => {
                 Object.keys(groupedAppNumbers).map((yearPart) => (
                     <h2>{yearPart}年</h2>
                     <ul class="pl-[2em] list-disc list-inside">
-                        {groupedAppNumbers[yearPart].map((appNumber) => (
+                        {groupedAppNumbers[yearPart].sort((a, b) => a.slug.localeCompare(b.slug)).map((appNumber) => (
                             <li>
                                 <a
                                     href={`/docs/applicationNumbers/${appNumber.slug}`}

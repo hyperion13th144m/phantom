@@ -13,6 +13,16 @@ export class DocumentDate {
     }
 
     toString(): string {
-        return `${this.date.getFullYear()}年 ${this.date.getMonth() + 1}月 ${this.date.getDate()}日`;
+        const month = this.date.getMonth() + 1;
+        const day = this.date.getDate();
+        return `${this.date.getFullYear()}-${month.toString().padStart(2, "0")}-${day
+            .toString()
+            .padStart(2, "0")}`;
+    }
+
+    toJapaneseString(): string {
+        const month = this.date.getMonth() + 1;
+        const day = this.date.getDate();
+        return `${this.date.getFullYear()}年 ${month.toString().padStart(2, "0")}月 ${day.toString().padStart(2, "0")}日`;
     }
 }
