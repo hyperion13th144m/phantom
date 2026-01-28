@@ -20,10 +20,6 @@
      ====================================================================-->
     <xsl:template match="/">
         <xsl:element name="root">
-            <xsl:element name="fileReferenceId">
-                <xsl:value-of
-                    select="root/jp:cpy-notice-pat-exam/jp:dispatch-control-article/jp:file-reference-id" />
-            </xsl:element>
             <xsl:element name="textBlocksRoot">
                 <xsl:element name="tag">notice-pat-exam-rn</xsl:element>
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam-rn" />

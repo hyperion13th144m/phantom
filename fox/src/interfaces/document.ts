@@ -72,6 +72,15 @@ export interface DocumentJson {
 
     // OCR text from the images.
     ocrText: string;
+
+    // list of inventor names
+    inventors?: string[];
+
+    // list of applicant names
+    applicants: string[];
+
+    // list of patent agents
+    agents?: string[];
 }
 
 export interface ImagesOfIPDocument {
@@ -86,12 +95,7 @@ export interface ImagesOfIPDocument {
 }
 
 export interface IPDocument extends Omit<DocumentJson, "submissionDate" | "applicationNumber" | "dispatchDate"> {
-    inventors: string[];
-    applicants: string[];
-    agents: string[];
-
     submissionDate: DocumentDate | null;
     dispatchDate: DocumentDate | null;
-
     applicationNumber: ApplicationNumber;
 };

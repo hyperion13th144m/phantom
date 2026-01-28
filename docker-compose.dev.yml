@@ -36,18 +36,18 @@ services:
     networks:
       - dev-net
 
-  queen-dev:
-    container_name: queen-dev
-    image: python:3.14-bookworm
-    volumes:
-      - .:/workspaces:cached
-    tty: true
-    environment:
-      LANG: ja_JP.UTF-8
-      TZ: Asia/Tokyo
-    restart: always
-    networks:
-      - dev-net
+  #queen-dev:
+  #  container_name: queen-dev
+  #  image: python:3.14-bookworm
+  #  volumes:
+  #    - .:/workspaces:cached
+  #  tty: true
+  #  environment:
+  #    LANG: ja_JP.UTF-8
+  #    TZ: Asia/Tokyo
+  #  restart: always
+  #  networks:
+  #    - dev-net
  
   fox-dev:
     container_name: fox-dev
@@ -59,7 +59,7 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - .:/workspaces:cached
-      - ${DATA_DIR}:/workspaces/fox/public/content
+      - ${DATA_DIR}:/data_dir
     networks:
       - dev-net
 

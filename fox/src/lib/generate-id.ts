@@ -4,7 +4,7 @@ import crypto from "node:crypto";
  * 発明者名など文字列から安定した Id を生成する
  * @example 山田 太郎 -> inv_a3f9c2e41b
  */
-export function generateId(srcString: string): string {
+export function generateId(srcString: string, prefix: string): string {
     const normalized = normalizeString(srcString);
 
     const hash = crypto
@@ -13,7 +13,7 @@ export function generateId(srcString: string): string {
         .digest("hex")
         .slice(0, 10); // ← 10〜12桁推奨
 
-    return `inv_${hash}`;
+    return `${prefix}_${hash}`;
 }
 
 /** 表記ゆれ対策 */

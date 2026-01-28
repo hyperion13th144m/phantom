@@ -51,10 +51,8 @@ services:
     build:
       context: fox
       dockerfile: Dockerfile
-    tty: true
     volumes:
-      - ${WWW_ROOT}:/app/dist
-      - ${DATA_DIR}:/app/public/content
+      - ${DATA_DIR}:/data_dir
 
   joker:
     container_name: joker

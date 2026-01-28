@@ -7,13 +7,11 @@ import Layout from "../layouts/Layout.astro";
     <main class="p-4">
         <BreadCrumbs crumbs={[{ title: "HOME", href: "/" }]} />
         <section>
-            <ul class="list-disc list-inside">
-                <li>
-                    <a href="/docs" class="text-blue-600 hover:underline"
-                        >特許出願関連文書</a
-                    >
-                </li>
-            </ul>
+            <h1 class="mb-4">特許出願関連文書</h1>
+            <a href="/docs/applicants" class="text-blue-600 hover:underline"
+                >出願人の一覧</a
+            >
+            <a href="/search" class="text-blue-600 hover:underline">検索</a>
         </section>
     </main>
 </Layout>

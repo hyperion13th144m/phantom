@@ -1,17 +1,44 @@
 ---
+import sqlite from "better-sqlite3";
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
-import type { ApplicantIndexEntry } from "~/interfaces/index/applicant-index";
+import { INDEX_DB } from "~/constant";
 import Layout from "~/layouts/Layout.astro";
-import _applicantIndex from "../../../../public/content/_indexes/applicant-index.json";
 
+export const prerender = true;
 export async function getStaticPaths() {
-    return Object.keys(_applicantIndex).map((applicant) => ({
-        params: { applicant },
+    const db = new sqlite(INDEX_DB);
+    const rows = db
+        .prepare(`SELECT DISTINCT slug, name FROM applicants`)
+        .all() as Array<{
+        slug: string;
+        name: string;
+    }>;
+    db.close();
+    return rows.map((applicant) => ({
+        params: { applicant: applicant.slug },
+        props: { name: applicant.name },
     }));
 }
 
 const { applicant } = Astro.params;
-const applicantIndex = _applicantIndex as Record<string, ApplicantIndexEntry>;
+const db = new sqlite(INDEX_DB);
+const applicantIndexRow = db
+    .prepare(
+        `SELECT DISTINCT appNumSlug, appNumFormatted, fileReferenceId FROM documents d
+         JOIN applicants a ON d.docId = a.docId
+         WHERE slug = ?
+         ORDER BY docDate DESC`,
+    )
+    .all(applicant) as Array<{
+    docId: string;
+    appNumSlug: string;
+    appNumFormatted: string;
+    fileReferenceId: string;
+}>;
+if (applicantIndexRow.length === 0) {
+    throw new Error(`Applicant index not found: ${applicant}`);
+}
+db.close();
 ---
 
 <Layout title={`出願人別文書一覧 | ${applicant}`}>
@@ -22,7 +49,7 @@ const applicantIndex = _applicantIndex as Record<string, ApplicantIndexEntry>;
                 { title: "出願書類", href: "/docs" },
                 { title: "出願人の一覧", href: "/docs/applicants" },
                 {
-                    title: applicantIndex[applicant].name,
+                    title: Astro.props.name,
                     href: `/docs/applicants/${applicant}`,
                 },
             ]}
@@ -30,20 +57,20 @@ const applicantIndex = _applicantIndex as Record<string, ApplicantIndexEntry>;
 
         <section>
             <h1 class="text-2xl font-bold">
-                {applicantIndex[applicant].name}の出願一覧
+                {Astro.props.name}の出願一覧
             </h1>
             <span class="text-sm text-gray-600">
-                総数: {applicantIndex[applicant].documents.length} 件
+                総数: {applicantIndexRow.length} 件
             </span>
             {
-                applicantIndex[applicant].documents.map((row, index) => (
+                applicantIndexRow.map((row, index) => (
                     <ul class="pl-[2em] list-disc list-inside">
                         <li>
                             <a
-                                href={`/docs/applicationNumbers/${row.applicationNumberSlug}`}
+                                href={`/docs/applicationNumbers/${row.appNumSlug}`}
                                 class="text-blue-600 hover:underline"
                             >
-                                {row.applicationNumberString}
+                                {row.appNumFormatted}
                                 {row.fileReferenceId &&
                                     ` (${row.fileReferenceId})`}
                             </a>

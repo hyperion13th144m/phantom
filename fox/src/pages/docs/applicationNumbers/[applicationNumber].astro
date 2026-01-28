@@ -1,71 +1,82 @@
 ---
+import sqlite from "better-sqlite3";
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
-import type { ApplicationNumberIndexEntry } from "~/interfaces/index/application-number-index";
+import { INDEX_DB } from "~/constant";
 import Layout from "~/layouts/Layout.astro";
-import _applicationNumberIndex from "../../../../public/content/_indexes/application-number-index.json";
 
+export const prerender = true;
 export async function getStaticPaths() {
-    return Object.keys(_applicationNumberIndex).map((applicationNumber) => ({
-        params: { applicationNumber },
+    const db = new sqlite(INDEX_DB);
+    const rows = db
+        .prepare(`SELECT DISTINCT appNumSlug, appNumFormatted FROM documents`)
+        .all() as Array<{
+        appNumSlug: string;
+        appNumFormatted: string;
+    }>;
+    db.close();
+    return rows.map((appNum) => ({
+        params: { applicationNumber: appNum.appNumSlug },
+        props: { an: appNum.appNumFormatted },
     }));
 }
 
 const { applicationNumber } = Astro.params;
-const applicationNumberIndex = _applicationNumberIndex as Record<
-    string,
-    ApplicationNumberIndexEntry
->;
-
-const applicationNumberEntry = applicationNumberIndex[applicationNumber];
-const an = applicationNumberEntry.applicationNumberString;
-
-type DocumentEntry = ApplicationNumberIndexEntry["documents"][number];
-
-const sorter = (a: DocumentEntry, b: DocumentEntry) => {
-    return a.documentDate.localeCompare(b.documentDate);
-};
+const db = new sqlite(INDEX_DB);
+const rows = db
+    .prepare(
+        `SELECT DISTINCT d.docId, d.appNumSlug, d.appNumFormatted, d.fileReferenceId, d.documentName, d.docDateFormatted
+         FROM documents d
+         JOIN applicants a ON d.docId = a.docId
+         WHERE d.appNumSlug = ?
+         ORDER BY docDate ASC, documentName ASC`,
+    )
+    .all(applicationNumber) as Array<{
+    docId: string;
+    appNumSlug: string;
+    appNumFormatted: string;
+    fileReferenceId: string;
+    documentName: string;
+    docDateFormatted: string;
+}>;
+if (rows.length === 0) {
+    throw new Error(`Applicant index not found: ${applicationNumber}`);
+}
+db.close();
 ---
 
-<Layout title={`出願番号別文書一覧 | ${an}`}>
+<Layout title={`出願番号別文書一覧 | ${Astro.props.an}`}>
     <main class="p-4">
         <BreadCrumbs
             crumbs={[
                 { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
                 {
-                    title: "出願番号の一覧",
-                    href: "/docs/applicationNumbers",
-                },
-                {
-                    title: an,
+                    title: Astro.props.an,
                     href: `/docs/applicationNumbers/${applicationNumber}`,
                 },
             ]}
         />
 
         <section>
-            <h1 class="text-2xl font-bold">{an} の出願書類一覧</h1>
+            <h1 class="text-2xl font-bold">{Astro.props.an} の出願書類一覧</h1>
             <span class="text-sm text-gray-600">
-                総数: {applicationNumberEntry.documents.length} 件
+                総数: {rows.length} 件
             </span>
             {
-                applicationNumberEntry.documents
-                    .sort((a, b) => sorter(a, b))
-                    .map((entry) => (
-                        <div class="flex gap-4 items-center py-1">
-                            <div class="min-w-[10em]">
-                                {entry.documentDateFormatted !== ""
-                                    ? entry.documentDateFormatted
-                                    : "日付不明"}
-                            </div>
-                            <a
-                                href={`/docs/${entry.docId}`}
-                                class="text-blue-600 hover:underline"
-                            >
-                                {entry.documentName}
-                            </a>
+                rows.map((entry) => (
+                    <div class="flex gap-4 items-center py-1">
+                        <div class="min-w-[10em]">
+                            {entry.docDateFormatted !== ""
+                                ? entry.docDateFormatted
+                                : "日付不明"}
                         </div>
-                    ))
+                        <a
+                            href={`/docs/${entry.docId}`}
+                            class="text-blue-600 hover:underline"
+                        >
+                            {entry.documentName}
+                        </a>
+                    </div>
+                ))
             }
         </section>
     </main>

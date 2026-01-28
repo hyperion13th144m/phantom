@@ -106,8 +106,8 @@ export interface UnknownBlock {
     [key: string]: unknown;
 }
 
-export type Block = BibliographicBlock | ClaimBlock | DescriptionBlock |
-    FiguresContainerBlock | ParagraphBlock;
+//export type Block = BibliographicBlock | ClaimBlock | DescriptionBlock |
+//    FiguresContainerBlock | ParagraphBlock;
 
 /** -----------------------------
  *  特許請求の範囲（claims） の子ブロック

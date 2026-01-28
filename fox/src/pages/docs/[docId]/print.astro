@@ -1,11 +1,10 @@
 ---
 import DocumentMain from "~/components/document/DocumentMainPrint.astro";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
-import { getDocIds } from "~/lib/getDocIds";
 import { getIPDocument } from "~/lib/getIPDocument";
 
-export const getStaticPaths = getDocIds;
-
+// export const getStaticPaths = getDocIds;
+export const prerender = false;
 const { docId } = Astro.params as { docId: string };
 const ipDocument = await getIPDocument(docId);
 const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documentName}`;

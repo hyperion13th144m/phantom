@@ -3,7 +3,6 @@ export type ApplicantIndexEntry = {
     address?: string;
     idNumber?: string;
     documents: {
-        docId: string;
         applicationNumberString: string;
         applicationNumberSlug: string;
         fileReferenceId: string | null;

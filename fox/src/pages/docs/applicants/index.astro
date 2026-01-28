@@ -1,13 +1,18 @@
 ---
+import sqlite from "better-sqlite3";
 import BreadCrumbs from "~/components/ui/BreadCrumbs.astro";
-import type { ApplicantIndexEntry } from "~/interfaces/index/applicant-index";
+import { INDEX_DB } from "~/constant";
 import Layout from "~/layouts/Layout.astro";
-import _applicantIndex from "../../../../public/content/_indexes/applicant-index.json";
 
-const applicantIndex: Record<string, ApplicantIndexEntry> = _applicantIndex;
-const sortedApplicants = Object.keys(applicantIndex).sort((a, b) =>
-    applicantIndex[a].name.localeCompare(applicantIndex[b].name),
-);
+export const prerender = true;
+const db = new sqlite(INDEX_DB);
+const rows = db
+    .prepare(`SELECT DISTINCT slug, name FROM applicants ORDER BY name ASC`)
+    .all() as Array<{
+    slug: string;
+    name: string;
+}>;
+db.close();
 ---
 
 <Layout title="出願人の一覧">
@@ -15,7 +20,6 @@ const sortedApplicants = Object.keys(applicantIndex).sort((a, b) =>
         <BreadCrumbs
             crumbs={[
                 { title: "HOME", href: "/" },
-                { title: "出願書類", href: "/docs" },
                 { title: "出願人の一覧", href: "/docs/applicants" },
             ]}
         />
@@ -23,19 +27,14 @@ const sortedApplicants = Object.keys(applicantIndex).sort((a, b) =>
         <section>
             <h1 class="text-xl font-bold">出願人の一覧</h1>
             {
-                sortedApplicants.map((applicant) => (
+                rows.map((applicant) => (
                     <div class="mt-6">
-                        <h2 class="text-gray-600 mb-2">
-                            {applicantIndex[applicant].idNumber ??
-                                applicantIndex[applicant].address ??
-                                "no adderss or identification number"}
-                        </h2>
                         <div class="pl-4 flex flex-col gap-2">
                             <a
-                                href={`/docs/applicants/${applicant}`}
+                                href={`/docs/applicants/${applicant.slug}`}
                                 class="text-blue-600 hover:underline"
                             >
-                                {applicantIndex[applicant].name}
+                                {applicant.name}
                             </a>
                         </div>
                     </div>

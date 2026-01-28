@@ -1,7 +1,6 @@
 export type FileReferenceIdIndexEntry = {
-    applicationNumberSlug: string;
-    applicationNumberString: string;
     documents: {
-        docId: string;
+        applicationNumberSlug: string;
+        applicationNumberString: string;
     }[];
 };

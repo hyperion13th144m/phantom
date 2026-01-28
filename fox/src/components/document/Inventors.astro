@@ -9,7 +9,8 @@ const { ipDocument } = Astro.props;
 ---
 
 {
-    ipDocument.inventors.length > 0 &&
+    ipDocument.inventors &&
+        ipDocument.inventors.length > 0 &&
         ipDocument.inventors.map((inv) => (
             <div class="bg-cyan-100 rounded-md shadow-md px-2">
                 <a

@@ -5,7 +5,7 @@ export async function getDocIds() {
     // document.json を探し、docIdを返す。
 
     let results: string[] = [];
-    const contentDir = path.join(process.cwd(), "public", "content");
+    const contentDir = path.join("/data_dir");
     try {
         const dirents = await fs.readdir(contentDir, {
             recursive: true,

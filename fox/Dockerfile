@@ -5,8 +5,15 @@ RUN yarn install --frozen-lockfile
 
 
 FROM node:24-alpine
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=4321
+
 USER node
 WORKDIR /app
 COPY --chown=node:node . .
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-CMD  [ "yarn", "build" ]
+#RUN yarn build
+
+EXPOSE 4321
+CMD  [ "yarn", "start" ]
