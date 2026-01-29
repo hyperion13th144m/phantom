@@ -98,7 +98,7 @@ services:
       context: nginx
       dockerfile: Dockerfile
     volumes:
-      - ${WWW_ROOT}:/usr/share/nginx/html
+      - ${DATA_DIR}:/usr/share/nginx/html
     ports:
       - ${NGINX_PORT}:8080
 

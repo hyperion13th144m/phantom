@@ -20,9 +20,7 @@ const {
 
 // uid を確実にユニーク化（Node 18+ / Astro なら crypto.randomUUID() が普通に使えます）
 const uid = crypto.randomUUID();
-const baseUrlPath = Astro.params.docId
-    ? getBaseUrlPath(Astro.params.docId)
-    : "";
+const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
 ---
 
 <div id={`ic-${uid}`} class="w-full" data-ic-root data-loop={loop ? "1" : "0"}>

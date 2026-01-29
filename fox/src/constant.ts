@@ -20,12 +20,6 @@ const DATA_DIR = "/data_dir";
 const BASE_URL = "/static";
 
 export const INDEX_DB = path.join(DATA_DIR, "_indexes", "index.db");
-export const indexDB = {
-    applicants: path.join(DATA_DIR, "_indexes", "applicant-index.db"),
-    inventors: path.join(DATA_DIR, "_indexes", "inventor-index.db"),
-    applicationNumbers: path.join(DATA_DIR, "_indexes", "application-number-index.db"),
-    fileReferenceIds: path.join(DATA_DIR, "_indexes", "file-reference-id-index.db"),
-}
 
 // docId で特定されるコンテンツが保存されたディレクトリのパスを取得
 export const getContentRoot = (docId: string) => {

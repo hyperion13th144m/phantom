@@ -1369,7 +1369,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="jpTag">
                 <xsl:value-of select="'・ＦＩ'" />
             </xsl:element>
-            <xsl:apply-templates select="jp:ipc" />
+            <xsl:apply-templates select="jp:fi" />
         </xsl:element>
     </xsl:template>
 

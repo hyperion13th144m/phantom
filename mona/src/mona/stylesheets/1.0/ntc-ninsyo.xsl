@@ -405,8 +405,10 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:element name="jpTag">
                 <xsl:value-of select="'納付年分'" />
             </xsl:element>
-            <xsl:apply-templates select="jp:year-from" />
-            <xsl:apply-templates select="jp:year-to" />
+            <xsl:element name="text">
+                <xsl:apply-templates select="jp:year-from" />
+                <xsl:apply-templates select="jp:year-to" />
+            </xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -415,25 +417,18 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
      ====================================================================-->
     <!-- 納付年分（自） -->
     <xsl:template match="jp:year-from">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                        <xsl:value-of select="'年～'" />
-                    </xsl:when>
-                    <xsl:when test="string-length(normalize-space(.)) = 0" />
-                    <xsl:otherwise>
-                        <xsl:value-of
-                            select="f:to-fullwidth-digit(.)" />
-                        <xsl:value-of select="'年～'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
+        <xsl:choose>
+            <xsl:when test="./@jp:error-code">
+                <xsl:value-of select="." />
+                <xsl:value-of select="'年～'" />
+            </xsl:when>
+            <xsl:when test="string-length(normalize-space(.)) = 0" />
+            <xsl:otherwise>
+                <xsl:value-of
+                    select="f:to-fullwidth-digit(.)" />
+                <xsl:value-of select="'年～'" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <!-- ====================================================================
@@ -441,24 +436,17 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
      ====================================================================-->
     <!-- 納付年分（至） -->
     <xsl:template match="jp:year-to">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                        <xsl:value-of select="'年分'" />
-                    </xsl:when>
-                    <xsl:when test="string-length(normalize-space(.)) = 0" />
-                    <xsl:otherwise>
-                        <xsl:value-of select="f:to-fullwidth-digit(.)" />
-                        <xsl:value-of select="'年分'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
+        <xsl:choose>
+            <xsl:when test="./@jp:error-code">
+                <xsl:value-of select="." />
+                <xsl:value-of select="'年分'" />
+            </xsl:when>
+            <xsl:when test="string-length(normalize-space(.)) = 0" />
+            <xsl:otherwise>
+                <xsl:value-of select="f:to-fullwidth-digit(.)" />
+                <xsl:value-of select="'年分'" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <!-- ====================================================================

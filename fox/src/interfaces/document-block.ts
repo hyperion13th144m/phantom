@@ -253,33 +253,51 @@ export interface ImageSrcBlock {
 // jpTag o, convertedText o / jpTag o, text o, convertedText x
 // あわせた。renderer は、 convertedText ?? text を使う。
 const bibliographicTags1 = [
-    "jp:document-code",
-    "jp:doc-number",
     "jp:account",
-    "jp:fee",
-    "jp:document-name",
-    "jp:application-reference",
-    "jp:article",
-    "jp:date",
-    "jp:country",
-    "jp:application-section",
+    "jp:account-number", // 実データないためレンダリング結果は確認していない. 以下 X は同じいみ
+    "jp:account-type",   // X
     "jp:addressed-to-person",
-    "jp:file-reference-id",
-    "jp:registered-number",
-    "jp:name",
-    "jp:dispatch-number",
-    "jp:ipc",
-    "jp:text",
-    "jp:general-power-of-attorney-id",
-    "jp:original-language-of-name",
-    "jp:doc-number",
-    "jp:proof-means",
+    "jp:application-reference",
+    "jp:application-section",
+    "jp:article",
     "jp:citation",
+    "jp:country",
+    "jp:date",
+    "jp:dispatch-number",
+    "jp:doc-number",
+    "jp:document-code",
+    "jp:document-name",
     "jp:dtext",
+    "jp:fee",
+    "jp:file-reference-id",
+    "jp:general-power-of-attorney-id",
+    "jp:generated-access-code",
+    //"jp:ipc",
+    "jp:ip-type",
+    "jp:item-of-amendment",
+    "jp:kind-of-accelerated-examination", // X
+    "jp:kind-of-appeals", // X
+    "jp:law-of-industrial-regenerate",
+    "jp:name",
+    "jp:name-of-new-depository", // X
+    "jp:new-depository-number", // X
+    "jp:notice-contents-group",
+    "jp:office", // X
+    "jp:office-address", // X
+    "jp:office-in-japan", // X
+    "jp:old-depository-number", // X   "jp:original-language-of-name",
+    "jp:original-language-of-address",
+    "jp:payment-years", // X
     "jp:phone",
+    "jp:proof-means",
+    "jp:registered-number",
+    "jp:relation-attorney-special-matter", // X
+    "jp:relation-of-case", // X
+    "jp:representative-applicant", // X
     "jp:share",
     "jp:share-rate",
-    "jp:law-of-industrial-regenerate",
+    "jp:text",
+    "jp:way-of-amendment",
 ] as const;
 type BibliographicItemTags1 = typeof bibliographicTags1[number];
 export interface BibliographicBlock1 {
@@ -291,16 +309,22 @@ export interface BibliographicBlock1 {
 }
 
 const bibliographicTags2 = [
-    "jp:indication-of-case-article",
-    "jp:applicant",
     "jp:agent",
+    "jp:amendment-charge-article",
+    "jp:amendment-group",
+    "jp:appeal-article", // X
+    "jp:applicant",
     "jp:attorney",
-    "jp:inventor",
     "jp:charge-article",
-    "jp:submission-object-list-article",
+    "jp:contents-of-amendment",
     "jp:earlier-app",
+    "jp:indication-of-case-article",
+    "jp:inventor",
+    "jp:lawyer", // X
     "jp:parent-application-article",
-    "jp:priority-claim"
+    "jp:priority-claim",
+    "jp:rejection-case-accept-notice-art", // X
+    "jp:submission-object-list-article",
 ] as const;
 type BibliographicItemTags2 = typeof bibliographicTags2[number];
 export interface BibliographicBlock2 {
@@ -311,15 +335,20 @@ export interface BibliographicBlock2 {
 }
 
 const bibliographicTags3 = [
-    "jp:applicants",
     "jp:agents",
-    "jp:inventors",
+    "jp:amendment-article",
+    "jp:applicants",
+    "jp:approval-column-article", // X
     "jp:attorney-change-article",
-    "jp:special-mention-matter-article",
     "jp:declaration-priority-ear-app",
-    "jp:priority-claims",
-    "jp:payment",
+    "jp:priority-doc-location-info",
+    "jp:inventors",
     "jp:list-group",
+    "jp:nationality",
+    "jp:payment",
+    "jp:priority-claims",
+    "jp:representative-group", // X
+    "jp:special-mention-matter-article",
 ] as const;
 type BibliographicItemTags3 = typeof bibliographicTags3[number];
 export interface BibliographicBlock3 {
@@ -338,8 +367,15 @@ export interface BibliographicBlock4 {
     blocks: ParagraphBlock[];
 }
 
-export type BibliographicBlock = BibliographicBlock1 | BibliographicBlock2 | BibliographicBlock3 | BibliographicBlock4;
-
+const bibliographicTags5 = [
+    "jp:item-content",
+] as const;
+type BibliographicItemTags5 = typeof bibliographicTags5[number];
+export interface BibliographicBlocks5 {
+    tag: BibliographicItemTags5;
+    text: string;
+}
+export type BibliographicBlock = BibliographicBlock1 | BibliographicBlock2 | BibliographicBlock3 | BibliographicBlock4 | BibliographicBlocks5 | ParagraphBlock;
 
 
 /** -----------------------------
@@ -349,23 +385,27 @@ export type BibliographicBlock = BibliographicBlock1 | BibliographicBlock2 | Bib
 // jpTag o, convertedText o / jpTag o, text o, convertedText x
 // あわせた。renderer は、 convertedText ?? text を使う。
 const noticeBibliographicTags1 = [
-    "jp:doc-number",
+    "invention-title",
+    "jp:addressed-to-person-group",
+    "jp:application-section",
+    "jp:change-flag-invention-title",
     "jp:date",
     "jp:depository-ins-code",
     "jp:depository-number",
-    "jp:patent-reference-group",
-    "jp:application-section",
-    "jp:addressed-to-person-group",
-    "invention-title",
-    "jp:number-of-claim",
-    "jp:kind-of-application",
-    "jp:exist-of-reference-doc",
-    "jp:patent-law-section30",
-    "jp:change-flag-invention-title",
-    "jp:exceptions-to-lack-of-novelty",
-    "jp:ipc",
-    "jp:field-of-search",
+    "jp:doc-number",
     "jp:document-number",
+    "jp:exceptions-to-lack-of-novelty",
+    "jp:exist-of-reference-doc",
+    //"jp:fi",  Tags1 ではないような
+    "jp:field-of-search",
+    //"jp:ipc",  Tags1 ではないような
+    "jp:kind-of-application",
+    "jp:number-of-claim",
+    "jp:number-of-other-persons", // X
+    "jp:patent-law-section30",
+    "jp:patent-reference-group",
+    "jp:payment-years", // X
+    "jp:version-number", // X
 ] as const;
 type NoticeBibliographicItemTags1 = typeof noticeBibliographicTags1[number];
 export interface NoticeBibliographicBlock1 {
@@ -377,16 +417,20 @@ export interface NoticeBibliographicBlock1 {
 }
 
 const noticeBibliographicTags2 = [
-    "jp:indication-of-case-article",
-    "jp:ipc-article",
-    "jp:fi-article",
-    "jp:deposit-article",
+    "jp:classification-article", // X
+    "jp:contents-name", // X
     "jp:deposit",
-    "jp:field-of-search-article",
-    "jp:patent-reference-article",
-    "jp:reference-books-article",
+    "jp:deposit-article",
     "jp:exceptions-to-lack-of-novelty-art",
     "jp:exceptions-to-lack-of-novelty-grp",
+    "jp:fi-article",
+    "jp:field-of-search-article",
+    "jp:indication-of-case-article",
+    "jp:invention-contents-article", // X
+    "jp:ipc-article",
+    "jp:patent-reference-article",
+    "jp:reference-books-article",
+    "jp:remark", // X 
 ] as const;
 type NoticeBibliographicItemTags2 = typeof noticeBibliographicTags2[number];
 export interface NoticeBibliographicBlock2 {
@@ -398,19 +442,23 @@ export interface NoticeBibliographicBlock2 {
 
 const noticeBibliographicTags3 = [
     "jp:application-reference",
-    "jp:document-id",
-    "jp:drafting-date",
     "jp:certification-column-article",
     "jp:certification-column-group",
-    "jp:image-group",
-    "jp:final-decision-group",
-    "jp:final-decision-group-rn",
-    "jp:final-decision-memo",
-    "jp:final-decision-memo-rn",
+    "jp:contents-part-article", // X
+    "jp:document-id",
+    "jp:drafting-date",
     "jp:final-decision-bibliog",
     "jp:final-decision-bibliog-rn",
     "jp:final-decision-body",
     "jp:final-decision-body-rn",
+    "jp:final-decision-group",
+    "jp:final-decision-group-rn",
+    "jp:final-decision-memo",
+    "jp:final-decision-memo-rn",
+    "jp:heading", // X
+    "jp:image-group",
+    "jp:inquiry-article", // X
+    "jp:inquiry-staff-group", // X
 ] as const;
 type NoticeBibliographicItemTags3 = typeof noticeBibliographicTags3[number];
 export interface NoticeBibliographicBlock3 {
@@ -479,6 +527,15 @@ interface NoticeCertificationGroupBlock {
     }[];
 }
 
+/* 実データがないので、jp:certification-group と同様の構造、レンダリングと仮定 */
+interface NoticeInquiryStaffGroupBlock {
+    tag: "jp:inquiry-staff-group";
+    blocks: {
+        tag: "jp:division" | "jp:name";
+        text: string;
+    }[];
+}
+
 interface NoticeDraftPersonGroupBlock {
     tag: "jp:draft-person-group";
     jpTag: string;
@@ -506,11 +563,19 @@ interface NoticeParentApplicationArticleBlock {
 }
 
 
+/* 実データがないので、jp:certification-group と同様の構造、レンダリングと仮定 */
+interface NoticeInclusionPaymentGroupBlock {
+    tag: "jp:inclusion-payment-group";
+    text: string;
+    blocks: NoticeBibliographicBlock[];
+}
+
 export type NoticeBibliographicBlock = NoticeBibliographicBlock1 | NoticeBibliographicBlock2 |
     NoticeBibliographicBlock3 | NoticeBibliographicBlock4 | NoticeBibliographicBlock5 |
     NoticeBibliographicBlock6 |
     NoticeDispatchControlArticleBlock | NoticeDocumentNameBlock | NoticeFooterArticleBlock |
-    NoticeDraftPersonGroupBlock | NoticeCertificationGroupBlock | NoticeArticleGroupBlock |
+    NoticeDraftPersonGroupBlock | NoticeCertificationGroupBlock | NoticeInquiryStaffGroupBlock |
+    NoticeArticleGroupBlock | NoticeInclusionPaymentGroupBlock |
     NoticeParentApplicationArticleBlock |
     ParagraphBlock | OtherImagesContainerBlock;
 
@@ -629,11 +694,15 @@ export const bibliographicTypeGuards = {
     isBibliographicBlock2: createTypeGuardWithTags<BibliographicBlock2>(bibliographicTags2),
     isBibliographicBlock3: createTypeGuardWithTags<BibliographicBlock3>(bibliographicTags3),
     isBibliographicBlock4: createTypeGuardWithTags<BibliographicBlock4>(bibliographicTags4),
+    isBibliographicBlock5: createTypeGuardWithTags<BibliographicBlocks5>(bibliographicTags5),
+    isParagraph: createTypeGuard<ParagraphBlock, 'tag'>('tag', 'paragraph'),
     isUnknownBibliographicBlock: createUnknownBlockWithTags<UnknownBlock>([
+        "paragraph",
         ...bibliographicTags1,
         ...bibliographicTags2,
         ...bibliographicTags3,
-        ...bibliographicTags4
+        ...bibliographicTags4,
+        ...bibliographicTags5
     ]),
 }
 
@@ -643,9 +712,11 @@ export const noticeBibliographicTypeGuards = {
     isNoticeDocumentNameBlock: createTypeGuard<NoticeDocumentNameBlock, 'tag'>('tag', 'jp:document-name'),
     isNoticeFooterArticleBlock: createTypeGuard<NoticeFooterArticleBlock, 'tag'>('tag', 'jp:footer-article'),
     isNoticeCertificationGroupBlock: createTypeGuard<NoticeCertificationGroupBlock, 'tag'>('tag', 'jp:certification-group'),
+    isNoticeInquiryStaffGroupBlock: createTypeGuard<NoticeInquiryStaffGroupBlock, 'tag'>('tag', 'jp:inquiry-staff-group'),
     isNoticeDraftPersonGroupBlock: createTypeGuard<NoticeDraftPersonGroupBlock, 'tag'>('tag', 'jp:draft-person-group'),
     isNoticeArticleGroupBlock: createTypeGuard<NoticeArticleGroupBlock, 'tag'>('tag', 'jp:article-group'),
     isNoticeParentApplicationArticleBlock: createTypeGuard<NoticeParentApplicationArticleBlock, 'tag'>('tag', 'jp:parent-application-article'),
+    isNoticeInclusionPaymentGroupBlock: createTypeGuard<NoticeInclusionPaymentGroupBlock, 'tag'>('tag', 'jp:inclusion-payment-group'),
     isNoticeBibliographicBlock1: createTypeGuardWithTags<NoticeBibliographicBlock1>(noticeBibliographicTags1),
     isNoticeBibliographicBlock2: createTypeGuardWithTags<NoticeBibliographicBlock2>(noticeBibliographicTags2),
     isNoticeBibliographicBlock3: createTypeGuardWithTags<NoticeBibliographicBlock3>(noticeBibliographicTags3),
@@ -662,6 +733,8 @@ export const noticeBibliographicTypeGuards = {
         "jp:parent-application-article",
         "paragraph",
         "other-images",
+        "jp:inclusion-payment-group", // X
+        "jp:inquiry-staff-group", // X
         // paragraphItem の other-images を流用した。ゆえに、ここに追加しておく。
         // 本来的には jp:image-group の子要素(type NoticeBibliographicBlock)として
         //  other-images のinterface を作成すべき.
@@ -673,4 +746,3 @@ export const noticeBibliographicTypeGuards = {
         ...noticeBibliographicTags6
     ]),
 }
-

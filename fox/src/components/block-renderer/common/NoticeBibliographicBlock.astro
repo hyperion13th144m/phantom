@@ -147,6 +147,17 @@ const { block } = Astro.props as {
 }
 
 {
+    g.isNoticeInquiryStaffGroupBlock(block) && (
+        <div class="flex gap-10">
+            {block.blocks
+                .map((b) => (
+                     <div>{b.text}</div>
+                ))}
+       </div>
+    )
+}
+
+{
     g.isNoticeBibliographicBlock6(block) && (
         <div>{block.text}</div>
     )
@@ -163,6 +174,20 @@ const { block } = Astro.props as {
                 <div>{block.text}</div>
             )}
             {block.blocks?.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </div>
+    )
+}
+
+{
+    /** tag ○, jpTag x, text o, blocks ○ */
+    g.isNoticeInclusionPaymentGroupBlock(block) && (
+        <div>
+            <div>
+                   {block.text}
+            </div>
+            {block.blocks.map((b) => (
                 <Astro.self block={b} />
             ))}
         </div>

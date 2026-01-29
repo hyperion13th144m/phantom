@@ -41,7 +41,7 @@ const { block } = Astro.props as {
                     {block.jpTag}
                 </span>
             </div>
-            {block?.blocks?.map((b) => (
+            {block.blocks?.map((b) => (
                 <Astro.self block={b} />
             ))}
         </>
@@ -64,6 +64,19 @@ const { block } = Astro.props as {
             {block.blocks && block.blocks.map((b) => <Paragraph block={b} />)}
         </div>
     )
+}
+{
+    /** jpTag x, convertedText X, text o, blocks x */
+    g.isBibliographicBlock5(block) && (
+        <div class="flex">
+            <div>{block.text}</div>
+        </div>
+    )
+}
+
+{
+    // 段落
+    g.isParagraph(block) && <Paragraph block={block} />
 }
 
 {
