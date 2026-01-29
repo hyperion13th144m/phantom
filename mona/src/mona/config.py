@@ -8,7 +8,6 @@ from .manifest_processor.xslt import TranslatorConfig
 
 SCHEMA_VER = "1.0"
 
-# ひとまず Patentのみ
 TARGET_DOCUMENT_CODES = [
     "A101",
     "A102",
@@ -28,6 +27,11 @@ TARGET_DOCUMENT_CODES = [
     "A1781",
     "A1871",
     "A1872",
+    # 実用新案
+    "A263",  # 実用新案登録願
+    "A2523",  # 手続補正書
+    # xsl が必要。あとで。
+    # "A2242623",  # 実用新案技術評価の通知
 ]
 
 # 全角記号と半角記号の対応表

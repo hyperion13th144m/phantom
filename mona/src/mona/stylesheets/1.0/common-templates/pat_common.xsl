@@ -5734,7 +5734,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明の名称】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明の名称】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案の名称】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明の名称】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -5842,7 +5852,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明の開示】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明の開示】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案の開示】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明の開示】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -5923,7 +5943,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明を実施するための最良の形態】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明を実施するための最良の形態】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案を実施するための最良の形態】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明を実施するための最良の形態】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -6093,7 +6123,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明の概要】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明の概要】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案の概要】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明の概要】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -6147,7 +6187,18 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明を実施するための形態】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明を実施するための形態】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案を実施するための形態】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明を実施するための形態】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -6373,7 +6424,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明が解決しようとする課題】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明が解決しようとする課題】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案が解決しようとする課題】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明が解決しようとする課題】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
@@ -6454,7 +6515,17 @@
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="'【発明の効果】'" />
+                        <xsl:choose>
+                            <xsl:when test="$kind-of-law = 'patent'">
+                                <xsl:value-of select="'【発明の効果】'" />
+                            </xsl:when>
+                            <xsl:when test="$kind-of-law = 'utility'">
+                                <xsl:value-of select="'【考案の効果】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【発明の効果】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
