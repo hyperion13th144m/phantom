@@ -51,7 +51,7 @@ db.close();
                 { title: "HOME", href: "/" },
                 {
                     title: Astro.props.an,
-                    href: `/docs/applicationNumbers/${applicationNumber}`,
+                    href: ".",
                 },
             ]}
         />
@@ -70,7 +70,7 @@ db.close();
                                 : "日付不明"}
                         </div>
                         <a
-                            href={`/docs/${entry.docId}`}
+                            href={`../../docs/${entry.docId}`}
                             class="text-blue-600 hover:underline"
                         >
                             {entry.documentName}

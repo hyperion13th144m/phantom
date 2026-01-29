@@ -13,7 +13,6 @@ USER node
 WORKDIR /app
 COPY --chown=node:node . .
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-#RUN yarn build
 
 EXPOSE 4321
 CMD  [ "yarn", "start" ]

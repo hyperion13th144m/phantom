@@ -53,6 +53,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ${DATA_DIR}:/data_dir
+    command: sh -c "cd /app && yarn run build && node dist/server/entry.mjs"
 
   joker:
     container_name: joker
