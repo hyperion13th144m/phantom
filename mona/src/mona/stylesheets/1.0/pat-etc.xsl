@@ -20,7 +20,7 @@
      ====================================================================-->
     <xsl:template match="/">
         <xsl:element name="root">
-            <xsl:element name="textBlocksRoot">
+            <xsl:element name="blocks">
                 <xsl:element name="tag">pat-etc</xsl:element>
                 <!-- 上申書 -->
                 <xsl:apply-templates select="root/jp:pat-etc/jp:etcetera-a781" />

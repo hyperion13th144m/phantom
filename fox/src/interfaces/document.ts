@@ -1,6 +1,6 @@
 import { DocumentDate } from "~/lib/doc-date";
 import { ApplicationNumber } from "~/lib/doc-number";
-import type { TextBlocksRoot } from "./document-block";
+import type { Block } from "./document-block";
 
 // document.json Interface
 export interface DocumentJson {
@@ -65,7 +65,7 @@ export interface DocumentJson {
     receiptNumber: string;
 
     // text blocks root of the document
-    textBlocksRoot: TextBlocksRoot;
+    blocks: Block[];
 
     // images associated with the document
     images: ImagesOfIPDocument[];

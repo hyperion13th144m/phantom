@@ -1,5 +1,5 @@
 /** text-blocks.json のトップレベル */
-export type TextBlocksRoot = DocumentBlock[];
+export type Block = DocumentBlock[];
 export type DocumentBlock = PatAppDocBlock | ClaimsDocBlock |
     DescriptionDocBlock | DrawingsDocBlock | AbstractDocBlock |
     ForeignDocumentBlock |
@@ -106,8 +106,6 @@ export interface UnknownBlock {
     [key: string]: unknown;
 }
 
-//export type Block = BibliographicBlock | ClaimBlock | DescriptionBlock |
-//    FiguresContainerBlock | ParagraphBlock;
 
 /** -----------------------------
  *  特許請求の範囲（claims） の子ブロック
@@ -257,7 +255,6 @@ const bibliographicTags1 = [
     "jp:account-number", // 実データないためレンダリング結果は確認していない. 以下 X は同じいみ
     "jp:account-type",   // X
     "jp:addressed-to-person",
-    "jp:application-reference",
     "jp:application-section",
     "jp:article",
     "jp:citation",
@@ -272,7 +269,7 @@ const bibliographicTags1 = [
     "jp:file-reference-id",
     "jp:general-power-of-attorney-id",
     "jp:generated-access-code",
-    //"jp:ipc",
+    "jp:ipc",
     "jp:ip-type",
     "jp:item-of-amendment",
     "jp:kind-of-accelerated-examination", // X
@@ -281,12 +278,14 @@ const bibliographicTags1 = [
     "jp:name",
     "jp:name-of-new-depository", // X
     "jp:new-depository-number", // X
+    "jp:num-claim-increase-amendment",
     "jp:notice-contents-group",
     "jp:office", // X
     "jp:office-address", // X
     "jp:office-in-japan", // X
     "jp:old-depository-number", // X   "jp:original-language-of-name",
     "jp:original-language-of-address",
+    "jp:original-language-of-name",
     "jp:payment-years", // X
     "jp:phone",
     "jp:proof-means",
@@ -298,6 +297,7 @@ const bibliographicTags1 = [
     "jp:share-rate",
     "jp:text",
     "jp:way-of-amendment",
+    "shutugan-kubun", // X
 ] as const;
 type BibliographicItemTags1 = typeof bibliographicTags1[number];
 export interface BibliographicBlock1 {
@@ -325,6 +325,8 @@ const bibliographicTags2 = [
     "jp:priority-claim",
     "jp:rejection-case-accept-notice-art", // X
     "jp:submission-object-list-article",
+    // 補正対象としての明細書・請求の範囲の項目名を追加
+    "claims",
 ] as const;
 type BibliographicItemTags2 = typeof bibliographicTags2[number];
 export interface BibliographicBlock2 {
@@ -338,6 +340,7 @@ const bibliographicTags3 = [
     "jp:agents",
     "jp:amendment-article",
     "jp:applicants",
+    "jp:application-reference",
     "jp:approval-column-article", // X
     "jp:attorney-change-article",
     "jp:declaration-priority-ear-app",
@@ -375,7 +378,21 @@ export interface BibliographicBlocks5 {
     tag: BibliographicItemTags5;
     text: string;
 }
-export type BibliographicBlock = BibliographicBlock1 | BibliographicBlock2 | BibliographicBlock3 | BibliographicBlock4 | BibliographicBlocks5 | ParagraphBlock;
+
+export interface AmendmentClaimBlock {
+    tag: "claim";
+    jpTag: string;
+    number: string;
+    indentLevel: string;
+    isIndependent: boolean;
+    blocks: ClaimTextBlock[];
+}
+
+export interface AmendmentClaimTextBlock {
+    tag: "claim-text";
+    blocks: ParagraphItem[];
+}
+export type BibliographicBlock = BibliographicBlock1 | BibliographicBlock2 | BibliographicBlock3 | BibliographicBlock4 | BibliographicBlocks5 | ParagraphBlock | AmendmentClaimBlock;
 
 
 /** -----------------------------
@@ -396,9 +413,8 @@ const noticeBibliographicTags1 = [
     "jp:document-number",
     "jp:exceptions-to-lack-of-novelty",
     "jp:exist-of-reference-doc",
-    //"jp:fi",  Tags1 ではないような
+    "jp:fi",
     "jp:field-of-search",
-    //"jp:ipc",  Tags1 ではないような
     "jp:kind-of-application",
     "jp:number-of-claim",
     "jp:number-of-other-persons", // X
@@ -696,8 +712,10 @@ export const bibliographicTypeGuards = {
     isBibliographicBlock4: createTypeGuardWithTags<BibliographicBlock4>(bibliographicTags4),
     isBibliographicBlock5: createTypeGuardWithTags<BibliographicBlocks5>(bibliographicTags5),
     isParagraph: createTypeGuard<ParagraphBlock, 'tag'>('tag', 'paragraph'),
+    isAmendmentClaimBlock: createTypeGuard<AmendmentClaimBlock, 'tag'>('tag', 'claim'),
     isUnknownBibliographicBlock: createUnknownBlockWithTags<UnknownBlock>([
         "paragraph",
+        "claim",
         ...bibliographicTags1,
         ...bibliographicTags2,
         ...bibliographicTags3,

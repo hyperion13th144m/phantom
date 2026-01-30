@@ -234,12 +234,6 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:value-of select="." />
-            </xsl:element>
             <xsl:element name="indentLevel">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
@@ -1905,7 +1899,7 @@
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'jp:date'" />
             </xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【出願日】'" />
@@ -5502,7 +5496,7 @@
         match="claims">
 
         <!--  項目名の編集  -->
-        <xsl:element name="textBlocksRoot">
+        <xsl:element name="blocks">
             <xsl:element name="tag">claims</xsl:element>
             <xsl:element name="jpTag">
                 <xsl:choose>
@@ -5562,7 +5556,7 @@
     <!-- 明細書 -->
     <xsl:template
         match="description">
-        <xsl:element name="textBlocksRoot">
+        <xsl:element name="blocks">
             <xsl:element name="tag">description</xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【書類名】明細書'" />
@@ -5597,7 +5591,7 @@
      ====================================================================-->
     <!-- 図面 -->
     <xsl:template match="drawings">
-        <xsl:element name="textBlocksRoot">
+        <xsl:element name="blocks">
             <xsl:element name="tag">drawings</xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【書類名】図面'" />
@@ -5623,7 +5617,7 @@
      ====================================================================-->
     <!-- 要約書 -->
     <xsl:template match="abstract">
-        <xsl:element name="textBlocksRoot">
+        <xsl:element name="blocks">
             <xsl:element name="tag">abstract</xsl:element>
             <xsl:element name="jpTag">
                 <xsl:value-of select="'【書類名】要約書'" />
@@ -7423,74 +7417,58 @@
      ====================================================================-->
     <xsl:template
         name="出願書類参照編集">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:indication-of-case-article
+        <xsl:if
+            test="(ancestor::jp:indication-of-case-article
                   or ancestor::jp:parent-application-article)
                 and (./@appl-type = 'international-application')
                 and (./@jp:kind-of-law)">
-                        <xsl:value-of select="'【出願の区分】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="''" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:indication-of-case-article
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="'shutugan-kubun'" />
+                </xsl:element>
+                <xsl:element name="jpTag">
+                    <xsl:value-of select="'【出願の区分】'" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:choose>
+                        <xsl:when test="./@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'特許'" />
+                        </xsl:when>
+                        <xsl:when test="./@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'実用新案登録'" />
+                        </xsl:when>
+                        <xsl:when test="./@jp:kind-of-law = ''">
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:call-template name="書誌編集エラー処理" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:element>
+                <xsl:element name="indentLevel">
+                    <xsl:choose>
+                        <xsl:when
+                            test="(ancestor::jp:indication-of-case-article
                   or ancestor::jp:parent-application-article)
                 and (./@appl-type = 'international-application')
                 and (./@jp:kind-of-law)">
-                        <xsl:choose>
-                            <xsl:when test="./@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'特許'" />
-                            </xsl:when>
-                            <xsl:when test="./@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'実用新案登録'" />
-                            </xsl:when>
-                            <xsl:when test="./@jp:kind-of-law = ''">
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="書誌編集エラー処理" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="''" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:indication-of-case-article
-                  or ancestor::jp:parent-application-article)
-                and (./@appl-type = 'international-application')
-                and (./@jp:kind-of-law)">
-                        <xsl:choose>
-                            <xsl:when
-                                test="$payment = 'jp:payment-' or $node = 'jp:demand-e853'
+                            <xsl:choose>
+                                <xsl:when
+                                    test="$payment = 'jp:payment-' or $node = 'jp:demand-e853'
                      or $node = 'jp:demand-e854' or $node = 'jp:demand-e862' ">
-                                <xsl:sequence select="0" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="2" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
+                                    <xsl:sequence select="0" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:sequence select="2" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:sequence select="0" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:element>
             </xsl:element>
-        </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- ====================================================================

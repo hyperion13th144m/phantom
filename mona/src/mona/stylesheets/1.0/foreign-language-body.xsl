@@ -42,7 +42,7 @@
     <!-- 明細書 特許請求の範囲-->
     <xsl:template
         match="jp:foreign-language-description | jp:foreign-language-claims | jp:foreign-language-abstract | jp:foreign-language-drawings">
-        <xsl:element name="textBlocksRoot">
+        <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>

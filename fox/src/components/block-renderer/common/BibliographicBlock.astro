@@ -1,4 +1,5 @@
 ---
+import ClaimText from "../pat-app-doc/ClaimText.astro";
 import Paragraph from "./Paragraph.astro";
 
 import {
@@ -77,6 +78,17 @@ const { block } = Astro.props as {
 {
     // 段落
     g.isParagraph(block) && <Paragraph block={block} />
+}
+
+{
+    // 補正対象としての請求の範囲のテキストブロック
+    g.isAmendmentClaimBlock(block) && (
+        <div>
+            {block.blocks.map((b) => (
+                <ClaimText claimText={b} />
+            ))}
+        </div>
+    )
 }
 
 {

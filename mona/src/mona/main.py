@@ -179,7 +179,7 @@ def common_processing_steps(
         logger.info(f"Failed to process {archive_path}: {e}")
         logger.debug(f"doc_id: {doc_id}")
         logger.info(traceback.format_exc())
-        # shutil.rmtree(output_dir)
+        shutil.rmtree(output_dir)
 
 
 def process_archive(

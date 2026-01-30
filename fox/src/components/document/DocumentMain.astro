@@ -32,53 +32,43 @@ const hasCarouselImages =
     images.length === thumbnails.length;
 
 // 各セクションのブロックを抽出
-const patAppDoc = ipDocument.textBlocksRoot
+const patAppDoc = ipDocument.blocks
     .filter((block) => g.isPatAppDoc(block))
     .at(0);
-const description = ipDocument.textBlocksRoot
+const description = ipDocument.blocks
     .filter((block) => g.isDescription(block))
     .at(0);
-const claims = ipDocument.textBlocksRoot
-    .filter((block) => g.isClaims(block))
-    .at(0);
-const abstract = ipDocument.textBlocksRoot
-    .filter((block) => g.isAbstract(block))
-    .at(0);
-const drawings = ipDocument.textBlocksRoot
-    .filter((block) => g.isDrawings(block))
-    .at(0);
+const claims = ipDocument.blocks.filter((block) => g.isClaims(block)).at(0);
+const abstract = ipDocument.blocks.filter((block) => g.isAbstract(block)).at(0);
+const drawings = ipDocument.blocks.filter((block) => g.isDrawings(block)).at(0);
 
 // 外国語書面出願
-const foreignDescription = ipDocument.textBlocksRoot
+const foreignDescription = ipDocument.blocks
     .filter((block) => g.isForeignDescription(block))
     .at(0);
-const foreignClaims = ipDocument.textBlocksRoot
+const foreignClaims = ipDocument.blocks
     .filter((block) => g.isForeignClaims(block))
     .at(0);
-const foreignAbstract = ipDocument.textBlocksRoot
+const foreignAbstract = ipDocument.blocks
     .filter((block) => g.isForeignAbstract(block))
     .at(0);
-const foreignDrawings = ipDocument.textBlocksRoot
+const foreignDrawings = ipDocument.blocks
     .filter((block) => g.isForeignDrawings(block))
     .at(0);
 
 // 意見書のブロックを抽出
-const patResponse = ipDocument.textBlocksRoot
+const patResponse = ipDocument.blocks
     .filter((block) => g.isPatResponse(block))
     .at(0);
 
 // 補正書のブロックを抽出
-const patAmnd = ipDocument.textBlocksRoot
-    .filter((block) => g.isPatAmnd(block))
-    .at(0);
+const patAmnd = ipDocument.blocks.filter((block) => g.isPatAmnd(block)).at(0);
 
 // 上申書のブロックを抽出
-const patEtc = ipDocument.textBlocksRoot
-    .filter((block) => g.isPatEtc(block))
-    .at(0);
+const patEtc = ipDocument.blocks.filter((block) => g.isPatEtc(block)).at(0);
 
 // 拒絶理由通知書等のブロックを抽出
-const ntcPatExam = ipDocument.textBlocksRoot
+const ntcPatExam = ipDocument.blocks
     .filter((block) => g.isNoticePatExam(block) || g.isNoticePatExamRn(block))
     .at(0);
 ---

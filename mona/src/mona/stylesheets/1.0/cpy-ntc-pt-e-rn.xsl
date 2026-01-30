@@ -20,7 +20,7 @@
      ====================================================================-->
     <xsl:template match="/">
         <xsl:element name="root">
-            <xsl:element name="textBlocksRoot">
+            <xsl:element name="blocks">
                 <xsl:element name="tag">notice-pat-exam-rn</xsl:element>
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam-rn" />
             </xsl:element>
