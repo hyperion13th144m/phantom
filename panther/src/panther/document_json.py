@@ -18,6 +18,7 @@ class DocumentJson(BaseModel):
     libefiling が出力した document.json の受け口。
     ここは「入力に合わせる」層なので、extra='allow' で未知キーを許容しがち。
     """
+
     model_config = ConfigDict(extra="allow")
 
     docId: str = Field(..., alias="docId")
@@ -26,7 +27,9 @@ class DocumentJson(BaseModel):
     sources: List[SourceFileInfo] = Field(default_factory=list)
 
     # 法域
-    law: Literal["patent", "utilityModel", "design", "trademark"] = Field(..., alias="law")
+    law: Literal["patent", "utilityModel", "design", "trademark"] = Field(
+        ..., alias="law"
+    )
 
     # 文書名関連
     documentName: str = Field(..., alias="documentName")
@@ -35,7 +38,9 @@ class DocumentJson(BaseModel):
     # 各種番号
     fileReferenceId: Optional[str] = Field(None, alias="fileReferenceId")
     applicationNumber: Optional[str] = Field(None, alias="applicationNumber")
-    internationalApplicationNumber: Optional[str] = Field(None, alias="internationalApplicationNumber")
+    internationalApplicationNumber: Optional[str] = Field(
+        None, alias="internationalApplicationNumber"
+    )
     registrationNumber: Optional[str] = Field(None, alias="registrationNumber")
     appealReferenceNumber: Optional[str] = Field(None, alias="appealReferenceNumber")
     receiptNumber: Optional[str] = Field(None, alias="receiptNumber")
@@ -45,15 +50,21 @@ class DocumentJson(BaseModel):
     submissionTime: Optional[str] = Field(None, alias="submissionTime")
     dispatchDate: Optional[str] = Field(None, alias="dispatchDate")
     dispatchTime: Optional[str] = Field(None, alias="dispatchTime")
-     
+
+    # 出願人 発明者 代理人
+    applicants: Optional[List[str]] = None
+    inventors: Optional[List[str]] = None
+    agents: Optional[List[str]] = None
+
     # 画像
     images: List[ImageInfo] = Field(default_factory=list)
-    
+
     # ocr text
     ocrText: Optional[str] = None
 
     # text blocks
-    textBlocksRoot: List[TextBlock] = Field(default_factory=list)
+    blocks: List[TextBlock] = Field(default_factory=list)
+
 
 class SourceFileInfo(BaseModel):
     filename: str
@@ -62,6 +73,7 @@ class SourceFileInfo(BaseModel):
     task: str
     kind: str
     extension: str
+
 
 class ImageInfo(BaseModel):
     number: str
@@ -72,7 +84,8 @@ class ImageInfo(BaseModel):
     height: int
     representative: bool
     description: Optional[str] = None
- 
+
+
 class TextBlock(BaseModel):
     model_config = ConfigDict(extra="allow")
 
@@ -80,9 +93,12 @@ class TextBlock(BaseModel):
     jpTag: Optional[str] = None
     text: Optional[str] = None
     convertedText: Optional[str] = None
-    indentLevel: Optional[str] = None  # 元JSONでは文字列のことがあるので Optional[str] が安全
+    indentLevel: Optional[str] = (
+        None  # 元JSONでは文字列のことがあるので Optional[str] が安全
+    )
 
     blocks: List["TextBlock"] = Field(default_factory=list)
+
 
 # resolve forward references
 TextBlock.model_rebuild()

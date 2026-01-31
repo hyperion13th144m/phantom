@@ -98,57 +98,8 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:apply-templates select="p" />
             <xsl:apply-templates select="jp:certification-group" />
 
-            <!--
-            <xsl:choose>
-                <xsl:when test="p[2]">
-                    <xsl:apply-templates select="p[2]" />
-                    <xsl:if test="jp:phone">
-                        <xsl:apply-templates select="jp:phone" />
-                        <xsl:apply-templates select="jp:fax" />
-                    </xsl:if>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="jp:inclusion-payment-group">
-                            <xsl:apply-templates select="jp:inclusion-payment-group" />
-                        </xsl:when>
-                        <xsl:otherwise>
-
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:otherwise>
-            </xsl:choose>
-            -->
         </xsl:element>
     </xsl:template>
-
-    <!-- ====================================================================
-     jp:certification-column-group/p | jp:inquiry-article/p
-    段落
-    <xsl:template match="jp:certification-column-group/p | jp:inquiry-article/p">
-        <xsl:choose>
-            <xsl:when test="ancestor::jp:certification-column-group">
-                <xsl:choose>
-
-                    <xsl:when test="string-length(normalize-space(.)) &gt; 30"> 
-                        <xsl:element name="V4_INDENT">
-                            <xsl:attribute name="COL">1</xsl:attribute>
-                            <xsl:attribute name="COE">30</xsl:attribute>
-                            <xsl:apply-templates />
-                        </xsl:element>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:apply-templates />
-            </xsl:otherwise>
-        </xsl:choose>
-        <BR />
-    </xsl:template>
-     ====================================================================-->
 
     <!-- ====================================================================
      jp:inquiry-staff-group

@@ -261,7 +261,6 @@
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
 
-    <!-- Y21M04 特実審査業務システム刷新に伴う既存システムの対応 2019/07/05 Start-->
     <!-- ====================================================================
      jp:etcetera-a871 早期審査に関する事情説明書
      ====================================================================-->
@@ -282,7 +281,6 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-    <!-- Y21M04 特実審査業務システム刷新に伴う既存システムの対応 2019/07/05 End-->
 
     <!-- ====================================================================
      jp:etcetera-a872 早期審査に関する事情説明補充書
@@ -304,7 +302,6 @@
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
 
-    <!-- Y05M04　料金法改正対応　追加　Start-->
     <!-- ====================================================================
      jp:etcetera-a914
      ====================================================================-->
@@ -346,10 +343,7 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-    <!-- Y05M04　料金法改正対応　追加　End-->
 
-    <!--Y09M04
-    優先権DAS対応 2008/09/03 Start-->
     <!-- ====================================================================
      jp:etcetera-a916 世界知的所有権機関へのアクセスコード付与請求書 
      ====================================================================-->
@@ -368,11 +362,7 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-    <!--Y09M04
-    優先権DAS対応 2008/09/03 End-->
 
-    <!--Y16M04
-    PLT対応 2015/06/15 Start-->
     <!-- ====================================================================
      jp:etcetera-a603 期間延長請求書（期間徒過）
      ====================================================================-->
@@ -423,11 +413,7 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-    <!--Y16M04
-    PLT対応 2015/06/15 End-->
 
-    <!--Y24M04
-    特許出願の非公開化対応 2023/04/03 Start-->
     <!-- ====================================================================
      jp:etcetera-a918
      ====================================================================-->
@@ -463,7 +449,4 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-    <!--Y24M04
-    特許出願の非公開化対応 2023/04/03 End-->
-
 </xsl:stylesheet>

@@ -15,9 +15,9 @@ export const getIPDocument = async (docId: string) => {
     const document: DocumentJson = JSON.parse(documentRaw);
 
     // IPDocument 用のフィールドを取得・変換
-    const applicants = document.applicants;
-    const inventors = document.inventors;
-    const agents = document.agents;
+    const applicants = document.fields.applicants;
+    const inventors = document.fields.inventors;
+    const agents = document.fields.agents;
     const submissionDate = document.submissionDate ? new DocumentDate(document.submissionDate) : null;
     const dispatchDate = document.dispatchDate ? new DocumentDate(document.dispatchDate) : null;
     const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";

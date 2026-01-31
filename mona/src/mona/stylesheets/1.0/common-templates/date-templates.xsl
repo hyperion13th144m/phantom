@@ -39,7 +39,6 @@
                           not(ancestor::jp:parent-application-article [@jp:kind-of-application = 'based-on-utility']))
                      or ancestor::jp:declaration-priority-ear-app
                      or ancestor::jp:indication-of-case-article)">
-            <!-- Y05M04　実用新案法改正　追加　End-->
             <xsl:value-of select="'提出の'" />
             <xsl:choose>
                 <xsl:when test="$law = 'patent'">

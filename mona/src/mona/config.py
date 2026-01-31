@@ -102,7 +102,6 @@ translator_config = [
     ### procedure.xml テキスト
     TranslatorConfig(
         xsl_path=f"{SCHEMA_VER}/procedure.xsl",
-        force_list=["applicants", "agents", "inventors"],
         namespace="http://www.jpo.go.jp",
         doctype="procedure",
     ),
@@ -110,7 +109,7 @@ translator_config = [
         ### A163 日本語特許出願関連
         ### 願書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/pat-appd.xsl",
-        force_list=["blocks", "textBlocksRoot"],
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-app-doc",
     ),
@@ -141,7 +140,7 @@ translator_config = [
     TranslatorConfig(
         ### A1523 手続補正書
         xsl_path=f"{SCHEMA_VER}/pat-amnd.xsl",
-        force_list=["blocks", "textBlocksRoot"],
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-amnd",
         postprocessor=postprocess_application_body,
@@ -149,7 +148,7 @@ translator_config = [
     TranslatorConfig(
         ### A153/A159 意見書、弁明書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/pat-rspn.xsl",
-        force_list=["blocks", "textBlocksRoot"],
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-rspns",
         postprocessor=postprocess_application_body,
@@ -157,7 +156,7 @@ translator_config = [
     TranslatorConfig(
         ### A1781, A871, A872 上申書, 早期審査に関する事情説明書, 早期審査に関する事情説明補充書
         xsl_path=f"{SCHEMA_VER}/pat-etc.xsl",
-        force_list=["blocks", "textBlocksRoot"],
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-etc",
         postprocessor=postprocess_application_body,
@@ -165,7 +164,7 @@ translator_config = [
     TranslatorConfig(
         ### A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-e.xsl",
-        force_list=["blocks", "textBlocksRoot"],
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam",
         postprocessor=postprocess_application_body,
@@ -173,9 +172,26 @@ translator_config = [
     TranslatorConfig(
         ### 新形式 A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
         xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-e-rn.xsl",
-        force_list=["blocks", "textBlocksRoot"],
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam-rn",
+        postprocessor=postprocess_application_body,
+    ),
+    TranslatorConfig(
+        ### 全文検索用フィールド
+        xsl_path=f"{SCHEMA_VER}/text.xsl",
+        force_list=[
+            "independentClaims",
+            "dependentClaims",
+            "specialMentionMatterArticle",
+            "rejectionReasonArticle",
+            "applicants",
+            "agents",
+            "inventors",
+            "contentsOfAmendment",
+        ],
+        namespace="",
+        doctype="root",
         postprocessor=postprocess_application_body,
     ),
 ]

@@ -74,5 +74,6 @@ class XSLTProcessor(ManifestProcessor):
             search_tag = f"{{{namespace}}}{doctype}"
         else:
             search_tag = doctype
-
+        if root.getroot().tag == search_tag:
+            return True
         return root.find(search_tag) is not None

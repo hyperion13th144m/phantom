@@ -21,7 +21,7 @@
 
         <xsl:variable name="agentKind">
             <xsl:choose>
-                <xsl:when test="./@jp:kind-of-agent"><!--@jp:kind-of-agent属性が存在する場合-->
+                <xsl:when test="./@jp:kind-of-agent">
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:proceeded-attorney-article">
                             <xsl:choose>
@@ -230,7 +230,7 @@
                     </xsl:choose>
                     <xsl:value-of select="'】'" />
                 </xsl:when>
-                <xsl:otherwise><!--@jp:kind-of-agent属性が存在しない場合-->
+                <xsl:otherwise>
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:proceeded-attorney-article">
                             <xsl:choose>
@@ -440,7 +440,7 @@
 
         <xsl:variable name="num-of-spaces" as="xs:integer">
             <xsl:choose>
-                <xsl:when test="./@jp:kind-of-agent"><!--@jp:kind-of-agent属性が存在する場合-->
+                <xsl:when test="./@jp:kind-of-agent">
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:attorney-change-article">
                             <xsl:choose>
@@ -533,7 +533,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
-                <xsl:otherwise><!--@jp:kind-of-agent属性が存在しない場合-->
+                <xsl:otherwise>
                     <xsl:sequence select="0" />
                 </xsl:otherwise>
             </xsl:choose>

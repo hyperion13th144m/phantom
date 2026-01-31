@@ -17,6 +17,7 @@ from mona.manifest_processor.base import ManifestProcessor
 from mona.manifest_processor.metadata import MetadataProcessor
 from mona.manifest_processor.ocr import OCRProcessor
 from mona.manifest_processor.xslt import XSLTProcessor
+from mona.merge_dict import deep_merge
 
 setup_logger()
 logger = logging.getLogger(__name__)
@@ -221,29 +222,11 @@ def get_data(manifest_path: Path) -> dict:
         translated_data = p.translate()
         data.extend(translated_data)
 
-    merged_dict = merge_dicts(data)
-    return merged_dict
+    merged_dict = {}
+    for d in data:
+        merged_dict = deep_merge(merged_dict, d)
 
-
-def merge_dicts(dicts: list[dict]) -> dict:
-    """Merge a list of dicts into a single dict."""
-
-    result = {}
-    for d in dicts:
-        if "root" not in d:
-            continue
-        for key in d["root"]:
-            if key in result:
-                ### key が既に存在する場合は、リストに追加する
-                if isinstance(result[key], list):
-                    result[key].extend(d["root"][key])
-                else:
-                    result[key] = [result[key]] + d["root"][key]
-            else:
-                ### key が存在しない場合は、新規に追加する
-                result[key] = d["root"][key]
-
-    return result
+    return merged_dict["root"]
 
 
 if __name__ == "__main__":
