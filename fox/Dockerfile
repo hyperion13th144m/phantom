@@ -8,6 +8,8 @@ FROM node:24-alpine
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
+ENV LANG=ja_JP.UTF-8
+ENV TZ=Asia/Tokyo
 
 USER node
 WORKDIR /app

@@ -2874,6 +2874,11 @@ rollup@^4.34.9:
     "@rollup/rollup-win32-x64-msvc" "4.54.0"
     fsevents "~2.3.2"
 
+rotating-file-stream@^3.2.7:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/rotating-file-stream/-/rotating-file-stream-3.2.7.tgz#db41fce36d0a10de3e27f028aa8d5f587f1ca916"
+  integrity sha512-SVquhBEVvRFY+nWLUc791Y0MIlyZrEClRZwZFLLRgJKldHyV1z4e2e/dp9LPqCS3AM//uq/c3PnOFgjqnm5P+A==
+
 safe-buffer@^5.0.1, safe-buffer@~5.2.0:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"

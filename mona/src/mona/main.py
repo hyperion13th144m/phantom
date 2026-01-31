@@ -139,7 +139,11 @@ def multi_processes_parent(
 
 
 def multi_processes_child(output_dir_root, queue, log_level, overwrite: bool):
-    logger.setLevel(getattr(logging, log_level.upper(), None))
+    # multiprocessor子プロセスでもloggerを初期化
+    setup_logger()
+    logger_child = logging.getLogger(__name__)
+    logger_child.setLevel(getattr(logging, log_level.upper(), None))
+
     while True:
         item = queue.get()
         if item is None:
@@ -186,8 +190,6 @@ def common_processing_steps(
 def process_archive(
     archive_path: Path, procedure_path: Path, output_dir: Path, logger: Logger
 ):
-    logger.info(f"Processing archive: {archive_path}")
-
     ### Parse the archive into output_dir
     parse_archive(
         str(archive_path),
@@ -202,7 +204,7 @@ def process_archive(
     dst_path = output_dir / f"document.json"
     with open(dst_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"  Generated {dst_path}")
+        logger.info(f"Processed: {archive_path} -> {dst_path}")
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:

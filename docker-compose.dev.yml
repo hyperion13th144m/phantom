@@ -8,13 +8,13 @@ services:
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir
+      - ${LOG_DIR_MONA}:/var/log/mona
       - .:/workspaces:cached
     tty: true
     environment:
       SRC_DIR: /src_dir
       DATA_DIR: /data_dir
-      LANG: ja_JP.UTF-8
-      TZ: Asia/Tokyo
+      OMP_THREAD_LIMIT: 1
     networks:
       - dev-net
   
@@ -60,6 +60,7 @@ services:
     volumes:
       - .:/workspaces:cached
       - ${DATA_DIR}:/data_dir
+      - ${LOG_DIR_FOX}:/var/log/fox
     networks:
       - dev-net
 
@@ -107,7 +108,7 @@ services:
       context: nginx
       dockerfile: Dockerfile.dev
     volumes:
-      - ${WWW_ROOT}:/usr/share/nginx/html
+      - ${DATA_DIR}:/usr/share/nginx/html
     ports:
       - ${DEV_NGINX_PORT}:38080
     networks:

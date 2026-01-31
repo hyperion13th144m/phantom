@@ -8,6 +8,7 @@ services:
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir
+      - ${LOG_DIR_MONA}:/var/log/mona
     tty: true
     environment:
       SRC_DIR: /src_dir
@@ -53,6 +54,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ${DATA_DIR}:/data_dir
+      - ${LOG_DIR_FOX}:/var/log/fox
     command: sh -c "cd /app && yarn run build && node dist/server/entry.mjs"
 
   joker:

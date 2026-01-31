@@ -19,6 +19,5 @@ COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-root
 COPY --chown=$USERNAME:$GROUPNAME . .
-ENV PYTHONPATH="/app/src:${PYTHONPATH}"
 
 ENTRYPOINT [ "poetry", "run", "python", "src/mona/main.py" ]

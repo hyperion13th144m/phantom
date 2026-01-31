@@ -102,6 +102,7 @@ translator_config = [
     ### procedure.xml テキスト
     TranslatorConfig(
         xsl_path=f"{SCHEMA_VER}/procedure.xsl",
+        force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="procedure",
     ),
