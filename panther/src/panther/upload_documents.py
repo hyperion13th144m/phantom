@@ -11,6 +11,7 @@ Bulk upsert documents into Elasticsearch from:
 
 import hashlib
 import json
+import logging
 import sys
 import time
 from datetime import datetime, timezone
@@ -20,8 +21,9 @@ from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
 from panther.document_json import DocumentJson
 from panther.es_client import create_es_client
-from panther.ip_document import load_ip_document
 from panther.patent_doc_editor import PatentDocEditor
+
+logger = logging.getLogger(__name__)
 
 PRESERVE_FIELDS = {"assignees", "tags"}  # user-managed fields in ES
 
@@ -141,7 +143,7 @@ def build_actions(
             yield action
 
         except Exception as e:
-            print(f"[ERROR] {path}: {e}", file=sys.stderr)
+            logger.error(f"[ERROR] {path}: {e}")
             continue
 
 
@@ -210,7 +212,7 @@ def bulk_upsert_with_retries(
                 pass
             else:
                 failed += 1
-                print(f"[FAIL] status={status} item={err}", file=sys.stderr)
+                logger.error(f"[FAIL] status={status} item={err}")
 
         # Build lookup dict once, then retry set
         lookup = {a["_id"]: a for a in to_send if "_id" in a}
@@ -225,10 +227,7 @@ def bulk_upsert_with_retries(
                     failed_items.append(act)
                 else:
                     failed += 1
-                    print(
-                        f"[FAIL] could not find original action for _id={_id}",
-                        file=sys.stderr,
-                    )
+                    logger.error(f"[FAIL] could not find original action for _id={_id}")
 
         if not failed_items:
             success += ok_count
@@ -236,16 +235,12 @@ def bulk_upsert_with_retries(
 
         if attempt > max_retries:
             failed += len(failed_items)
-            print(
-                f"[GIVE UP] retries exceeded for {len(failed_items)} items",
-                file=sys.stderr,
-            )
+            logger.error(f"[GIVE UP] retries exceeded for {len(failed_items)} items")
             success += ok_count
             return success, failed
 
-        print(
-            f"[RETRY] attempt={attempt}/{max_retries} retry_items={len(failed_items)} backoff={backoff:.1f}s",
-            file=sys.stderr,
+        logger.warning(
+            f"[RETRY] attempt={attempt}/{max_retries} retry_items={len(failed_items)} backoff={backoff:.1f}s"
         )
         time.sleep(backoff)
         backoff = min(max_backoff, backoff * 2)
@@ -256,21 +251,21 @@ def cmd_upload(args) -> int:
     """Upload documents to Elasticsearch."""
     data_root = Path(args.data_root)
     if not data_root.exists():
-        print(f"Error: Data root not found: {data_root}", file=sys.stderr)
+        logger.error(f"Error: Data root not found: {data_root}")
         return 1
 
     # Connect to Elasticsearch
-    print(f"Connecting to Elasticsearch: {args.es}")
+    logger.info(f"Connecting to Elasticsearch: {args.es}")
     try:
         es = create_es_client(args)
 
         # Check connection
         if not es.ping():
-            print("Error: Cannot connect to Elasticsearch", file=sys.stderr)
+            logger.error("Error: Cannot connect to Elasticsearch")
             return 1
 
-        print("✓ Connected to Elasticsearch")
-        print(f"Uploading documents from: {data_root}")
+        logger.info("✓ Connected to Elasticsearch")
+        logger.info(f"Uploading documents from: {data_root}")
 
         # Build actions
         actions = build_actions(
@@ -292,14 +287,14 @@ def cmd_upload(args) -> int:
         )
 
         if args.refresh:
-            print("Refreshing index...")
+            logger.info("Refreshing index...")
             es.indices.refresh(index=args.index)
 
-        print(f"\n[DONE] Success: {success}, Failed: {failed}")
+        logger.info(f"\n[DONE] Success: {success}, Failed: {failed}")
         return 0 if failed == 0 else 1
 
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        logger.error(f"Error: {e}")
         return 1
     finally:
         if "es" in locals():

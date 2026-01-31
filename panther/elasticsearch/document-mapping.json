@@ -162,10 +162,6 @@
             "inventors": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -175,10 +171,6 @@
             "applicants": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -188,10 +180,6 @@
             "agents": {
                 "type": "keyword",
                 "fields": {
-                    "analyzed": {
-                        "type": "text",
-                        "analyzer": "my_kuromoji_analyzer"
-                    },
                     "ngram": {
                         "type": "text",
                         "analyzer": "my_ngram_analyzer"
@@ -351,6 +339,26 @@
                 }
             },
             "draftingBody": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "opinionContentsArticle": {
+                "type": "text",
+                "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "contentsOfAmendment": {
                 "type": "text",
                 "analyzer": "my_kuromoji_analyzer",
                 "fields": {

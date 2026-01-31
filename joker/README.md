@@ -20,6 +20,30 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Logging
+
+This application supports logging to `/var/log/joker/joker.log` when running in standalone mode (production).
+
+### Log Features
+
+- **Location**: `/var/log/joker/joker.log`
+- **Format**: JSON lines with timestamp, level, message, and optional data
+- **Rotation**: Automatically rotates when log file exceeds 128KB
+- **Retention**: Keeps up to 10 rotated log files
+- **Levels**: INFO, ERROR, WARN, DEBUG
+
+### Setup
+
+Ensure the log directory exists and has proper permissions:
+
+```bash
+sudo mkdir -p /var/log/joker
+sudo chown -R $USER:$USER /var/log/joker
+sudo chmod 755 /var/log/joker
+```
+
+In development mode, logs are also output to the console for easier debugging.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

@@ -9,14 +9,54 @@ Usage:
 """
 
 import argparse
+import logging
+import logging.handlers
 import os
 import sys
+from pathlib import Path
 
 from panther.create_db import cmd_create_db
 from panther.create_index import cmd_create_index
 from panther.import_extra_data import cmd_import_extra_data
 from panther.upload_documents import cmd_upload
 from panther.upload_extra_data import cmd_upload_extra_data
+
+
+def setup_logging():
+    """Configure logging with rotating file handler."""
+    log_dir = Path("/var/log/panther")
+    log_file = log_dir / "panther.log"
+
+    # Create log directory if it doesn't exist
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    # Set up the root logger
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    # Create rotating file handler (128KB max, keep 5 backup files)
+    file_handler = logging.handlers.RotatingFileHandler(
+        log_file, maxBytes=128 * 1024, backupCount=5, encoding="utf-8"  # 128 KB
+    )
+    file_handler.setLevel(logging.INFO)
+
+    # Create console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+
+    # Create formatter
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+
+    # Add handlers to logger
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+    logger.info("Logging initialized")
 
 
 def add_common_arguments(parser: argparse.ArgumentParser):
@@ -50,6 +90,9 @@ def add_common_arguments(parser: argparse.ArgumentParser):
 
 def main():
     """Main entry point with subcommands."""
+    # Set up logging before anything else
+    setup_logging()
+
     parser = argparse.ArgumentParser(
         description="Panther CLI - Elasticsearch index management and document upload",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -67,7 +110,7 @@ def main():
         default="extra_patent_data.db",
         help="SQLite database file for storing extra data (default: extra_patent_data.db)",
     )
-    
+
     # import-extra-data subcommand
     import_extra_data_parser = subparsers.add_parser(
         "import-extra-data",
@@ -83,7 +126,7 @@ def main():
         default="extra_patent_data.db",
         help="SQLite database file for storing extra data (default: extra_patent_data.db)",
     )
-    
+
     # create-index subcommand
     create_parser = subparsers.add_parser(
         "create-index",
@@ -146,9 +189,15 @@ def main():
         help="Upload extra data (assignees, tags) from SQLite to Elasticsearch",
     )
     add_common_arguments(upload_extra_parser)
-    upload_extra_parser.add_argument("--sqlite-db", required=True, help="Path to sqlite db")
-    upload_extra_parser.add_argument("--batch", type=int, default=500, help="Bulk batch size")
-    upload_extra_parser.add_argument("--dry-run", action="store_true", help="Do not write to ES")
+    upload_extra_parser.add_argument(
+        "--sqlite-db", required=True, help="Path to sqlite db"
+    )
+    upload_extra_parser.add_argument(
+        "--batch", type=int, default=500, help="Bulk batch size"
+    )
+    upload_extra_parser.add_argument(
+        "--dry-run", action="store_true", help="Do not write to ES"
+    )
 
     args = parser.parse_args()
 
@@ -175,4 +224,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
- 

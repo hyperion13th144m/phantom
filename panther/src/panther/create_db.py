@@ -3,7 +3,10 @@ SQLiteデータベースにpatentDocumentテーブルを作成し、
 document.jsonファイルからデータをインポートするスクリプト
 """
 
+import logging
 import sqlite3
+
+logger = logging.getLogger(__name__)
 
 
 def cmd_create_db(db_path: str = "patent.db"):
@@ -35,19 +38,19 @@ def cmd_create_db(db_path: str = "patent.db"):
         # テーブルを作成
         cursor.execute(create_table_sql)
         conn.commit()
-        print(f"✓ テーブル 'patentDocument' を作成しました（データベース: {db_path}）")
+        logger.info(f"✓ テーブル 'patentDocument' を作成しました（データベース: {db_path}）")
 
         # テーブル情報を表示
         cursor.execute("PRAGMA table_info(patentDocument)")
         columns = cursor.fetchall()
-        print("\nカラム情報:")
+        logger.info("\nカラム情報:")
         for col in columns:
-            print(f"  - {col[1]} ({col[2]}){' PRIMARY KEY' if col[5] else ''}")
+            logger.info(f"  - {col[1]} ({col[2]}){' PRIMARY KEY' if col[5] else ''}")
 
         return 0
 
     except sqlite3.Error as e:
-        print(f"✗ エラーが発生しました: {e}")
+        logger.error(f"✗ エラーが発生しました: {e}")
         return 1
     finally:
         conn.close()

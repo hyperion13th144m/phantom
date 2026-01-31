@@ -2,12 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 import sqlite3
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from elasticsearch import Elasticsearch, helpers
 
+logger = logging.getLogger(__name__)
+
 # ---------- utility ----------
+
 
 def parse_list_field(value: Optional[str]) -> Optional[List[str]]:
     """
@@ -38,7 +42,10 @@ def parse_list_field(value: Optional[str]) -> Optional[List[str]]:
 
 # ---------- sqlite ----------
 
-def iter_sqlite_records(db_path: str) -> Iterable[Tuple[str, Optional[List[str]], Optional[List[str]]]]:
+
+def iter_sqlite_records(
+    db_path: str,
+) -> Iterable[Tuple[str, Optional[List[str]], Optional[List[str]]]]:
     """
     patentDocument から (docId, assignees, tags) を返す
     """
@@ -46,10 +53,12 @@ def iter_sqlite_records(db_path: str) -> Iterable[Tuple[str, Optional[List[str]]
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
-    cur.execute("""
+    cur.execute(
+        """
         SELECT docId, assignees, tags
         FROM patentDocument
-    """)
+    """
+    )
 
     for row in cur:
         doc_id = row["docId"]
@@ -61,6 +70,7 @@ def iter_sqlite_records(db_path: str) -> Iterable[Tuple[str, Optional[List[str]]
 
 
 # ---------- elasticsearch ----------
+
 
 def build_actions(
     index: str,
@@ -96,6 +106,7 @@ def build_actions(
 
 # ---------- main ----------
 
+
 def cmd_upload_extra_data(args):
     # ES client
     if args.api_key:
@@ -108,12 +119,12 @@ def cmd_upload_extra_data(args):
     records = list(iter_sqlite_records(args.sqlite_db))
     actions = list(build_actions(args.index, records))
 
-    print(f"SQLite records: {len(records)}")
-    print(f"ES updates:     {len(actions)}")
+    logger.info(f"SQLite records: {len(records)}")
+    logger.info(f"ES updates:     {len(actions)}")
 
     if args.dry_run:
         for a in actions[:5]:
-            print("[DRY]", a["_id"], a["doc"])
+            logger.info(f"[DRY] {a['_id']} {a['doc']}")
         return 0
 
     helpers.bulk(
@@ -124,8 +135,9 @@ def cmd_upload_extra_data(args):
         raise_on_exception=False,
     )
 
-    print("Done.")
+    logger.info("Done.")
     return 0
+
 
 if __name__ == "__main__":
     cmd_upload_extra_data()

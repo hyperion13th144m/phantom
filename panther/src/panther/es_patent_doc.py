@@ -18,6 +18,7 @@ class EsPatentDoc(BaseModel):
     Elasticsearch に投入する最終スキーマ。
     ここは extra='forbid' にして「想定外を入れない」方が運用が安定します。
     """
+
     model_config = ConfigDict(extra="forbid")
 
     docId: str
@@ -38,7 +39,7 @@ class EsPatentDoc(BaseModel):
     # 日付
     submissionDate: Optional[str] = None
     dispatchDate: Optional[str] = None
- 
+
     # 画像
     images: List[ImageInfo] = Field(default_factory=list)
 
@@ -47,10 +48,10 @@ class EsPatentDoc(BaseModel):
 
     # 以下、変換で作る派生・正規化フィールド
     ### 願書など書誌事項から取れるフィールド群
-    applicants: List[str] = Field(default_factory=list)
-    inventors: List[str] = Field(default_factory=list)
-    agents: List[str] = Field(default_factory=list)
-    specialMentionMatterArticle: List[str] = Field(default_factory=list)
+    applicants: Optional[List[str]] = Field(default_factory=list)
+    inventors: Optional[List[str]] = Field(default_factory=list)
+    agents: Optional[List[str]] = Field(default_factory=list)
+    specialMentionMatterArticle: Optional[List[str]] = Field(default_factory=list)
     lawOfIndustrialRegenerate: Optional[str] = None
 
     ### 明細書関連フィールド
@@ -65,18 +66,22 @@ class EsPatentDoc(BaseModel):
     referenceToDepositedBiologicalMaterial: Optional[str] = None
 
     ### 請求の範囲・要約書関連フィールド
-    independentClaims: Optional[str] = None
-    dependentClaims: Optional[str] = None
+    independentClaims: Optional[List[str]] = Field(default_factory=list)
+    dependentClaims: Optional[List[str]] = Field(default_factory=list)
     abstract: Optional[str] = None
 
     ### 拒絶理由、拒絶査定関連フィールド
     conclusionPartArticle: Optional[str] = None
     draftingBody: Optional[str] = None
-    rejectionReasonArticle: List[str] = Field(default_factory=list)
+    rejectionReasonArticle: Optional[List[str]] = Field(default_factory=list)
+
+    ### 意見書、補正書関連フィールド
+    opinionContentsArticle: Optional[str] = None
+    contentsOfAmendment: Optional[List[str]] = Field(default_factory=list)
 
     # document.json ではアップロードしない。sqliteから取ってくる。
-    assignee: List[str] = Field(default_factory=list)
-    tags: List[str] = Field(default_factory=list)
+    assignee: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[List[str]] = Field(default_factory=list)
 
 
 if __name__ == "__main__":

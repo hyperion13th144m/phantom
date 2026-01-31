@@ -2,12 +2,17 @@
 SQLiteデータベースにpatentDocumentテーブルを作成し、
 document.jsonファイルからデータをインポートするスクリプト
 """
+
 import json
+import logging
 import sqlite3
 from pathlib import Path
 from typing import Any, Dict
 
-from panther.ip_document import load_ip_document
+from panther.document_json import DocumentJson
+from panther.patent_doc_editor import PatentDocEditor
+
+logger = logging.getLogger(__name__)
 
 
 def check_doc_exists(cursor: sqlite3.Cursor, doc_id: str) -> bool:
@@ -37,27 +42,33 @@ def insert_document(cursor: sqlite3.Cursor, doc_data: Dict[str, Any]) -> bool:
         挿入成功の場合True、失敗の場合False
     """
     try:
+        applicants = doc_data.get("applicants") or []
+        inventors = doc_data.get("inventors") or []
+        appNumber = (
+            doc_data.get("applicationNumber")
+            or doc_data.get("internationalApplicationNumber")
+            or doc_data.get("receiptNumber")
+            or ""
+        )
         cursor.execute(
             """
             INSERT INTO patentDocument (
                 docId, law, appNumber, fileReferenceId,
-                applicants, inventors, assignees, tags
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                applicants, inventors
+            ) VALUES (?, ?, ?, ?, ?, ?)
         """,
             (
                 doc_data.get("docId"),
                 doc_data.get("law"),
-                doc_data.get("applicationNumber"),
-                doc_data.get("fileReferenceId"),
-                ",".join(doc_data.get("applicants")),
-                ",".join(doc_data.get("inventors")),
-                "",
-                "",
+                appNumber,
+                doc_data.get("fileReferenceId") or "",
+                ",".join(applicants),
+                ",".join(inventors),
             ),
         )
         return True
     except sqlite3.Error as e:
-        print(f"  ✗ 挿入エラー: {e}")
+        logger.error(f"  ✗ 挿入エラー: {e}")
         return False
 
 
@@ -73,17 +84,17 @@ def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db
     data_path = Path(data_dir)
 
     if not data_path.exists():
-        print(f"✗ ディレクトリが見つかりません: {data_dir}")
+        logger.error(f"✗ ディレクトリが見つかりません: {data_dir}")
         return
 
     # document.jsonファイルを再帰的に検索
     json_files = list(data_path.rglob("document.json"))
 
     if not json_files:
-        print(f"✗ document.jsonが見つかりませんでした: {data_dir}")
+        logger.error(f"✗ document.jsonが見つかりませんでした: {data_dir}")
         return
 
-    print(f"✓ {len(json_files)}個のdocument.jsonを見つけました")
+    logger.info(f"✓ {len(json_files)}個のdocument.jsonを見つけました")
 
     # データベースに接続
     conn = sqlite3.connect(db_path)
@@ -97,46 +108,52 @@ def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db
         for json_file in json_files:
             try:
                 # JSONファイルを読み込む
-                doc_data = load_ip_document(json_file)
-                doc_id = doc_data.get("docId")
+                with open(json_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+
+                _doc_data = DocumentJson(**data)
+                editor = PatentDocEditor(src=_doc_data)
+                doc_data = editor.to_es_model()
+
+                doc_id = doc_data.docId
 
                 if not doc_id:
-                    print(f"  ⚠ docIdがありません: {json_file}")
+                    logger.warning(f"  ⚠ docIdがありません: {json_file}")
                     error_count += 1
                     continue
 
                 # docIdの存在チェック
                 if check_doc_exists(cursor, doc_id):
-                    print(f"  ⊘ スキップ (既存): {doc_id} ({json_file})")
+                    logger.info(f"  ⊘ スキップ (既存): {doc_id} ({json_file})")
                     skipped_count += 1
                 else:
                     # データを挿入
-                    if insert_document(cursor, doc_data):
-                        print(f"  ✓ 挿入成功: {doc_id} ({json_file})")
+                    if insert_document(cursor, doc_data.model_dump()):
+                        logger.info(f"  ✓ 挿入成功: {doc_id} ({json_file})")
                         inserted_count += 1
                     else:
                         error_count += 1
 
             except json.JSONDecodeError as e:
-                print(f"  ✗ JSON読み取りエラー: {json_file} - {e}")
+                logger.error(f"  ✗ JSON読み取りエラー: {json_file} - {e}")
                 error_count += 1
             except Exception as e:
-                print(f"  ✗ エラー: {json_file} - {e}")
+                logger.error(f"  ✗ エラー: {json_file} - {e}")
                 error_count += 1
 
         # コミット
         conn.commit()
 
         # サマリーを表示
-        print(f"\n{'='*60}")
-        print(f"処理完了:")
-        print(f"  挿入: {inserted_count}件")
-        print(f"  スキップ: {skipped_count}件")
-        print(f"  エラー: {error_count}件")
-        print(f"{'='*60}")
+        logger.info(f"\n{'='*60}")
+        logger.info(f"処理完了:")
+        logger.info(f"  挿入: {inserted_count}件")
+        logger.info(f"  スキップ: {skipped_count}件")
+        logger.info(f"  エラー: {error_count}件")
+        logger.info(f"{'='*60}")
 
     except Exception as e:
-        print(f"✗ 予期しないエラー: {e}")
+        logger.error(f"✗ 予期しないエラー: {e}")
         conn.rollback()
     finally:
         conn.close()

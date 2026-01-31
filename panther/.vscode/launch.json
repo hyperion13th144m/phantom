@@ -70,6 +70,7 @@
             "console": "integratedTerminal",
             "args": [
                 "create-db",
+                "--sqlite-db",
                 "patent.db"
             ]
         },

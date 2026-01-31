@@ -24,6 +24,7 @@ services:
     volumes:
       - ${DATA_DIR}:/data_dir
       - ${EXTRA_DATA_DIR}:/extra_dir
+      - ${LOG_DIR_PANTHER}:/var/log/panther
       - .:/workspaces:cached
     tty: true
     environment:
@@ -69,6 +70,7 @@ services:
     image: node:24-bookworm
     volumes:
       - .:/workspaces:cached
+      - ${LOG_DIR_JOKER}:/var/log/joker
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8

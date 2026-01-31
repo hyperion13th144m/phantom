@@ -1,6 +1,7 @@
 import { getEnv } from "@/lib/env";
 import { es } from "@/lib/es";
 import { buildImageUrl } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import type { estypes } from "@elastic/elasticsearch";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -63,6 +64,13 @@ export async function GET(req: NextRequest) {
     const q = (searchParams.get("q") ?? "").trim();
     const page = toInt(searchParams.get("page"), 1, 1, 100000);
     const size = toInt(searchParams.get("size"), 10, 1, 100);
+
+    logger.info("Search request received", {
+        query: q,
+        page,
+        size,
+        url: req.url,
+    });
 
     // 任意フィルタ（UI側で渡せるようにしておく）
     const applicant = (searchParams.get("applicant") ?? "").trim();
@@ -217,6 +225,13 @@ export async function GET(req: NextRequest) {
             tags: (result.aggregations?.tags as estypes.AggregationsStringTermsAggregate)?.buckets ?? [],
         };
 
+        logger.info("Search completed successfully", {
+            query: q,
+            total,
+            resultsCount: hits.length,
+            page,
+        });
+
         return NextResponse.json({
             page,
             size,
@@ -226,6 +241,12 @@ export async function GET(req: NextRequest) {
         });
     } catch (e: unknown) {
         // ESエラーの見える化
+        logger.error("Elasticsearch search failed", {
+            query: q,
+            error: (e as Error)?.message ?? String(e),
+            stack: (e as Error)?.stack,
+        });
+        
         return NextResponse.json(
             {
                 error: "Elasticsearch search failed",

@@ -1,18 +1,42 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# -----------------------------
+# 1) Input: document.json を受けるモデル
+# -----------------------------
+
 from __future__ import annotations
 
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 
-# -----------------------------
-# 1) Input: document.json を受けるモデル
-# -----------------------------
+class TextFields(BaseModel):
+    inventionTitle: Optional[str] = None
+    technicalField: Optional[str] = None
+    backgroundArt: Optional[str] = None
+    techProblem: Optional[str] = None
+    techSolution: Optional[str] = None
+    advantageousEffects: Optional[str] = None
+    embodiments: Optional[str] = None
+    industrialApplicability: Optional[str] = None
+    referenceToDepositedBiologicalMaterial: Optional[str] = None
+    lawOfIndustrialRegenerate: Optional[str] = None
+    independentClaims: Optional[List[str]] = None
+    dependentClaims: Optional[List[str]] = None
+    abstract: Optional[str] = None
+    applicants: Optional[List[str]] = None
+    inventors: Optional[List[str]] = None
+    agents: Optional[List[str]] = None
+    specialMentionMatterArticle: Optional[List[str]] = None
+    conclusionPartArticle: Optional[str] = None
+    draftingBody: Optional[str] = None
+    contentsOfAmendment: Optional[List[str]] = None
+    opinionContentsArticle: Optional[str] = None
+    rejectionReasonArticle: Optional[List[str]] = None
+
+
 class DocumentJson(BaseModel):
     """
     libefiling が出力した document.json の受け口。
@@ -51,11 +75,6 @@ class DocumentJson(BaseModel):
     dispatchDate: Optional[str] = Field(None, alias="dispatchDate")
     dispatchTime: Optional[str] = Field(None, alias="dispatchTime")
 
-    # 出願人 発明者 代理人
-    applicants: Optional[List[str]] = None
-    inventors: Optional[List[str]] = None
-    agents: Optional[List[str]] = None
-
     # 画像
     images: List[ImageInfo] = Field(default_factory=list)
 
@@ -64,6 +83,9 @@ class DocumentJson(BaseModel):
 
     # text blocks
     blocks: List[TextBlock] = Field(default_factory=list)
+
+    # text fields for fulltext search
+    fields: TextFields = Field(default_factory=TextFields)
 
 
 class SourceFileInfo(BaseModel):
