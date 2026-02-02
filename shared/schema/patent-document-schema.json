@@ -1,0 +1,492 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "section-with-only-blocks": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "pat-app-doc": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-only-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "pat-app-doc"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "pat-rspns": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-only-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "pat-rspns"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "pat-amnd": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-only-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "pat-amnd"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "pat-etc": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-only-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "pat-etc"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "section-with-blocks": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string"
+                },
+                "jpTag": {
+                    "type": "string"
+                },
+                "indentLevel": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "jpTag",
+                "indentLevel",
+                "blocks"
+            ]
+        },
+        "claims": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "claims"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "description": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "description"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "drawings": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/section-with-blocks"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "drawings"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "abstract": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "const": "abstract"
+                },
+                "jpTag": {
+                    "type": "string"
+                },
+                "indentLevel": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "jpTag",
+                "indentLevel",
+                "blocks"
+            ]
+        },
+        "foreignDocument": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:foreign-language-description",
+                        "jp:foreign-language-claims",
+                        "jp:foreign-language-abstract",
+                        "jp:foreign-language-drawings"
+                    ]
+                },
+                "indentLevel": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "indentLevel",
+                "blocks"
+            ]
+        },
+        "noticePatExam": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "notice-pat-exam",
+                        "notice-pat-exam-rn"
+                    ]
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        }
+    },
+    "title": "PatentDocument",
+    "type": "object",
+    "properties": {
+        "docId": {
+            "type": "string"
+        },
+        "sources": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "filename": {
+                        "type": "string"
+                    },
+                    "sha256": {
+                        "type": "string"
+                    },
+                    "byte_size": {
+                        "type": "number"
+                    },
+                    "task": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "extension": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "filename",
+                    "sha256",
+                    "byte_size",
+                    "task",
+                    "kind",
+                    "extension"
+                ]
+            }
+        },
+        "schemaVer": {
+            "type": "string"
+        },
+        "law": {
+            "type": "string"
+        },
+        "documentName": {
+            "type": "string"
+        },
+        "documentCode": {
+            "type": "string"
+        },
+        "fileReferenceId": {
+            "type": "string"
+        },
+        "registrationNumber": {
+            "type": "string"
+        },
+        "applicationNumber": {
+            "type": "string"
+        },
+        "internationalApplicationNumber": {
+            "type": "string"
+        },
+        "appealReferenceNumber": {
+            "type": "string"
+        },
+        "receiptNumber": {
+            "type": "string"
+        },
+        "submissionDate": {
+            "type": "string"
+        },
+        "submissionTime": {
+            "type": "string"
+        },
+        "dispatchDate": {
+            "type": "string"
+        },
+        "dispatchTime": {
+            "type": "string"
+        },
+        "images": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "string"
+                    },
+                    "filename": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "sizeTag": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": "number"
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "representative": {
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "number",
+                    "filename",
+                    "kind",
+                    "sizeTag",
+                    "width",
+                    "height",
+                    "representative"
+                ]
+            }
+        },
+        "fields": {
+            "type": "object",
+            "properties": {
+                "inventionTitle": {
+                    "type": "string"
+                },
+                "technicalField": {
+                    "type": "string"
+                },
+                "backgroundArt": {
+                    "type": "string"
+                },
+                "techProblem": {
+                    "type": "string"
+                },
+                "techSolution": {
+                    "type": "string"
+                },
+                "advantageousEffects": {
+                    "type": "string"
+                },
+                "embodiments": {
+                    "type": "string"
+                },
+                "industrialApplicability": {
+                    "type": "string"
+                },
+                "independentClaims": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "dependentClaims": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "abstract": {
+                    "type": "string"
+                },
+                "inventors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "applicants": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "agents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "rejectionReasonArticle": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contentsOfAmendment": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "opinionContentsArticle": {
+                    "type": "string"
+                },
+                "draftingBody": {
+                    "type": "string"
+                },
+                "conclusionPartArticle": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "applicants"
+            ]
+        },
+        "ocrText": {
+            "type": "string"
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/pat-app-doc"
+                    },
+                    {
+                        "$ref": "#/$defs/pat-rspns"
+                    },
+                    {
+                        "$ref": "#/$defs/pat-amnd"
+                    },
+                    {
+                        "$ref": "#/$defs/pat-etc"
+                    },
+                    {
+                        "$ref": "#/$defs/description"
+                    },
+                    {
+                        "$ref": "#/$defs/claims"
+                    },
+                    {
+                        "$ref": "#/$defs/drawings"
+                    },
+                    {
+                        "$ref": "#/$defs/abstract"
+                    },
+                    {
+                        "$ref": "#/$defs/foreignDocument"
+                    },
+                    {
+                        "$ref": "#/$defs/noticePatExam"
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "docId",
+        "sources",
+        "schemaVer",
+        "law",
+        "documentName",
+        "documentCode",
+        "blocks",
+        "images",
+        "fields",
+        "ocrText"
+    ]
+}

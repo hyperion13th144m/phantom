@@ -1,1 +1,3 @@
 .env
+mona/src/mona/models
+fox/src/interfaces/patent-document-schema.ts

@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "-o -l debug /src_dir/overwrite reference/overwrite A1131"
+            "args": "-l debug /src_dir reference/A1781 A1781"
         },
         {
             "name": "multi",
@@ -21,6 +21,12 @@
             //"args": "-m 1 -l debug /src_dir/ /data_dir A163"
             "args": "-o -m 1 -l debug /src_dir/ /data_dir {A101,A102,A1131,A1191,A1192,A130,A1523,A163,A1631,A1632,A1634,A153,A159,A1781,A1871,A1872}"
             //"args": "-o -m 1 -l debug /src_dir/ /data_dir A130"
+        },
+        {
+            "name": "codegen",
+            "request": "launch",
+            "command": "poetry run datamodel-codegen && exit",
+            "type": "node-terminal"
         }
     ]
 }
