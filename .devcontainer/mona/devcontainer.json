@@ -22,7 +22,8 @@
                 "ms-python.python",
                 "ms-python.isort",
                 "ms-python.black-formatter",
-                "redhat.vscode-xml"
+                "redhat.vscode-xml",
+                "spmeesseman.vscode-taskexplorer"
             ]
         }
     },

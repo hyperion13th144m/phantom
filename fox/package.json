@@ -9,7 +9,7 @@
         "start": "node ./dist/server/entry.mjs",
         "astro": "astro",
         "build:db": "tsx ./src/scripts/build-index-db.ts",
-        "codegen": "json2ts ../shared/schema/patent-document-schema.json ./src/interfaces/patent-document-schema.ts"
+        "codegen": "node ./src/scripts/generate-interface.cjs ../shared/schema/patent-document-schema.json ./src/interfaces/patent-document-schema.ts"
     },
     "dependencies": {
         "@astrojs/node": "^9.5.2",
@@ -22,6 +22,7 @@
     "devDependencies": {
         "@types/better-sqlite3": "^7.6.13",
         "json-schema-to-typescript": "^15.0.4",
+        "loadash": "^1.0.0",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     }

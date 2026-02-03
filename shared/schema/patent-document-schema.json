@@ -8,7 +8,26 @@
                     "type": "string"
                 },
                 "blocks": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/pat-block-type-a"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-b"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-c"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-d"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-e"
+                            }
+                        ]
+                    }
                 }
             },
             "required": [
@@ -51,20 +70,39 @@
             ]
         },
         "pat-amnd": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/section-with-only-blocks"
+            "properties": {
+                "tag": {
+                    "const": "pat-amnd"
                 },
-                {
-                    "properties": {
-                        "tag": {
-                            "const": "pat-amnd"
-                        }
-                    },
-                    "required": [
-                        "tag"
-                    ]
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/pat-block-type-a"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-b"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-c"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-d"
+                            },
+                            {
+                                "$ref": "#/$defs/pat-block-type-e"
+                            },
+                            {
+                                "$ref": "#/$defs/amendment-article"
+                            }
+                        ]
+                    }
                 }
+            },
+            "required": [
+                "tag",
+                "blocks"
             ]
         },
         "pat-etc": {
@@ -90,10 +128,10 @@
                 "tag": {
                     "type": "string"
                 },
-                "jpTag": {
+                "jp-tag": {
                     "type": "string"
                 },
-                "indentLevel": {
+                "indent-level": {
                     "type": "string"
                 },
                 "blocks": {
@@ -102,8 +140,8 @@
             },
             "required": [
                 "tag",
-                "jpTag",
-                "indentLevel",
+                "jp-tag",
+                "indent-level",
                 "blocks"
             ]
         },
@@ -116,10 +154,17 @@
                     "properties": {
                         "tag": {
                             "const": "claims"
+                        },
+                        "blocks": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/claim-block"
+                            }
                         }
                     },
                     "required": [
-                        "tag"
+                        "tag",
+                        "blocks"
                     ]
                 }
             ]
@@ -133,10 +178,24 @@
                     "properties": {
                         "tag": {
                             "const": "description"
+                        },
+                        "blocks": {
+                            "type": "array",
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/$defs/invention-title-block"
+                                    },
+                                    {
+                                        "$ref": "#/$defs/description-item-block"
+                                    }
+                                ]
+                            }
                         }
                     },
                     "required": [
-                        "tag"
+                        "tag",
+                        "blocks"
                     ]
                 }
             ]
@@ -164,10 +223,10 @@
                 "tag": {
                     "const": "abstract"
                 },
-                "jpTag": {
+                "jp-tag": {
                     "type": "string"
                 },
-                "indentLevel": {
+                "indent-level": {
                     "type": "string"
                 },
                 "text": {
@@ -176,12 +235,12 @@
             },
             "required": [
                 "tag",
-                "jpTag",
-                "indentLevel",
+                "jp-tag",
+                "indent-level",
                 "blocks"
             ]
         },
-        "foreignDocument": {
+        "foreign-document": {
             "type": "object",
             "properties": {
                 "tag": {
@@ -193,20 +252,23 @@
                         "jp:foreign-language-drawings"
                     ]
                 },
-                "indentLevel": {
+                "indent-level": {
                     "type": "string"
                 },
                 "blocks": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/paragraph-block"
+                    }
                 }
             },
             "required": [
                 "tag",
-                "indentLevel",
+                "indent-level",
                 "blocks"
             ]
         },
-        "noticePatExam": {
+        "notice-pat-exam": {
             "type": "object",
             "properties": {
                 "tag": {
@@ -217,11 +279,963 @@
                     ]
                 },
                 "blocks": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/notice-block-type-a"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-b"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-c"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-d"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-e"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-f"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-g"
+                            },
+                            {
+                                "$ref": "#/$defs/notice-block-type-h"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "invention-title-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "invention-title"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "indent-level",
+                "text"
+            ]
+        },
+        "description-item-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "technical-field",
+                        "background-art",
+                        "citation-list",
+                        "patent-literature",
+                        "non-patent-literature",
+                        "summary-of-invention",
+                        "disclosure",
+                        "tech-problem",
+                        "tech-solution",
+                        "advantageous-effects",
+                        "description-of-drawings",
+                        "description-of-embodiments",
+                        "best-mode",
+                        "embodiment-example",
+                        "mode-for-invention",
+                        "industrial-applicability",
+                        "sequence-list-text",
+                        "reference-signs-list",
+                        "reference-to-deposited-biological-material"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/paragraph-block"
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "claim-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "claim"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/claim-text"
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "number",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "claim-text": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "claim-text"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/inline-text"
+                            },
+                            {
+                                "$ref": "#/$defs/patcit-block"
+                            },
+                            {
+                                "$ref": "#/$defs/fig-ref-block"
+                            },
+                            {
+                                "$ref": "#/$defs/image-container-block"
+                            },
+                            {
+                                "$ref": "#/$defs/figures-container-block"
+                            },
+                            {
+                                "$ref": "#/$defs/other-images-container-block"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "amendment-article": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "jp:amendment-article"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/amendment-group"
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "amendment-group": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "jp:amendment-group"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/pat-block-type-a"
+                            },
+                            {
+                                "$ref": "#/$defs/contents-of-amendment-block"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "contents-of-amendment-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "jp:contents-of-amendment"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/description"
+                            },
+                            {
+                                "$ref": "#/$defs/claims"
+                            },
+                            {
+                                "$ref": "#/$defs/abstract"
+                            },
+                            {
+                                "$ref": "#/$defs/drawings"
+                            },
+                            {
+                                "$ref": "#/$defs/paragraph-block"
+                            },
+                            {
+                                "$ref": "#/$defs/claim-block"
+                            },
+                            {
+                                "$ref": "#/$defs/figures-container-block"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "pat-block-type-a": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:account",
+                        "jp:account-number",
+                        "jp:account-type",
+                        "jp:addressed-to-person",
+                        "jp:application-section",
+                        "jp:article",
+                        "jp:citation",
+                        "jp:country",
+                        "jp:date",
+                        "jp:dispatch-number",
+                        "jp:doc-number",
+                        "jp:document-code",
+                        "jp:document-name",
+                        "jp:dtext",
+                        "jp:fee",
+                        "jp:file-reference-id",
+                        "jp:general-power-of-attorney-id",
+                        "jp:generated-access-code",
+                        "jp:ipc",
+                        "jp:ip-type",
+                        "jp:item-of-amendment",
+                        "jp:kind-of-accelerated-examination",
+                        "jp:kind-of-appeals",
+                        "jp:law-of-industrial-regenerate",
+                        "jp:name",
+                        "jp:name-of-new-depository",
+                        "jp:new-depository-number",
+                        "jp:num-claim-increase-amendment",
+                        "jp:notice-contents-group",
+                        "jp:office",
+                        "jp:office-address",
+                        "jp:office-in-japan",
+                        "jp:old-depository-number",
+                        "jp:original-language-of-name",
+                        "jp:original-language-of-address",
+                        "jp:original-language-of-name",
+                        "jp:payment-years",
+                        "jp:phone",
+                        "jp:proof-means",
+                        "jp:registered-number",
+                        "jp:relation-attorney-special-matter",
+                        "jp:relation-of-case",
+                        "jp:representative-applicant",
+                        "jp:share",
+                        "jp:share-rate",
+                        "jp:text",
+                        "jp:way-of-amendment",
+                        "shutugan-kubun"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "converted-text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "text",
+                "indent-level"
+            ]
+        },
+        "pat-block-type-b": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:agent",
+                        "jp:amendment-charge-article",
+                        "jp:appeal-article",
+                        "jp:applicant",
+                        "jp:attorney",
+                        "jp:charge-article",
+                        "jp:earlier-app",
+                        "jp:indication-of-case-article",
+                        "jp:inventor",
+                        "jp:lawyer",
+                        "jp:parent-application-article",
+                        "jp:priority-claim",
+                        "jp:rejection-case-accept-notice-art",
+                        "jp:submission-object-list-article"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
                     "type": "array"
                 }
             },
             "required": [
                 "tag",
+                "jp-tag",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "pat-block-type-c": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:agents",
+                        "jp:applicants",
+                        "jp:application-reference",
+                        "jp:approval-column-article",
+                        "jp:attorney-change-article",
+                        "jp:declaration-priority-ear-app",
+                        "jp:priority-doc-location-info",
+                        "jp:inventors",
+                        "jp:list-group",
+                        "jp:nationality",
+                        "jp:payment",
+                        "jp:priority-claims",
+                        "jp:representative-group",
+                        "jp:special-mention-matter-article"
+                    ]
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "pat-block-type-d": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:opinion-contents-article"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "blocks",
+                "indent-level"
+            ]
+        },
+        "pat-block-type-e": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:item-content"
+                    ]
+                },
+                "text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "text"
+            ]
+        },
+        "paragraph-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "paragraph"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/$defs/inline-text"
+                            },
+                            {
+                                "$ref": "#/$defs/patcit-block"
+                            },
+                            {
+                                "$ref": "#/$defs/fig-ref-block"
+                            },
+                            {
+                                "$ref": "#/$defs/image-container-block"
+                            },
+                            {
+                                "$ref": "#/$defs/figures-container-block"
+                            },
+                            {
+                                "$ref": "#/$defs/other-images-container-block"
+                            }
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "number",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "inline-text": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "text",
+                        "sub",
+                        "sup",
+                        "underline"
+                    ]
+                },
+                "text": {
+                    "type": "string"
+                },
+                "is-last-sentence": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "tag",
+                "text",
+                "is-last-sentence"
+            ]
+        },
+        "patcit-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "patcit",
+                        "nplcit"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "number",
+                "text",
+                "indent-level"
+            ]
+        },
+        "fig-ref-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "const": "figref"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "number",
+                "text",
+                "indent-level"
+            ]
+        },
+        "image-container-block": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "figures",
+                        "tables",
+                        "equations",
+                        "chemical-formulas",
+                        "other-images"
+                    ]
+                },
+                "number": {
+                    "type": "string"
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "alt": {
+                    "type": "string"
+                },
+                "representative": {
+                    "type": "boolean"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/image-src-block"
+                    }
+                }
+            },
+            "required": [
+                "tag",
+                "indent-level",
+                "images"
+            ]
+        },
+        "figures-container-block": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/image-container-block"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "figures"
+                        }
+                    },
+                    "required": [
+                        "tag",
+                        "number",
+                        "jp-tag",
+                        "alt",
+                        "representative"
+                    ]
+                }
+            ]
+        },
+        "other-images-container-block": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/image-container-block"
+                },
+                {
+                    "properties": {
+                        "tag": {
+                            "const": "other-images"
+                        }
+                    },
+                    "required": [
+                        "tag"
+                    ]
+                }
+            ]
+        },
+        "image-src-block": {
+            "type": "object",
+            "properties": {
+                "src": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "kind": {
+                    "type": "string",
+                    "enum": [
+                        "figures",
+                        "tables",
+                        "equations",
+                        "chemical-formulas",
+                        "other-images",
+                        "unknown"
+                    ]
+                },
+                "sizeTag": {
+                    "type": "string",
+                    "enum": [
+                        "thumbnail",
+                        "middle",
+                        "large"
+                    ]
+                }
+            },
+            "required": [
+                "src",
+                "width",
+                "height",
+                "kind",
+                "sizeTag"
+            ]
+        },
+        "notice-block-type-a": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "invention-title",
+                        "jp:addressed-to-person-group",
+                        "jp:application-section",
+                        "jp:change-flag-invention-title",
+                        "jp:date",
+                        "jp:depository-ins-code",
+                        "jp:depository-number",
+                        "jp:doc-number",
+                        "jp:document-number",
+                        "jp:exceptions-to-lack-of-novelty",
+                        "jp:exist-of-reference-doc",
+                        "jp:fi",
+                        "jp:field-of-search",
+                        "jp:kind-of-application",
+                        "jp:number-of-claim",
+                        "jp:number-of-other-persons",
+                        "jp:patent-law-section30",
+                        "jp:patent-reference-group",
+                        "jp:payment-years",
+                        "jp:version-number"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "converted-text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "indent-level",
+                "text"
+            ]
+        },
+        "notice-block-type-b": {
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:classification-article",
+                        "jp:contents-name",
+                        "jp:deposit",
+                        "jp:deposit-article",
+                        "jp:exceptions-to-lack-of-novelty-art",
+                        "jp:exceptions-to-lack-of-novelty-grp",
+                        "jp:fi-article",
+                        "jp:field-of-search-article",
+                        "jp:indication-of-case-article",
+                        "jp:invention-contents-article",
+                        "jp:ipc-article",
+                        "jp:patent-reference-article",
+                        "jp:reference-books-article",
+                        "jp:remark"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "indent-level": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "indent-level",
+                "blocks"
+            ]
+        },
+        "notice-block-type-c": {
+            "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:application-reference",
+                        "jp:certification-column-article",
+                        "jp:certification-column-group",
+                        "jp:contents-part-article",
+                        "jp:document-id",
+                        "jp:drafting-date",
+                        "jp:final-decision-bibliog",
+                        "jp:final-decision-bibliog-rn",
+                        "jp:final-decision-body",
+                        "jp:final-decision-body-rn",
+                        "jp:final-decision-group",
+                        "jp:final-decision-group-rn",
+                        "jp:final-decision-memo",
+                        "jp:final-decision-memo-rn",
+                        "jp:heading",
+                        "jp:image-group",
+                        "jp:inquiry-article",
+                        "jp:inquiry-staff-group",
+                        "jp:bibliog-in-ntc-pat-exam",
+                        "jp:bibliog-in-ntc-pat-exam-rn",
+                        "jp:conclusion-part-article",
+                        "jp:drafting-body",
+                        "jp:footer-article",
+                        "jp:dispatch-control-article"
+                    ]
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "notice-block-type-d": {
+            "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:reconsideration-before-appeal",
+                        "jp:reference-books",
+                        "jp:document-name"
+                    ]
+                },
+                "text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "tag",
+                "text"
+            ]
+        },
+        "notice-block-type-e": {
+            "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:certification-group",
+                        "jp:inquiry-staff-group"
+                    ]
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "blocks"
+            ]
+        },
+        "notice-block-type-f": {
+            "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:draft-person-group",
+                        "jp:article-group"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag",
+                "blocks"
+            ]
+        },
+        "notice-block-type-g": {
+            "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:parent-application-article"
+                    ]
+                },
+                "jp-tag": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "jp-tag"
+            ]
+        },
+        "notice-block-type-h": {
+            "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+            "type": "object",
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "enum": [
+                        "jp:inclusion-payment-group"
+                    ]
+                },
+                "text": {
+                    "type": "string"
+                },
+                "blocks": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "tag",
+                "text",
                 "blocks"
             ]
         }
@@ -468,10 +1482,10 @@
                         "$ref": "#/$defs/abstract"
                     },
                     {
-                        "$ref": "#/$defs/foreignDocument"
+                        "$ref": "#/$defs/foreign-document"
                     },
                     {
-                        "$ref": "#/$defs/noticePatExam"
+                        "$ref": "#/$defs/notice-pat-exam"
                     }
                 ]
             }
