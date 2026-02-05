@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "const": "claims"
+        },
+        "jp-tag": {
+            "type": "string"
+        },
+        "indent-level": {
+            "type": "string"
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/claim"
+            }
+        }
+    },
+    "required": [
+        "tag",
+        "jp-tag",
+        "indent-level",
+        "blocks"
+    ]
+}

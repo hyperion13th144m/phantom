@@ -1,0 +1,86 @@
+{
+    "type": "object",
+    "properties": {
+        "inventionTitle": {
+            "type": "string"
+        },
+        "technicalField": {
+            "type": "string"
+        },
+        "backgroundArt": {
+            "type": "string"
+        },
+        "techProblem": {
+            "type": "string"
+        },
+        "techSolution": {
+            "type": "string"
+        },
+        "advantageousEffects": {
+            "type": "string"
+        },
+        "embodiments": {
+            "type": "string"
+        },
+        "industrialApplicability": {
+            "type": "string"
+        },
+        "independentClaims": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "dependentClaims": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "abstract": {
+            "type": "string"
+        },
+        "inventors": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "applicants": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "agents": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "rejectionReasonArticle": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "contentsOfAmendment": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "opinionContentsArticle": {
+            "type": "string"
+        },
+        "draftingBody": {
+            "type": "string"
+        },
+        "conclusionPartArticle": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "applicants"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/$defs/image-container"
+        },
+        {
+            "properties": {
+                "tag": {
+                    "const": "other-images"
+                }
+            },
+            "required": [
+                "tag"
+            ]
+        }
+    ]
+}

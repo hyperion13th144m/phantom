@@ -1,0 +1,21 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/$defs/image-container"
+        },
+        {
+            "properties": {
+                "tag": {
+                    "const": "figures"
+                }
+            },
+            "required": [
+                "tag",
+                "number",
+                "jp-tag",
+                "alt",
+                "representative"
+            ]
+        }
+    ]
+}

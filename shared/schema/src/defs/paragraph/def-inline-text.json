@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "enum": [
+                "text",
+                "sub",
+                "sup",
+                "underline"
+            ]
+        },
+        "text": {
+            "type": "string"
+        },
+        "is-last-sentence": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "tag",
+        "text",
+        "is-last-sentence"
+    ]
+}

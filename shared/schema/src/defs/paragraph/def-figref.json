@@ -1,0 +1,28 @@
+    {
+        "type": "object",
+        "properties": {
+            "tag": {
+                "type": "string",
+                "const": "figref"
+            },
+            "jp-tag": {
+                "type": "string"
+            },
+            "number": {
+                "type": "string"
+            },
+            "text": {
+                "type": "string"
+            },
+            "indent-level": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "tag",
+            "jp-tag",
+            "number",
+            "text",
+            "indent-level"
+        ]
+    }

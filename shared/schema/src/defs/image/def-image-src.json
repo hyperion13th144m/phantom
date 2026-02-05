@@ -1,0 +1,40 @@
+{
+    "type": "object",
+    "properties": {
+        "src": {
+            "type": "string"
+        },
+        "width": {
+            "type": "number"
+        },
+        "height": {
+            "type": "number"
+        },
+        "kind": {
+            "type": "string",
+            "enum": [
+                "figures",
+                "tables",
+                "equations",
+                "chemical-formulas",
+                "other-images",
+                "unknown"
+            ]
+        },
+        "sizeTag": {
+            "type": "string",
+            "enum": [
+                "thumbnail",
+                "middle",
+                "large"
+            ]
+        }
+    },
+    "required": [
+        "src",
+        "width",
+        "height",
+        "kind",
+        "sizeTag"
+    ]
+}

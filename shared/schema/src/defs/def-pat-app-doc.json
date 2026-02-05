@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "const": "pat-app-doc"
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/bibliographic-items-type-a"
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "tag",
+        "blocks"
+    ]
+}

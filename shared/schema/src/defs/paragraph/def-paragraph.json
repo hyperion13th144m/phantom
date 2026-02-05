@@ -1,0 +1,50 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "const": "paragraph"
+        },
+        "jp-tag": {
+            "type": "string"
+        },
+        "number": {
+            "type": "string"
+        },
+        "indent-level": {
+            "type": "string"
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/inline-text"
+                    },
+                    {
+                        "$ref": "#/$defs/patcit"
+                    },
+                    {
+                        "$ref": "#/$defs/fig-ref"
+                    },
+                    {
+                        "$ref": "#/$defs/image-container"
+                    },
+                    {
+                        "$ref": "#/$defs/figures-container"
+                    },
+                    {
+                        "$ref": "#/$defs/other-images-container"
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "tag",
+        "jp-tag",
+        "number",
+        "indent-level",
+        "blocks"
+    ]
+}

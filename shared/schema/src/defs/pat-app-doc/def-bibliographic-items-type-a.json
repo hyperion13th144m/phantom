@@ -1,0 +1,76 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "enum": [
+                "jp:account",
+                "jp:account-number",
+                "jp:account-type",
+                "jp:addressed-to-person",
+                "jp:application-section",
+                "jp:article",
+                "jp:citation",
+                "jp:country",
+                "jp:date",
+                "jp:dispatch-number",
+                "jp:doc-number",
+                "jp:document-code",
+                "jp:document-name",
+                "jp:dtext",
+                "jp:fee",
+                "jp:file-reference-id",
+                "jp:general-power-of-attorney-id",
+                "jp:generated-access-code",
+                "jp:ipc",
+                "jp:ip-type",
+                "jp:item-of-amendment",
+                "jp:kind-of-accelerated-examination",
+                "jp:kind-of-appeals",
+                "jp:law-of-industrial-regenerate",
+                "jp:name",
+                "jp:name-of-new-depository",
+                "jp:new-depository-number",
+                "jp:num-claim-increase-amendment",
+                "jp:notice-contents-group",
+                "jp:office",
+                "jp:office-address",
+                "jp:office-in-japan",
+                "jp:old-depository-number",
+                "jp:original-language-of-name",
+                "jp:original-language-of-address",
+                "jp:original-language-of-name",
+                "jp:payment-years",
+                "jp:phone",
+                "jp:proof-means",
+                "jp:registered-number",
+                "jp:relation-attorney-special-matter",
+                "jp:relation-of-case",
+                "jp:representative-applicant",
+                "jp:share",
+                "jp:share-rate",
+                "jp:text",
+                "jp:way-of-amendment",
+                "shutugan-kubun"
+            ]
+        },
+        "jp-tag": {
+            "type": "string"
+        },
+        "indent-level": {
+            "type": "string"
+        },
+        "text": {
+            "type": "string"
+        },
+        "converted-text": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "tag",
+        "jp-tag",
+        "indent-level",
+        "text"
+    ]
+}

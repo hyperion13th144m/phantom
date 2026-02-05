@@ -1,0 +1,43 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "const": "description"
+        },
+        "jp-tag": {
+            "type": "string"
+        },
+        "indent-level": {
+            "type": "string"
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/invention-title"
+                    },
+                    {
+                        "$ref": "#/$defs/description-items"
+                    },
+                    {
+                        "$ref": "#/$defs/description-of-embodiments"
+                    },
+                    {
+                        "$ref": "#/$defs/citation-list"
+                    },
+                    {
+                        "$ref": "#/$defs/summary-of-invention"
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "tag",
+        "jp-tag",
+        "indent-level",
+        "blocks"
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "const": "invention-title"
+        },
+        "jp-tag": {
+            "type": "string"
+        },
+        "indent-level": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "tag",
+        "jp-tag",
+        "indent-level",
+        "text"
+    ]
+}

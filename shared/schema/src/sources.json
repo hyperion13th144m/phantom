@@ -1,0 +1,34 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "filename": {
+                "type": "string"
+            },
+            "sha256": {
+                "type": "string"
+            },
+            "byte_size": {
+                "type": "number"
+            },
+            "task": {
+                "type": "string"
+            },
+            "kind": {
+                "type": "string"
+            },
+            "extension": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "filename",
+            "sha256",
+            "byte_size",
+            "task",
+            "kind",
+            "extension"
+        ]
+    }
+}

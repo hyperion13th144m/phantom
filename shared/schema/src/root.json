@@ -1,0 +1,184 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "pat-app-doc": {
+            "$ref": "./defs/def-pat-app-doc.json"
+        },
+        "bibliographic-items-type-a": {
+            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-a.json"
+        },
+        "bibliographic-items-type-b": {
+            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-b.json"
+        },
+        "bibliographic-items-type-c": {
+            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-c.json"
+        },
+        "description": {
+            "$ref": "./defs/def-description.json"
+        },
+        "claims": {
+            "$ref": "./defs/def-claims.json"
+        },
+        "claim": {
+            "$ref": "./defs/claims/def-claim.json"
+        },
+        "claim-text": {
+            "$ref": "./defs/claims/def-claim-text.json"
+        },
+        "abstract": {
+            "$ref": "./defs/def-abstract.json"
+        },
+        "drawings": {
+            "$ref": "./defs/def-drawings.json"
+        },
+        "foreign-document": {
+            "$ref": "./defs/def-foreign-document.json"
+        },
+        "paragraph": {
+            "$ref": "./defs/paragraph/def-paragraph.json"
+        },
+        "inline-text": {
+            "$ref": "./defs/paragraph/def-inline-text.json"
+        },
+        "patcit": {
+            "$ref": "./defs/paragraph/def-patcit.json"
+        },
+        "fig-ref": {
+            "$ref": "./defs/paragraph/def-figref.json"
+        },
+        "image-container": {
+            "$ref": "./defs/image/def-image-container.json"
+        },
+        "figures-container": {
+            "$ref": "./defs/image/def-figures-container.json"
+        },
+        "other-images-container": {
+            "$ref": "./defs/image/def-other-images-container.json"
+        },
+        "image-src": {
+            "$ref": "./defs/image/def-image-src.json"
+        },
+        "invention-title": {
+            "$ref": "./defs/description/def-invention-title.json"
+        },
+        "description-items": {
+            "$ref": "./defs/description/def-description-items.json"
+        },
+        "description-of-embodiments": {
+            "$ref": "./defs/description/def-description-of-embodiments.json"
+        },
+        "embodiments-example": {
+            "$ref": "./defs/description/def-embodiments-example.json"
+        },
+        "citation-list": {
+            "$ref": "./defs/description/def-citation-list.json"
+        },
+        "citation-list-items": {
+            "$ref": "./defs/description/def-citation-list-items.json"
+        },
+        "summary-of-invention": {
+            "$ref": "./defs/description/def-summary-of-invention.json"
+        },
+        "summary-of-invention-items": {
+            "$ref": "./defs/description/def-summary-of-invention-items.json"
+        }
+    },
+    "title": "PatentDocument",
+    "type": "object",
+    "properties": {
+        "docId": {
+            "type": "string"
+        },
+        "schemaVer": {
+            "type": "string"
+        },
+        "law": {
+            "type": "string"
+        },
+        "documentName": {
+            "type": "string"
+        },
+        "documentCode": {
+            "type": "string"
+        },
+        "fileReferenceId": {
+            "type": "string"
+        },
+        "registrationNumber": {
+            "type": "string"
+        },
+        "applicationNumber": {
+            "type": "string"
+        },
+        "internationalApplicationNumber": {
+            "type": "string"
+        },
+        "appealReferenceNumber": {
+            "type": "string"
+        },
+        "receiptNumber": {
+            "type": "string"
+        },
+        "submissionDate": {
+            "type": "string"
+        },
+        "submissionTime": {
+            "type": "string"
+        },
+        "dispatchDate": {
+            "type": "string"
+        },
+        "dispatchTime": {
+            "type": "string"
+        },
+        "images": {
+            "$ref": "./images.json"
+        },
+        "sources": {
+            "$ref": "./sources.json"
+        },
+        "fields": {
+            "$ref": "./fields.json"
+        },
+        "ocrText": {
+            "type": "string"
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/pat-app-doc"
+                    },
+                    {
+                        "$ref": "#/$defs/description"
+                    },
+                    {
+                        "$ref": "#/$defs/claims"
+                    },
+                    {
+                        "$ref": "#/$defs/abstract"
+                    },
+                    {
+                        "$ref": "#/$defs/drawings"
+                    },
+                    {
+                        "$ref": "#/$defs/foreign-document"
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "docId",
+        "sources",
+        "schemaVer",
+        "law",
+        "documentName",
+        "documentCode",
+        "images",
+        "fields",
+        "ocrText",
+        "blocks"
+    ]
+}

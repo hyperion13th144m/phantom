@@ -39,7 +39,7 @@ class TextFields(BaseModel):
 
 class DocumentJson(BaseModel):
     """
-    libefiling が出力した document.json の受け口。
+    phantom/mona が出力した document.json の受け口。
     ここは「入力に合わせる」層なので、extra='allow' で未知キーを許容しがち。
     """
 

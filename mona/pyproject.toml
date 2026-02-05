@@ -22,8 +22,8 @@ build-backend = "poetry.core.masonry.api"
 dev = ["datamodel-code-generator[ruff] (>=0.53.0,<0.54.0)"]
 
 [tool.datamodel-codegen]
-input = "../shared/schema/patent-document-schema.json"
-input-file-type = "jsonschema"
+input = "../shared/schema/patent-document-schema.yaml"
+input-file-type = "yaml"
 output = "src/mona/models/patent_document_schema.py"
 output-model-type = "pydantic_v2.BaseModel"
 use-default-ns = true

@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+        "tag": {
+            "const": "abstract"
+        },
+        "jp-tag": {
+            "type": "string"
+        },
+        "indent-level": {
+            "type": "string"
+        },
+        "text": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "tag",
+        "jp-tag",
+        "indent-level",
+        "blocks"
+    ]
+}

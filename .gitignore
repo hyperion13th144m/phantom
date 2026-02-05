@@ -1,3 +1,4 @@
 .env
 mona/src/mona/models
 fox/src/interfaces/patent-document-schema.ts
+panther/src/panther/models/patent_document.py
