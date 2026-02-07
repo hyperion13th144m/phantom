@@ -41,6 +41,7 @@ mkdir -p "$(dirname "$PANTHER_MODEL")"
 
 # ============================
 # Step 1: Merge schema
+#   merge all json under src/ into one schema json
 # ============================
 log "Step 1: Merging schema json files"
 

@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getContentRoot } from "~/constant";
-import type { DocumentJson, IPDocument } from "~/interfaces/document";
+import type { IPatentDocument } from "~/interfaces/document";
+import type { PatentDocument } from "~/interfaces/patent-document-schema";
 import { DocumentDate } from "~/lib/doc-date";
 import { ApplicationNumber } from "~/lib/doc-number";
 
@@ -12,19 +13,16 @@ export const getIPDocument = async (docId: string) => {
     // document.json を読み込む
     const documentPath = path.resolve(contentRoot, "document.json");
     const documentRaw = await fs.readFile(documentPath, "utf-8");
-    const document: DocumentJson = JSON.parse(documentRaw);
+    const document: PatentDocument = JSON.parse(documentRaw);
 
-    // IPDocument 用のフィールドを取得・変換
-    const applicants = document.fields.applicants;
-    const inventors = document.fields.inventors;
-    const agents = document.fields.agents;
+    // fields を一度取り出す
+    const { applicants, inventors, agents } = document.fields;
+
+    // convert date
     const submissionDate = document.submissionDate ? new DocumentDate(document.submissionDate) : null;
     const dispatchDate = document.dispatchDate ? new DocumentDate(document.dispatchDate) : null;
-    const an = document.applicationNumber ?? document.internationalApplicationNumber ?? document.receiptNumber ?? "";
-    const applicationNumber = new ApplicationNumber(
-        document.law,
-        an
-    );
+
+    const applicationNumber = createApplicationNumber(document);
 
     return {
         ...document,
@@ -34,5 +32,15 @@ export const getIPDocument = async (docId: string) => {
         submissionDate,
         dispatchDate,
         applicationNumber,
-    } as IPDocument
+    } as IPatentDocument
+}
+
+function createApplicationNumber(doc: PatentDocument): ApplicationNumber {
+    const an =
+        doc.applicationNumber ??
+        doc.internationalApplicationNumber ??
+        doc.receiptNumber ??
+        "";
+
+    return new ApplicationNumber(doc.law, an);
 }

@@ -1,6 +1,7 @@
 import { DocumentDate } from "~/lib/doc-date";
 import { ApplicationNumber } from "~/lib/doc-number";
 import type { Block } from "./document-block";
+import { type PatentDocument } from "./patent-document-schema";
 
 // document.json Interface
 export interface DocumentJson {
@@ -107,6 +108,15 @@ export interface ImagesOfIPDocument {
 }
 
 export interface IPDocument extends Omit<DocumentJson, "submissionDate" | "applicationNumber" | "dispatchDate"> {
+    submissionDate: DocumentDate | null;
+    dispatchDate: DocumentDate | null;
+    applicationNumber: ApplicationNumber;
+    inventors?: string[];
+    applicants: string[];
+    agents?: string[];
+};
+
+export interface IPatentDocument extends Omit<PatentDocument, "submissionDate" | "applicationNumber" | "dispatchDate"> {
     submissionDate: DocumentDate | null;
     dispatchDate: DocumentDate | null;
     applicationNumber: ApplicationNumber;
