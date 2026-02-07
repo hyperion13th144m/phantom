@@ -3,7 +3,9 @@
     "properties": {
         "tag": {
             "type": "string",
-            "const": "drawings"
+            "enum": [
+                "jp:opinion-contents-article"
+            ]
         },
         "jp-tag": {
             "type": "string"
@@ -14,7 +16,7 @@
         "blocks": {
             "type": "array",
             "items": {
-                "$ref": "#/$defs/figures-container"
+                "$ref": "#/$defs/paragraph"
             }
         }
     },

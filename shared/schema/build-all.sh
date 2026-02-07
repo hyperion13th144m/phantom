@@ -19,11 +19,14 @@ log() {
 # ============================
 SCHEMA_SRC="./src"
 SCHEMA_DIST="./dist/patent-document-schema.json"
+SCHEMA_DIST_CAMEL="./dist/patent-document-schema-camel.json"
 
 FOX_TYPES="../../fox/src/interfaces/patent-document-schema.ts"
+FOX_TYPE_GUARD="../../fox/src/interfaces/patent-document-schema.guard.ts"
 MONA_MODEL="../../mona/src/mona/models/patent_document_schema.py"
 PANTHER_MODEL="../../panther/src/panther/models/patent_document.py"
 TS_MODEL="./dist/patent-document-schema.ts"
+TS_GUARD="./dist/patent-document-schema.guard.ts"
 PY_MODEL="./dist/patent_document_schema.py"
 
 # ============================
@@ -39,12 +42,24 @@ mkdir -p "$(dirname "$PANTHER_MODEL")"
 # ============================
 # Step 1: Merge schema
 # ============================
-log "Step 1: Merging schema YAML files"
+log "Step 1: Merging schema json files"
 
-node build-schema.js "$SCHEMA_SRC" "$SCHEMA_DIST"
+node build-schema.cjs "$SCHEMA_SRC" "$SCHEMA_DIST"
 
 if [ ! -f "$SCHEMA_DIST" ]; then
   echo "ERROR: Schema merge failed. Output not found: $SCHEMA_DIST"
+  exit 1
+fi
+
+# ============================
+# Step 1b: Convert schema to camelCase
+# ============================
+log "Step 1b: Converting schema to camelCase"
+
+node to-camelCase.cjs "$SCHEMA_DIST" "$SCHEMA_DIST_CAMEL"
+
+if [ ! -f "$SCHEMA_DIST_CAMEL" ]; then
+  echo "ERROR: Schema camelCase conversion failed. Output not found: $SCHEMA_DIST_CAMEL"
   exit 1
 fi
 
@@ -53,9 +68,18 @@ fi
 # ============================
 log "Step 2: Generating TypeScript types for fox"
 
-json2ts \
-  -i "$SCHEMA_DIST" \
-  -o "$FOX_TYPES"
+node to-ts-schema.cjs "$SCHEMA_DIST_CAMEL" "$FOX_TYPES"
+#json2ts \
+#  -i "$SCHEMA_DIST_CAMEL" \
+#  -o "$FOX_TYPES"
+
+# ============================
+# Step 2b: Generate TypeScript type guards
+# ============================
+log "Step 2b: Generating TypeScript type guards for fox"
+
+yarn run ts-auto-guard --export-all "$FOX_TYPES" "$FOX_TYPE_GUARD"
+sed -i -e 's/import/import type/g' "$FOX_TYPE_GUARD"
 
 # ============================
 # Step 3: Generate Python models
@@ -87,9 +111,12 @@ datamodel-codegen \
   --formatters ruff-check ruff-format
 
 log "Step 6: Generating TypeScript types for test"
-json2ts \
-  -i "$SCHEMA_DIST" \
-  -o "$TS_MODEL"
+node to-ts-schema.cjs "$SCHEMA_DIST_CAMEL" "$TS_MODEL"
+yarn run ts-auto-guard --export-all "$TS_MODEL" "$TS_GUARD"
+sed -i -e 's/import/import type/g' "$TS_GUARD"
+#json2ts \
+#  -i "$SCHEMA_DIST_CAMEL" \
+#  -o "$TS_MODEL"
 
 # ============================
 # Done

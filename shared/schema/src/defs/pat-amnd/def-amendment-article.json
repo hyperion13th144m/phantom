@@ -2,16 +2,13 @@
     "type": "object",
     "properties": {
         "tag": {
-            "const": "pat-app-doc"
+            "type": "string",
+            "const": "jp:amendment-article"
         },
         "blocks": {
             "type": "array",
             "items": {
-                "anyOf": [
-                    {
-                        "$ref": "#/$defs/bibliographic-items-type-c"
-                    }
-                ]
+                "$ref": "#/$defs/amendment-group"
             }
         }
     },

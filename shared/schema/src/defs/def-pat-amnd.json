@@ -2,7 +2,7 @@
     "type": "object",
     "properties": {
         "tag": {
-            "const": "pat-app-doc"
+            "const": "pat-amnd"
         },
         "blocks": {
             "type": "array",
@@ -10,6 +10,9 @@
                 "anyOf": [
                     {
                         "$ref": "#/$defs/bibliographic-items-type-c"
+                    },
+                    {
+                        "$ref": "#/$defs/amendment-article"
                     }
                 ]
             }

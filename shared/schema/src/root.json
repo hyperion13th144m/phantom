@@ -4,14 +4,14 @@
         "pat-app-doc": {
             "$ref": "./defs/def-pat-app-doc.json"
         },
-        "bibliographic-items-type-a": {
-            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-a.json"
+        "pat-rspns": {
+            "$ref": "./defs/def-pat-rspns.json"
         },
-        "bibliographic-items-type-b": {
-            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-b.json"
+        "pat-etc": {
+            "$ref": "./defs/def-pat-etc.json"
         },
-        "bibliographic-items-type-c": {
-            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-c.json"
+        "pat-amnd": {
+            "$ref": "./defs/def-pat-amnd.json"
         },
         "description": {
             "$ref": "./defs/def-description.json"
@@ -33,6 +33,30 @@
         },
         "foreign-document": {
             "$ref": "./defs/def-foreign-document.json"
+        },
+        "notice-pat-exam": {
+            "$ref": "./defs/def-notice-pat-exam.json"
+        },
+        "amendment-article": {
+            "$ref": "./defs/pat-amnd/def-amendment-article.json"
+        },
+        "amendment-group": {
+            "$ref": "./defs/pat-amnd/def-amendment-group.json"
+        },
+        "contents-of-amendment": {
+            "$ref": "./defs/pat-amnd/def-contents-of-amendment.json"
+        },
+        "bibliographic-items-type-a": {
+            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-a.json"
+        },
+        "bibliographic-items-type-b": {
+            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-b.json"
+        },
+        "bibliographic-items-type-c": {
+            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-c.json"
+        },
+        "bibliographic-items-type-d": {
+            "$ref": "./defs/pat-rspns/def-bibliographic-items-type-d.json"
         },
         "paragraph": {
             "$ref": "./defs/paragraph/def-paragraph.json"
@@ -81,6 +105,30 @@
         },
         "summary-of-invention-items": {
             "$ref": "./defs/description/def-summary-of-invention-items.json"
+        },
+        "notice-items-type-a": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-a.json"
+        },
+        "notice-items-type-b": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-b.json"
+        },
+        "notice-items-type-c": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-c.json"
+        },
+        "notice-items-type-d": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-d.json"
+        },
+        "notice-items-type-e": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-e.json"
+        },
+        "notice-items-type-f": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-f.json"
+        },
+        "notice-items-type-g": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-g.json"
+        },
+        "notice-items-type-h": {
+            "$ref": "./defs/notice-pat-exam/def-notice-items-type-h.json"
         }
     },
     "title": "PatentDocument",
@@ -163,7 +211,19 @@
                         "$ref": "#/$defs/drawings"
                     },
                     {
+                        "$ref": "#/$defs/pat-rspns"
+                    },
+                    {
+                        "$ref": "#/$defs/pat-etc"
+                    },
+                    {
+                        "$ref": "#/$defs/pat-amnd"
+                    },
+                    {
                         "$ref": "#/$defs/foreign-document"
+                    },
+                    {
+                        "$ref": "#/$defs/notice-pat-exam"
                     }
                 ]
             }

@@ -1,0 +1,27 @@
+{
+    "$comment": "temporarily, those tags are in this same type. tags will be divided based on rendering styles",
+    "type": "object",
+    "properties": {
+        "tag": {
+            "type": "string",
+            "enum": [
+                "jp:certification-group",
+                "jp:inquiry-staff-group"
+            ]
+        },
+        "blocks": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/notice-items-type-a"
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "tag",
+        "blocks"
+    ]
+}

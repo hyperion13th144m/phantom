@@ -1,9 +1,10 @@
 {
+    "$comment": "TODO: check jp:receipt-number, jp:submission-date under this tag.",
     "type": "object",
     "properties": {
         "tag": {
             "type": "string",
-            "const": "drawings"
+            "const": "jp:amendment-group"
         },
         "jp-tag": {
             "type": "string"
@@ -14,7 +15,14 @@
         "blocks": {
             "type": "array",
             "items": {
-                "$ref": "#/$defs/figures-container"
+                "anyOf": [
+                    {
+                        "$ref": "#/$defs/bibliographic-items-type-a"
+                    },
+                    {
+                        "$ref": "#/$defs/contents-of-amendment"
+                    }
+                ]
             }
         }
     },
