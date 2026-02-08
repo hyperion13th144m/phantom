@@ -4,6 +4,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:f="urn:phantom-mona:string-utils"
+    xmlns:schema="urn:schema-dsl"
     exclude-result-prefixes="xs jp f">
 
     <xsl:variable name="node" select="name(//jp:pat-app-doc/*)" />

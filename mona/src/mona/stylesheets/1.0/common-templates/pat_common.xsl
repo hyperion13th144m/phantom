@@ -4,8 +4,8 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:f="urn:phantom-mona:string-utils">
-
+    xmlns:f="urn:phantom-mona:string-utils"
+    xmlns:schema="urn:schema-dsl">
     <!-- this xslt was created with reference to pat_common.xsl at Apr  4  2023 
          sha256sum:054dec3b453ed47edcc0732a4156c236344fbdece7d40d2eb669a8c0d1756d92 
     -->
@@ -26,6 +26,128 @@
 
 
     <!-- ====================================================================
+     type A elements have a tag and blocks.
+
+     jp:special-mention-matter-article 特記事項 
+     jp:inventors 発明者の記事
+     jp:applicants 申請者の記事
+     jp:agents 代理人の記事
+     jp:attorney-change-article 変更する代理人の記事
+     jp:priority-claims パリ条約による優先権等の主張
+     jp:declaration-priority-ear-app 先の出願に基づく優先権主張
+     jp:list-group 目録 
+     ====================================================================-->
+    <xsl:template
+        match="jp:special-mention-matter-article |
+        jp:inventors | jp:applicants | jp:agents | jp:attorney-change-article |
+        jp:priority-claims | jp:declaration-priority-ear-app | jp:list-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+
+            <!-- jp:article belongs to only jp:special-mention-matter-article -->
+            <xsl:apply-templates select="jp:article" />
+
+            <!-- jp:inventor belongs to only jp:inventors -->
+            <xsl:apply-templates select="jp:inventor" />
+
+            <!-- jp:applicant belongs to only jp:applicants -->
+            <xsl:apply-templates select="jp:applicant" />
+
+            <!-- jp:agent belongs to jp:agents and jp:attorney-change-article -->
+            <xsl:apply-templates select="jp:agent" />
+
+            <!-- jp:priority-claim belongs to only jp:priority-claims -->
+            <xsl:apply-templates select="jp:priority-claim" />
+
+            <!-- jp:earlier-app belongs to only jp:declaration-priority-ear-app -->
+            <xsl:apply-templates select="jp:earlier-app" />
+
+            <!-- jp:list-group has the following elements and
+                 above elements don't have the following elements -->
+            <xsl:apply-templates select="jp:document-name" />
+            <xsl:apply-templates select="jp:citation" />
+            <xsl:apply-templates select="jp:return-request" />
+            <xsl:apply-templates select="jp:general-power-of-attorney-id" />
+
+            <!-- jp:list-group and some elements have jp:dtext -->
+            <xsl:apply-templates select="jp:dtext" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- tag, blocks を持つ要素を集約することも可能だけど、
+     集約せずに要素毎にschema定義することにした。
+     Schema は template と一対一に対応させることを基本にする。-->
+    <schema:object name="special-mention-matter-article">
+        <schema:property name="tag" type="string"
+            const="jp:special-mention-matter-article" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="article" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="inventors">
+        <schema:property name="tag" type="string"
+            const="jp:inventors" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="inventor" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="applicants">
+        <schema:property name="tag" type="string"
+            const="jp:applicants" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="applicant" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="agents">
+        <schema:property name="tag" type="string"
+            const="jp:agents" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="agent" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="attorney-change-article">
+        <schema:property name="tag" type="string"
+            const="jp:attorney-change-article" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="agent" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="priority-claims">
+        <schema:property name="tag" type="string"
+            const="jp:priority-claims" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="priority-claim" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="declaration-priority-ear-app">
+        <schema:property name="tag" type="string"
+            const="jp:declaration-priority-ear-app" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="earlier-app" />
+        </schema:property>
+    </schema:object>
+    <schema:object name="list-group">
+        <schema:property name="tag" type="string"
+            const="jp:list-group" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="document-name" />
+            <schema:ref name="citation" />
+            <schema:ref name="return-request" />
+            <schema:ref name="general-power-of-attorney-id" />
+            <schema:ref name="dtext" />
+        </schema:property>
+    </schema:object>
+    <!-- =========== End of the type A elements ===========-->
+
+
+    <!-- ====================================================================
+     type B elements have tag, jp-tag, indent-level and text.
+     optional: converted-text
+     ====================================================================-->
+
+    <!-- ====================================================================
          jp:document-code
          ====================================================================-->
     <!-- 書類識別コード -->
@@ -39,7 +161,7 @@
                 <xsl:value-of select="." />
             </xsl:element>
             <xsl:call-template name="書類名タイトル" />
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:call-template name="書類名変換" />
             </xsl:element>
         </xsl:element>
@@ -60,18 +182,18 @@
 
         <xsl:choose>
             <xsl:when test="parent::jp:amendment-charge-article">
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'【補正対象書類名】'" />
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:sequence select="2" />
                 </xsl:element>
             </xsl:when>
             <xsl:when test="parent::jp:target-document">
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'【書類名】'" />
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:sequence select="2" />
                 </xsl:element>
             </xsl:when>
@@ -80,28 +202,28 @@
                     <xsl:when test="parent::jp:amendment-group">
                         <xsl:choose>
                             <xsl:when test="$kinddoc = 'jp:amendment-a524'">
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【訂正対象書類名】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:sequence select="2" />
                                 </xsl:element>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【補正対象書類名】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:sequence select="2" />
                                 </xsl:element>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【書類名】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:sequence select="2" />
                         </xsl:element>
                     </xsl:otherwise>
@@ -112,28 +234,28 @@
                     <xsl:when test="parent::jp:amendment-group">
                         <xsl:choose>
                             <xsl:when test="$kinddoc = 'jp:amendment-a524'">
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【訂正対象書類名】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:sequence select="1" />
                                 </xsl:element>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【補正対象書類名】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:sequence select="1" />
                                 </xsl:element>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【書類名】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:sequence select="0" />
                         </xsl:element>
                     </xsl:otherwise>
@@ -160,238 +282,76 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:special-mention-matter-article
-     ====================================================================-->
-    <!-- 特記事項 -->
-    <xsl:template
-        match="jp:special-mention-matter-article">
+     jp:share-rate 持分の割合
+     import from <xsl:template name="持分の割合編集">
+      ====================================================================-->
+    <xsl:template match="jp:share-rate">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:apply-templates select="jp:article" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:submission-date
-     ====================================================================-->
-    <!-- 提出日 -->
-    <xsl:template
-        match="jp:submission-date">
-        <xsl:apply-templates select="jp:date" />
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:addressed-to-person
-     ====================================================================-->
-    <!-- あて先 -->
-    <xsl:template
-        match="jp:addressed-to-person">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【持分の割合】'" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【あて先】'" />
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="." />
+                <xsl:apply-templates select="jp:moleclar" />
+                <xsl:value-of select="'/'" />
+                <xsl:apply-templates select="jp:denominator" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:moleclar 持分率（分子）
+     ====================================================================-->
+    <xsl:template match="jp:moleclar">
+        <xsl:value-of select="." />
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:denominator 持分率（分母）
+     ====================================================================-->
+    <xsl:template match="jp:denominator">
+        <xsl:value-of select="." />
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:dtext その他、提出物件の特記事項
+     import from <xsl:template name="その他編集">
+     ====================================================================-->
+    <xsl:template match="jp:dtext">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
                 <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
+                    <xsl:when test="ancestor::jp:submission-object-list-article">
+                        <xsl:value-of select="'【提出物件の特記事項】'" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:sequence select="0" />
+                        <xsl:value-of select="'【その他】'" />
                     </xsl:otherwise>
                 </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:parent-application-article
-
-     import from <xsl:template name="原出願の表示編集">
-     ====================================================================-->
-    <!-- 原出願の表示 -->
-    <xsl:template
-        match="jp:parent-application-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="./@jp:kind-of-application = 'based-on-utility'">
-                        <xsl:value-of select="'【基礎とした実用新案登録及びその実用新案登録出願の表示】'" />
-                    </xsl:when>
-
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【原出願の表示】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates
-                select="jp:application-reference [@appl-type = 'registration']//jp:doc-number" />
-            <xsl:apply-templates select="jp:application-reference [@appl-type = 'registration']" />
-            <xsl:apply-templates
-                select="jp:application-reference [@appl-type = 'application']//jp:doc-number" />
-            <xsl:apply-templates select="jp:application-reference [@appl-type = 'application']" />
-            <xsl:apply-templates
-                select="jp:application-reference [@appl-type = 'international-application']//jp:doc-number" />
-            <xsl:apply-templates
-                select="jp:application-reference [@appl-type = 'international-application']" />
-            <xsl:apply-templates select="jp:file-reference-id" />
-        </xsl:element>
-
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:ipc-article
-         jp:ipc-article <- 国際特許分類編集 
-         ====================================================================-->
-    <xsl:template
-        match="jp:ipc-article">
-        <xsl:for-each select="jp:ipc">
-            <xsl:element name="blocks">
-                <xsl:element name="tag">
-                    <xsl:text>jp:ipc</xsl:text>
-                </xsl:element>
-                <xsl:choose>
-                    <xsl:when test="position() = 1">
-                        <xsl:element name="jpTag">
-                            <xsl:value-of select="'【国際特許分類】'" />
-                        </xsl:element>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:element name="jpTag">
-                            <xsl:value-of select="''" />
-                        </xsl:element>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:element name="text">
-                    <xsl:value-of select="normalize-space()" />
-                </xsl:element>
-                <xsl:element name="indentLevel">
-                    <xsl:choose>
-                        <xsl:when test="ancestor::jp:contents-of-amendment">
-                            <xsl:sequence select="2" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:sequence select="0" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:element>
-            </xsl:element>
-        </xsl:for-each>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:inventors
-     ====================================================================-->
-    <!-- 発明者の記事 -->
-    <xsl:template
-        match="jp:inventors">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:inventor" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:applicants
-     ====================================================================-->
-    <!-- 申請者の記事     -->
-    <xsl:template
-        match="jp:applicants">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:applicant" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:trust-relation
-     ====================================================================-->
-    <!-- 信託関係事項     -->
-    <xsl:template
-        match="jp:trust-relation">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【信託関係事項】'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:agents
-     ====================================================================-->
-    <!-- 代理人の記事     -->
-    <xsl:template
-        match="jp:agents">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:agent" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:secret-design-term
-     ====================================================================-->
-    <!-- 秘密意匠請求期間     -->
-    <xsl:template
-        match="jp:secret-design-term">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【秘密にすることを請求する期間】'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
             </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:value-of select="''" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
+                    <xsl:when test="ancestor::jp:submission-object-list-article">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
                     </xsl:when>
@@ -404,62 +364,19 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:attorney-change-article
-     ====================================================================-->
-    <!-- 変更する代理人の記事     -->
-    <xsl:template
-        match="jp:attorney-change-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:agent" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:priority-claims
-     ====================================================================-->
-    <!-- パリ条約による優先権等の主張     -->
-    <xsl:template
-        match="jp:priority-claims">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:priority-claim" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:declaration-priority-ear-app
-     ====================================================================-->
-    <!-- 先の出願に基づく優先権主張     -->
-    <xsl:template
-        match="jp:declaration-priority-ear-app">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:earlier-app" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:payment-years
+     jp:payment-years 納付年分
      import from <xsl:template name="納付年分編集">
      ====================================================================-->
-    <!-- 納付年分     -->
     <xsl:template
         match="jp:payment-years">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【納付年分】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:annexation-payment
@@ -479,22 +396,126 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:law-of-industrial-regenerate
+     jp:year-from 納付年分（自）
      ====================================================================-->
-    <!-- 産業再生法     -->
+    <xsl:template match="jp:year-from">
+        <xsl:choose>
+            <xsl:when test="./@jp:error-code">
+                <xsl:value-of select="." />
+            </xsl:when>
+            <xsl:when test="string-length(normalize-space(.)) = 0" />
+
+            <xsl:when
+                test="number(string-length(normalize-space(.))) != 0 and number(.) != number(normalize-space(.))">
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:when>
+            <xsl:when test="string-length(normalize-space(.)) &gt; 2">
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="'第'" />
+                <xsl:choose>
+                    <xsl:when test="string-length(normalize-space(.)) = 0">
+                        <xsl:value-of select="concat('　','0')" />
+                    </xsl:when>
+                    <xsl:when test="string-length(normalize-space(.)) = 1">
+                        <xsl:value-of select="concat('　',.)" />
+                    </xsl:when>
+                    <xsl:when test="string-length(normalize-space(.)) = 2">
+                        <xsl:choose>
+                            <xsl:when test="number(substring(normalize-space(.),1,1)) = 0">
+                                <xsl:value-of
+                                    select="concat('　',substring(normalize-space(.),2,1))" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="." />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                </xsl:choose>
+                <xsl:value-of select="'年分'" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:year-to 納付年分（至）
+     ====================================================================-->
+    <xsl:template match="jp:year-to">
+        <xsl:choose>
+            <xsl:when test="./@jp:error-code">
+                <xsl:value-of select="." />
+            </xsl:when>
+            <xsl:when test="string-length(normalize-space(.)) = 0" />
+            <xsl:when
+                test="number(string-length(normalize-space(.))) != 0 and number(.) != number(normalize-space(.))">
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:when>
+            <xsl:when test="string-length(normalize-space(.)) &gt; 2">
+                <xsl:call-template name="書誌編集エラー処理" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="'から第'" />
+                <xsl:choose>
+                    <xsl:when test="number(string-length(normalize-space(.))) = 1">
+                        <xsl:value-of select="concat('　',.)" />
+                    </xsl:when>
+                    <xsl:when test="number(string-length(normalize-space(.))) = 2">
+                        <xsl:choose>
+                            <xsl:when test="number(substring(normalize-space(.),1,1)) = 0">
+                                <xsl:value-of
+                                    select="concat('　',substring(normalize-space(.),2,1))" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="." />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                </xsl:choose>
+                <xsl:value-of select="'年分'" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:proof-necessity プルーフの要否 
+     imoprt from <xsl:template name="プルーフの要否編集">
+     ====================================================================-->
     <xsl:template
-        match="jp:law-of-industrial-regenerate">
+        match="jp:proof-necessity">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【国等の委託研究の成果に係る記載事項】'" />
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【プルーフの要否】'" />
             </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+
+                            <xsl:when test="normalize-space(.) = '0'">
+                                <xsl:value-of select="'不要'" />
+                            </xsl:when>
+
+                            <xsl:when test="normalize-space(.) = '1'">
+                                <xsl:value-of select="'要'" />
+                            </xsl:when>
+
+                            <xsl:when test="normalize-space(.) = ''">
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="書誌編集エラー処理" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -508,19 +529,64 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:share-rate
-     import from <xsl:template name="持分の割合編集">
-      ====================================================================-->
-    <!-- 持分の割合 -->
-    <xsl:template match="jp:share-rate">
+     jp:notice-contents-group 届出の内容
+      import from 届出の内容編集
+     ====================================================================-->
+    <xsl:template match="jp:notice-contents-group">
+
+        <xsl:variable name="node">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:value-of select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$node" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【持分の割合】'" />
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="$node = 'jp:applicant-a55'">
+                        <xsl:value-of select="'【申立の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:etcetera-a601'">
+                        <xsl:value-of select="'【請求の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:etcetera-a821' or $node = 'jp:payment-r220'">
+                        <xsl:value-of select="'【補足の内容】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:etcetera-a831'">
+                        <xsl:value-of select="'【提出の理由】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:etcetera-a623' or $node = 'jp:etcetera-a624'">
+                        <xsl:value-of select="'【評価の請求に係る請求項の表示】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:application-a631'">
+                        <xsl:value-of select="'【確認事項】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test="$node = 'jp:application-a632' or $node = 'jp:application-a635'
+                     or $node = 'jp:amendment-a526' or $node = 'jp:amendment-a528'
+                     or $node = 'jp:amendment-a5210' or $node = 'jp:amendment-a5212'">
+                        <xsl:value-of select="'【職権作成の表示】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:etcetera-a603'">
+                        <xsl:value-of select="'【請求の内容】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【届出の内容】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space()" />
+            </xsl:element>
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -530,13 +596,1746 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:ip-type
+     ====================================================================-->
+    <!-- 出願の区分 -->
+    <xsl:template match="jp:ip-type">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【出願の区分】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="2" />
+            </xsl:element>
             <xsl:element name="text">
-                <xsl:apply-templates select="jp:moleclar" />
-                <xsl:value-of select="'/'" />
-                <xsl:apply-templates select="jp:denominator" />
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:when test="normalize-space(.) = 'patent'">
+                        <xsl:value-of select="'特許'" />
+                    </xsl:when>
+                    <xsl:when test="normalize-space(.) = 'utility'">
+                        <xsl:value-of select="'実用新案登録'" />
+                    </xsl:when>
+                    <xsl:when test="normalize-space(.) = 'design'">
+                        <xsl:value-of select="'意匠登録'" />
+                    </xsl:when>
+                    <xsl:when test="normalize-space(.) = ''"><!--NULLの場合、編集しない-->
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="書誌編集エラー処理" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
         </xsl:element>
     </xsl:template>
+
+    <!-- ====================================================================
+     jp:use-of-das DAS利用
+     import from <xsl:template name="DAS利用編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:use-of-das">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:priority-claim">
+                        <xsl:value-of select="'【優先権証明書に係る付与】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【本出願に係る付与】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:priority-claim">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="ancestor::jp:contents-of-amendment">
+                                <xsl:sequence select="2" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="0" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:when test="normalize-space(.) = '1'">
+                        <xsl:value-of select="'希望'" />
+                    </xsl:when>
+                    <xsl:when test="normalize-space(.) = ''"><!--NULLの場合、編集しない-->
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="書誌編集エラー処理" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:doc-number 文書番号
+     import from <xsl:template name="文書番号編集">
+     ====================================================================-->
+    <xsl:template match="jp:doc-number">
+        <xsl:variable name="law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:application-reference">
+                        <xsl:choose>
+                            <xsl:when
+                                test="ancestor::jp:application-reference [@appl-type = 'application']">
+                                <xsl:value-of select="'【出願番号】'" />
+                            </xsl:when>
+                            <xsl:when
+                                test="ancestor::jp:application-reference [@appl-type = 'international-application']">
+                                <xsl:value-of select="'【国際出願番号】'" />
+                            </xsl:when>
+                            <xsl:when
+                                test="ancestor::jp:application-reference [@appl-type = 'registration']">
+                                <xsl:choose>
+                                    <xsl:when test="$law = 'patent'">
+                                        <xsl:value-of select="'【特許番号】'" />
+                                    </xsl:when>
+                                    <xsl:when test="$law = 'utility'">
+                                        <xsl:value-of select="'【実用新案登録番号】'" />
+                                    </xsl:when>
+                                    <xsl:when test="$law = 'design'">
+                                        <xsl:value-of select="'【意匠登録番号】'" />
+                                    </xsl:when>
+                                    <xsl:when test="$law = 'trademark'">
+                                        <xsl:value-of select="'【商標登録番号】'" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="'【登録番号】'" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:when
+                                test="ancestor::jp:application-reference [@appl-type = 'examined-pub']">
+                                <xsl:value-of select="'【出願公告番号】'" />
+                            </xsl:when>
+                            <xsl:when
+                                test="ancestor::jp:application-reference [@appl-type = 'un-examined-pub']">
+                                <xsl:value-of select="'【出願公開番号】'" />
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:appeal-reference">
+                        <xsl:value-of select="'【審判番号】'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-doc-location-info">
+                        <xsl:value-of select="'【提供国（機関）における出願の番号】'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-claim">
+                        <xsl:value-of select="'【出願番号】'" />
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:application-reference or ancestor::jp:appeal-reference">
+                        <xsl:choose>
+                            <xsl:when
+                                test="ancestor::jp:application-reference
+                        and ancestor::jp:application-reference [@appl-type = 'registration']">
+                                <xsl:choose>
+                                    <xsl:when
+                                        test="ancestor::jp:indication-of-case-article
+                           and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
+                             or $node = 'jp:demand-e854' or $node = 'jp:demand-e862') ">
+                                        <xsl:sequence select="0" />
+                                    </xsl:when>
+                                    <xsl:when test="ancestor::jp:annexation-payment">
+                                        <xsl:sequence select="0" />
+                                    </xsl:when>
+                                    <xsl:when
+                                        test="ancestor::jp:indication-of-case-article
+                           and ($node = 'jp:etcetera-a623' or $node = 'jp:etcetera-a624' or $node = 'jp:etcetera-a915')
+                           and $kind-of-law = 'utility'
+                           and string-length(normalize-space(ancestor::jp:application-reference/jp:document-id/jp:date)) = 0">
+                                        <xsl:choose>
+                                            <xsl:when
+                                                test="//jp:application-reference/@appl-type != 'registration'">
+                                                <xsl:sequence select="2" />
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:sequence select="0" />
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:sequence select="2" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when
+                                        test="ancestor::jp:indication-of-case-article
+                           and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
+                             or $node = 'jp:demand-e854' or $node = 'jp:demand-e862') ">
+                                        <xsl:sequence select="0" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:sequence select="2" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-doc-location-info">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-claim">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="normalize-space(.) = ''" />
+                            <xsl:otherwise>
+                                <xsl:call-template name="文書番号内容編集" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:name 氏名又は名称
+     import from <xsl:template name="氏名又は名称編集">
+     ====================================================================-->
+    <xsl:template match="jp:name">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:inventor">
+                        <xsl:value-of select="'【氏名】'" />
+                    </xsl:when>
+                    <xsl:when test=" parent::jp:bank-account">
+                        <xsl:value-of select="'【口座名義人】'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:representative">
+                        <xsl:choose>
+                            <xsl:when
+                                test="(ancestor::jp:attorney-disappear-article
+                          or ancestor::jp:attorney-change-article)
+                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
+                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
+                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
+                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
+                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
+                          or $node = 'jp:attorney-a7437') ">
+                                <xsl:call-template name="名称編集">
+                                    <xsl:with-param name="type" select="1" />
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="名称編集">
+                                    <xsl:with-param name="type" select="1" />
+                                </xsl:call-template>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when
+                                test="(ancestor::jp:attorney-disappear-article
+                          or ancestor::jp:attorney-change-article)
+                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
+                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
+                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
+                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
+                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
+                          or $node = 'jp:attorney-a7437') ">
+                                <xsl:value-of select="'【氏名又は名称】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【氏名又は名称】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:inventor">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when test=" parent::jp:bank-account">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:representative">
+                        <xsl:choose>
+                            <xsl:when
+                                test="(ancestor::jp:attorney-disappear-article
+                          or ancestor::jp:attorney-change-article)
+                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
+                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
+                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
+                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
+                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
+                          or $node = 'jp:attorney-a7437') ">
+                                <xsl:sequence select="3" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="2" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when
+                                test="(ancestor::jp:attorney-disappear-article
+                          or ancestor::jp:attorney-change-article)
+                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
+                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
+                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
+                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
+                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
+                          or $node = 'jp:attorney-a7437') ">
+                                <xsl:sequence select="3" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="2" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:original-language-of-name 氏名又は名称原語表記
+     import from <xsl:template name="氏名又は名称原語表記編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:original-language-of-name">
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:representative">
+                        <xsl:call-template name="名称編集">
+                            <xsl:with-param name="type" select="2" />
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【氏名又は名称原語表記】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="2" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+
+    <!-- ====================================================================
+     jp:registered-number 識別番号 import from <xsl:template name="識別番号編集">
+     jp:office-address 就業場所 import from <xsl:template name="就業場所編集">
+     jp:contact 連絡先 import from <xsl:template name="連絡先編集">
+     jp:text 住所又は居所 import from <xsl:template name="住所又は居所編集">
+     jp:relation-attorney-special-matter 代理関係の特記事項 import from <xsl:template name="代理関係の特記事項編集">
+     jp:phone 電話番号 import from <xsl:template name="電話番号編集">
+     jp:fax ファクシミリ番号 import from <xsl:template name="ファクシミリ番号編集">
+     jp:kana フリガナ import from <xsl:template name="フリカナ編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:registered-number | jp:office-address | jp:contact | jp:text |
+     jp:relation-attorney-special-matter | jp:phone | jp:fax | jp:kana">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="name() = 'jp:registered-number'">
+                        <xsl:value-of select="'【識別番号】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:office-address'">
+                        <xsl:value-of select="'【就業場所】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:contact'">
+                        <xsl:value-of select="'【連絡先】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:text'">
+                        <xsl:value-of select="'【住所又は居所】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:relation-attorney-special-matter'">
+                        <xsl:value-of select="'【代理関係の特記事項】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:phone'">
+                        <xsl:value-of select="'【電話番号】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:fax'">
+                        <xsl:value-of select="'【ファクシミリ番号】'" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'jp:kana'">
+                        <xsl:value-of select="'【フリガナ】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【unknown】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="(ancestor::jp:attorney-disappear-article
+                      or ancestor::jp:attorney-change-article)
+                    and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
+                      or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
+                      or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
+                      or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
+                      or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
+                      or $node = 'jp:attorney-a7437') ">
+                        <xsl:sequence select="3" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="2" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+
+    <!-- ====================================================================
+     jp:country 国コード
+     import from <xsl:template name="国コード編集">
+     ====================================================================-->
+    <xsl:template match="jp:country">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:application-country-article">
+                        <xsl:value-of select="'【出願国・地域名】'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-doc-location-info">
+                        <xsl:value-of select="'【優先権証明書提供国（機関）】'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-claim">
+                        <xsl:value-of select="'【国・地域名】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【国籍・地域】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:application-country-article">
+                        <xsl:sequence select="0" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-doc-location-info">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:priority-claim">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="2" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="国名県名変換" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:receipt-number 受付番号
+     import from <xsl:template name="受付番号編集">
+     ====================================================================-->
+    <xsl:template match="jp:receipt-number">
+        <xsl:variable name="kinddoc">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:value-of select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$node" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:variable name="c-payment">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:value-of
+                        select="substring(ancestor::jp:contents-of-amendment/@jp:kind-of-document,1,11)" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$payment" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:choose>
+                            <xsl:when test="parent::jp:amendment-group">
+                                <xsl:choose>
+                                    <xsl:when test="$kinddoc = 'jp:amendment-a524'">
+                                        <xsl:value-of select="'【訂正対象書類受付番号】'" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="'【補正対象書類受付番号】'" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【受付番号】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="ancestor::jp:indication-of-case-article">
+                                <xsl:choose>
+                                    <xsl:when
+                                        test="$c-payment = 'jp:payment-'
+                            or $kinddoc = 'jp:demand-e853'
+                            or $kinddoc = 'jp:demand-e854'
+                            or $kinddoc = 'jp:demand-e862' ">
+                                        <xsl:value-of select="'【受付番号】'" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="'【受付番号】'" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:when test="parent::jp:amendment-group">
+                                <xsl:choose>
+                                    <xsl:when test="$kinddoc = 'jp:amendment-a524'">
+                                        <xsl:value-of select="'【訂正対象書類受付番号】'" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="'【補正対象書類受付番号】'" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【受付番号】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="ancestor::jp:indication-of-case-article">
+                                <xsl:choose>
+                                    <xsl:when
+                                        test="$c-payment = 'jp:payment-'
+                            or $kinddoc = 'jp:demand-e853'
+                            or $kinddoc = 'jp:demand-e854'
+                            or $kinddoc = 'jp:demand-e862' ">
+                                        <xsl:sequence select="0" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:sequence select="2" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:when test="parent::jp:amendment-group">
+                                <xsl:sequence select="1" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="2" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:relation-of-case 事件との関係
+     import from <xsl:template name="事件との関係編集">
+     ====================================================================-->
+    <xsl:template match="jp:relation-of-case">
+        <xsl:variable name="kinddoc">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:choose>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment">
+                            <xsl:value-of
+                                select="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-document" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of
+                                select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$node" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="$kinddoc = 'jp:etcetera-a621' or $kinddoc = 'jp:etcetera-a625'">
+                        <xsl:value-of select="'【出願人との関係】'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:presenter-article">
+                        <xsl:value-of select="'【請求人との関係】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【事件との関係】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="2" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:fee 納付方法・納付金額
+     import from <xsl:template name="納付金額編集">
+     ====================================================================-->
+    <xsl:template match="jp:fee">
+        <xsl:variable name="kinddoc">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:choose>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment">
+                            <xsl:value-of
+                                select="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-document" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of
+                                select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$node" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when
+                        test="$kinddoc = 'jp:payment-r110' or $kinddoc = 'jp:payment-r111'
+                     or $kinddoc = 'jp:payment-r112' or $kinddoc = 'jp:payment-r113'
+                     or $kinddoc = 'jp:payment-r114' or $kinddoc = 'jp:payment-r115'
+                     or $kinddoc = 'jp:payment-r21' or $kinddoc = 'jp:payment-r210'
+                     or $kinddoc = 'jp:payment-r211' ">
+                        <xsl:value-of select="'【補充金額】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test="parent::jp:amount-paid and not(ancestor::jp:contents-of-amendment)">
+                        <xsl:value-of select="'【納付済金額】'" />
+                    </xsl:when>
+                    <xsl:when test="parent::jp:amount-paid ">
+                        <xsl:value-of select="'【納付済金額】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test=" parent::jp:amount-restoration-claim and not(ancestor::jp:contents-of-amendment)">
+                        <xsl:value-of select="'【返還請求金額】'" />
+                    </xsl:when>
+                    <xsl:when test=" parent::jp:amount-restoration-claim ">
+                        <xsl:value-of select="'【返還請求金額】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test="parent::jp:amount-proper-payment and not(ancestor::jp:contents-of-amendment)">
+                        <xsl:value-of select="'【適正納付金額】'" />
+                    </xsl:when>
+                    <xsl:when test="parent::jp:amount-proper-payment ">
+                        <xsl:value-of select="'【適正納付金額】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test="($kinddoc = 'jp:etcetera-a914') and
+                                  ancestor::jp:charge-article">
+                        <xsl:value-of select="'【加算金額】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【納付金額】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="$kinddoc = 'jp:payment-r110' or $kinddoc = 'jp:payment-r111'
+                     or $kinddoc = 'jp:payment-r112' or $kinddoc = 'jp:payment-r113'
+                     or $kinddoc = 'jp:payment-r114' or $kinddoc = 'jp:payment-r115'
+                     or $kinddoc = 'jp:payment-r21' or $kinddoc = 'jp:payment-r210'
+                     or $kinddoc = 'jp:payment-r211' ">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when
+                        test="parent::jp:amount-paid and not(ancestor::jp:contents-of-amendment)">
+                        <xsl:sequence select="0" />
+                    </xsl:when>
+                    <xsl:when test="parent::jp:amount-paid ">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when
+                        test=" parent::jp:amount-restoration-claim and not(ancestor::jp:contents-of-amendment)">
+                        <xsl:sequence select="0" />
+                    </xsl:when>
+                    <xsl:when test=" parent::jp:amount-restoration-claim ">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when
+                        test="parent::jp:amount-proper-payment and not(ancestor::jp:contents-of-amendment)">
+                        <xsl:sequence select="0" />
+                    </xsl:when>
+                    <xsl:when test="parent::jp:amount-proper-payment ">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:when
+                        test="($kinddoc = 'jp:etcetera-a914') and
+                                  ancestor::jp:charge-article">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="2" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="./@amount" />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="./@amount" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when
+                                test="./@amount != '' and string(number(./@amount)) != 'NaN'">
+                                <xsl:value-of
+                                    select="format-number(xs:integer(normalize-space(./@amount)), '#,###')" />
+                                <xsl:value-of select="'円'" />
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:account 予納台帳番号・納付書番号
+     import from <xsl:template name="予納台帳番号編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:account">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="./@account-type = 'deposit'">
+                        <xsl:value-of select="'【予納台帳番号】'" />
+                    </xsl:when>
+                    <xsl:when test="./@account-type = 'form'">
+                        <xsl:value-of select="'【納付書番号】'" />
+                    </xsl:when>
+                    <xsl:when test="./@account-type = 'electronic-cash'">
+                        <xsl:value-of select="'【納付番号】'" />
+                    </xsl:when>
+                    <xsl:when test="./@account-type = 'transfer'">
+                        <xsl:value-of select="'【振替番号】'" />
+                    </xsl:when>
+                    <xsl:when test="./@account-type = 'credit-card'">
+                        <xsl:value-of select="'【指定立替納付】'" />
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="2" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@account-type = 'credit-card'">
+                        <xsl:if test="./@jp:error-code">
+                            <xsl:value-of select="./@number" />
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="./@number" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:if test="./@account-type = 'electronic-cash'">
+                <xsl:if test="string-length(normalize-space(./@number)) = 16">
+                    <xsl:element name="converted-text">
+                        <xsl:call-template name="split-at-n-chars">
+                            <xsl:with-param name="input-string"
+                                select="normalize-space(./@number)" />
+                            <xsl:with-param name="n-chars" select="4" />
+                            <xsl:with-param name="sep" select="'-'" />
+                        </xsl:call-template>
+                    </xsl:element>
+                </xsl:if>
+            </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:document-name 物件名
+     import from <xsl:template name="物件名編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:document-name">
+        <xsl:variable name="node">
+            <xsl:choose>
+                <xsl:when
+                    test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment">
+                    <xsl:value-of
+                        select="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-document" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of
+                        select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:list-group">
+                        <xsl:value-of select="'【物件名】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:etcetera-a831'">
+                        <xsl:value-of select="'【提出する刊行物等】'" />
+                    </xsl:when>
+                    <xsl:when test="$node = 'jp:presentment-a82'">
+                        <xsl:value-of select="'【提出する物件】'" />
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:choose>
+                            <xsl:when test="ancestor::jp:list-group">
+                                <xsl:sequence select="2" />
+                            </xsl:when>
+                            <xsl:when test="$node = 'jp:etcetera-a831'">
+                                <xsl:sequence select="2" />
+                            </xsl:when>
+                            <xsl:when test="$node = 'jp:presentment-a82'">
+                                <xsl:sequence select="2" />
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="ancestor::jp:list-group">
+                                <xsl:sequence select="2" />
+                            </xsl:when>
+                            <xsl:when test="$node = 'jp:etcetera-a831'">
+                                <xsl:sequence select="0" />
+                            </xsl:when>
+                            <xsl:when test="$node = 'jp:presentment-a82'">
+                                <xsl:sequence select="0" />
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:list-group">
+                        <xsl:value-of select=". || '　' || following-sibling::jp:number-of-object" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="." />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:return-request 返還の申出
+     import from <xsl:template name="返還の申出編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:return-request">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【返還の申出】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="3" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="normalize-space(.) = '0'">
+                                <xsl:value-of select="'無'" />
+                            </xsl:when>
+                            <xsl:when test="normalize-space(.) = '1'">
+                                <xsl:value-of select="'有'" />
+                            </xsl:when>
+                            <xsl:when test="normalize-space(.) = ''">
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="書誌編集エラー処理" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:submission-date    提出日 
+     jp:dispatch-date      発送日 
+     jp:notice-filing-date 出願番号通知の出願日 
+     jp:proof-filing-date  証明しようとする出願日
+     jp:submit-date-of-amendment 補正書の提出年月日
+     ====================================================================-->
+    <xsl:template
+        match="jp:submission-date | jp:dispatch-date | jp:notice-filing-date |
+        jp:proof-filing-date | jp:submit-date-of-amendment">
+        <xsl:apply-templates select="jp:date" />
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:date 日付
+     ====================================================================-->
+    <xsl:template
+        match="jp:date">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:call-template name="日付タイトル" />
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space()" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="0" />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:call-template name="format-date-jp">
+                    <xsl:with-param name="date-str" select="normalize-space()" />
+                    <xsl:with-param name="law" select="$kind-of-law" />
+                </xsl:call-template>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ===================================================================
+      tag, jp-tag, indent-level=2, and text="." with no amendment context.
+      ===================================================================-->
+    <xsl:template
+        match="jp:relief-sought-in-demands | jp:generated-access-code | 
+         jp:financial-institution-name | jp:account-type | jp:account-number
+         jp:share | jp:representative-applicant |  jp:office-in-japan |
+         jp:office | jp:general-power-of-attorney-id |
+         jp:original-language-of-address | jp:kind-of-appeals |
+         jp:legal-entity-property">
+        <xsl:variable name="params"
+            select="key('item-type-1-key', name())" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="2" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:key name="item-type-1-key" match="parameter" use="@tag" />
+    <xsl:variable name="item-type-1-parameters">
+        <parameter tag="jp:relief-sought-in-demands" jp-tag="【請求の趣旨】" />
+        <parameter tag="jp:generated-access-code" jp-tag="【アクセスコード】" />
+        <parameter tag="jp:financial-institution-name" jp-tag="【金融機関名】" />
+        <parameter tag="jp:account-type" jp-tag="【口座種別】" />
+        <parameter tag="jp:account-number" jp-tag="【口座番号】" />
+        <parameter tag="jp:share" jp-tag="【持分】" />
+        <parameter tag="jp:representative-applicant" jp-tag="【代表出願人】" />
+        <parameter tag="jp:office-in-japan" jp-tag="【日本における営業所】" />
+        <parameter tag="jp:office" jp-tag="【営業所】" />
+        <parameter tag="jp:general-power-of-attorney-id" jp-tag="【包括委任状番号】" />
+        <parameter tag="jp:original-language-of-address" jp-tag="【住所又は居所原語表記】" />
+        <parameter tag="jp:kind-of-appeals" jp-tag="【審判の種別】" />
+        <parameter tag="jp:legal-entity-property" jp-tag="【法人の法的性質】" />
+    </xsl:variable>
+
+    <!-- ===================================================================
+      tag, jp-tag, indent-level=0 or 2 depends on amendments, and text="."
+      ===================================================================-->
+    <xsl:template
+        match="jp:addressed-to-person | jp:trust-relation | jp:secret-design-term |
+        jp:law-of-industrial-regenerate | jp:dispatch-number |
+        jp:name-of-old-depository | jp:old-depository-number |
+        jp:name-of-new-depository | jp:new-depository-number |
+        jp:number-of-class | jp:number-of-annexation | jp:srep-request-no
+        jp:citation | jp:kind-of-accelerated-examination">
+        <xsl:variable name="params"
+            select="key('item-type-2-key', name())" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="$params/@indent-level-amendment" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="$params/@indent-level" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:key name="item-type-2-key" match="parameter" use="@tag" />
+    <xsl:variable name="item-type-2-parameters">
+        <parameter tag="jp:addressed-to-person" jp-tag="【あて先】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:trust-relation" jp-tag="【信託関係事項】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:secret-design-term" jp-tag="【秘密にすることを請求する期間】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:law-of-industrial-regenerate" jp-tag="【国等の委託研究の成果に係る記載事項】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:dispatch-number" jp-tag="【発送番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:name-of-old-depository" jp-tag="【旧寄託機関の名称】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:old-depository-number" jp-tag="【旧受託番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:name-of-new-depository" jp-tag="【新寄託機関の名称】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:new-depository-number" jp-tag="【新受託番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:number-of-class" jp-tag="【商品及び役務の区分の数】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:number-of-annexation" jp-tag="【併合件数】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:srep-request-no" jp-tag="【調査報告番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:citation" jp-tag="【援用の表示】"
+            indent-level="3"
+            indent-level-amendment="2" />
+        <parameter tag="jp:kind-of-accelerated-examination" jp-tag="【早期審査の種別】"
+            indent-level="0"
+            indent-level-amendment="2" />
+    </xsl:variable>
+
+
+    <schema:object name="document-code">
+        <schema:property name="tag" type="string" const="jp:document-code" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
+    <schema:object name="file-reference-id">
+        <schema:property name="tag" type="string" const="jp:file-reference-id" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="share-rate">
+        <schema:property name="tag" type="string" const="jp:share-rate" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="dtext">
+        <schema:property name="tag" type="string" const="jp:dtext" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="payment-years">
+        <schema:property name="tag" type="string" const="jp:payment-years" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="proof-necessity">
+        <schema:property name="tag" type="string" const="jp:proof-necessity" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="notice-contents-group">
+        <schema:property name="tag" type="string" const="jp:notice-contents-group" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="ip-type">
+        <schema:property name="tag" type="string" const="jp:ip-type" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="use-of-das">
+        <schema:property name="tag" type="string" const="jp:use-of-das" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="name">
+        <schema:property name="tag" type="string" const="jp:name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="original-language-of-name">
+        <schema:property name="tag" type="string" const="jp:original-language-of-name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="registered-number">
+        <schema:property name="tag" type="string" const="jp:registered-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="office-address">
+        <schema:property name="tag" type="string" const="jp:office-address" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="contact">
+        <schema:property name="tag" type="string" const="jp:contact" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="text">
+        <schema:property name="tag" type="string" const="jp:text" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="relation-attorney-special-matter">
+        <schema:property name="tag" type="string" const="jp:relation-attorney-special-matter" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="phone">
+        <schema:property name="tag" type="string" const="jp:phone" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="fax">
+        <schema:property name="tag" type="string" const="jp:fax" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="kana">
+        <schema:property name="tag" type="string" const="jp:kana" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="country">
+        <schema:property name="tag" type="string" const="jp:country" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="receipt-number">
+        <schema:property name="tag" type="string" const="jp:receipt-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="jp:relation-of-case">
+        <schema:property name="tag" type="string" const="jp:relation-of-case" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="fee">
+        <schema:property name="tag" type="string" const="jp:fee" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
+    <schema:object name="account">
+        <schema:property name="tag" type="string" const="jp:account" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
+    <schema:object name="document-name">
+        <schema:property name="tag" type="string" const="jp:document-name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="return-request">
+        <schema:property name="tag" type="string" const="jp:return-request" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object name="date">
+        <schema:property name="tag" type="string" const="jp:date" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
+    <schema:object name="relief-sought-in-demands">
+        <schema:property name="tag" type="string"
+            const="jp:relief-sought-in-demands" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="generated-access-code">
+        <schema:property name="tag" type="string"
+            const="jp:generated-access-code" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="financial-institution-name">
+        <schema:property name="tag" type="string"
+            const="jp:financial-institution-name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="account-type">
+        <schema:property name="tag" type="string"
+            const="jp:account-type" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="account-number">
+        <schema:property name="tag" type="string"
+            const="jp:account-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="share">
+        <schema:property name="tag" type="string"
+            const="jp:share" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="representative-applicant">
+        <schema:property name="tag" type="string"
+            const="jp:representative-applicant" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="office-in-japan">
+        <schema:property name="tag" type="string"
+            const="jp:office-in-japan" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="office">
+        <schema:property name="tag" type="string"
+            const="jp:office" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="general-power-of-attorney-id">
+        <schema:property name="tag" type="string"
+            const="jp:general-power-of-attorney-id" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="original-language-of-address">
+        <schema:property name="tag" type="string"
+            const="jp:original-language-of-address" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="kind-of-appeals">
+        <schema:property name="tag" type="string"
+            const="jp:kind-of-appeals" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="legal-entity-property">
+        <schema:property name="tag" type="string"
+            const="jp:legal-entity-property" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="addressed-to-person">
+        <schema:property name="tag" type="string"
+            const="jp:addressed-to-person" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="trust-relation">
+        <schema:property name="tag" type="string"
+            const="jp:trust-relation" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="secret-design-term">
+        <schema:property name="tag" type="string"
+            const="jp:secret-design-term" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="law-of-industrial-regenerate">
+        <schema:property name="tag" type="string"
+            const="jp:law-of-industrial-regenerate" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="dispatch-number">
+        <schema:property name="tag" type="string"
+            const="jp:dispatch-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="name-of-old-depository">
+        <schema:property name="tag" type="string"
+            const="jp:name-of-old-depository" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="old-depository-number">
+        <schema:property name="tag" type="string"
+            const="jp:old-depository-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="name-of-new-depository">
+        <schema:property name="tag" type="string"
+            const="jp:name-of-new-depository" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="new-depository-number">
+        <schema:property name="tag" type="string"
+            const="jp:new-depository-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="number-of-class">
+        <schema:property name="tag" type="string"
+            const="jp:number-of-class" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="number-of-annexation">
+        <schema:property name="tag" type="string"
+            const="jp:number-of-annexation" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="srep-request-no">
+        <schema:property name="tag" type="string"
+            const="jp:srep-request-no" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="citation">
+        <schema:property name="tag" type="string"
+            const="jp:citation" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <schema:object name="kind-of-accelerated-examination">
+        <schema:property name="tag" type="string"
+            const="jp:kind-of-accelerated-examination" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <!-- =========== End of the type B elements ===========-->
+
+
+    <!-- ====================================================================
+     jp:special-mention-matter-article/jp:article 条文
+     ====================================================================-->
+    <xsl:template match="jp:article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:choose>
+                <xsl:when test="position() = 1">
+                    <xsl:element name="jp-tag">
+                        <xsl:value-of select="'【特記事項】'" />
+                    </xsl:element>
+                    <xsl:choose>
+                        <xsl:when test="ancestor::jp:contents-of-amendment">
+                            <xsl:element name="indent-level">
+                                <xsl:value-of select="2" />
+                            </xsl:element>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:element name="indent-level">
+                                <xsl:value-of select="0" />
+                            </xsl:element>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:element name="jp-tag">
+                        <xsl:value-of select="'　　　　　　　　　　　'" />
+                    </xsl:element>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:call-template name="convert-special-mention-matter-article">
+                    <xsl:with-param name="article" select="normalize-space()" />
+                    <xsl:with-param name="kind-of-law" select="$kind-of-law" />
+                </xsl:call-template>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:ipc-article
+         jp:ipc-article <- 国際特許分類編集 
+         ====================================================================-->
+    <xsl:template
+        match="jp:ipc-article">
+        <xsl:for-each select="jp:ipc">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:text>jp:ipc</xsl:text>
+                </xsl:element>
+                <xsl:choose>
+                    <xsl:when test="position() = 1">
+                        <xsl:element name="jp-tag">
+                            <xsl:value-of select="'【国際特許分類】'" />
+                        </xsl:element>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:element name="jp-tag">
+                            <xsl:value-of select="''" />
+                        </xsl:element>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:element name="text">
+                    <xsl:value-of select="normalize-space()" />
+                </xsl:element>
+                <xsl:element name="indent-level">
+                    <xsl:choose>
+                        <xsl:when test="ancestor::jp:contents-of-amendment">
+                            <xsl:sequence select="2" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:sequence select="0" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:element>
+            </xsl:element>
+        </xsl:for-each>
+    </xsl:template>
+
+
+    <!-- ====================================================================
+     jp:priority-doc-location-info
+     ====================================================================-->
+    <!-- 優先権書類の所在情報     -->
+    <xsl:template match="jp:priority-doc-location-info">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:country" />
+            <xsl:apply-templates select="jp:doc-number" />
+        </xsl:element>
+    </xsl:template>
+
+
+    <!-- ====================================================================
+     jp:contents-part-article
+     ====================================================================-->
+    <!-- 記部の記事 -->
+    <xsl:template match="jp:contents-part-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:contents-part-group" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:contents-part-group
+     ====================================================================-->
+    <!-- 記部 -->
+    <xsl:template
+        match="jp:contents-part-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:contents-name" />
+            <xsl:apply-templates select="p" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:contents-name
+     ====================================================================-->
+    <!--  項目名 -->
+    <xsl:template match="jp:contents-name">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【' || . || '】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="2" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:presenter-article
+     ====================================================================-->
+    <!-- 提出者の記事 -->
+    <xsl:template
+        match="jp:presenter-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:applicant" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:payment
+     ====================================================================-->
+    <!-- 納付 -->
+    <xsl:template match="jp:payment">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+
+            <xsl:apply-templates select="jp:account" />
+            <xsl:apply-templates select="jp:fee" />
+
+            <!-- 未サポート -->
+            <xsl:if test="fee-total or credit-card or other-method">
+                <xsl:apply-templates select="fee-total | credit-card | other-method" />
+            </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:amount-paid、jp:amount-proper-payment、jp:amount-restoration-claim
+     ====================================================================-->
+    <!-- 納付済金額、適正納付金額、返還請求金額 -->
+    <xsl:template
+        match="jp:amount-paid | jp:amount-proper-payment | jp:amount-restoration-claim">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:fee" />
+        </xsl:element>
+    </xsl:template>
+
+
+    <!-- ====================================================================
+     jp:nationality
+     ====================================================================-->
+    <!-- 国籍 -->
+    <xsl:template match="jp:nationality">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:country" />
+        </xsl:element>
+    </xsl:template>
+
 
     <!-- ====================================================================
      jp:charge-article
@@ -613,7 +2412,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$payment = 'jp:payment-'">
                         <xsl:choose>
@@ -635,7 +2434,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="$payment = 'jp:payment-'">
                         <xsl:choose>
@@ -681,46 +2480,6 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:dtext
-     import from <xsl:template name="その他編集">
-     ====================================================================-->
-    <!-- その他、提出物件の特記事項 -->
-    <xsl:template
-        match="jp:dtext">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:submission-object-list-article">
-                        <xsl:value-of select="'【提出物件の特記事項】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【その他】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:submission-object-list-article">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:submission-object-list-article
      ====================================================================-->
     <!-- 提出物件の目録 -->
@@ -730,10 +2489,10 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【提出物件の目録】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -748,45 +2507,29 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:proof-necessity
-     imoprt from <xsl:template name="プルーフの要否編集">
+     jp:parent-application-article
+
+     import from <xsl:template name="原出願の表示編集">
      ====================================================================-->
-    <!-- プルーフの要否 -->
+    <!-- 原出願の表示 -->
     <xsl:template
-        match="jp:proof-necessity">
+        match="jp:parent-application-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【プルーフの要否】'" />
-            </xsl:element>
-            <xsl:element name="text">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
+                    <xsl:when test="./@jp:kind-of-application = 'based-on-utility'">
+                        <xsl:value-of select="'【基礎とした実用新案登録及びその実用新案登録出願の表示】'" />
                     </xsl:when>
+
                     <xsl:otherwise>
-                        <xsl:choose>
-
-                            <xsl:when test="normalize-space(.) = '0'">
-                                <xsl:value-of select="'不要'" />
-                            </xsl:when>
-
-                            <xsl:when test="normalize-space(.) = '1'">
-                                <xsl:value-of select="'要'" />
-                            </xsl:when>
-
-                            <xsl:when test="normalize-space(.) = ''">
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="書誌編集エラー処理" />
-                            </xsl:otherwise>
-                        </xsl:choose>
+                        <xsl:value-of select="'【原出願の表示】'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -796,6 +2539,18 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+
+            <xsl:apply-templates
+                select="jp:application-reference [@appl-type = 'registration']//jp:doc-number" />
+            <xsl:apply-templates select="jp:application-reference [@appl-type = 'registration']" />
+            <xsl:apply-templates
+                select="jp:application-reference [@appl-type = 'application']//jp:doc-number" />
+            <xsl:apply-templates select="jp:application-reference [@appl-type = 'application']" />
+            <xsl:apply-templates
+                select="jp:application-reference [@appl-type = 'international-application']//jp:doc-number" />
+            <xsl:apply-templates
+                select="jp:application-reference [@appl-type = 'international-application']" />
+            <xsl:apply-templates select="jp:file-reference-id" />
         </xsl:element>
     </xsl:template>
 
@@ -809,10 +2564,62 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'＊＊＊'" />
             </xsl:element>
             <xsl:apply-templates select="jp:rule-outside-group" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:rule-outside-group
+     ====================================================================-->
+    <!-- 規定外記事 -->
+    <xsl:template
+        match="jp:rule-outside-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:item-name" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:item-name
+     import from <xsl:template name="項目名編集">
+     ====================================================================-->
+    <!-- 項目名 -->
+    <xsl:template
+        match="jp:item-name">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【' || . || '】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="0" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+            <xsl:apply-templates select="following-sibling::jp:item-content" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:item-content
+     ====================================================================-->
+    <xsl:template match="jp:item-content">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -883,7 +2690,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:application-a631' or $node = 'jp:application-a632' or
@@ -935,7 +2742,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:application-a631' or $node = 'jp:application-a632' or
@@ -1057,200 +2864,6 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     jp:attorney-disappear-article
-     ====================================================================-->
-    <!-- 消滅する代理人の記事     -->
-    <xsl:template
-        match="jp:attorney-disappear-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:agent" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:proceeded-attorney-article
-     ====================================================================-->
-    <!-- 手続した代理人の記事 -->
-    <xsl:template
-        match="jp:proceeded-attorney-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:agent" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:attorney-of-case-article
-     ====================================================================-->
-    <!-- 事件の出願人の代理人の記事 -->
-    <xsl:template
-        match="jp:attorney-of-case-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:agent" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:applicant-of-case-article
-     ====================================================================-->
-    <!-- 事件の出願人の記事 -->
-    <xsl:template
-        match="jp:applicant-of-case-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:applicant" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:dispatch-number
-     import from <xsl:template name="発送番号編集">
-     ====================================================================-->
-    <!-- 発送番号 -->
-    <xsl:template
-        match="jp:dispatch-number">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【発送番号】'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:dispatch-date
-     ====================================================================-->
-    <!-- 発送日 -->
-    <xsl:template
-        match="jp:dispatch-date">
-        <xsl:apply-templates select="jp:date" />
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:notice-contents-group
-      import from 届出の内容編集
-     ====================================================================-->
-    <!-- 届出の内容 -->
-    <xsl:template
-        match="jp:notice-contents-group">
-
-        <xsl:variable name="node">
-            <xsl:choose>
-                <xsl:when test="ancestor::jp:contents-of-amendment">
-                    <xsl:value-of select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$node" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="$node = 'jp:applicant-a55'">
-                        <xsl:value-of select="'【申立の内容】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:etcetera-a601'">
-                        <xsl:value-of select="'【請求の内容】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:etcetera-a821' or $node = 'jp:payment-r220'">
-                        <xsl:value-of select="'【補足の内容】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:etcetera-a831'">
-                        <xsl:value-of select="'【提出の理由】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:etcetera-a623' or $node = 'jp:etcetera-a624'">
-                        <xsl:value-of select="'【評価の請求に係る請求項の表示】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:application-a631'">
-                        <xsl:value-of select="'【確認事項】'" />
-                    </xsl:when>
-                    <xsl:when
-                        test="$node = 'jp:application-a632' or $node = 'jp:application-a635'
-                     or $node = 'jp:amendment-a526' or $node = 'jp:amendment-a528'
-                     or $node = 'jp:amendment-a5210' or $node = 'jp:amendment-a5212'">
-                        <xsl:value-of select="'【職権作成の表示】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:etcetera-a603'">
-                        <xsl:value-of select="'【請求の内容】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【届出の内容】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:notice-filing-date
-     ====================================================================-->
-    <!-- 出願番号通知の出願日 -->
-    <xsl:template
-        match="jp:notice-filing-date">
-        <xsl:apply-templates select="jp:date" />
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:proof-filing-date
-     ====================================================================-->
-    <!-- 証明しようとする出願日 -->
-    <xsl:template
-        match="jp:proof-filing-date">
-        <xsl:apply-templates select="jp:date" />
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:submit-date-of-amendment
-     ====================================================================-->
-    <!-- 補正書の提出年月日 -->
-    <xsl:template
-        match="jp:submit-date-of-amendment">
-        <xsl:apply-templates select="jp:date" />
-    </xsl:template>
 
     <!-- ====================================================================
      jp:number-of-claim
@@ -1285,7 +2898,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when
                         test="$kinddoc = 'jp:etcetera-a623' or $kinddoc = 'jp:etcetera-a624'">
@@ -1302,7 +2915,7 @@
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:choose>
@@ -1361,42 +2974,6 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:application-country-article
-     ====================================================================-->
-    <!-- 出願国名 -->
-    <xsl:template
-        match="jp:application-country-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:country" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:sequence-list
-     ====================================================================-->
-    <!-- 配列表 -->
-    <xsl:template
-        match="jp:sequence-list">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【配列表】'" />
-            </xsl:element>
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-
-        <!-- 未サポート -->
-        <xsl:if test="doc-page">
-            <xsl:apply-templates select="doc-page" />
-        </xsl:if>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:amendment-article
      ====================================================================-->
     <!-- 補正の記事 -->
@@ -1435,7 +3012,7 @@
                     <xsl:element name="tag">
                         <xsl:value-of select="name()" />
                     </xsl:element>
-                    <xsl:element name="jpTag">
+                    <xsl:element name="jp-tag">
                         <xsl:choose>
                             <xsl:when test="$sikibetu = 'jp:amendment-a524'">
                                 <xsl:value-of select="concat('【誤訳訂正',./@jp:serial-number,'】')" />
@@ -1445,7 +3022,7 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:element>
-                    <xsl:element name="indentLevel">
+                    <xsl:element name="indent-level">
                         <xsl:sequence select="2" />
                     </xsl:element>
                     <xsl:apply-templates select="*" />
@@ -1456,7 +3033,7 @@
                     <xsl:element name="tag">
                         <xsl:value-of select="name()" />
                     </xsl:element>
-                    <xsl:element name="jpTag">
+                    <xsl:element name="jp-tag">
                         <xsl:choose>
                             <xsl:when test="$sikibetu = 'jp:amendment-a524'">
                                 <xsl:value-of select="concat('【誤訳訂正',./@jp:serial-number,'】')" />
@@ -1466,7 +3043,7 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:element>
-                    <xsl:element name="indentLevel">
+                    <xsl:element name="indent-level">
                         <xsl:sequence select="0" />
                     </xsl:element>
                     <xsl:apply-templates select="jp:document-code" />
@@ -1505,7 +3082,7 @@
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$kinddoc = 'jp:amendment-a524'">
                         <xsl:value-of select="'【訂正対象項目名】'" />
@@ -1515,7 +3092,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -1538,10 +3115,10 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【手数料補正】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -1579,7 +3156,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$kinddoc = 'jp:amendment-a524'">
                         <xsl:value-of select="'【訂正方法】'" />
@@ -1615,7 +3192,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -1650,7 +3227,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$kinddoc = 'jp:amendment-a524'">
                         <xsl:value-of select="'【訂正の内容】'" />
@@ -1660,7 +3237,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -1684,10 +3261,10 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【審判事件の表示】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:sequence select="2" />
             </xsl:element>
         </xsl:element>
@@ -1699,138 +3276,6 @@
         <xsl:apply-templates select="jp:file-reference-id" />
     </xsl:template>
 
-    <!-- ====================================================================
-     jp:relief-sought-in-demands
-     ====================================================================-->
-    <!--   請求の趣旨 -->
-    <xsl:template
-        match="jp:relief-sought-in-demands">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【請求の趣旨】'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:contents-part-article
-     ====================================================================-->
-    <!-- 記部の記事 -->
-    <xsl:template match="jp:contents-part-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:contents-part-group" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:contents-part-group
-     ====================================================================-->
-    <!-- 記部 -->
-    <xsl:template
-        match="jp:contents-part-group">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:contents-name" />
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:presenter-article
-     ====================================================================-->
-    <!-- 提出者の記事 -->
-    <xsl:template
-        match="jp:presenter-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:applicant" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:article
-     ====================================================================-->
-    <!-- 条文 -->
-    <xsl:template
-        match="jp:article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:choose>
-                <xsl:when test="position() = 1">
-                    <xsl:element name="jpTag">
-                        <xsl:value-of select="'【特記事項】'" />
-                    </xsl:element>
-                    <xsl:choose>
-                        <xsl:when test="ancestor::jp:contents-of-amendment">
-                            <xsl:element name="indentLevel">
-                                <xsl:value-of select="2" />
-                            </xsl:element>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:element name="indentLevel">
-                                <xsl:value-of select="0" />
-                            </xsl:element>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:element name="jpTag">
-                        <xsl:value-of select="'　　　　　　　　　　　'" />
-                    </xsl:element>
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:call-template name="convert-special-mention-matter-article">
-                    <xsl:with-param name="article" select="normalize-space()" />
-                    <xsl:with-param name="kind-of-law" select="$kind-of-law" />
-                </xsl:call-template>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:date
-     ====================================================================-->
-    <!-- 日付 -->
-    <xsl:template
-        match="jp:date">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:call-template name="日付タイトル" />
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
-            </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:call-template name="format-date-jp">
-                    <xsl:with-param name="date-str" select="normalize-space()" />
-                    <xsl:with-param name="law" select="$kind-of-law" />
-                </xsl:call-template>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
 
     <!-- ====================================================================
      jp:application-reference
@@ -1886,7 +3331,6 @@
         </xsl:element>
     </xsl:template>
 
-
     <!-- ====================================================================
      先の出願日編集
      YYYYMMDD -> 元号YY年MM月DD日
@@ -1901,10 +3345,10 @@
             <xsl:element name="tag">
                 <xsl:value-of select="'jp:date'" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【出願日】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="($payment = 'jp:payment-' or $node = 'jp:demand-e853'
@@ -1920,7 +3364,7 @@
             <xsl:element name="text">
                 <xsl:value-of select=".//jp:date" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:choose>
                     <xsl:when test=".//jp:date/@jp:error-code">
                         <xsl:value-of select=".//jp:date" />
@@ -1956,7 +3400,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:choose>
@@ -1990,7 +3434,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:choose>
@@ -2063,10 +3507,10 @@
             </xsl:element>
             <xsl:choose>
                 <xsl:when test="ancestor::jp:presenter-article">
-                    <xsl:element name="jpTag">
+                    <xsl:element name="jp-tag">
                         <xsl:value-of select="'【提出者】'" />
                     </xsl:element>
-                    <xsl:element name="indentLevel">
+                    <xsl:element name="indent-level">
                         <xsl:sequence select="2" />
                     </xsl:element>
                 </xsl:when>
@@ -2180,59 +3624,6 @@
 
     </xsl:template>
 
-    <!-- ====================================================================
-     deceased-inventor
-     ====================================================================-->
-    <!-- 未サポート -->
-    <xsl:template
-        match="deceased-inventor">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-
-            <xsl:apply-templates
-                select="name | prefix | last-name | first-name | midle-name | suffix
-                               | iid | role | orgname | department | synonym
-                               | jp:registered-number" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     designated-states | designated-states-as-inventor
-     ====================================================================-->
-    <!-- 未サポート -->
-    <xsl:template
-        match="designated-states | designated-states-as-inventor">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-
-            <xsl:if test="./country[1]">
-                <xsl:apply-templates select="country[1]" />
-            </xsl:if>
-            <xsl:if test="region">
-                <xsl:apply-templates select="region/country" />
-            </xsl:if>
-            <xsl:if test="./country[2]">
-                <xsl:apply-templates select="country[2]" />
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     residence
-     ====================================================================-->
-    <!-- 未サポート -->
-    <xsl:template match="residence">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="country" />
-        </xsl:element>
-    </xsl:template>
 
     <!-- ====================================================================
      jp:agent
@@ -2245,7 +3636,7 @@
                 <xsl:value-of select="name()" />
             </xsl:element>
 
-            <!-- jpTag, indentLevel -->
+            <!-- jp-tag, indent-level -->
             <xsl:choose>
                 <xsl:when test="ancestor::jp:contents-of-amendment">
                     <xsl:call-template name="代理人編集">
@@ -2323,137 +3714,6 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:ip-type
-     ====================================================================-->
-    <!-- 出願の区分 -->
-    <xsl:template match="jp:ip-type">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【出願の区分】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:when test="normalize-space(.) = 'patent'">
-                        <xsl:value-of select="'特許'" />
-                    </xsl:when>
-                    <xsl:when test="normalize-space(.) = 'utility'">
-                        <xsl:value-of select="'実用新案登録'" />
-                    </xsl:when>
-                    <xsl:when test="normalize-space(.) = 'design'">
-                        <xsl:value-of select="'意匠登録'" />
-                    </xsl:when>
-                    <xsl:when test="normalize-space(.) = ''"><!--NULLの場合、編集しない-->
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:call-template name="書誌編集エラー処理" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:generated-access-code
-     ====================================================================-->
-    <!-- アクセスコード -->
-    <xsl:template
-        match="jp:generated-access-code">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【アクセスコード】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:priority-doc-location-info
-     ====================================================================-->
-    <!-- 優先権書類の所在情報     -->
-    <xsl:template match="jp:priority-doc-location-info">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:country" />
-            <xsl:apply-templates select="jp:doc-number" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:use-of-das
-     import from <xsl:template name="DAS利用編集">
-     ====================================================================-->
-    <!-- DAS利用     -->
-    <xsl:template
-        match="jp:use-of-das">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:priority-claim">
-                        <xsl:value-of select="'【優先権証明書に係る付与】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【本出願に係る付与】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:priority-claim">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="ancestor::jp:contents-of-amendment">
-                                <xsl:sequence select="2" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="0" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:when test="normalize-space(.) = '1'">
-                        <xsl:value-of select="'希望'" />
-                    </xsl:when>
-                    <xsl:when test="normalize-space(.) = ''"><!--NULLの場合、編集しない-->
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:call-template name="書誌編集エラー処理" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:earlier-app
      import from <xsl:template name="先の出願編集">
      ====================================================================-->
@@ -2478,7 +3738,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$node = 'jp:withdrawal-abandonment-a764'">
                         <xsl:value-of select="'【先の出願の表示】'" />
@@ -2488,7 +3748,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="parent::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -2536,7 +3796,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$sikibetu = 'jp:response-a59'">
                         <xsl:value-of select="'【弁明の内容】'" />
@@ -2577,7 +3837,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -2616,7 +3876,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$sikibetu = 'jp:amendment-a524'">
                         <xsl:choose>
@@ -2640,7 +3900,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -2680,7 +3940,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$sikibetu = 'jp:amendment-a524'">
                         <xsl:choose>
@@ -2704,126 +3964,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-
-    <!-- ====================================================================
-     jp:name-of-old-depository
-     import from <xsl:template name="旧寄託機関の名称編集">
-     ====================================================================-->
-    <!-- 旧寄託機関の名称 -->
-    <xsl:template
-        match="jp:name-of-old-depository">
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【旧寄託機関の名称】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:old-depository-number
-     import from <xsl:template name="旧受託番号編集">
-     ====================================================================-->
-    <!-- 旧受託番号 -->
-    <xsl:template match="jp:old-depository-number">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【旧受託番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:name-of-new-depository
-     import from <xsl:template name="新寄託機関の名称編集">
-     ====================================================================-->
-    <!-- 新寄託機関の名称 -->
-    <xsl:template match="jp:name-of-new-depository">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【新寄託機関の名称】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:new-depository-number
-     import from <xsl:template name="新受託番号編集">
-     ====================================================================-->
-    <!-- 新受託番号 -->
-    <xsl:template match="jp:new-depository-number">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【新受託番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -2871,7 +4012,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when
                         test="$kinddoc = 'jp:payment-r220' or $kinddoc = 'jp:etcetera-a821'">
@@ -2882,7 +4023,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -2898,1645 +4039,10 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     jp:delivery-way
-     import from  <xsl:template name="交付方法編集">
-       ====================================================================-->
-    <!-- 交付方法 -->
-    <xsl:template
-        match="jp:delivery-way">
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【交付方法】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="normalize-space(.) = '1'">
-                                <xsl:value-of select="'手交'" />
-                            </xsl:when>
-                            <xsl:when test="normalize-space(.) = '2'">
-                                <xsl:value-of select="'郵送'" />
-                            </xsl:when>
-                            <xsl:when test="normalize-space(.) = ''">
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="書誌編集エラー処理" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
 
     <!-- ====================================================================
-     jp:number-of-copy
-     import from <xsl:template name="請求部数編集">
+     jp:representative-group 代表者情報
      ====================================================================-->
-    <!-- 請求部数 -->
-    <xsl:template
-        match="jp:number-of-copy">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【請求部数】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:if test="string-length(normalize-space(.)) != 0">
-                    <xsl:choose>
-                        <xsl:when test="ancestor::jp:contents-of-amendment">
-                            <xsl:value-of select="'　　　' || ." />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="'　　　　　' || ." />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:if>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:indicate-payment
-     import from <xsl:template name="納付の表示編集">
-     ====================================================================-->
-    <!-- 納付の表示 -->
-    <xsl:template
-        match="jp:indicate-payment">
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【納付の表示】　　　　'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when
-                                test="($node = 'jp:payment-r200' or $node = 'jp:payment-r210')
-                         and $kind-of-law = 'trademark'">
-                                <xsl:choose>
-                                    <xsl:when test="normalize-space(.) = ''">
-                                    </xsl:when>
-                                    <xsl:when test="normalize-space(.) = '1'">
-                                        <xsl:value-of select="'分割納付'" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:call-template name="書誌編集エラー処理" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:choose>
-                                    <xsl:when test="normalize-space(.) = ''">
-                                    </xsl:when>
-                                    <xsl:when test="normalize-space(.) = '0'">
-                                        <xsl:value-of select="'一括納付'" />
-                                    </xsl:when>
-                                    <xsl:when test="normalize-space(.) = '1'">
-                                        <xsl:value-of select="'分割納付'" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:call-template name="書誌編集エラー処理" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:proof-or-deliverty-document
-     import from <xsl:template name="証明又は交付に係る書類名編集">
-     ====================================================================-->
-    <!-- 証明又は交付に係る書類名 -->
-    <xsl:template
-        match="jp:proof-or-deliverty-document">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:variable name="node">
-                            <xsl:value-of
-                                select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
-                        </xsl:variable>
-                        <xsl:choose>
-                            <xsl:when test="$node = 'jp:demand-e842'">
-                                <xsl:value-of select="'【証明に係る書類名】'" />
-                            </xsl:when>
-                            <xsl:when test="$node = 'jp:demand-e841'">
-                                <xsl:value-of select="'【証明に係る他の書類名】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【交付に係る書類名】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$node = 'jp:demand-e842'">
-                                <xsl:value-of select="'【証明に係る書類名】'" />
-                            </xsl:when>
-                            <xsl:when test="$node = 'jp:demand-e841'">
-                                <xsl:value-of select="'【証明に係る他の書類名】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【交付に係る書類名】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:rejection-case-accept-notice-art
-     import from <xsl:template name="拒絶理由通知を受けた事件の表示編集">
-     ====================================================================-->
-    <!-- 拒絶理由通知を受けた事件の表示 -->
-    <xsl:template match="jp:rejection-case-accept-notice-art">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【拒絶理由通知を受けた事件の表示】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:for-each select="jp:application-reference">
-                <xsl:apply-templates select=".//jp:doc-number" />
-            </xsl:for-each>
-            <xsl:apply-templates select="jp:appeal-reference/jp:doc-number" />
-
-            <!-- 未サポート -->
-            <xsl:if
-                test="jp:appeal-reference/jp:date or .//country
-             or .//kind or .//name or jp:application-reference//jp:date">
-                <xsl:apply-templates
-                    select="jp:appeal-reference/jp:date | .//country | .//kind | .//name
-                                 | jp:application-reference//jp:date" />
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:proof-matter-article
-     ====================================================================-->
-    <!-- 証明に係る事項 -->
-    <xsl:template
-        match="jp:proof-matter-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【証明に係る事項】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:number-of-class
-     import from <xsl:template name="商品及び役務の区分の数編集">
-     ====================================================================-->
-    <!-- 商品及び役務の区分の数 -->
-    <xsl:template
-        match="jp:number-of-class">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【商品及び役務の区分の数】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:kind-of-annexation
-     import from <xsl:template name="併合識別編集">
-     ====================================================================-->
-    <!-- 併合識別 -->
-    <xsl:template
-        match="jp:kind-of-annexation">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【併合識別】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:if test="normalize-space(.) = '1'">
-                            <xsl:value-of select="'併合'" />
-                        </xsl:if>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:number-of-annexation
-     import from <xsl:template name="併合件数編集">
-     ====================================================================-->
-    <!-- 併合件数 -->
-    <xsl:template
-        match="jp:number-of-annexation">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【併合件数】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:annexation-payment-article
-     ====================================================================-->
-    <!-- 併合納付の明細の記事 -->
-    <xsl:template
-        match="jp:annexation-payment-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【併合納付の明細】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:apply-templates select="jp:annexation-payment" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:annexation-payment
-     import from <xsl:template name="併合納付の明細編集">
-     ====================================================================-->
-    <!-- 併合納付の明細 -->
-    <xsl:template
-        match="jp:annexation-payment">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:application-reference" />
-            <xsl:apply-templates select="jp:number-of-claim" />
-            <xsl:apply-templates select="jp:payment-years" />
-            <xsl:apply-templates select="jp:fee" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:publications-etc-article
-     ====================================================================-->
-    <!-- 刊行物等の記事 -->
-    <xsl:template
-        match="jp:publications-etc-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【刊行物等】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:apply-templates select="jp:publications-etc" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:publications-etc
-     ====================================================================-->
-    <!-- 刊行物等 -->
-    <xsl:template
-        match="jp:publications-etc">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:if test="position() != 1">
-                    <xsl:value-of select="'　　　　　　　　　　　'" />
-                </xsl:if>
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:class-of-goods-and-service
-     ====================================================================-->
-    <!-- 商品及び役務の区分 -->
-    <xsl:template
-        match="jp:class-of-goods-and-service">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【商品及び役務の区分】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:for-each select="jp:class">
-                <xsl:element name="blocks">
-                    <xsl:element name="tag">
-                        <xsl:value-of select="'jp:class'" />
-                    </xsl:element>
-                    <xsl:element name="text">
-                        <xsl:value-of select="." />
-                    </xsl:element>
-                </xsl:element>
-            </xsl:for-each>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:srep-request-no
-     import from <xsl:template name="調査報告番号編集">
-     ====================================================================-->
-    <!-- 調査報告番号 -->
-    <xsl:template
-        match="jp:srep-request-no">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【調査報告番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:target-document-article
-     ====================================================================-->
-    <!-- 返還請求対象書類 -->
-    <xsl:template
-        match="jp:target-document-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:target-document" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:target-document
-     import from <xsl:template name="対象書類編集">
-     ====================================================================-->
-    <!-- 対象書類 -->
-    <xsl:template
-        match="jp:target-document">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="parent::jp:target-document-article">
-                        <xsl:if test="position() = 1">
-                            <xsl:value-of select="'【返還請求対象書類】'" />
-                        </xsl:if>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【返還請求対象書類】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="parent::jp:target-document-article">
-                        <xsl:choose>
-                            <xsl:when test="position() = 1">
-                                <xsl:choose>
-                                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                                        <xsl:sequence select="2" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:sequence select="0" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="0" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="ancestor::jp:contents-of-amendment">
-                                <xsl:sequence select="2" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="0" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:apply-templates select="jp:document-code" />
-            <xsl:apply-templates select="jp:submission-date" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     p
-     ====================================================================-->
-    <!-- 段落 ,段落内テキスト -->
-    <xsl:template
-        match="p">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">paragraph</xsl:element>
-            <xsl:element name="number">
-                <xsl:value-of select="@num" />
-            </xsl:element>
-            <xsl:if test="normalize-space(@num) != ''">
-                <xsl:element name="jpTag">
-                    <xsl:value-of select="'【' || f:to-fullwidth-digit(@num) || '】'" />
-                </xsl:element>
-            </xsl:if>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="1" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:apply-templates />
-        </xsl:element>
-    </xsl:template>
-
-    <xsl:template
-        match="text() | sup | sub | u">
-        <xsl:variable name="tag">
-            <xsl:choose>
-                <xsl:when test="self::text()">text</xsl:when>
-                <xsl:when test="self::sup">sup</xsl:when>
-                <xsl:when test="self::sub">sub</xsl:when>
-                <xsl:when test="self::u">underline</xsl:when>
-            </xsl:choose>
-        </xsl:variable>
-
-        <!-- 次の「有意ノード」を見る -->
-        <xsl:variable name="nextNode"
-            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
-
-        <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
-            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
-
-        <xsl:if test="normalize-space() != ''">
-            <xsl:element name="blocks">
-                <xsl:element name="tag">
-                    <xsl:value-of select="$tag" />
-                </xsl:element>
-                <xsl:element name="text">
-                    <xsl:call-template name="trim">
-                        <xsl:with-param name="text" select="." />
-                    </xsl:call-template>
-                </xsl:element>
-                <xsl:element name="isLastSentence">
-                    <xsl:value-of select="$isLastSentence" />
-                </xsl:element>
-            </xsl:element>
-        </xsl:if>
-    </xsl:template>
-
-    <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
-
-    <!--  イメージ   -->
-    <xsl:template match="maths/img | tables/img | figure/img | chemistry/img">
-        <xsl:for-each select="key('images-table-key', @file)">
-            <xsl:element name="images">
-                <xsl:element name="src">
-                    <xsl:value-of select="@new" />
-                </xsl:element>
-                <xsl:element name="width">
-                    <xsl:value-of select="@width" />
-                </xsl:element>
-                <xsl:element name="height">
-                    <xsl:value-of select="@height" />
-                </xsl:element>
-                <xsl:element name="kind">
-                    <xsl:value-of select="@kind" />
-                </xsl:element>
-                <xsl:element name="sizeTag">
-                    <xsl:value-of select="@sizeTag" />
-                </xsl:element>
-            </xsl:element>
-        </xsl:for-each>
-    </xsl:template>
-
-    <!--  イメージ   -->
-    <xsl:template match="p/img">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'other-images'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="0" />
-            </xsl:element>
-
-            <xsl:for-each select="key('images-table-key', @file)">
-                <xsl:element name="images">
-                    <xsl:element name="src">
-                        <xsl:value-of select="@new" />
-                    </xsl:element>
-                    <xsl:element name="width">
-                        <xsl:value-of select="@width" />
-                    </xsl:element>
-                    <xsl:element name="height">
-                        <xsl:value-of select="@height" />
-                    </xsl:element>
-                    <xsl:element name="kind">
-                        <xsl:value-of select="@kind" />
-                    </xsl:element>
-                    <xsl:element name="sizeTag">
-                        <xsl:value-of select="@sizeTag" />
-                    </xsl:element>
-                </xsl:element>
-            </xsl:for-each>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:year-from
-     ====================================================================-->
-    <!-- 納付年分（自） -->
-    <xsl:template
-        match="jp:year-from">
-        <xsl:choose>
-            <xsl:when test="./@jp:error-code">
-                <xsl:value-of select="." />
-            </xsl:when>
-            <xsl:when test="string-length(normalize-space(.)) = 0" />
-
-            <xsl:when
-                test="number(string-length(normalize-space(.))) != 0 and number(.) != number(normalize-space(.))">
-                <xsl:call-template name="書誌編集エラー処理" />
-            </xsl:when>
-            <xsl:when test="string-length(normalize-space(.)) &gt; 2">
-                <xsl:call-template name="書誌編集エラー処理" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="'第'" />
-                <xsl:choose>
-                    <xsl:when test="string-length(normalize-space(.)) = 0">
-                        <xsl:value-of select="concat('　','0')" />
-                    </xsl:when>
-                    <xsl:when test="string-length(normalize-space(.)) = 1">
-                        <xsl:value-of select="concat('　',.)" />
-                    </xsl:when>
-                    <xsl:when test="string-length(normalize-space(.)) = 2">
-                        <xsl:choose>
-                            <xsl:when test="number(substring(normalize-space(.),1,1)) = 0">
-                                <xsl:value-of
-                                    select="concat('　',substring(normalize-space(.),2,1))" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="." />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                </xsl:choose>
-                <xsl:value-of select="'年分'" />
-            </xsl:otherwise>
-        </xsl:choose>
-
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:year-to
-     ====================================================================-->
-    <!-- 納付年分（至） -->
-    <xsl:template
-        match="jp:year-to">
-
-
-        <xsl:choose>
-            <xsl:when test="./@jp:error-code">
-                <xsl:value-of select="." />
-            </xsl:when>
-            <xsl:when test="string-length(normalize-space(.)) = 0" />
-            <!--Y08M01J
-                    ST-Y08M01J-H038 2007/11/02-->
-            <!--<xsl:when
-                    test="string-length(.) != 0 and number(.) != ." >-->
-            <xsl:when
-                test="number(string-length(normalize-space(.))) != 0 and number(.) != number(normalize-space(.))">
-                <xsl:call-template name="書誌編集エラー処理" />
-            </xsl:when>
-            <xsl:when test="string-length(normalize-space(.)) &gt; 2">
-                <xsl:call-template name="書誌編集エラー処理" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="'から第'" />
-                <xsl:choose>
-                    <!--Y08M01J
-                            ST-Y08M01J-H038 2007/11/02-->
-                    <xsl:when test="number(string-length(normalize-space(.))) = 1">
-                        <xsl:value-of select="concat('　',.)" />
-                    </xsl:when>
-                    <xsl:when test="number(string-length(normalize-space(.))) = 2">
-                        <xsl:choose>
-                            <!--<xsl:when
-                                    test="substring(.,1,1) = 0
-                           or substring(.,1,1) = ' '" >-->
-                            <xsl:when test="number(substring(normalize-space(.),1,1)) = 0">
-                                <xsl:value-of
-                                    select="concat('　',substring(normalize-space(.),2,1))" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="." />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                </xsl:choose>
-                <xsl:value-of select="'年分'" />
-            </xsl:otherwise>
-        </xsl:choose>
-
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:moleclar
-     ====================================================================-->
-    <!-- 持分率（分子） -->
-    <xsl:template
-        match="jp:moleclar">
-
-        <xsl:value-of select="." />
-
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:denominator
-     ====================================================================-->
-    <!-- 持分率（分母） -->
-    <xsl:template match="jp:denominator">
-
-        <xsl:value-of select="." />
-
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:payment
-     ====================================================================-->
-    <!-- 納付 -->
-    <xsl:template match="jp:payment">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-
-            <xsl:apply-templates select="jp:account" />
-            <xsl:apply-templates select="jp:fee" />
-
-            <!-- 未サポート -->
-            <xsl:if test="fee-total or credit-card or other-method">
-                <xsl:apply-templates select="fee-total | credit-card | other-method" />
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:amount-paid、jp:amount-proper-payment、jp:amount-restoration-claim
-     ====================================================================-->
-    <!-- 納付済金額、適正納付金額、返還請求金額 -->
-    <xsl:template
-        match="jp:amount-paid | jp:amount-proper-payment | jp:amount-restoration-claim">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:fee" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:bank-account
-     import from <xsl:template name="振込先編集">
-     ====================================================================-->
-    <!-- 返還金振込先  -->
-    <xsl:template
-        match="jp:bank-account">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【返還金振込先】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:apply-templates select="jp:financial-institution-name" />
-            <xsl:apply-templates select="jp:account-type" />
-            <xsl:apply-templates select="jp:account-number" />
-            <xsl:apply-templates select="jp:kana" />
-            <xsl:apply-templates select="jp:name" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:financial-institution-name
-     ====================================================================-->
-    <!-- 金融機関名  -->
-    <xsl:template
-        match="jp:financial-institution-name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【金融機関名】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:account-type
-     ====================================================================-->
-    <!-- 口座種別  -->
-    <xsl:template match="jp:account-type">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【口座種別】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:account-number
-     ====================================================================-->
-    <!-- 口座番号  -->
-    <xsl:template match="jp:account-number">
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【口座番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:list-group
-     import from <xsl:template name="目録編集">
-     ====================================================================-->
-    <!-- 目録 -->
-    <xsl:template match="jp:list-group">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:citation" />
-            <xsl:apply-templates select="jp:return-request" />
-            <xsl:apply-templates select="jp:general-power-of-attorney-id" />
-            <xsl:apply-templates select="jp:dtext" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:rule-outside-group
-     ====================================================================-->
-    <!-- 規定外記事 -->
-    <xsl:template
-        match="jp:rule-outside-group">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:item-name" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:doc-number
-     import from <xsl:template name="文書番号編集">
-     ====================================================================-->
-    <!-- 文書番号 -->
-    <xsl:template
-        match="jp:doc-number">
-
-        <xsl:variable name="law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:application-reference">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:application-reference [@appl-type = 'application']">
-                                <xsl:value-of select="'【出願番号】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:application-reference [@appl-type = 'international-application']">
-                                <xsl:value-of select="'【国際出願番号】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:application-reference [@appl-type = 'registration']">
-                                <xsl:choose>
-                                    <xsl:when test="$law = 'patent'">
-                                        <xsl:value-of select="'【特許番号】'" />
-                                    </xsl:when>
-                                    <xsl:when test="$law = 'utility'">
-                                        <xsl:value-of select="'【実用新案登録番号】'" />
-                                    </xsl:when>
-                                    <xsl:when test="$law = 'design'">
-                                        <xsl:value-of select="'【意匠登録番号】'" />
-                                    </xsl:when>
-                                    <xsl:when test="$law = 'trademark'">
-                                        <xsl:value-of select="'【商標登録番号】'" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="'【登録番号】'" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:application-reference [@appl-type = 'examined-pub']">
-                                <xsl:value-of select="'【出願公告番号】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:application-reference [@appl-type = 'un-examined-pub']">
-                                <xsl:value-of select="'【出願公開番号】'" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:appeal-reference">
-                        <xsl:value-of select="'【審判番号】'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-doc-location-info">
-                        <xsl:value-of select="'【提供国（機関）における出願の番号】'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-claim">
-                        <xsl:value-of select="'【出願番号】'" />
-                    </xsl:when>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:application-reference or ancestor::jp:appeal-reference">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:application-reference
-                        and ancestor::jp:application-reference [@appl-type = 'registration']">
-                                <xsl:choose>
-                                    <xsl:when
-                                        test="ancestor::jp:indication-of-case-article
-                           and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
-                             or $node = 'jp:demand-e854' or $node = 'jp:demand-e862') ">
-                                        <xsl:sequence select="0" />
-                                    </xsl:when>
-                                    <xsl:when test="ancestor::jp:annexation-payment">
-                                        <xsl:sequence select="0" />
-                                    </xsl:when>
-                                    <xsl:when
-                                        test="ancestor::jp:indication-of-case-article
-                           and ($node = 'jp:etcetera-a623' or $node = 'jp:etcetera-a624' or $node = 'jp:etcetera-a915')
-                           and $kind-of-law = 'utility'
-                           and string-length(normalize-space(ancestor::jp:application-reference/jp:document-id/jp:date)) = 0">
-                                        <xsl:choose>
-                                            <xsl:when
-                                                test="//jp:application-reference/@appl-type != 'registration'">
-                                                <xsl:sequence select="2" />
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:sequence select="0" />
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:sequence select="2" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:choose>
-                                    <xsl:when
-                                        test="ancestor::jp:indication-of-case-article
-                           and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
-                             or $node = 'jp:demand-e854' or $node = 'jp:demand-e862') ">
-                                        <xsl:sequence select="0" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:sequence select="2" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-doc-location-info">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-claim">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="normalize-space(.) = ''" />
-                            <xsl:otherwise>
-                                <xsl:call-template name="文書番号内容編集" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:kana
-     import from <xsl:template name="フリカナ編集">
-     ====================================================================-->
-    <!-- フリガナ -->
-    <xsl:template
-        match="jp:kana">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【フリガナ】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                  or ancestor::jp:attorney-change-article)
-                and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                  or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                  or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                  or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                  or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                  or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:name
-     import from <xsl:template name="氏名又は名称編集">
-     ====================================================================-->
-    <!-- 氏名又は名称 -->
-    <xsl:template match="jp:name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:inventor">
-                        <xsl:value-of select="'【氏名】'" />
-                    </xsl:when>
-                    <xsl:when test=" parent::jp:bank-account">
-                        <xsl:value-of select="'【口座名義人】'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:representative">
-                        <xsl:choose>
-                            <xsl:when
-                                test="(ancestor::jp:attorney-disappear-article
-                          or ancestor::jp:attorney-change-article)
-                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                          or $node = 'jp:attorney-a7437') ">
-                                <xsl:call-template name="名称編集">
-                                    <xsl:with-param name="type" select="1" />
-                                </xsl:call-template>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="名称編集">
-                                    <xsl:with-param name="type" select="1" />
-                                </xsl:call-template>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when
-                                test="(ancestor::jp:attorney-disappear-article
-                          or ancestor::jp:attorney-change-article)
-                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                          or $node = 'jp:attorney-a7437') ">
-                                <xsl:value-of select="'【氏名又は名称】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【氏名又は名称】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:inventor">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when test=" parent::jp:bank-account">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:representative">
-                        <xsl:choose>
-                            <xsl:when
-                                test="(ancestor::jp:attorney-disappear-article
-                          or ancestor::jp:attorney-change-article)
-                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                          or $node = 'jp:attorney-a7437') ">
-                                <xsl:sequence select="3" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="2" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when
-                                test="(ancestor::jp:attorney-disappear-article
-                          or ancestor::jp:attorney-change-article)
-                        and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                          or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                          or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                          or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                          or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                          or $node = 'jp:attorney-a7437') ">
-                                <xsl:sequence select="3" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="2" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:original-language-of-name
-     import from <xsl:template name="氏名又は名称原語表記編集">
-     ====================================================================-->
-    <!-- 氏名又は名称原語表記 -->
-    <xsl:template
-        match="jp:original-language-of-name">
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:representative">
-                        <xsl:call-template name="名称編集">
-                            <xsl:with-param name="type" select="2" />
-                        </xsl:call-template>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【氏名又は名称原語表記】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:registered-number
-     import from <xsl:template name="識別番号編集">
-     ====================================================================-->
-    <!-- 識別番号 -->
-    <xsl:template
-        match="jp:registered-number">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【識別番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                      or ancestor::jp:attorney-change-article)
-                    and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                      or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                      or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                      or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                      or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                      or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:receipt-number
-     import from <xsl:template name="受付番号編集">
-     ====================================================================-->
-    <!-- 受付番号 -->
-    <xsl:template
-        match="jp:receipt-number">
-        <xsl:variable name="kinddoc">
-            <xsl:choose>
-                <xsl:when test="ancestor::jp:contents-of-amendment">
-                    <xsl:value-of select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$node" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <xsl:variable name="c-payment">
-            <xsl:choose>
-                <xsl:when test="ancestor::jp:contents-of-amendment">
-                    <xsl:value-of
-                        select="substring(ancestor::jp:contents-of-amendment/@jp:kind-of-document,1,11)" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$payment" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when test="parent::jp:amendment-group">
-                                <xsl:choose>
-                                    <xsl:when test="$kinddoc = 'jp:amendment-a524'">
-                                        <xsl:value-of select="'【訂正対象書類受付番号】'" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="'【補正対象書類受付番号】'" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【受付番号】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="ancestor::jp:indication-of-case-article">
-                                <xsl:choose>
-                                    <xsl:when
-                                        test="$c-payment = 'jp:payment-'
-                            or $kinddoc = 'jp:demand-e853'
-                            or $kinddoc = 'jp:demand-e854'
-                            or $kinddoc = 'jp:demand-e862' ">
-                                        <xsl:value-of select="'【受付番号】'" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="'【受付番号】'" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:when test="parent::jp:amendment-group">
-                                <xsl:choose>
-                                    <xsl:when test="$kinddoc = 'jp:amendment-a524'">
-                                        <xsl:value-of select="'【訂正対象書類受付番号】'" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="'【補正対象書類受付番号】'" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【受付番号】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="ancestor::jp:indication-of-case-article">
-                                <xsl:choose>
-                                    <xsl:when
-                                        test="$c-payment = 'jp:payment-'
-                            or $kinddoc = 'jp:demand-e853'
-                            or $kinddoc = 'jp:demand-e854'
-                            or $kinddoc = 'jp:demand-e862' ">
-                                        <xsl:sequence select="0" />
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:sequence select="2" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:when test="parent::jp:amendment-group">
-                                <xsl:sequence select="1" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:sequence select="2" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:share
-     ====================================================================-->
-    <!-- 持分 -->
-    <xsl:template match="jp:share">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【持分】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:representative-applicant
-     ====================================================================-->
-    <!-- 代表出願人 -->
-    <xsl:template match="jp:representative-applicant">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【代表出願人】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:office-address
-     import from <xsl:template name="就業場所編集">
-     ====================================================================-->
-    <!-- 就業場所 -->
-    <xsl:template match="jp:office-address">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【就業場所】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                  or ancestor::jp:attorney-change-article)
-                and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                  or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                  or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                  or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                  or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                  or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:office-in-japan
-     ====================================================================-->
-    <!-- 日本における営業所 -->
-    <xsl:template match="jp:office-in-japan">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【日本における営業所】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:office
-     ====================================================================-->
-    <!-- 営業所 -->
-    <xsl:template match="jp:office">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【営業所】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:representative-group
-     ====================================================================-->
-    <!-- 代表者情報 -->
     <xsl:template match="jp:representative-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -4558,144 +4064,17 @@
     </xsl:template>
 
     <!-- ====================================================================
-     jp:legal-entity-property
+     jp:attorney 弁理士
      ====================================================================-->
-    <!-- 法人の法的性質 -->
-    <xsl:template
-        match="jp:legal-entity-property">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【法人の法的性質】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:nationality
-     ====================================================================-->
-    <!-- 国籍 -->
-    <xsl:template match="jp:nationality">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:country" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:contact
-     import from <xsl:template name="連絡先編集">
-     ====================================================================-->
-    <!-- 連絡先 -->
-    <xsl:template
-        match="jp:contact">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【連絡先】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                  or ancestor::jp:attorney-change-article)
-                and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                  or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                  or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                  or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                  or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                  or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:relation-of-case
-     import from <xsl:template name="事件との関係編集">
-     ====================================================================-->
-    <!-- 事件との関係 -->
-    <xsl:template match="jp:relation-of-case">
-        <xsl:variable name="kinddoc">
-            <xsl:choose>
-                <xsl:when test="ancestor::jp:contents-of-amendment">
-                    <xsl:choose>
-                        <xsl:when
-                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment">
-                            <xsl:value-of
-                                select="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-document" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of
-                                select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$node" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="$kinddoc = 'jp:etcetera-a621' or $kinddoc = 'jp:etcetera-a625'">
-                        <xsl:value-of select="'【出願人との関係】'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:presenter-article">
-                        <xsl:value-of select="'【請求人との関係】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【事件との関係】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:attorney
-     ====================================================================-->
-    <!-- 弁理士 -->
     <xsl:template match="jp:attorney">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【弁理士】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="(ancestor::jp:attorney-disappear-article
@@ -4714,22 +4093,21 @@
                 </xsl:choose>
             </xsl:element>
         </xsl:element>
-
     </xsl:template>
 
+
     <!-- ====================================================================
-     jp:lawyer
+     jp:lawyer 弁護士
      ====================================================================-->
-    <!-- 弁護士 -->
     <xsl:template match="jp:lawyer">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【弁護士】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="(ancestor::jp:attorney-disappear-article
@@ -4750,721 +4128,21 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     jp:relation-attorney-special-matter
-     import from <xsl:template name="代理関係の特記事項編集">
-     ====================================================================-->
-    <!-- 代理関係の特記事項 -->
-    <xsl:template match="jp:relation-attorney-special-matter">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【代理関係の特記事項】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                  or ancestor::jp:attorney-change-article)
-                and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                  or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                  or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                  or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                  or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                  or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:country
-     import from <xsl:template name="国コード編集">
-     ====================================================================-->
-    <!-- 国コード -->
-    <xsl:template match="jp:country">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:application-country-article">
-                        <xsl:value-of select="'【出願国・地域名】'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-doc-location-info">
-                        <xsl:value-of select="'【優先権証明書提供国（機関）】'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-claim">
-                        <xsl:value-of select="'【国・地域名】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【国籍・地域】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:application-country-article">
-                        <xsl:sequence select="0" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-doc-location-info">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:priority-claim">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:call-template name="国名県名変換" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:phone
-     import from <xsl:template name="電話番号編集">
-     ====================================================================-->
-    <!-- 電話番号 -->
-    <xsl:template
-        match="jp:phone">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【電話番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                      or ancestor::jp:attorney-change-article)
-                    and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                      or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                      or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                      or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                      or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                      or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:fax
-     import from <xsl:template name="ファクシミリ番号編集">
-     ====================================================================-->
-    <!-- ファクシミリ番号 -->
-    <xsl:template
-        match="jp:fax">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【ファクシミリ番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                      or ancestor::jp:attorney-change-article)
-                    and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                      or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                      or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                      or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                      or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                      or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:text
-     import from <xsl:template name="住所又は居所編集">
-     ====================================================================-->
-    <!-- 住所又は居所  -->
-    <xsl:template
-        match="jp:text">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【住所又は居所】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="(ancestor::jp:attorney-disappear-article
-                      or ancestor::jp:attorney-change-article)
-                    and ($node = 'jp:attorney-a7421' or $node = 'jp:attorney-a7423'
-                      or $node = 'jp:attorney-a7425' or $node = 'jp:attorney-a7426'
-                      or $node = 'jp:attorney-a7427' or $node = 'jp:attorney-a7428'
-                      or $node = 'jp:attorney-a7431' or $node = 'jp:attorney-a7433'
-                      or $node = 'jp:attorney-a7435' or $node = 'jp:attorney-a7436'
-                      or $node = 'jp:attorney-a7437') ">
-                        <xsl:sequence select="3" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:fee
-     import from <xsl:template name="納付金額編集">
-     ====================================================================-->
-    <!-- 納付方法・納付金額  -->
-    <xsl:template
-        match="jp:fee">
-        <xsl:variable name="kinddoc">
-            <xsl:choose>
-                <xsl:when test="ancestor::jp:contents-of-amendment">
-                    <xsl:choose>
-                        <xsl:when
-                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment">
-                            <xsl:value-of
-                                select="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-document" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of
-                                select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$node" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when
-                        test="$kinddoc = 'jp:payment-r110' or $kinddoc = 'jp:payment-r111'
-                     or $kinddoc = 'jp:payment-r112' or $kinddoc = 'jp:payment-r113'
-                     or $kinddoc = 'jp:payment-r114' or $kinddoc = 'jp:payment-r115'
-                     or $kinddoc = 'jp:payment-r21' or $kinddoc = 'jp:payment-r210'
-                     or $kinddoc = 'jp:payment-r211' ">
-                        <xsl:value-of select="'【補充金額】'" />
-                    </xsl:when>
-                    <xsl:when
-                        test="parent::jp:amount-paid and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:value-of select="'【納付済金額】'" />
-                    </xsl:when>
-                    <xsl:when test="parent::jp:amount-paid ">
-                        <xsl:value-of select="'【納付済金額】'" />
-                    </xsl:when>
-                    <xsl:when
-                        test=" parent::jp:amount-restoration-claim and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:value-of select="'【返還請求金額】'" />
-                    </xsl:when>
-                    <xsl:when test=" parent::jp:amount-restoration-claim ">
-                        <xsl:value-of select="'【返還請求金額】'" />
-                    </xsl:when>
-                    <xsl:when
-                        test="parent::jp:amount-proper-payment and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:value-of select="'【適正納付金額】'" />
-                    </xsl:when>
-                    <xsl:when test="parent::jp:amount-proper-payment ">
-                        <xsl:value-of select="'【適正納付金額】'" />
-                    </xsl:when>
-                    <xsl:when
-                        test="($kinddoc = 'jp:etcetera-a914') and
-                                  ancestor::jp:charge-article">
-                        <xsl:value-of select="'【加算金額】'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'【納付金額】'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="$kinddoc = 'jp:payment-r110' or $kinddoc = 'jp:payment-r111'
-                     or $kinddoc = 'jp:payment-r112' or $kinddoc = 'jp:payment-r113'
-                     or $kinddoc = 'jp:payment-r114' or $kinddoc = 'jp:payment-r115'
-                     or $kinddoc = 'jp:payment-r21' or $kinddoc = 'jp:payment-r210'
-                     or $kinddoc = 'jp:payment-r211' ">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when
-                        test="parent::jp:amount-paid and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:sequence select="0" />
-                    </xsl:when>
-                    <xsl:when test="parent::jp:amount-paid ">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when
-                        test=" parent::jp:amount-restoration-claim and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:sequence select="0" />
-                    </xsl:when>
-                    <xsl:when test=" parent::jp:amount-restoration-claim ">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when
-                        test="parent::jp:amount-proper-payment and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:sequence select="0" />
-                    </xsl:when>
-                    <xsl:when test="parent::jp:amount-proper-payment ">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:when
-                        test="($kinddoc = 'jp:etcetera-a914') and
-                                  ancestor::jp:charge-article">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="2" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="./@amount" />
-            </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="./@amount" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when
-                                test="./@amount != '' and string(number(./@amount)) != 'NaN'">
-                                <xsl:value-of
-                                    select="format-number(xs:integer(normalize-space(./@amount)), '#,###')" />
-                                <xsl:value-of select="'円'" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:account
-     import from <xsl:template name="予納台帳番号編集">
-     ====================================================================-->
-    <!-- 予納台帳番号・納付書番号  -->
-    <xsl:template
-        match="jp:account">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="./@account-type = 'deposit'">
-                        <xsl:value-of select="'【予納台帳番号】'" />
-                    </xsl:when>
-                    <xsl:when test="./@account-type = 'form'">
-                        <xsl:value-of select="'【納付書番号】'" />
-                    </xsl:when>
-                    <xsl:when test="./@account-type = 'electronic-cash'">
-                        <xsl:value-of select="'【納付番号】'" />
-                    </xsl:when>
-                    <xsl:when test="./@account-type = 'transfer'">
-                        <xsl:value-of select="'【振替番号】'" />
-                    </xsl:when>
-                    <xsl:when test="./@account-type = 'credit-card'">
-                        <xsl:value-of select="'【指定立替納付】'" />
-                    </xsl:when>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@account-type = 'credit-card'">
-                        <xsl:if test="./@jp:error-code">
-                            <xsl:value-of select="./@number" />
-                        </xsl:if>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="./@number" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:if test="./@account-type = 'electronic-cash'">
-                <xsl:if test="string-length(normalize-space(./@number)) = 16">
-                    <xsl:element name="convertedText">
-                        <xsl:call-template name="split-at-n-chars">
-                            <xsl:with-param name="input-string"
-                                select="normalize-space(./@number)" />
-                            <xsl:with-param name="n-chars" select="4" />
-                            <xsl:with-param name="sep" select="'-'" />
-                        </xsl:call-template>
-                    </xsl:element>
-                </xsl:if>
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:document-name
-     import from <xsl:template name="物件名編集">
-     ====================================================================-->
-    <!-- 物件名 -->
-    <xsl:template
-        match="jp:document-name">
-        <xsl:variable name="node">
-            <xsl:choose>
-                <xsl:when
-                    test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment">
-                    <xsl:value-of
-                        select="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-document" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of
-                        select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:list-group">
-                        <xsl:value-of select="'【物件名】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:etcetera-a831'">
-                        <xsl:value-of select="'【提出する刊行物等】'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:presentment-a82'">
-                        <xsl:value-of select="'【提出する物件】'" />
-                    </xsl:when>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when test="ancestor::jp:list-group">
-                                <xsl:sequence select="2" />
-                            </xsl:when>
-                            <xsl:when test="$node = 'jp:etcetera-a831'">
-                                <xsl:sequence select="2" />
-                            </xsl:when>
-                            <xsl:when test="$node = 'jp:presentment-a82'">
-                                <xsl:sequence select="2" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="ancestor::jp:list-group">
-                                <xsl:sequence select="2" />
-                            </xsl:when>
-                            <xsl:when test="$node = 'jp:etcetera-a831'">
-                                <xsl:sequence select="0" />
-                            </xsl:when>
-                            <xsl:when test="$node = 'jp:presentment-a82'">
-                                <xsl:sequence select="0" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:list-group">
-                        <xsl:value-of select=". || '　' || following-sibling::jp:number-of-object" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="." />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-
-    <!-- ====================================================================
-     jp:citation
-     ====================================================================-->
-    <!-- 援用の表示 -->
-    <xsl:template
-        match="jp:citation">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【援用の表示】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="3" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:return-request
-     import from <xsl:template name="返還の申出編集">
-     ====================================================================-->
-    <!-- 返還の申出 -->
-    <xsl:template
-        match="jp:return-request">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【返還の申出】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="3" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:error-code">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="normalize-space(.) = '0'">
-                                <xsl:value-of select="'無'" />
-                            </xsl:when>
-                            <xsl:when test="normalize-space(.) = '1'">
-                                <xsl:value-of select="'有'" />
-                            </xsl:when>
-                            <xsl:when test="normalize-space(.) = ''">
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="書誌編集エラー処理" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:general-power-of-attorney-id
-     ====================================================================-->
-    <!-- 包括委任状番号 -->
-    <xsl:template
-        match="jp:general-power-of-attorney-id">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【包括委任状番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:item-name
-     import from <xsl:template name="項目名編集">
-     ====================================================================-->
-    <!-- 項目名 -->
-    <xsl:template
-        match="jp:item-name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【' || . || '】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="0" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-            <xsl:apply-templates select="following-sibling::jp:item-content" />
-        </xsl:element>
-    </xsl:template>
-
-
-    <!-- ====================================================================
-     jp:original-language-of-address
-     ====================================================================-->
-    <!-- 住所又は居所原語表記 -->
-    <xsl:template
-        match="jp:original-language-of-address">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【住所又は居所原語表記】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:kind-of-appeals
-     ====================================================================-->
-    <!--  審判の種別 -->
-    <xsl:template match="jp:kind-of-appeals">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【審判の種別】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:contents-name
-     ====================================================================-->
-    <!--  項目名 -->
-    <xsl:template match="jp:contents-name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【' || . || '】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:sequence select="2" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:kind-of-accelerated-examination
-     ====================================================================-->
-    <!-- 早期審査の種別 -->
-    <xsl:template match="jp:kind-of-accelerated-examination">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【早期審査の種別】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
 
     <!-- ====================================================================
      jp:invention-contents-article
      ====================================================================-->
     <!-- 申出に係る発明の内容 -->
+    <!--
     <xsl:template match="jp:invention-contents-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【申出に係る発明の内容】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -5478,27 +4156,51 @@
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
+    -->
 
-    <!-- ====================================================================
-     全角変換
-     ====================================================================-->
-    <xsl:template
-        match="@num | @mode-num | @ex-num">
-        <xsl:value-of select="f:to-fullwidth-alnum(.)" />
+    <!--
+      block type 'A' contains
+        tag, jp-tag, indent-level, and
+        child 'p' elements.
+     -->
+    <xsl:template match="jp:invention-contents-article">
+        <xsl:variable name="params"
+            select="key('block-type-a-key', name())" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="$params/@indent-level-amendment" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="$params/@indent-level" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="p" />
+        </xsl:element>
     </xsl:template>
 
-    <!-- ==明細書関係====start===============================================-->
-    <!-- ====================================================================
-     claims
-     ====================================================================-->
-    <!-- 請求の範囲 -->
-    <xsl:template
-        match="claims">
+    <xsl:key name="block-type-a-key" match="parameter" use="@tag" />
+    <xsl:variable name="block-type-a-parameters">
+        <parameter tag="jp:invention-contents-article" jp-tag="【申出に係る発明の内容】" indent-level="0"
+            indent-level-amendment="2" />
+    </xsl:variable>
 
-        <!--  項目名の編集  -->
+    <!-- ====================================================================
+     claims 請求の範囲 
+     ====================================================================-->
+    <xsl:template match="claims">
         <xsl:element name="blocks">
             <xsl:element name="tag">claims</xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:choose>
@@ -5535,7 +4237,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -5550,114 +4252,27 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     description
-     ====================================================================-->
-    <!-- 明細書 -->
-    <xsl:template
-        match="description">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">description</xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【書類名】明細書'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates
-                select="invention-title | technical-field | background-art | disclosure
-                             | mode-for-invention | description-of-drawings  | summary-of-invention
-                             | description-of-embodiments | best-mode | industrial-applicability
-                             | reference-signs-list | reference-to-deposited-biological-material
-                             | sequence-list-text | citation-list | heading | p" />
-            <!-- 未サポート -->
-            <xsl:if test="doc-page">
-                <xsl:apply-templates select="doc-page" />
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
+    <schema:object name="claims">
+        <schema:property name="tag" type="string" const="claims" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="claim" />
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of claims ======================== -->
 
     <!-- ====================================================================
-     drawings
+     claim 請求項 
      ====================================================================-->
-    <!-- 図面 -->
-    <xsl:template match="drawings">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">drawings</xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【書類名】図面'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="figure" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     abstract
-     ====================================================================-->
-    <!-- 要約書 -->
-    <xsl:template match="abstract">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">abstract</xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【書類名】要約書'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:call-template name="trim">
-                    <xsl:with-param name="text" select="." />
-                </xsl:call-template>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <!-- 未サポート -->
-            <xsl:if test="doc-page or abst-problem or abst-solution">
-                <xsl:apply-templates select="doc-page | abst-problem | abst-solution" />
-            </xsl:if>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     claim
-     ====================================================================-->
-    <!-- 請求項 -->
     <xsl:template match="claim">
         <xsl:element name="blocks">
             <xsl:element name="tag">claim</xsl:element>
-            <xsl:element name="jpTag">【請求項<xsl:apply-templates select="@num" />】</xsl:element>
+            <xsl:element name="jp-tag">【請求項<xsl:apply-templates select="@num" />】</xsl:element>
             <xsl:element name="number">
                 <xsl:value-of select="@num" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -5683,17 +4298,92 @@
         </xsl:element>
     </xsl:template>
 
+    <schema:object name="claim">
+        <schema:property name="tag" type="string" const="claim" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="number" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="is-independent" type="boolean" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="claim-text" />
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of claim ======================== -->
 
     <!-- ====================================================================
-     claim-text
+     claim-text 請求項内段落
      ====================================================================-->
-    <!-- 請求項内段落 -->
     <xsl:template match="claim-text">
         <xsl:element name="blocks">
             <xsl:element name="tag">claim-text</xsl:element>
             <xsl:apply-templates />
         </xsl:element>
     </xsl:template>
+    <schema:object name="claim-text">
+        <schema:property name="tag" type="string" const="claim-text" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="inline-text" />
+            <schema:ref name="image-container" />
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of claim-text ======================== -->
+
+
+    <!-- ====================================================================
+     description
+     ====================================================================-->
+    <!-- 明細書 -->
+    <xsl:template
+        match="description">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">description</xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【書類名】明細書'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+
+            <xsl:apply-templates
+                select="invention-title | technical-field | background-art | disclosure
+                             | mode-for-invention | description-of-drawings  | summary-of-invention
+                             | description-of-embodiments | best-mode | industrial-applicability
+                             | reference-signs-list | reference-to-deposited-biological-material
+                             | sequence-list-text | citation-list | heading | p" />
+            <!-- 未サポート -->
+            <xsl:if test="doc-page">
+                <xsl:apply-templates select="doc-page" />
+            </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+    <schema:object name="description">
+        <schema:property name="tag" type="string" const="description" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="invention-title" />
+                <schema:ref name="summary-of-invention" />
+                <schema:ref name="description-items" />
+                <schema:ref name="citation-list" />
+                <schema:ref name="description-of-embodiments" />
+
+                <!-- xsl では mode-for-invention だが、
+                 schema では embodiments-example に纏めている -->
+                <schema:ref name="embodiments-example" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of description ======================== -->
 
     <!-- ====================================================================
      invention-title
@@ -5705,7 +4395,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:choose>
@@ -5742,7 +4432,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -5757,381 +4447,35 @@
             <xsl:apply-templates />
         </xsl:element>
     </xsl:template>
-
-    <!-- ====================================================================
-     technical-field
-     ====================================================================-->
-    <!-- 技術分野 -->
-    <xsl:template match="technical-field">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【技術分野】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     background-art
-     ====================================================================-->
-    <!-- 背景技術 -->
-    <xsl:template match="background-art">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【背景技術】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     disclosure
-     ====================================================================-->
-    <!-- 発明の開示 -->
-    <xsl:template match="disclosure">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の開示】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の開示】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の開示】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の開示】'" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の開示】'" />
-                            </xsl:when>
-                            <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の開示】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【発明の開示】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="*" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     description-of-drawings
-     ====================================================================-->
-    <!-- 図面の簡単な説明 -->
-    <xsl:template
-        match="description-of-drawings">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【図面の簡単な説明】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     best-mode
-     ====================================================================-->
-    <!-- 発明を実施するための最良の形態 -->
-    <xsl:template match="best-mode">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明を実施するための最良の形態】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案を実施するための最良の形態】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明を実施するための最良の形態】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案を実施するための最良の形態】'" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明を実施するための最良の形態】'" />
-                            </xsl:when>
-                            <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案を実施するための最良の形態】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【発明を実施するための最良の形態】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     mode-for-invention
-     ====================================================================-->
-    <!-- 実施例 -->
-    <xsl:template
-        match="mode-for-invention">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【実施例'" />
-                <xsl:apply-templates select="@mode-num" />
-                <xsl:value-of select="'】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     industrial-applicability
-     ====================================================================-->
-    <!-- 産業上の利用可能性 -->
-    <xsl:template
-        match="industrial-applicability">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【産業上の利用可能性】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     sequence-list-text
-     ====================================================================-->
-    <!-- 配列表フリーテキスト -->
-    <xsl:template
-        match="sequence-list-text">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【配列表フリーテキスト】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     heading
-     import from <xsl:template name="既定外項目名編集">
-     ====================================================================-->
-    <!-- 【Ｋ～Ｋ】  -->
-    <xsl:template match="heading">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【' || . || '】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
+    <schema:object name="invention-title">
+        <schema:property name="tag" type="string"
+            const="invention-title" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="inline-text" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of invention-title ======================== -->
 
     <!-- ====================================================================
      summary-of-invention
      ====================================================================-->
     <!-- 発明の概要 -->
     <xsl:template
-        match="summary-of-invention">
+        match="summary-of-invention | disclosure">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の概要】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の概要】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の概要】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の概要】'" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の概要】'" />
-                            </xsl:when>
-                            <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の概要】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【発明の概要】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
+            <xsl:element name="jp-tag">
+                <xsl:call-template name="summary-of-invention-jp-tag">
+                    <xsl:param name="summary-or-disclosure" select="name()" />
+                </xsl:call-template>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -6148,86 +4492,158 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     description-of-embodiments
-     ====================================================================-->
-    <!-- 発明を実施するための形態 -->
     <xsl:template
-        match="description-of-embodiments">
+        name="summary-of-invention-jp-tag">
+        <xsl:param name="summary-or-disclosure" />
+        <xsl:variable name="summary-or-disclosure-text">
+            <xsl:choose>
+                <xsl:when test="$summary-or-disclosure = 'summary-of-invention'">
+                    <xsl:value-of select="'概要'" />
+                </xsl:when>
+                <xsl:when test="$summary-or-disclosure = 'disclosure'">
+                    <xsl:value-of select="'開示'" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="''" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:variable name="patent-or-utility">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:choose>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>
+                        <xsl:when test="$kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when test="$kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="'発明'" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of
+            select="'【' || $patent-or-utility || 'の' || $summary-or-disclosure-text || '】'" />
+    </xsl:template>
+
+    <schema:object name="summary-of-invention">
+        <schema:property name="tag" type="string"
+            enum="summary-of-invention disclosure" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="summary-of-invention-items" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of summary-of-invention ======================== -->
+
+    <!-- ===================================================================
+      description item type contains
+      tag, jp-tag, indent-level=0 or 2 depends on amendments, and text="."
+      =================================================================== -->
+    <xsl:template
+        match="technical-field | background-art | description-of-drawings |
+        industrial-applicability | sequence-list-text | reference-signs-list |
+        reference-to-deposited-biological-material">
+        <xsl:variable name="params"
+            select="key('item-type-c-key', name())" />
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
+            </xsl:element>
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明を実施するための形態】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案を実施するための形態】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明を実施するための形態】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案を実施するための形態】'" />
-                            </xsl:when>
-                        </xsl:choose>
+                        <xsl:sequence select="$params/@indent-level-amendment" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明を実施するための形態】'" />
-                            </xsl:when>
-                            <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案を実施するための形態】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【発明を実施するための形態】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
+                        <xsl:sequence select="$params/@indent-level" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
 
-            <xsl:apply-templates select="embodiments-example | heading | p" />
+            <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     embodiments-example
-     ====================================================================-->
-    <!-- 実施例 -->
+    <xsl:key name="description-items-key" match="parameter" use="@tag" />
+    <xsl:variable name="description-items-parameters">
+        <parameter tag="technical-field" jp-tag="【技術分野】" indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="background-art" jp-tag="【背景技術】" indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="description-of-drawings" jp-tag="【図面の簡単な説明】" indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="industrial-applicability" jp-tag="【産業上の利用可能性】" indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="sequence-list-text" jp-tag="【配列リストテキスト】" indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="reference-signs-list" jp-tag="【符号の説明】" indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="reference-to-deposited-biological-material" jp-tag="【受託番号】" indent-level="0"
+            indent-level-amendment="2" />
+    </xsl:variable>
+
+    <schema:object name="description-items">
+        <schema:property name="tag" type="string"
+            enum="technical-field background-art description-of-drawings industrial-applicability
+            sequence-list-text reference-signs-list reference-to-deposited-biological-material" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of description-items ======================== -->
+
+    <!-- ===================================================================
+        tech-problem 発明が解決しようとする課題
+        tech-solutions 課題を解決するための手段
+        advantageous-effects 発明の効果
+        =================================================================== -->
     <xsl:template
-        match="embodiments-example">
+        match="tech-problem | tech-solutions | advantageous-effects">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【実施例'" />
-                <xsl:apply-templates select="@ex-num" />
-                <xsl:value-of select="'】'" />
+            <xsl:element name="jp-tag">
+                <xsl:call-template name="tech-problem-solution-effects-jp-tag">
+                    <xsl:param name="tag" select="name()" />
+                </xsl:call-template>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -6243,62 +4659,78 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     reference-signs-list
-     ====================================================================-->
-    <!-- 符号の説明 -->
-    <xsl:template match="reference-signs-list">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【符号の説明】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     reference-to-deposited-biological-material
-     ====================================================================-->
-    <!-- 受託番号 -->
     <xsl:template
-        match="reference-to-deposited-biological-material">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【受託番号】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
+        name="summary-of-invention-items-jp-tag">
+        <xsl:param name="tag" />
+        <xsl:variable name="law-text">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:choose>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>
+                        <xsl:when test="$kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when test="$kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="'発明'" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
 
-            <xsl:apply-templates select="p" />
-        </xsl:element>
+        <xsl:choose>
+            <xsl:when
+                test="$tag = 'tech-problem'">
+                <xsl:value-of select="'【' || $law-text || 'が解決しようとする課題】'" />
+            </xsl:when>
+            <xsl:when
+                test="$tag = 'tech-solution'">
+                <xsl:value-of select="'【課題を解決するための手段】'" />
+            </xsl:when>
+            <xsl:when
+                test="$tag = 'advantageous-effects'">
+                <xsl:value-of select="'【' || $law-text || 'の効果】'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="''" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
+
+    <schema:object name="summary-of-invention-items">
+        <schema:property name="tag" type="string"
+            enum="tech-problem tech-solutions advantageous-effects heading paragraph" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ==== End of tech-problem | tech-solutions | advantageous-effects == -->
 
     <!-- ====================================================================
      citation-list
@@ -6309,10 +4741,10 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【先行技術文献】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -6324,24 +4756,50 @@
                 </xsl:choose>
             </xsl:element>
 
-            <xsl:apply-templates select="patent-literature | non-patent-literature | heading | p" />
+            <xsl:apply-templates select="patent-literature | non-patent-literature | p" />
         </xsl:element>
     </xsl:template>
 
+    <schema:object name="citation-list">
+        <schema:property name="tag" type="string"
+            const="citation-list" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="literature" />
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of citation-list ======================== -->
+
     <!-- ====================================================================
-     patent-literature
+     patent-literature 特許文献
+     non-patent-literature 非特許文献 
      ====================================================================-->
-    <!-- 特許文献 -->
     <xsl:template
-        match="patent-literature">
+        match="patent-literature | non-patent-literature">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【特許文献】'" />
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when
+                        test="name() = 'patent-literature'">
+                        <xsl:value-of select="'【特許文献】'" />
+                    </xsl:when>
+                    <xsl:when
+                        test="name() = 'non-patent-literature'">
+                        <xsl:value-of select="'【非特許文献】'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【unknown】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -6357,20 +4815,36 @@
         </xsl:element>
     </xsl:template>
 
+    <schema:object name="literature">
+        <schema:property name="tag" type="string"
+            enum="patent-literature non-patent-literature" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of patent-literature ======================== -->
+
     <!-- ====================================================================
-     non-patent-literature
+     description-of-embodiments 発明を実施するための形態
+     best-mode 発明を実施するための最良の形態
      ====================================================================-->
-    <!-- 非特許文献 -->
     <xsl:template
-        match="non-patent-literature">
+        match="description-of-embodiments | best-mode">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【非特許文献】'" />
+            <xsl:element name="jp-tag">
+                <xsl:call-template name="description-of-embodiments-jp-tag">
+                    <xsl:param name="description-of-embodiments-or-best-mode"
+                        select="name()" />
+                </xsl:call-template>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:contents-of-amendment">
@@ -6382,282 +4856,211 @@
                 </xsl:choose>
             </xsl:element>
 
-            <xsl:apply-templates select="p" />
+            <xsl:apply-templates select="embodiments-example | p" />
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     tech-problem
-     ====================================================================-->
-    <!-- 発明が解決しようとする課題 -->
-    <xsl:template match="tech-problem">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明が解決しようとする課題】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案が解決しようとする課題】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明が解決しようとする課題】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案が解決しようとする課題】'" />
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明が解決しようとする課題】'" />
-                            </xsl:when>
-                            <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案が解決しようとする課題】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【発明が解決しようとする課題】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     tech-solution
-     ====================================================================-->
-    <!-- 課題を解決するための手段 -->
-    <xsl:template match="tech-solution">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【課題を解決するための手段】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     advantageous-effects
-     ====================================================================-->
-    <!-- 発明の効果 -->
     <xsl:template
-        match="advantageous-effects">
+        name="description-of-embodiments-jp-tag">
+        <xsl:param name="description-of-embodiments-or-best-mode" />
+
+        <xsl:variable name="second-part">
+            <xsl:choose>
+                <xsl:when
+                    test="$description-of-embodiments-or-best-mode = 'description-of-embodiments'">
+                    <xsl:value-of select="'を実施するための形態'" />
+                </xsl:when>
+                <xsl:when test="$description-of-embodiments-or-best-mode = 'best-mode'">
+                    <xsl:value-of select="'を実施するための最良の形態'" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="''" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="first-part">
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xsl:choose>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when
+                            test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:choose>
+                        <xsl:when test="$kind-of-law = 'patent'">
+                            <xsl:value-of select="'発明'" />
+                        </xsl:when>
+                        <xsl:when test="$kind-of-law = 'utility'">
+                            <xsl:value-of select="'考案'" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="'発明'" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of
+            select="'【' || $first-part || $second-part || '】'" />
+    </xsl:template>
+
+    <schema:object name="description-of-embodiments">
+        <schema:property name="tag" type="string"
+            enum="description-of-embodiments best-mode" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="embodiments-example" />
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of description-of-embodiments ======================== -->
+
+    <!-- ====================================================================
+     embodiments-example 実施例 
+     mode-for-invention  実施例
+     ====================================================================-->
+    <xsl:template
+        match="embodiments-example | mode-for-invention">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【実施例'" />
                 <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:choose>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の効果】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の効果】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の効果】'" />
-                            </xsl:when>
-                            <xsl:when
-                                test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の効果】'" />
-                            </xsl:when>
-                        </xsl:choose>
+                    <xsl:when test="./@ex-num">
+                        <xsl:apply-templates select="@ex-num" />
                     </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【発明の効果】'" />
-                            </xsl:when>
-                            <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【考案の効果】'" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="'【発明の効果】'" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indentLevel">
-                <xsl:choose>
-                    <xsl:when
-                        test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="2" />
+                    <xsl:when test="./@mode-num">
+                        <xsl:apply-templates select="@mode-num" />
                     </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="0" />
-                    </xsl:otherwise>
                 </xsl:choose>
-            </xsl:element>
-
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-
-    <!-- ====================================================================
-     patcit
-     ====================================================================-->
-    <!-- 特許文献  -->
-    <xsl:template
-        match="description//patcit | jp:contents-of-amendment//patcit">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">patcit</xsl:element>
-            <xsl:element name="number">
-                <xsl:value-of select="@num" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【特許文献'" />
-                <xsl:apply-templates select="@num" />
                 <xsl:value-of select="'】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+
+            <xsl:apply-templates select="p" />
+        </xsl:element>
+    </xsl:template>
+
+    <schema:object name="embodiments-example">
+        <schema:property name="tag" type="string"
+            enum="embodiments-example mode-for-invention" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of embodiments-example ======================== -->
+
+    <!-- ====================================================================
+     drawings
+     ====================================================================-->
+    <!-- 図面 -->
+    <xsl:template match="drawings">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">drawings</xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【書類名】図面'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+
+            <xsl:apply-templates select="figure" />
+        </xsl:element>
+    </xsl:template>
+
+    <schema:object name="drawings">
+        <schema:property name="tag" type="string" const="drawings" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="figure" />
+        </schema:property>
+    </schema:object>
+    <!-- ======================= End of drawings ======================== -->
+
+    <!-- ====================================================================
+     abstract 要約書
+     ====================================================================-->
+    <xsl:template match="abstract">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">abstract</xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【書類名】要約書'" />
             </xsl:element>
             <xsl:element name="text">
-                <xsl:value-of select="./text" />
+                <xsl:call-template name="trim">
+                    <xsl:with-param name="text" select="." />
+                </xsl:call-template>
             </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+
+            <!-- 未サポート -->
+            <xsl:if test="doc-page or abst-problem or abst-solution">
+                <xsl:apply-templates select="doc-page | abst-problem | abst-solution" />
+            </xsl:if>
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     nplcit
-     ====================================================================-->
-    <!-- 非特許文献  -->
-    <xsl:template
-        match="description//nplcit | jp:contents-of-amendment//nplcit">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">nplcit</xsl:element>
-            <xsl:element name="number">
-                <xsl:value-of select="@num" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'　　【非特許文献'" />
-                <xsl:apply-templates select="@num" />
-                <xsl:value-of select="'】'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="./text" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-        </xsl:element>
-    </xsl:template>
+    <schema:object name="abstract">
+        <schema:property name="tag" type="string" const="abstract" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+    <!-- ======================= End of abstract ======================== -->
 
-    <!-- ====================================================================
-     chemistry
-     ====================================================================-->
-    <!-- 化学式  -->
-    <xsl:template
-        match="application-body//chemistry | jp:contents-of-amendment//chemistry">
-        <xsl:element name="blocks">
-            <!-- tag 名は html renderer の識別用に分かりやすい名前に変えている-->
-            <xsl:element name="tag">
-                <xsl:value-of select="'chemical-formulas'" />
-            </xsl:element>
-            <xsl:element name="number">
-                <xsl:value-of select="@num" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【化'" />
-                <xsl:apply-templates select="@num" />
-                <xsl:value-of select="'】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-
-            <xsl:apply-templates select="img" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     maths
-     ====================================================================-->
-    <!-- 数式  -->
-    <xsl:template
-        match="application-body//maths | jp:contents-of-amendment//maths">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'equations'" />
-            </xsl:element>
-            <xsl:element name="number">
-                <xsl:value-of select="@num" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【数'" />
-                <xsl:apply-templates select="@num" />
-                <xsl:value-of select="'】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-
-            <xsl:apply-templates select="img" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     tables
-     ====================================================================-->
-    <!-- 表  -->
-    <xsl:template
-        match="application-body//tables | jp:contents-of-amendment//tables">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'tables'" />
-            </xsl:element>
-            <xsl:element name="number">
-                <xsl:value-of select="@num" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【表'" />
-                <xsl:apply-templates select="@num" />
-                <xsl:value-of select="'】'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-
-            <xsl:apply-templates select="img" />
-        </xsl:element>
-    </xsl:template>
 
     <!-- ====================================================================
      figure
@@ -6678,12 +5081,12 @@
             <xsl:element name="number">
                 <xsl:value-of select="@num" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'【図'" />
                 <xsl:apply-templates select="@num" />
                 <xsl:value-of select="'】'" />
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -6711,57 +5114,321 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     figref
-     ====================================================================-->
-    <!-- 図の説明  -->
-    <xsl:template
-        match="description//figref | jp:contents-of-amendment//figref">
+    <schema:object name="figure">
+        <schema:property name="tag" type="string" const="figures" />
+        <schema:property name="number" type="string" />
+        <schema:property name="jp-tag" type="string" optional="true" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="alt" type="string" />
+        <schema:property name="representative" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="image" />
+        </schema:property>
+    </schema:object>
 
-        <!--  項目内容の編集  -->
+    <!-- ====================================================================
+     p
+     ====================================================================-->
+    <!-- 段落 ,段落内テキスト -->
+    <xsl:template
+        match="p">
         <xsl:element name="blocks">
-            <xsl:element name="tag">figref</xsl:element>
+            <xsl:element name="tag">paragraph</xsl:element>
             <xsl:element name="number">
                 <xsl:value-of select="@num" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'【図'" />
+            <xsl:if test="normalize-space(@num) != ''">
+                <xsl:element name="jp-tag">
+                    <xsl:value-of select="'【' || f:to-fullwidth-digit(@num) || '】'" />
+                </xsl:element>
+            </xsl:if>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="1" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+
+    <schema:object name="paragraph">
+        <schema:property name="tag" type="string" const="paragraph" />
+        <schema:property name="number" type="string" />
+        <schema:property name="jp-tag" type="string" optional="true" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="inline-text" />
+                <schema:ref name="inline-text-with-header" />
+                <schema:ref name="image-container" />
+                <schema:ref name="other-images" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+
+    <!--  inline text under paragraph   -->
+    <xsl:template
+        match="text() | sup | sub | u">
+        <xsl:variable name="tag">
+            <xsl:choose>
+                <xsl:when test="self::text()">text</xsl:when>
+                <xsl:when test="self::sup">sup</xsl:when>
+                <xsl:when test="self::sub">sub</xsl:when>
+                <xsl:when test="self::u">underline</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- 次の「有意ノード」を見る -->
+        <xsl:variable name="nextNode"
+            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
+
+        <!-- 次が br か、次が存在しない（p末尾）なら true -->
+        <xsl:variable name="is-last-sentence"
+            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
+
+        <xsl:if test="normalize-space() != ''">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="$tag" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:call-template name="trim">
+                        <xsl:with-param name="text" select="." />
+                    </xsl:call-template>
+                </xsl:element>
+                <xsl:element name="is-last-sentence">
+                    <xsl:value-of select="$is-last-sentence" />
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+
+    <schema:object name="inline-text">
+        <schema:property name="tag" type="string" enum="text sup sub underline" />
+        <schema:property name="text" type="string" />
+        <schema:property name="is-last-sentence" type="boolean" />
+    </schema:object>
+
+    <!-- ====================================================================
+     figref 図の説明
+     patcit 特許文献
+     nplcit 非特許文献
+     ====================================================================-->
+    <xsl:template
+        match="description//figref | jp:contents-of-amendment//figref |
+        description//patcit | jp:contents-of-amendment//patcit |
+        description//nplcit | jp:contents-of-amendment//nplcit">
+        <xsl:variable name="params"
+            select="key('inline-text-with-header-key', name())" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="number">
+                <xsl:value-of select="@num" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
                 <xsl:apply-templates select="@num" />
                 <xsl:value-of select="'】'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:element name="indent-level">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
+    <xsl:key name="inline-text-with-header-key" match="parameter" use="@tag" />
+    <xsl:variable name="inline-text-with-header-parameters">
+        <parameter tag="figref" jp-tag="【図" />
+        <parameter tag="patcit" jp-tag="【特許文献" />
+        <parameter tag="nplcit" jp-tag="【非特許文献" />
+    </xsl:variable>
+
+    <schema:object name="inline-text-with-header">
+        <schema:property name="tag" type="string"
+            enum="figref patcit nplcit" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="number" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <!-- ============= End of inline-text-with-header ============================= -->
+
+
     <!-- ====================================================================
-     jp:item-content
+     tables 表
+     maths 数式 
+     chemistry 化学式
      ====================================================================-->
-    <!--  -->
-    <xsl:template match="jp:item-content">
+    <xsl:template
+        match="application-body//tables | jp:contents-of-amendment//tables |
+        application-body//maths | jp:contents-of-amendment//maths |
+        application-body//chemistry | jp:contents-of-amendment//chemistry">
+        <xsl:variable name="params"
+            select="key('image-container-key', name())" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="$params/@tag2" />
+            </xsl:element>
+            <xsl:element name="number">
+                <xsl:value-of select="@num" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
+                <xsl:apply-templates select="@num" />
+                <xsl:value-of select="'】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">2</xsl:element>
+
+            <xsl:apply-templates select="img" />
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:key name="image-container-key" match="parameter" use="@tag" />
+    <xsl:variable name="image-container-parameters">
+        <parameter tag="tables" tag2="tables" jp-tag="【表" />
+        <parameter tag="maths" tag2="equations" jp-tag="【数" />
+        <parameter tag="chemistry" tag2="chemical-formulas" jp-tag="【化" />
+    </xsl:variable>
+
+    <schema:object name="image-container">
+        <schema:property name="tag" type="string"
+            enum="tables equations chemical-formulas" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="number" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="image" />
+        </schema:property>
+    </schema:object>
+    <!-- ============= End of image-container ============================= -->
+
+
+    <!-- 変換元XMLにある images/image のlookup -->
+    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
+
+    <!-- maths, tables, figure, chemistry 下の img -->
+    <xsl:template match="maths/img | tables/img | figure/img | chemistry/img">
+        <xsl:for-each select="key('images-table-key', @file)">
+            <xsl:element name="images">
+                <xsl:element name="src">
+                    <xsl:value-of select="@new" />
+                </xsl:element>
+                <xsl:element name="width">
+                    <xsl:value-of select="@width" />
+                </xsl:element>
+                <xsl:element name="height">
+                    <xsl:value-of select="@height" />
+                </xsl:element>
+                <xsl:element name="kind">
+                    <xsl:value-of select="@kind" />
+                </xsl:element>
+                <xsl:element name="sizeTag">
+                    <xsl:value-of select="@sizeTag" />
+                </xsl:element>
+            </xsl:element>
+        </xsl:for-each>
+    </xsl:template>
+
+    <schema:object name="image">
+        <schema:property name="tag" type="string"
+            const="image" />
+        <schema:property name="src" type="string" />
+        <schema:property name="width" type="string" />
+        <schema:property name="height" type="string" />
+        <schema:property name="kind" type="string" />
+        <schema:property name="size-tag" type="string" />
+    </schema:object>
+
+    <!-- paragraph 下の img -->
+    <xsl:template match="p/img">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="'other-images'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:sequence select="0" />
+            </xsl:element>
+
+            <xsl:for-each select="key('images-table-key', @file)">
+                <xsl:element name="images">
+                    <xsl:element name="src">
+                        <xsl:value-of select="@new" />
+                    </xsl:element>
+                    <xsl:element name="width">
+                        <xsl:value-of select="@width" />
+                    </xsl:element>
+                    <xsl:element name="height">
+                        <xsl:value-of select="@height" />
+                    </xsl:element>
+                    <xsl:element name="kind">
+                        <xsl:value-of select="@kind" />
+                    </xsl:element>
+                    <xsl:element name="size-tag">
+                        <xsl:value-of select="@sizeTag" />
+                    </xsl:element>
+                </xsl:element>
+            </xsl:for-each>
+        </xsl:element>
+    </xsl:template>
+
+    <schema:object name="other-images">
+        <schema:property name="tag" type="string"
+            const="other-images" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="images" type="array">
+            <schema:ref name="image" />
+        </schema:property>
+    </schema:object>
+
+    <!-- ====================================================================
+     数字系属性の全角変換
+     ====================================================================-->
+    <xsl:template
+        match="@num | @mode-num | @ex-num">
+        <xsl:value-of select="f:to-fullwidth-alnum(.)" />
+    </xsl:template>
+
+    <!-- ====================================================================
+     heading
+     import from <xsl:template name="既定外項目名編集">
+     ====================================================================-->
+    <!-- 【Ｋ～Ｋ】  -->
+    <xsl:template match="heading">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【' || . || '】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:element>
         </xsl:element>
     </xsl:template>
 
-    <!-- ==明細書関係=====end================================================-->
     <!-- ==template-name  start =============================================-->
-
-
     <!-- ====================================================================
      整理番号項目名編集
      ====================================================================-->
     <xsl:template
         name="整理番号項目名編集">
-
-
         <xsl:variable name="kinddoc">
             <xsl:choose>
                 <xsl:when test="ancestor::jp:contents-of-amendment">
@@ -6789,16 +5456,16 @@
             <xsl:when
                 test="parent::jp:contents-of-amendment
                 and ancestor::jp:appeal-article">
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'【整理番号】'" />
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:value-of select="2" />
                 </xsl:element>
             </xsl:when>
 
             <xsl:when test="ancestor::jp:contents-of-amendment">
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:choose>
                         <xsl:when test="parent::jp:amendment-group">
                             <xsl:choose>
@@ -6815,7 +5482,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:value-of select="2" />
                 </xsl:element>
             </xsl:when>
@@ -6826,18 +5493,18 @@
                             <xsl:when
                                 test="$c-payment = 'jp:payment-' or $kinddoc = 'jp:demand-e853'
                             or $kinddoc = 'jp:demand-e854' or $kinddoc = 'jp:demand-e862' ">
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【整理番号】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="0" />
                                 </xsl:element>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【整理番号】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="2" />
                                 </xsl:element>
                             </xsl:otherwise>
@@ -6846,15 +5513,15 @@
                     <xsl:when
                         test="ancestor::jp:parent-application-article
                         or ancestor::jp:declaration-priority-ear-app">
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【整理番号】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="2" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:when test="parent::jp:amendment-group">
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:choose>
                                 <xsl:when test="$kinddoc = 'jp:amendment-a524'">
                                     <xsl:value-of select="'【訂正対象書類整理番号】'" />
@@ -6864,15 +5531,15 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="1" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【整理番号】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="0" />
                         </xsl:element>
                     </xsl:otherwise>
@@ -6933,7 +5600,7 @@
         </xsl:variable>
 
         <!--  項目名の編集  -->
-        <xsl:element name="jpTag">
+        <xsl:element name="jp-tag">
             <xsl:choose>
                 <xsl:when
                     test="$node = 'jp:application-a631' or $node = 'jp:application-a632' or
@@ -7116,10 +5783,10 @@
             <xsl:when test="parent::jp:submission-date">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:target-document/jp:submission-date">
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【提出日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="2" />
                         </xsl:element>
                     </xsl:when>
@@ -7127,10 +5794,10 @@
                         <xsl:choose>
                             <xsl:when
                                 test="ancestor::jp:contents-of-amendment/jp:submission-date">
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【提出日】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="2" />
                                 </xsl:element>
                             </xsl:when>
@@ -7138,28 +5805,28 @@
                                 test="ancestor::jp:contents-of-amendment/jp:amendment-group/jp:submission-date">
                                 <xsl:choose>
                                     <xsl:when test="$kinddoc = 'jp:amendment-a524'">
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【訂正対象書類提出日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="2" />
                                         </xsl:element>
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【補正対象書類提出日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="2" />
                                         </xsl:element>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【提出日】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="2" />
                                 </xsl:element>
                             </xsl:otherwise>
@@ -7170,28 +5837,28 @@
                             <xsl:when test="ancestor::jp:amendment-group/jp:submission-date">
                                 <xsl:choose>
                                     <xsl:when test="$kinddoc = 'jp:amendment-a524'">
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【訂正対象書類提出日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="1" />
                                         </xsl:element>
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【補正対象書類提出日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="1" />
                                         </xsl:element>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【提出日】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="0" />
                                 </xsl:element>
                             </xsl:otherwise>
@@ -7209,18 +5876,18 @@
                         and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
                         or $node = 'jp:demand-e854' or $node = 'jp:demand-e862')
                         and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【出願日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="0" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【出願日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="2" />
                         </xsl:element>
                     </xsl:otherwise>
@@ -7235,18 +5902,18 @@
                         and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
                         or $node = 'jp:demand-e854' or $node = 'jp:demand-e862')
                         and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【国際出願日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="0" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【国際出願日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="2" />
                         </xsl:element>
                     </xsl:otherwise>
@@ -7255,18 +5922,18 @@
             <xsl:when
                 test="ancestor::jp:application-reference
                 and ancestor::jp:application-reference [@appl-type = 'registration']">
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'【登録日】'" />
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:value-of select="2" />
                 </xsl:element>
             </xsl:when>
             <xsl:when test="ancestor::jp:priority-claim">
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'【出願日】'" />
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:value-of select="2" />
                 </xsl:element>
             </xsl:when>
@@ -7278,18 +5945,18 @@
                         and ($payment = 'jp:payment-' or $node = 'jp:demand-e853'
                         or $node = 'jp:demand-e854' or $node = 'jp:demand-e862')
                         and not(ancestor::jp:contents-of-amendment)">
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【審判請求日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="0" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【審判請求日】'" />
                         </xsl:element>
-                        <xsl:element name="indentLevel">
+                        <xsl:element name="indent-level">
                             <xsl:value-of select="2" />
                         </xsl:element>
                     </xsl:otherwise>
@@ -7303,28 +5970,28 @@
                             <xsl:when test="$paym = 'jp:payment-'">
                                 <xsl:choose>
                                     <xsl:when test="$kindlaw = 'patent'">
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【特許査定の謄本発送日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="2" />
                                         </xsl:element>
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【登録査定の謄本発送日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="2" />
                                         </xsl:element>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【発送日】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="2" />
                                 </xsl:element>
                             </xsl:otherwise>
@@ -7335,28 +6002,28 @@
                             <xsl:when test="$paym = 'jp:payment-'">
                                 <xsl:choose>
                                     <xsl:when test="$kindlaw = 'patent'">
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【特許査定の謄本発送日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="0" />
                                         </xsl:element>
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:element name="jpTag">
+                                        <xsl:element name="jp-tag">
                                             <xsl:value-of select="'【登録査定の謄本発送日】'" />
                                         </xsl:element>
-                                        <xsl:element name="indentLevel">
+                                        <xsl:element name="indent-level">
                                             <xsl:value-of select="0" />
                                         </xsl:element>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:element name="jpTag">
+                                <xsl:element name="jp-tag">
                                     <xsl:value-of select="'【発送日】'" />
                                 </xsl:element>
-                                <xsl:element name="indentLevel">
+                                <xsl:element name="indent-level">
                                     <xsl:value-of select="0" />
                                 </xsl:element>
                             </xsl:otherwise>
@@ -7369,41 +6036,41 @@
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:submit-date-of-amendment">
                         <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xsl:element name="indentLevel">
+                            <xsl:element name="indent-level">
                                 <xsl:value-of select="2" />
                             </xsl:element>
                         </xsl:if>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【補正書の提出年月日】'" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:when test="ancestor::jp:notice-filing-date">
                         <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xsl:element name="indentLevel">
+                            <xsl:element name="indent-level">
                                 <xsl:value-of select="2" />
                             </xsl:element>
                         </xsl:if>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【出願番号通知の出願日】'" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:when test="ancestor::jp:proof-filing-date">
                         <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xsl:element name="indentLevel">
+                            <xsl:element name="indent-level">
                                 <xsl:value-of select="2" />
                             </xsl:element>
                         </xsl:if>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【証明しようとする出願日】'" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:when test="ancestor::jp:receipt-date">
                         <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xsl:element name="indentLevel">
+                            <xsl:element name="indent-level">
                                 <xsl:value-of select="2" />
                             </xsl:element>
                         </xsl:if>
-                        <xsl:element name="jpTag">
+                        <xsl:element name="jp-tag">
                             <xsl:value-of select="'【１９条補正のＷＩＰＯ受領日】'" />
                         </xsl:element>
                     </xsl:when>
@@ -7426,7 +6093,7 @@
                 <xsl:element name="tag">
                     <xsl:value-of select="'shutugan-kubun'" />
                 </xsl:element>
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'【出願の区分】'" />
                 </xsl:element>
                 <xsl:element name="text">
@@ -7444,7 +6111,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:element>
-                <xsl:element name="indentLevel">
+                <xsl:element name="indent-level">
                     <xsl:choose>
                         <xsl:when
                             test="(ancestor::jp:indication-of-case-article
@@ -7517,7 +6184,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:withdrawal-abandonment-a765'
@@ -7532,7 +6199,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
-            <xsl:element name="indentLevel">
+            <xsl:element name="indent-level">
                 <xsl:choose>
                     <xsl:when test="parent::jp:contents-of-amendment">
                         <xsl:sequence select="2" />
@@ -7561,6 +6228,789 @@
             <xsl:if test="priority-doc-attached">
                 <xsl:apply-templates select="priority-doc-attached" />
             </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     当面、処理対象にしないテンプレート群
+     ====================================================================-->
+
+    <!-- ====================================================================
+    pat-atny
+      a7431 代理人変更届
+      a7431 復代理人変更届
+        jp:attorney-disappear-article 
+     ====================================================================-->
+    <!-- 消滅する代理人の記事     -->
+    <xsl:template
+        match="jp:attorney-disappear-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:agent" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    pat-atny
+      a7422 代理人受任届 
+      a7424 代理人辞任届
+      a7431 復代理人変更届
+      a7432 復代理人受任届 
+      a7433 復代理人選任届 
+      a7434 復代理人辞任届 
+      a7435 復代理人解任届 
+      a7436 復代理権変更届
+      a7437 復代理権消滅届 
+        jp:proceeded-attorney-article 手続した代理人の記事
+     ====================================================================-->
+    <xsl:template
+        match="jp:proceeded-attorney-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:agent" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    pat-aplc
+      a711  出願人名義変更届 
+      a712  出願人名義変更届（一般承継）
+     pat-atny
+      a7432 復代理人受任届 
+      a7434 復代理人辞任届 
+        jp:attorney-of-case-article 事件の出願人の代理人の記事
+     ====================================================================-->
+    <xsl:template
+        match="jp:attorney-of-case-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:agent" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    pat-aplc
+      a711  出願人名義変更届 
+      a712  出願人名義変更届（一般承継）
+     pat-atny
+      a7422 代理人受任届 
+      a7424 代理人辞任届
+      a7431 復代理人変更届
+      a7432 復代理人受任届 
+      a7433 復代理人選任届 
+      a7434 復代理人辞任届 
+      a7435 復代理人解任届 
+      a7436 復代理権変更届
+      a7437 復代理権消滅届 
+        jp:applicant-of-case-article 事件の出願人の記事
+     ====================================================================-->
+    <xsl:template
+        match="jp:applicant-of-case-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:applicant" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:req-for-inspct
+      e841 優先権証明請求書
+    jp:notice-history-list
+      jp:notice-status-info
+    jp:demand-history-list
+      jp:req-for-inspct-history-info 
+
+        jp:application-country-article 出願国名
+     ====================================================================-->
+    <xsl:template
+        match="jp:application-country-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:country" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:rgs-doc
+      jp:payment-r20 特許料納付書, 実用新案登録料納付書
+       jp:annexation-payment-article 併合納付の明細の記事
+     ====================================================================-->
+    <xsl:template
+        match="jp:annexation-payment-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【併合納付の明細】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="jp:annexation-payment" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:rgs-doc
+      jp:payment-r20 特許料納付書, 実用新案登録料納付書
+        jp:annexation-payment 併合納付の明細
+    import from <xsl:template name="併合納付の明細編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:annexation-payment">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:application-reference" />
+            <xsl:apply-templates select="jp:number-of-claim" />
+            <xsl:apply-templates select="jp:payment-years" />
+            <xsl:apply-templates select="jp:fee" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    pat-etc
+      jp:etcetera-a914 出願審査請求手数料返還請求書
+        jp:target-document-article 返還請求対象書類
+     ====================================================================-->
+    <!--  -->
+    <xsl:template
+        match="jp:target-document-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:target-document" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    pat-etc
+      jp:etcetera-a914 出願審査請求手数料返還請求書
+      jp:etcetera-a915 既納手数料返還請求書
+        jp:target-document 対象書類
+     import from <xsl:template name="対象書類編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:target-document">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="parent::jp:target-document-article">
+                        <xsl:if test="position() = 1">
+                            <xsl:value-of select="'【返還請求対象書類】'" />
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'【返還請求対象書類】'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="parent::jp:target-document-article">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:choose>
+                                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                                        <xsl:sequence select="2" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:sequence select="0" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="0" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="ancestor::jp:contents-of-amendment">
+                                <xsl:sequence select="2" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="0" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:submission-date" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    unreferenced?
+     jp:sequence-list 配列表
+     ====================================================================-->
+    <xsl:template
+        match="jp:sequence-list">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【配列表】'" />
+            </xsl:element>
+            <xsl:apply-templates select="p" />
+        </xsl:element>
+
+        <!-- 未サポート -->
+        <xsl:if test="doc-page">
+            <xsl:apply-templates select="doc-page" />
+        </xsl:if>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:class-of-goods-and-service
+     ====================================================================-->
+    <!-- 商品及び役務の区分 -->
+    <xsl:template
+        match="jp:class-of-goods-and-service">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【商品及び役務の区分】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:for-each select="jp:class">
+                <xsl:element name="blocks">
+                    <xsl:element name="tag">
+                        <xsl:value-of select="'jp:class'" />
+                    </xsl:element>
+                    <xsl:element name="text">
+                        <xsl:value-of select="." />
+                    </xsl:element>
+                </xsl:element>
+            </xsl:for-each>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:rgs-doc
+      jp:payment-r20
+      jp:payment-r21
+        jp:kind-of-annexation 併合識別 
+     import from <xsl:template name="併合識別編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:kind-of-annexation">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【併合識別】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:if test="normalize-space(.) = '1'">
+                            <xsl:value-of select="'併合'" />
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:req-for-inspct
+      jp:demand-e842
+        jp:proof-matter-article 証明に係る事項
+     ====================================================================-->
+    <xsl:template
+        match="jp:proof-matter-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【証明に係る事項】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="p" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:req-for-inspct
+      jp:demand-e852
+        jp:rejection-case-accept-notice-art 拒絶理由通知を受けた事件の表示
+     import from <xsl:template name="拒絶理由通知を受けた事件の表示編集">
+     ====================================================================-->
+    <xsl:template match="jp:rejection-case-accept-notice-art">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【拒絶理由通知を受けた事件の表示】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+
+            <xsl:for-each select="jp:application-reference">
+                <xsl:apply-templates select=".//jp:doc-number" />
+            </xsl:for-each>
+            <xsl:apply-templates select="jp:appeal-reference/jp:doc-number" />
+
+            <!-- 未サポート -->
+            <xsl:if
+                test="jp:appeal-reference/jp:date or .//country
+             or .//kind or .//name or jp:application-reference//jp:date">
+                <xsl:apply-templates
+                    select="jp:appeal-reference/jp:date | .//country | .//kind | .//name
+                                 | jp:application-reference//jp:date" />
+            </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:req-for-inspct
+      jp:demand-e841
+      jp:demand-e842
+      jp:demand-e851
+      jp:demand-e852
+      jp:demand-e853
+      jp:demand-e854
+        jp:delivery-way 交付方法 
+     import from  <xsl:template name="交付方法編集">
+       ====================================================================-->
+    <xsl:template
+        match="jp:delivery-way">
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【交付方法】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="normalize-space(.) = '1'">
+                                <xsl:value-of select="'手交'" />
+                            </xsl:when>
+                            <xsl:when test="normalize-space(.) = '2'">
+                                <xsl:value-of select="'郵送'" />
+                            </xsl:when>
+                            <xsl:when test="normalize-space(.) = ''">
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="書誌編集エラー処理" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:req-for-inspct
+      jp:demand-e842
+      jp:demand-e851
+      jp:demand-e852
+      jp:demand-e853
+      jp:demand-e854
+        jp:number-of-copy 請求部数
+     import from <xsl:template name="請求部数編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:number-of-copy">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【請求部数】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:if test="string-length(normalize-space(.)) != 0">
+                    <xsl:choose>
+                        <xsl:when test="ancestor::jp:contents-of-amendment">
+                            <xsl:value-of select="'　　　' || ." />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="'　　　　　' || ." />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:if>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:rgs-doc
+     jp:payment-r100
+     jp:payment-r104
+     jp:payment-r110
+     jp:payment-r114
+     jp:payment-r200
+     jp:payment-r201
+     jp:payment-r210
+     jp:payment-r211
+       jp:indicate-payment 納付の表示
+     import from <xsl:template name="納付の表示編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:indicate-payment">
+
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【納付の表示】　　　　'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:error-code">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when
+                                test="($node = 'jp:payment-r200' or $node = 'jp:payment-r210')
+                         and $kind-of-law = 'trademark'">
+                                <xsl:choose>
+                                    <xsl:when test="normalize-space(.) = ''">
+                                    </xsl:when>
+                                    <xsl:when test="normalize-space(.) = '1'">
+                                        <xsl:value-of select="'分割納付'" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:call-template name="書誌編集エラー処理" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="normalize-space(.) = ''">
+                                    </xsl:when>
+                                    <xsl:when test="normalize-space(.) = '0'">
+                                        <xsl:value-of select="'一括納付'" />
+                                    </xsl:when>
+                                    <xsl:when test="normalize-space(.) = '1'">
+                                        <xsl:value-of select="'分割納付'" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:call-template name="書誌編集エラー処理" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:req-for-inspct
+      jp:demand-e841
+      jp:demand-e842
+      jp:demand-e851
+        jp:proof-or-deliverty-document 証明又は交付に係る書類名
+     import from <xsl:template name="証明又は交付に係る書類名編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:proof-or-deliverty-document">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:variable name="node">
+                            <xsl:value-of
+                                select="ancestor::jp:contents-of-amendment/@jp:kind-of-document" />
+                        </xsl:variable>
+                        <xsl:choose>
+                            <xsl:when test="$node = 'jp:demand-e842'">
+                                <xsl:value-of select="'【証明に係る書類名】'" />
+                            </xsl:when>
+                            <xsl:when test="$node = 'jp:demand-e841'">
+                                <xsl:value-of select="'【証明に係る他の書類名】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【交付に係る書類名】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="$node = 'jp:demand-e842'">
+                                <xsl:value-of select="'【証明に係る書類名】'" />
+                            </xsl:when>
+                            <xsl:when test="$node = 'jp:demand-e841'">
+                                <xsl:value-of select="'【証明に係る他の書類名】'" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="'【交付に係る書類名】'" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:pat-submsn
+      jp:presentment-a80
+        jp:publications-etc-article 刊行物等の記事
+     ====================================================================-->
+    <xsl:template
+        match="jp:publications-etc-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【刊行物等】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="jp:publications-etc" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    jp:pat-submsn
+      jp:presentment-a80
+        jp:publications-etc-article/jp:publications-etc
+     ====================================================================-->
+    <!-- 刊行物等 -->
+    <xsl:template
+        match="jp:publications-etc">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:if test="position() != 1">
+                    <xsl:value-of select="'　　　　　　　　　　　'" />
+                </xsl:if>
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+    pat-etc
+      etcetera-a914 出願審査請求手数料返還請求書
+      etcetera-a915 既納手数料返還請求書
+        jp:bank-account 返還金振込先
+     import from <xsl:template name="振込先編集">
+     ====================================================================-->
+    <xsl:template
+        match="jp:bank-account">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="'【返還金振込先】'" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="2" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="0" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="jp:financial-institution-name" />
+            <xsl:apply-templates select="jp:account-type" />
+            <xsl:apply-templates select="jp:account-number" />
+            <xsl:apply-templates select="jp:kana" />
+            <xsl:apply-templates select="jp:name" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     End of 当面、処理対象にしないテンプレート群
+     ====================================================================-->
+
+    <!-- ====================================================================
+     deceased-inventor
+     ====================================================================-->
+    <!-- 未サポート -->
+    <xsl:template
+        match="deceased-inventor">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+
+            <xsl:apply-templates
+                select="name | prefix | last-name | first-name | midle-name | suffix
+                               | iid | role | orgname | department | synonym
+                               | jp:registered-number" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     designated-states | designated-states-as-inventor
+     ====================================================================-->
+    <!-- 未サポート -->
+    <xsl:template
+        match="designated-states | designated-states-as-inventor">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+
+            <xsl:if test="./country[1]">
+                <xsl:apply-templates select="country[1]" />
+            </xsl:if>
+            <xsl:if test="region">
+                <xsl:apply-templates select="region/country" />
+            </xsl:if>
+            <xsl:if test="./country[2]">
+                <xsl:apply-templates select="country[2]" />
+            </xsl:if>
+        </xsl:element>
+    </xsl:template>
+
+
+    <!-- ====================================================================
+     residence
+     ====================================================================-->
+    <!-- 未サポート -->
+    <xsl:template match="residence">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="country" />
         </xsl:element>
     </xsl:template>
 
@@ -7667,4 +7117,8 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object>
+        <schema:property name="tag" type="string" const="unsupported-tag" />
+        <schema:property name="text" type="string" />
+    </schema:object>
 </xsl:stylesheet>
