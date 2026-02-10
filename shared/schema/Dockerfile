@@ -12,7 +12,7 @@ RUN npm install -g json-schema-to-typescript
 FROM python:3.12-slim AS python_builder
 
 # datamodel-code-generator をインストール
-RUN pip install --no-cache-dir 'datamodel-code-generator[ruff]' pydantic
+RUN pip install --no-cache-dir 'datamodel-code-generator[ruff]' lxml pydantic
 
 # ============================
 # Stage 3: Final image
@@ -30,14 +30,12 @@ COPY --from=python_builder /usr/local/bin/datamodel-codegen /usr/local/bin/
 COPY --from=python_builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 # Node 実行環境も必要なので node をインストール
-RUN apt-get update && apt-get install -y nodejs npm && apt-get clean
+RUN apt-get update && apt-get install -y nodejs npm jq && apt-get clean
 
 RUN addgroup pyuser && adduser --ingroup pyuser pyuser
 USER pyuser
 WORKDIR /schema
-
-# スキーマとビルドスクリプトをコピー
 COPY . .
+#RUN mkdir -p /schema/dist
 
-# デフォルトコマンド
-CMD ["sh", "build-all.sh"]
+ENTRYPOINT ["sh", "build-all.sh"]

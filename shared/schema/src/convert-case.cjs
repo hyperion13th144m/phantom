@@ -3,15 +3,15 @@
  */
 
 const fs = require('fs');
-const { camelCase } = require('lodash');
+const { camelCase, snakeCase } = require('lodash');
 
 /**
  * Recursively convert all object keys in a JSON Schema to camelCase.
  * This ensures generated TypeScript interfaces use camelCase property names.
  */
-function convertKeysToCamelCase(schema) {
+function convertKeys(schema, converter) {
     if (Array.isArray(schema)) {
-        return schema.map(convertKeysToCamelCase);
+        return schema.map(convertKeys);
     } else if (schema && typeof schema === 'object') {
         const newObj = {};
         for (const [key, value] of Object.entries(schema)) {
@@ -19,13 +19,13 @@ function convertKeysToCamelCase(schema) {
             if (key === 'properties' && typeof value === 'object') {
                 const newProps = {};
                 for (const [propKey, propValue] of Object.entries(value)) {
-                    newProps[camelCase(propKey)] = convertKeysToCamelCase(propValue);
+                    newProps[converter(propKey)] = convertKeys(propValue, converter);
                 }
                 newObj[key] = newProps;
             } else if (key === 'required' && Array.isArray(value)) {
-                newObj[key] = value.map(camelCase);
+                newObj[key] = value.map(converter);
             } else {
-                newObj[key] = convertKeysToCamelCase(value);
+                newObj[key] = convertKeys(value, converter);
             }
         }
         return newObj;
@@ -37,9 +37,14 @@ function convertKeysToCamelCase(schema) {
 const srcPath = process.argv[2] || 'example.schema.json';
 const srcJson = JSON.parse(fs.readFileSync(srcPath, 'utf8'));
 const dst = process.argv[3] || 'example.camelCase.json';
+const converter = process.argv[4] || 'camelCase';
 
 // Convert keys to camelCase
-const camelSchema = convertKeysToCamelCase(srcJson);
+const converterFunc =
+    converter === 'camelCase' ? camelCase :
+        converter === 'snake_case' ? snakeCase :
+            (s) => s;
+const camelSchema = convertKeys(srcJson, converterFunc);
 // Generate TypeScript
 
 (async () => {

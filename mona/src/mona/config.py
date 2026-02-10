@@ -180,7 +180,7 @@ translator_config = [
     ),
     TranslatorConfig(
         ### 全文検索用フィールド
-        xsl_path=f"{SCHEMA_VER}/text.xsl",
+        xsl_path=f"{SCHEMA_VER}/fields.xsl",
         force_list=[
             "independentClaims",
             "dependentClaims",

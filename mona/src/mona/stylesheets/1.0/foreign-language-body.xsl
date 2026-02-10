@@ -4,6 +4,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:f="urn:phantom-mona:string-utils"
+    xmlns:schema="urn:schema-dsl"
     exclude-result-prefixes="xs jp f">
 
     <xsl:variable name="node" select="name(//jp:foreign-language-body/*)" />
@@ -50,4 +51,17 @@
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
+
+    <!--==============================================
+     for json schema
+    =================================================-->
+    <schema:object
+        name="foreign-document">
+        <schema:property name="tag" type="string"
+            enum="jp:foreign-language-description jp:foreign-language-claims jp:foreign-language-abstract jp:foreign-language-drawings" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="paragraph" />
+        </schema:property>
+    </schema:object>
+
 </xsl:stylesheet>

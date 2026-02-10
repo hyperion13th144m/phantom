@@ -2,8 +2,10 @@
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jp="http://www.jpo.go.jp">
+    xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl">
 
+    <!-- when this xslt was edited, update shared/schema/src/root.json accordingly -->
 
     <xsl:template match="/">
         <xsl:element name="root">

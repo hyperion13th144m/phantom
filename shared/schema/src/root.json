@@ -1,136 +1,5 @@
 {
     "$schema": "http://json-schema.org/draft/2020-12/schema",
-    "$defs": {
-        "pat-app-doc": {
-            "$ref": "./defs/def-pat-app-doc.json"
-        },
-        "pat-rspns": {
-            "$ref": "./defs/def-pat-rspns.json"
-        },
-        "pat-etc": {
-            "$ref": "./defs/def-pat-etc.json"
-        },
-        "pat-amnd": {
-            "$ref": "./defs/def-pat-amnd.json"
-        },
-        "description": {
-            "$ref": "./defs/def-description.json"
-        },
-        "claims": {
-            "$ref": "./defs/def-claims.json"
-        },
-        "claim": {
-            "$ref": "./defs/claims/def-claim.json"
-        },
-        "claim-text": {
-            "$ref": "./defs/claims/def-claim-text.json"
-        },
-        "abstract": {
-            "$ref": "./defs/def-abstract.json"
-        },
-        "drawings": {
-            "$ref": "./defs/def-drawings.json"
-        },
-        "foreign-document": {
-            "$ref": "./defs/def-foreign-document.json"
-        },
-        "notice-pat-exam": {
-            "$ref": "./defs/def-notice-pat-exam.json"
-        },
-        "amendment-article": {
-            "$ref": "./defs/pat-amnd/def-amendment-article.json"
-        },
-        "amendment-group": {
-            "$ref": "./defs/pat-amnd/def-amendment-group.json"
-        },
-        "contents-of-amendment": {
-            "$ref": "./defs/pat-amnd/def-contents-of-amendment.json"
-        },
-        "bibliographic-items-type-a": {
-            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-a.json"
-        },
-        "bibliographic-items-type-b": {
-            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-b.json"
-        },
-        "bibliographic-items-type-c": {
-            "$ref": "./defs/pat-app-doc/def-bibliographic-items-type-c.json"
-        },
-        "bibliographic-items-type-d": {
-            "$ref": "./defs/pat-rspns/def-bibliographic-items-type-d.json"
-        },
-        "paragraph": {
-            "$ref": "./defs/paragraph/def-paragraph.json"
-        },
-        "inline-text": {
-            "$ref": "./defs/paragraph/def-inline-text.json"
-        },
-        "patcit": {
-            "$ref": "./defs/paragraph/def-patcit.json"
-        },
-        "fig-ref": {
-            "$ref": "./defs/paragraph/def-figref.json"
-        },
-        "image-container": {
-            "$ref": "./defs/image/def-image-container.json"
-        },
-        "figures-container": {
-            "$ref": "./defs/image/def-figures-container.json"
-        },
-        "other-images-container": {
-            "$ref": "./defs/image/def-other-images-container.json"
-        },
-        "image-src": {
-            "$ref": "./defs/image/def-image-src.json"
-        },
-        "invention-title": {
-            "$ref": "./defs/description/def-invention-title.json"
-        },
-        "description-items": {
-            "$ref": "./defs/description/def-description-items.json"
-        },
-        "description-of-embodiments": {
-            "$ref": "./defs/description/def-description-of-embodiments.json"
-        },
-        "embodiments-example": {
-            "$ref": "./defs/description/def-embodiments-example.json"
-        },
-        "citation-list": {
-            "$ref": "./defs/description/def-citation-list.json"
-        },
-        "citation-list-items": {
-            "$ref": "./defs/description/def-citation-list-items.json"
-        },
-        "summary-of-invention": {
-            "$ref": "./defs/description/def-summary-of-invention.json"
-        },
-        "summary-of-invention-items": {
-            "$ref": "./defs/description/def-summary-of-invention-items.json"
-        },
-        "notice-items-type-a": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-a.json"
-        },
-        "notice-items-type-b": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-b.json"
-        },
-        "notice-items-type-c": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-c.json"
-        },
-        "notice-items-type-d": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-d.json"
-        },
-        "notice-items-type-e": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-e.json"
-        },
-        "notice-items-type-f": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-f.json"
-        },
-        "notice-items-type-g": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-g.json"
-        },
-        "notice-items-type-h": {
-            "$ref": "./defs/notice-pat-exam/def-notice-items-type-h.json"
-        }
-    },
     "title": "PatentDocument",
     "type": "object",
     "properties": {
@@ -184,13 +53,82 @@
             "type": "string"
         },
         "images": {
-            "$ref": "./images.json"
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "string"
+                    },
+                    "filename": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "sizeTag": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": "number"
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "representative": {
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "number",
+                    "filename",
+                    "kind",
+                    "sizeTag",
+                    "width",
+                    "height",
+                    "representative"
+                ]
+            }
         },
         "sources": {
-            "$ref": "./sources.json"
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "filename": {
+                        "type": "string"
+                    },
+                    "sha256": {
+                        "type": "string"
+                    },
+                    "byte_size": {
+                        "type": "number"
+                    },
+                    "task": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "extension": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "filename",
+                    "sha256",
+                    "byte_size",
+                    "task",
+                    "kind",
+                    "extension"
+                ]
+            }
         },
         "fields": {
-            "$ref": "./fields.json"
+            "$ref": "#/$defs/fields"
         },
         "ocrText": {
             "type": "string"
@@ -215,7 +153,7 @@
                         "$ref": "#/$defs/drawings"
                     },
                     {
-                        "$ref": "#/$defs/pat-rspns"
+                        "$ref": "#/$defs/pat-rspn"
                     },
                     {
                         "$ref": "#/$defs/pat-etc"
@@ -225,9 +163,6 @@
                     },
                     {
                         "$ref": "#/$defs/foreign-document"
-                    },
-                    {
-                        "$ref": "#/$defs/notice-pat-exam"
                     }
                 ]
             }

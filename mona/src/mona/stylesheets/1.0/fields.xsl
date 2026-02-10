@@ -4,6 +4,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:f="urn:phantom-mona:string-utils"
+    xmlns:schema="urn:schema-dsl"
     exclude-result-prefixes="xs jp f">
 
     <xsl:variable name="node" select="name(//jp:pat-app-doc/*)" />
@@ -51,10 +52,8 @@
         reference-to-deposited-biological-material | abstract |
         jp:law-of-industrial-regenerate | jp:conclusion-part-article |
         jp:drafting-body | jp:opinion-contents-article | jp:contents-of-amendment">
-        <xsl:variable name="field"
-            select="key('field-table-key', name(.), $field-table)/@field" />
         <xsl:if test="normalize-space(.) != ''">
-            <xsl:element name="{$field}">
+            <xsl:element name="{local-name()}">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
         </xsl:if>
@@ -62,7 +61,7 @@
 
     <xsl:template match="jp:special-mention-matter-article">
         <xsl:for-each select="jp:article">
-            <xsl:element name="specialMentionMatterArticle">
+            <xsl:element name="special-mention-matter-article">
                 <xsl:call-template name="convert-special-mention-matter-article">
                     <xsl:with-param name="article" select="normalize-space()" />
                     <xsl:with-param name="kind-of-law" select="$kind-of-law" />
@@ -73,20 +72,20 @@
 
     <xsl:template match="jp:article-group">
         <xsl:for-each select="jp:article">
-            <xsl:element name="rejectionReasonArticle">
+            <xsl:element name="rejection-reason-article">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="claim-text[not(contains(., '請求項'))]">
-        <xsl:element name="independentClaims">
+        <xsl:element name="independent-claims">
             <xsl:value-of select="normalize-space(.)" />
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="claim-text[contains(., '請求項')]">
-        <xsl:element name="dependentClaims">
+        <xsl:element name="dependent-claims">
             <xsl:value-of select="normalize-space(.)" />
         </xsl:element>
     </xsl:template>
@@ -180,27 +179,37 @@
         </xsl:element>
     </xsl:template>
 
-
-    <xsl:key name="field-table-key" match="item" use="@tag" />
-    <xsl:variable name="field-table">
-        <item tag="invention-title" field="inventionTitle" />
-        <item tag="technical-field" field="technicalField" />
-        <item tag="background-art" field="backgroundArt" />
-        <item tag="tech-problem" field="techProblem" />
-        <item tag="tech-solution" field="techSolution" />
-        <item tag="advantageous-effects" field="advantageousEffects" />
-        <item tag="description-of-embodiments" field="embodiments" />
-        <item tag="best-mode" field="embodiments" />
-        <item tag="industrial-applicability" field="industrialApplicability" />
-        <item tag="reference-to-deposited-biological-material"
-            field="referenceToDepositedBiologicalMaterial" />
-        <item tag="abstract" field="abstract" />
-        <item tag="jp:law-of-industrial-regenerate" field="lawOfIndustrialRegenerate" />
-        <item tag="jp:conclusion-part-article" field="conclusionPartArticle" />
-        <item tag="jp:drafting-body" field="draftingBody" />
-        <item tag="jp:contents-of-amendment" field="contentsOfAmendment" />
-        <item tag="jp:opinion-contents-article" field="opinionContentsArticle" />
-    </xsl:variable>
-
     <xsl:template match="text()" />
+
+    <schema:object
+        name="fields">
+        <schema:property name="tag" type="string"
+            const="fields" />
+        <schema:property name="invention-title" type="string" optional="true" />
+        <schema:property name="technical-field" type="string" optional="true" />
+        <schema:property name="background-art" type="string" optional="true" />
+        <schema:property name="tech-problem" type="string" optional="true" />
+        <schema:property name="tech-solution" type="string" optional="true" />
+        <schema:property name="advantageous-effects" type="string" optional="true" />
+        <schema:property name="description-of-embodiments" type="string" optional="true" />
+        <schema:property name="best-mode" type="string" optional="true" />
+        <schema:property name="industrial-applicability" type="string" optional="true" />
+        <schema:property name="reference-to-deposited-biological-material" type="string"
+            optional="true" />
+        <schema:property name="abstract" type="string" optional="true" />
+        <schema:property name="jp:law-of-industrial-regenerate" type="string" optional="true" />
+        <schema:property name="jp:conclusion-part-article" type="string" optional="true" />
+        <schema:property name="jp:drafting-body" type="string" optional="true" />
+        <schema:property name="jp:opinion-contents-article" type="string" optional="true" />
+
+        <schema:property name="independent-claims" type="array" itemType="string" optional="true" />
+        <schema:property name="dependent-claims" type="array" itemType="string" optional="true" />
+        <schema:property name="inventors" type="array" itemType="string" optional="true" />
+        <schema:property name="applicants" type="array" itemType="string" />
+        <schema:property name="agents" type="array" itemType="string" optional="true" />
+        <schema:property name="rejection-reason-article" type="array" itemType="string"
+            optional="true" />
+        <schema:property name="contents-of-amendment" type="array" itemType="string"
+            optional="true" />
+    </schema:object>
 </xsl:stylesheet>

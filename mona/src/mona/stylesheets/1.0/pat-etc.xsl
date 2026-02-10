@@ -7,7 +7,8 @@
      ====================================================================-->
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:jp="http://www.jpo.go.jp">
+    xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl">
 
     <xsl:variable name="node" select="name(//jp:pat-etc/*)" />
     <xsl:variable name="kind-of-law" select="//jp:pat-etc/*/@jp:kind-of-law" />
@@ -449,4 +450,45 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
+
+    <!--==============================================
+     for json schema
+    =================================================-->
+    <schema:object
+        name="pat-etc">
+        <schema:property name="tag" type="string"
+            const="pat-etc" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="addressed-to-person" />
+                <schema:ref name="agents" />
+                <!-- 未サポート
+                <schema:ref name="amount-paid" />
+                <schema:ref name="amount-proper-payment" />
+                <schema:ref name="amount-restoration-claim" />
+                <schema:ref name="bank-account" />
+                <schema:ref name="invention-contents-article" />
+                <schema:ref name="target-document" />
+                <schema:ref name="target-document-article" />
+                -->
+                <schema:ref name="applicants" />
+                <schema:ref name="charge-article" />
+                <schema:ref name="dispatch-date" />
+                <schema:ref name="dispatch-number" />
+                <schema:ref name="document-code" />
+                <schema:ref name="dtext" />
+                <schema:ref name="file-reference-id" />
+                <schema:ref name="indication-of-case-article" />
+                <schema:ref name="notice-contents-group" />
+                <schema:ref name="opinion-contents-article" />
+                <schema:ref name="priority-claims" />
+                <schema:ref name="proof-necessity" />
+                <schema:ref name="rule-outside-item-article" />
+                <schema:ref name="share-rate" />
+                <schema:ref name="submission-date" />
+                <schema:ref name="submission-object-list-article" />
+                <schema:ref name="use-of-das" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 </xsl:stylesheet>

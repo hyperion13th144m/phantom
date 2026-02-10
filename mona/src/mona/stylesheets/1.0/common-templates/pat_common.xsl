@@ -28,7 +28,6 @@
         href="doc-number.xsl" />
     <xsl:include href="date-templates.xsl" />
 
-
     <!-- ====================================================================
      type A elements have a tag and blocks.
 
@@ -292,6 +291,14 @@
         </xsl:choose>
     </xsl:template>
 
+    <schema:object name="document-code">
+        <schema:property name="tag" type="string" const="jp:document-code" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
+
     <!-- ====================================================================
      jp:file-reference-id
      ====================================================================-->
@@ -308,6 +315,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="file-reference-id">
+        <schema:property name="tag" type="string" const="jp:file-reference-id" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:share-rate 持分の割合
@@ -339,6 +353,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="share-rate">
+        <schema:property name="tag" type="string" const="jp:share-rate" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:moleclar 持分率（分子）
@@ -392,6 +413,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="dtext">
+        <schema:property name="tag" type="string" const="jp:dtext" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:payment-years 納付年分
@@ -424,6 +452,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="payment-years">
+        <schema:property name="tag" type="string" const="jp:payment-years" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:year-from 納付年分（自）
@@ -559,6 +594,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="proof-necessity">
+        <schema:property name="tag" type="string" const="jp:proof-necessity" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:notice-contents-group 届出の内容
@@ -631,6 +673,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="notice-contents-group">
+        <schema:property name="tag" type="string" const="jp:notice-contents-group" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:ip-type
@@ -671,6 +720,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="ip-type">
+        <schema:property name="tag" type="string" const="jp:ip-type" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:use-of-das DAS利用
@@ -726,6 +782,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="use-of-das">
+        <schema:property name="tag" type="string" const="jp:use-of-das" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:doc-number 文書番号
@@ -872,6 +935,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="doc-number">
+        <schema:property name="tag" type="string" const="jp:doc-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:name 氏名又は名称
@@ -984,6 +1054,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="name">
+        <schema:property name="tag" type="string" const="jp:name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:original-language-of-name 氏名又は名称原語表記
@@ -1016,7 +1093,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    <schema:object
+        name="original-language-of-name">
+        <schema:property name="tag" type="string" const="jp:original-language-of-name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:registered-number 識別番号 import from <xsl:template name="識別番号編集">
@@ -1089,7 +1172,62 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    <schema:object
+        name="registered-number">
+        <schema:property name="tag" type="string" const="jp:registered-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="office-address">
+        <schema:property name="tag" type="string" const="jp:office-address" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="contact">
+        <schema:property name="tag" type="string" const="jp:contact" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="text">
+        <schema:property name="tag" type="string" const="jp:text" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="relation-attorney-special-matter">
+        <schema:property name="tag" type="string" const="jp:relation-attorney-special-matter" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="phone">
+        <schema:property name="tag" type="string" const="jp:phone" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="fax">
+        <schema:property name="tag" type="string" const="jp:fax" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
+    <schema:object
+        name="kana">
+        <schema:property name="tag" type="string" const="jp:kana" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:country 国コード
@@ -1145,6 +1283,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="country">
+        <schema:property name="tag" type="string" const="jp:country" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:receipt-number 受付番号
@@ -1267,6 +1412,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="receipt-number">
+        <schema:property name="tag" type="string" const="jp:receipt-number" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:relation-of-case 事件との関係
@@ -1320,6 +1472,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="relation-of-case">
+        <schema:property name="tag" type="string" const="jp:relation-of-case" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:fee 納付方法・納付金額
@@ -1456,6 +1615,14 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="fee">
+        <schema:property name="tag" type="string" const="jp:fee" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:account 予納台帳番号・納付書番号
@@ -1515,6 +1682,14 @@
             </xsl:if>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="account">
+        <schema:property name="tag" type="string" const="jp:account" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:document-name 物件名
@@ -1595,6 +1770,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="document-name">
+        <schema:property name="tag" type="string" const="jp:document-name" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:return-request 返還の申出
@@ -1644,6 +1826,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="return-request">
+        <schema:property name="tag" type="string" const="jp:return-request" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:submission-date    提出日 
@@ -1655,8 +1844,48 @@
     <xsl:template
         match="jp:submission-date | jp:dispatch-date | jp:notice-filing-date |
         jp:proof-filing-date | jp:submit-date-of-amendment">
-        <xsl:apply-templates select="jp:date" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:date" />
+        </xsl:element>
     </xsl:template>
+    <schema:object
+        name="submission-date">
+        <schema:property name="tag" type="string" const="jp:submission-date" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
+    <schema:object
+        name="dispatch-date">
+        <schema:property name="tag" type="string" const="jp:dispatch-date" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
+    <schema:object
+        name="notice-filing-date">
+        <schema:property name="tag" type="string" const="jp:notice-filing-date" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
+    <schema:object
+        name="proof-filing-date">
+        <schema:property name="tag" type="string" const="jp:proof-filing-date" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
+    <schema:object
+        name="submit-date-of-amendment">
+        <schema:property name="tag" type="string" const="jp:submit-date-of-amendment" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
      jp:date 日付
@@ -1667,6 +1896,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
+            <!-- render jp-tag -->
             <xsl:call-template name="日付タイトル" />
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space()" />
@@ -1682,6 +1912,14 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="date">
+        <schema:property name="tag" type="string" const="jp:date" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:special-mention-matter-article/jp:article 条文
@@ -1727,6 +1965,14 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="article">
+        <schema:property name="tag" type="string" const="jp:article" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:ipc-article
@@ -1767,6 +2013,13 @@
             </xsl:element>
         </xsl:for-each>
     </xsl:template>
+    <schema:object
+        name="ipc-article">
+        <schema:property name="tag" type="string" const="jp:ipc-article" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:number-of-claim 請求項の数
@@ -1872,6 +2125,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="number-of-claim">
+        <schema:property name="tag" type="string" const="jp:number-of-claim" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:num-claim-decrease-amendment 補正により減少する請求項の数
@@ -1935,6 +2195,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="num-claim-decrease-amendment">
+        <schema:property name="tag" type="string" const="jp:num-claim-decrease-amendment" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:num-claim-increase-amendment 補正により増加する請求項の数
@@ -1998,6 +2265,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="num-claim-increase-amendment">
+        <schema:property name="tag" type="string" const="jp:num-claim-increase-amendment" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:proof-means 証拠方法
@@ -2057,6 +2331,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="proof-means">
+        <schema:property name="tag" type="string" const="jp:proof-means" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
+    </schema:object>
 
     <!-- ===================================================================
       tag, jp-tag, indent-level=2, and text="." with no amendment context.
@@ -2104,326 +2385,6 @@
         <parameter tag="jp:kind-of-appeals" jp-tag="【審判の種別】" />
         <parameter tag="jp:legal-entity-property" jp-tag="【法人の法的性質】" />
     </xsl:variable>
-
-    <!-- ===================================================================
-      tag, jp-tag, indent-level=0 or 2 depends on amendments, and text="."
-      ===================================================================-->
-    <xsl:template
-        match="jp:addressed-to-person | jp:trust-relation | jp:secret-design-term |
-        jp:law-of-industrial-regenerate | jp:dispatch-number |
-        jp:name-of-old-depository | jp:old-depository-number |
-        jp:name-of-new-depository | jp:new-depository-number |
-        jp:number-of-class | jp:number-of-annexation | jp:srep-request-no
-        jp:citation | jp:kind-of-accelerated-examination">
-        <xsl:variable name="params"
-            select="key('item-type-2-key', name())" />
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jp-tag">
-                <xsl:value-of select="$params/@jp-tag" />
-            </xsl:element>
-            <xsl:element name="indent-level">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:sequence select="$params/@indent-level-amendment" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:sequence select="$params/@indent-level" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <xsl:key
-        name="item-type-2-key" match="parameter" use="@tag" />
-    <xsl:variable
-        name="item-type-2-parameters">
-        <parameter tag="jp:addressed-to-person" jp-tag="【あて先】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:trust-relation" jp-tag="【信託関係事項】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:secret-design-term" jp-tag="【秘密にすることを請求する期間】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:law-of-industrial-regenerate" jp-tag="【国等の委託研究の成果に係る記載事項】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:dispatch-number" jp-tag="【発送番号】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:name-of-old-depository" jp-tag="【旧寄託機関の名称】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:old-depository-number" jp-tag="【旧受託番号】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:name-of-new-depository" jp-tag="【新寄託機関の名称】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:new-depository-number" jp-tag="【新受託番号】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:number-of-class" jp-tag="【商品及び役務の区分の数】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:number-of-annexation" jp-tag="【併合件数】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:srep-request-no" jp-tag="【調査報告番号】"
-            indent-level="0"
-            indent-level-amendment="2" />
-        <parameter tag="jp:citation" jp-tag="【援用の表示】"
-            indent-level="3"
-            indent-level-amendment="2" />
-        <parameter tag="jp:kind-of-accelerated-examination" jp-tag="【早期審査の種別】"
-            indent-level="0"
-            indent-level-amendment="2" />
-    </xsl:variable>
-
-
-    <schema:object name="document-code">
-        <schema:property name="tag" type="string" const="jp:document-code" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-        <schema:property name="converted-text" type="string" />
-    </schema:object>
-    <schema:object
-        name="file-reference-id">
-        <schema:property name="tag" type="string" const="jp:file-reference-id" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="share-rate">
-        <schema:property name="tag" type="string" const="jp:share-rate" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="dtext">
-        <schema:property name="tag" type="string" const="jp:dtext" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="payment-years">
-        <schema:property name="tag" type="string" const="jp:payment-years" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="proof-necessity">
-        <schema:property name="tag" type="string" const="jp:proof-necessity" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="notice-contents-group">
-        <schema:property name="tag" type="string" const="jp:notice-contents-group" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="ip-type">
-        <schema:property name="tag" type="string" const="jp:ip-type" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="use-of-das">
-        <schema:property name="tag" type="string" const="jp:use-of-das" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="name">
-        <schema:property name="tag" type="string" const="jp:name" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="original-language-of-name">
-        <schema:property name="tag" type="string" const="jp:original-language-of-name" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="registered-number">
-        <schema:property name="tag" type="string" const="jp:registered-number" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="office-address">
-        <schema:property name="tag" type="string" const="jp:office-address" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="contact">
-        <schema:property name="tag" type="string" const="jp:contact" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="text">
-        <schema:property name="tag" type="string" const="jp:text" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="relation-attorney-special-matter">
-        <schema:property name="tag" type="string" const="jp:relation-attorney-special-matter" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="phone">
-        <schema:property name="tag" type="string" const="jp:phone" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="fax">
-        <schema:property name="tag" type="string" const="jp:fax" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="kana">
-        <schema:property name="tag" type="string" const="jp:kana" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="country">
-        <schema:property name="tag" type="string" const="jp:country" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="receipt-number">
-        <schema:property name="tag" type="string" const="jp:receipt-number" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="jp:relation-of-case">
-        <schema:property name="tag" type="string" const="jp:relation-of-case" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="fee">
-        <schema:property name="tag" type="string" const="jp:fee" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-        <schema:property name="converted-text" type="string" />
-    </schema:object>
-    <schema:object
-        name="account">
-        <schema:property name="tag" type="string" const="jp:account" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-        <schema:property name="converted-text" type="string" />
-    </schema:object>
-    <schema:object
-        name="document-name">
-        <schema:property name="tag" type="string" const="jp:document-name" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="return-request">
-        <schema:property name="tag" type="string" const="jp:return-request" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="date">
-        <schema:property name="tag" type="string" const="jp:date" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-        <schema:property name="converted-text" type="string" />
-    </schema:object>
-    <schema:object
-        name="article">
-        <schema:property name="tag" type="string" const="jp:article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-        <schema:property name="converted-text" type="string" />
-    </schema:object>
-    <schema:object
-        name="ipc-article">
-        <schema:property name="tag" type="string" const="jp:ipc-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="number-of-claims">
-        <schema:property name="tag" type="string" const="jp:number-of-claims" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="num-claim-decrease-amendment">
-        <schema:property name="tag" type="string" const="jp:num-claim-decrease-amendment" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="num-claim-increase-amendment">
-        <schema:property name="tag" type="string" const="jp:num-claim-increase-amendment" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
-    <schema:object
-        name="proof-means">
-        <schema:property name="tag" type="string" const="jp:proof-means" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="text" type="string" />
-        <schema:property name="indent-level" type="string" />
-    </schema:object>
     <schema:object
         name="relief-sought-in-demands">
         <schema:property name="tag" type="string"
@@ -2527,6 +2488,90 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="text" type="string" />
     </schema:object>
+
+    <!-- ===================================================================
+      tag, jp-tag, indent-level=0 or 2 depends on amendments, and text="."
+      ===================================================================-->
+    <xsl:template
+        match="jp:addressed-to-person | jp:trust-relation | jp:secret-design-term |
+        jp:law-of-industrial-regenerate | jp:dispatch-number |
+        jp:name-of-old-depository | jp:old-depository-number |
+        jp:name-of-new-depository | jp:new-depository-number |
+        jp:number-of-class | jp:number-of-annexation | jp:srep-request-no
+        jp:citation | jp:kind-of-accelerated-examination">
+        <xsl:variable name="params"
+            select="key('item-type-2-key', name())" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:value-of select="$params/@jp-tag" />
+            </xsl:element>
+            <xsl:element name="indent-level">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:sequence select="$params/@indent-level-amendment" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="$params/@indent-level" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:key
+        name="item-type-2-key" match="parameter" use="@tag" />
+    <xsl:variable
+        name="item-type-2-parameters">
+        <parameter tag="jp:addressed-to-person" jp-tag="【あて先】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:trust-relation" jp-tag="【信託関係事項】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:secret-design-term" jp-tag="【秘密にすることを請求する期間】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:law-of-industrial-regenerate" jp-tag="【国等の委託研究の成果に係る記載事項】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:dispatch-number" jp-tag="【発送番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:name-of-old-depository" jp-tag="【旧寄託機関の名称】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:old-depository-number" jp-tag="【旧受託番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:name-of-new-depository" jp-tag="【新寄託機関の名称】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:new-depository-number" jp-tag="【新受託番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:number-of-class" jp-tag="【商品及び役務の区分の数】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:number-of-annexation" jp-tag="【併合件数】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:srep-request-no" jp-tag="【調査報告番号】"
+            indent-level="0"
+            indent-level-amendment="2" />
+        <parameter tag="jp:citation" jp-tag="【援用の表示】"
+            indent-level="3"
+            indent-level-amendment="2" />
+        <parameter tag="jp:kind-of-accelerated-examination" jp-tag="【早期審査の種別】"
+            indent-level="0"
+            indent-level-amendment="2" />
+    </xsl:variable>
+
     <schema:object
         name="addressed-to-person">
         <schema:property name="tag" type="string"
@@ -2662,7 +2707,7 @@
         <schema:property name="tag" type="string"
             const="jp:amendment-article" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="amendment-group" />
+            <schema:ref name="amendment-group" />
         </schema:property>
     </schema:object>
 
@@ -2740,13 +2785,13 @@
         <schema:property name="tag" type="string" const="jp:amendment-group" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="document-code" />
-                <schema:ref ref="receipt-number" />
-                <schema:ref ref="submission-date" />
-                <schema:ref ref="file-reference-id" />
-                <schema:ref ref="item-of-amendment" />
-                <schema:ref ref="way-of-amendment" />
-                <schema:ref ref="contents-of-amendment" />
+                <schema:ref name="document-code" />
+                <schema:ref name="receipt-number" />
+                <schema:ref name="submission-date" />
+                <schema:ref name="file-reference-id" />
+                <schema:ref name="item-of-amendment" />
+                <schema:ref name="way-of-amendment" />
+                <schema:ref name="contents-of-amendment" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -2838,8 +2883,8 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="document-code" />
-                <schema:ref ref="charge-article" />
+                <schema:ref name="document-code" />
+                <schema:ref name="charge-article" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -2972,86 +3017,86 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="abstract" />
-                <schema:ref ref="addressed-to-person" />
-                <schema:ref ref="agents" />
-                <schema:ref ref="amendment-charge-article" />
-                <schema:ref ref="amendment-group" />
-                <!-- <schema:ref ref="amount-paid" /> -->
-                <!-- <schema:ref ref="amount-proper-payment" /> -->
-                <!-- <schema:ref ref="amount-restoration-claim" /> -->
-                <!-- <schema:ref ref="annexation-payment-article" /> -->
-                <schema:ref ref="appeal-article" />
-                <!-- <schema:ref ref="applicant-of-case-article" /> -->
-                <schema:ref ref="applicants" />
-                <!-- <schema:ref ref="application-country-article" /> -->
-                <schema:ref ref="application-reference" />
-                <schema:ref ref="attorney-change-article" />
-                <!-- <schema:ref ref="attorney-disappear-article" /> -->
-                <!-- <schema:ref ref="attorney-of-case-article" /> -->
-                <!-- <schema:ref ref="bank-account" /> -->
-                <schema:ref ref="charge-article" />
-                <schema:ref ref="claim" />
-                <schema:ref ref="claims" />
-                <!-- <schema:ref ref="class-of-goods-and-service" /> -->
-                <schema:ref ref="contents-part-article" />
-                <schema:ref ref="declaration-priority-ear-app" />
-                <!-- <schema:ref ref="delivery-way" /> -->
-                <schema:ref ref="description" />
-                <schema:ref ref="dispatch-date" />
-                <schema:ref ref="dispatch-number" />
-                <schema:ref ref="document-code" />
-                <schema:ref ref="document-name" />
-                <schema:ref ref="drawings" />
-                <schema:ref ref="dtext" />
-                <schema:ref ref="figure" />
-                <schema:ref ref="file-reference-id" />
-                <!-- <schema:ref ref="indicate-payment" /> -->
-                <schema:ref ref="indication-of-case-article" />
-                <schema:ref ref="invention-title" />
-                <schema:ref ref="inventors" />
-                <schema:ref ref="ipc-article" />
-                <schema:ref ref="kind-of-accelerated-examination" />
-                <!-- <schema:ref ref="kind-of-annexation" /> -->
-                <schema:ref ref="law-of-industrial-regenerate" />
-                <schema:ref ref="name-of-new-depository" />
-                <schema:ref ref="name-of-old-depository" />
-                <schema:ref ref="new-depository-number" />
-                <schema:ref ref="notice-contents-group" />
-                <schema:ref ref="notice-filing-date" />
-                <schema:ref ref="num-claim-decrease-amendment" />
-                <schema:ref ref="num-claim-increase-amendment" />
-                <schema:ref ref="number-of-annexation" />
-                <schema:ref ref="number-of-claim" />
-                <schema:ref ref="number-of-class" />
-                <!-- <schema:ref ref="number-of-copy" /> -->
-                <schema:ref ref="old-depository-number" />
-                <schema:ref ref="opinion-contents-article" />
-                <schema:ref ref="paragraph" />
-                <schema:ref ref="parent-application-article" />
-                <schema:ref ref="payment-years" />
-                <schema:ref ref="presenter-article" />
-                <schema:ref ref="priority-claims" />
-                <!-- <schema:ref ref="proceeded-attorney-article" /> -->
-                <schema:ref ref="proof-filing-date" />
-                <!-- <schema:ref ref="proof-matter-article" /> -->
-                <schema:ref ref="proof-means" />
-                <schema:ref ref="proof-necessity" />
-                <!-- <schema:ref ref="proof-or-deliverty-document" /> -->
-                <!-- <schema:ref ref="publications-etc-article" /> -->
-                <!-- <schema:ref ref="rejection-case-accept-notice-art" /> -->
-                <schema:ref ref="relief-sought-in-demands" />
-                <schema:ref ref="secret-design-term" />
-                <schema:ref ref="share-rate" />
-                <schema:ref ref="special-mention-matter-article" />
-                <schema:ref ref="srep-request-no" />
-                <schema:ref ref="submission-date" />
-                <schema:ref ref="submission-object-list-article" />
-                <schema:ref ref="submit-date-of-amendment" />
-                <!-- <schema:ref ref="target-document" /> -->
-                <!-- <schema:ref ref="target-document-article" /> -->
-                <schema:ref ref="trust-relation" />
-                <schema:ref ref="use-of-das" />
+                <schema:ref name="abstract" />
+                <schema:ref name="addressed-to-person" />
+                <schema:ref name="agents" />
+                <schema:ref name="amendment-charge-article" />
+                <schema:ref name="amendment-group" />
+                <!-- <schema:ref name="amount-paid" /> -->
+                <!-- <schema:ref name="amount-proper-payment" /> -->
+                <!-- <schema:ref name="amount-restoration-claim" /> -->
+                <!-- <schema:ref name="annexation-payment-article" /> -->
+                <schema:ref name="appeal-article" />
+                <!-- <schema:ref name="applicant-of-case-article" /> -->
+                <schema:ref name="applicants" />
+                <!-- <schema:ref name="application-country-article" /> -->
+                <schema:ref name="application-reference" />
+                <schema:ref name="attorney-change-article" />
+                <!-- <schema:ref name="attorney-disappear-article" /> -->
+                <!-- <schema:ref name="attorney-of-case-article" /> -->
+                <!-- <schema:ref name="bank-account" /> -->
+                <schema:ref name="charge-article" />
+                <schema:ref name="claim" />
+                <schema:ref name="claims" />
+                <!-- <schema:ref name="class-of-goods-and-service" /> -->
+                <schema:ref name="contents-part-article" />
+                <schema:ref name="declaration-priority-ear-app" />
+                <!-- <schema:ref name="delivery-way" /> -->
+                <schema:ref name="description" />
+                <schema:ref name="dispatch-date" />
+                <schema:ref name="dispatch-number" />
+                <schema:ref name="document-code" />
+                <schema:ref name="document-name" />
+                <schema:ref name="drawings" />
+                <schema:ref name="dtext" />
+                <schema:ref name="figure" />
+                <schema:ref name="file-reference-id" />
+                <!-- <schema:ref name="indicate-payment" /> -->
+                <schema:ref name="indication-of-case-article" />
+                <schema:ref name="invention-title" />
+                <schema:ref name="inventors" />
+                <schema:ref name="ipc-article" />
+                <schema:ref name="kind-of-accelerated-examination" />
+                <!-- <schema:ref name="kind-of-annexation" /> -->
+                <schema:ref name="law-of-industrial-regenerate" />
+                <schema:ref name="name-of-new-depository" />
+                <schema:ref name="name-of-old-depository" />
+                <schema:ref name="new-depository-number" />
+                <schema:ref name="notice-contents-group" />
+                <schema:ref name="notice-filing-date" />
+                <schema:ref name="num-claim-decrease-amendment" />
+                <schema:ref name="num-claim-increase-amendment" />
+                <schema:ref name="number-of-annexation" />
+                <schema:ref name="number-of-claim" />
+                <schema:ref name="number-of-class" />
+                <!-- <schema:ref name="number-of-copy" /> -->
+                <schema:ref name="old-depository-number" />
+                <schema:ref name="opinion-contents-article" />
+                <schema:ref name="paragraph" />
+                <schema:ref name="parent-application-article" />
+                <schema:ref name="payment-years" />
+                <schema:ref name="presenter-article" />
+                <schema:ref name="priority-claims" />
+                <!-- <schema:ref name="proceeded-attorney-article" /> -->
+                <schema:ref name="proof-filing-date" />
+                <!-- <schema:ref name="proof-matter-article" /> -->
+                <schema:ref name="proof-means" />
+                <schema:ref name="proof-necessity" />
+                <!-- <schema:ref name="proof-or-deliverty-document" /> -->
+                <!-- <schema:ref name="publications-etc-article" /> -->
+                <!-- <schema:ref name="rejection-case-accept-notice-art" /> -->
+                <schema:ref name="relief-sought-in-demands" />
+                <schema:ref name="secret-design-term" />
+                <schema:ref name="share-rate" />
+                <schema:ref name="special-mention-matter-article" />
+                <schema:ref name="srep-request-no" />
+                <schema:ref name="submission-date" />
+                <schema:ref name="submission-object-list-article" />
+                <schema:ref name="submit-date-of-amendment" />
+                <!-- <schema:ref name="target-document" /> -->
+                <!-- <schema:ref name="target-document-article" /> -->
+                <schema:ref name="trust-relation" />
+                <schema:ref name="use-of-das" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3073,7 +3118,7 @@
         name="contents-part-article">
         <schema:property name="tag" type="string" const="jp:contents-part-article" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="contents-part-group" />
+            <schema:ref name="contents-part-group" />
         </schema:property>
     </schema:object>
 
@@ -3096,8 +3141,8 @@
         <schema:property name="tag" type="string" const="jp:contents-part-group" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="contents-name" />
-                <schema:ref ref="paragraph" />
+                <schema:ref name="contents-name" />
+                <schema:ref name="paragraph" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3144,7 +3189,7 @@
         name="presenter-article">
         <schema:property name="tag" type="string" const="jp:presenter-article" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="applicant" />
+            <schema:ref name="applicant" />
         </schema:property>
     </schema:object>
     <!-- ====================================================================
@@ -3238,7 +3283,7 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="paragraph" />
+                <schema:ref name="paragraph" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3270,7 +3315,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="rule-outside-group" />
+            <schema:ref name="rule-outside-group" />
         </schema:property>
     </schema:object>
     <!-- ====================================================================
@@ -3291,7 +3336,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="item-name" />
+            <schema:ref name="item-name" />
         </schema:property>
     </schema:object>
 
@@ -3323,7 +3368,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="item-content" />
+            <schema:ref name="item-content" />
         </schema:property>
     </schema:object>
 
@@ -3429,13 +3474,13 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref select="country" />
-                <schema:ref select="date" />
-                <schema:ref select="doc-number" />
-                <schema:ref select="ip-type" />
-                <schema:ref select="generated-access-code" />
-                <schema:ref select="priority-doc-location-info" />
-                <schema:ref select="use-of-das" />
+                <schema:ref name="country" />
+                <schema:ref name="date" />
+                <schema:ref name="doc-number" />
+                <schema:ref name="ip-type" />
+                <schema:ref name="generated-access-code" />
+                <schema:ref name="priority-doc-location-info" />
+                <schema:ref name="use-of-das" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3459,8 +3504,8 @@
         <schema:property name="tag" type="string" const="jp:priority-doc-location-info" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="country" />
-                <schema:ref ref="doc-number" />
+                <schema:ref name="country" />
+                <schema:ref name="doc-number" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3518,9 +3563,9 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <!-- XSD には doc-number ないけど、xsl ではある。-->
-                <schema:ref ref="doc-number" />
-                <schema:ref ref="application-reference" />
-                <schema:ref ref="file-reference-id" />
+                <schema:ref name="doc-number" />
+                <schema:ref name="application-reference" />
+                <schema:ref name="file-reference-id" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3591,9 +3636,9 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <!-- XSD には doc-number ないけど、xsl ではある。-->
-                <schema:ref ref="doc-number" />
-                <schema:ref ref="application-reference" />
-                <schema:ref ref="file-reference-id" />
+                <schema:ref name="doc-number" />
+                <schema:ref name="application-reference" />
+                <schema:ref name="file-reference-id" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3845,12 +3890,13 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <!-- XSD に doc-number, date はないが、XSL にはある。-->
-                <schema:ref ref="doc-number" />
-                <schema:ref ref="date" />
-                <schema:ref ref="appeal-reference" />
-                <schema:ref ref="application-reference" />
-                <schema:ref ref="file-reference-id" />
-                <schema:ref ref="receipt-number" />
+                <schema:ref name="doc-number" />
+                <schema:ref name="date" />
+                <!-- jp:appeal-reference のtemplateはなく、その下のdoc-number,dateを参照する
+                 <schema:ref name="appeal-reference" /> -->
+                <schema:ref name="application-reference" />
+                <schema:ref name="file-reference-id" />
+                <schema:ref name="receipt-number" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3886,11 +3932,11 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <!-- XSD には doc-number,date ないけど、xsl ではある。-->
-                <schema:ref ref="doc-number" />
-                <schema:ref ref="date" />
-                <schema:ref ref="application-reference" />
-                <schema:ref ref="kind-of-appeals" />
-                <schema:ref ref="file-reference-id" />
+                <schema:ref name="doc-number" />
+                <schema:ref name="date" />
+                <schema:ref name="application-reference" />
+                <schema:ref name="kind-of-appeals" />
+                <schema:ref name="file-reference-id" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3952,8 +3998,8 @@
         <schema:property name="tag" type="string" const="jp:application-reference" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="doc-number" />
-                <schema:ref ref="date" />
+                <schema:ref name="doc-number" />
+                <schema:ref name="date" />
                 <schema:object name="shutugan-kubun">
                     <schema:property name="tag" type="string" const="shutugan-kubun" />
                     <schema:property name="jp-tag" type="string" />
@@ -4170,7 +4216,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="payment" />
+            <schema:ref name="payment" />
         </schema:property>
     </schema:object>
 
@@ -4199,8 +4245,8 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="account" />
-                <schema:ref ref="fee" />
+                <schema:ref name="account" />
+                <schema:ref name="fee" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -4236,7 +4282,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
-            <schema:ref ref="list-group" />
+            <schema:ref name="list-group" />
         </schema:property>
     </schema:object>
 
@@ -4350,10 +4396,10 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="registered-number" />
-                <schema:ref ref="text" />
-                <schema:ref ref="kana" />
-                <schema:ref ref="name" />
+                <schema:ref name="registered-number" />
+                <schema:ref name="text" />
+                <schema:ref name="kana" />
+                <schema:ref name="name" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -4492,22 +4538,30 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="share" />
-                <schema:ref ref="representative-applicant" />
-                <schema:ref ref="addressbook" />
-                <schema:ref ref="office-address" />
-                <schema:ref ref="office-in-japan" />
-                <schema:ref ref="office" />
-                <schema:ref ref="representative-group" />
-                <schema:ref ref="legal-entity-property" />
-                <schema:ref ref="nationality" />
-                <schema:ref ref="residence" />
-                <schema:ref ref="nationality-and-residence" />
-                <schema:ref ref="us-rights" />
-                <schema:ref ref="designated-states" />
-                <schema:ref ref="designated-states-as-inventor" />
-                <schema:ref ref="contact" />
-                <schema:ref ref="relation-of-case" />
+                <schema:ref name="share" />
+                <schema:ref name="representative-applicant" />
+                <!-- addressbook のtemplateはなく、その下の
+                 kana,name,original-language-of-name を参照する
+                <schema:ref name="addressbook" /> -->
+                <schema:ref name="kana" />
+                <schema:ref name="name" />
+                <schema:ref name="original-language-of-name" />
+
+                <schema:ref name="office-address" />
+                <schema:ref name="office-in-japan" />
+                <schema:ref name="office" />
+                <schema:ref name="representative-group" />
+                <schema:ref name="legal-entity-property" />
+                <schema:ref name="nationality" />
+
+                <!-- xsd にあるけど 未サポート -->
+                <!-- <schema:ref name="residence" /> -->
+                <!-- <schema:ref name="nationality-and-residence" /> -->
+                <!-- <schema:ref name="us-rights" /> -->
+                <!-- <schema:ref name="designated-states" /> -->
+                <!-- <schema:ref name="designated-states-as-inventor" /> -->
+                <schema:ref name="contact" />
+                <schema:ref name="relation-of-case" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -4607,13 +4661,18 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref ref="addressbook" />
-                <schema:ref ref="attorney" />
-                <schema:ref ref="lawyer" />
-                <schema:ref ref="office-address" />
-                <schema:ref ref="representative-group" />
-                <schema:ref ref="contact" />
-                <schema:ref ref="relation-attorney-special-matter" />
+                <!-- addressbook のtemplateはなく、その下の
+                 kana,name を参照する
+                <schema:ref name="addressbook" /> -->
+                <schema:ref name="kana" />
+                <schema:ref name="name" />
+
+                <schema:ref name="attorney" />
+                <schema:ref name="lawyer" />
+                <schema:ref name="office-address" />
+                <schema:ref name="representative-group" />
+                <schema:ref name="contact" />
+                <schema:ref name="relation-attorney-special-matter" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -4649,9 +4708,9 @@
                 <schema:property name="tag" type="string" const="jp:representative" />
                 <schema:property name="blocks" type="array">
                     <schema:anyOf>
-                        <schema:ref ref="kana" />
-                        <schema:ref ref="name" />
-                        <schema:ref ref="original-language-of-name" />
+                        <schema:ref name="kana" />
+                        <schema:ref name="name" />
+                        <schema:ref name="original-language-of-name" />
                     </schema:anyOf>
                 </schema:property>
             </schema:object>

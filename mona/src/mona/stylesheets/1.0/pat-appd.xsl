@@ -2,6 +2,7 @@
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl"
     exclude-result-prefixes="jp">
 
     <!-- this xslt was created with reference to pat_common.xsl
@@ -145,5 +146,44 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
+
+    <!--==============================================
+     for json schema
+    =================================================-->
+    <schema:object
+        name="pat-app-doc">
+        <schema:property name="tag" type="string"
+            const="pat-app-doc" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="addressed-to-person" />
+                <schema:ref name="agents" />
+                <schema:ref name="applicants" />
+                <schema:ref name="attorney-change-article" />
+                <schema:ref name="charge-article" />
+                <schema:ref name="declaration-priority-ear-app" />
+                <schema:ref name="dispatch-date" />
+                <schema:ref name="dispatch-number" />
+                <schema:ref name="document-code" />
+                <schema:ref name="dtext" />
+                <schema:ref name="file-reference-id" />
+                <schema:ref name="indication-of-case-article" />
+                <schema:ref name="inventors" />
+                <schema:ref name="ipc-article" />
+                <schema:ref name="law-of-industrial-regenerate" />
+                <schema:ref name="notice-contents-group" />
+                <schema:ref name="parent-application-article" />
+                <schema:ref name="payment-years" />
+                <schema:ref name="priority-claims" />
+                <schema:ref name="proof-necessity" />
+                <schema:ref name="rule-outside-item-article" />
+                <schema:ref name="share-rate" />
+                <schema:ref name="special-mention-matter-article" />
+                <schema:ref name="submission-date" />
+                <schema:ref name="submission-object-list-article" />
+                <schema:ref name="trust-relation" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
 </xsl:stylesheet>

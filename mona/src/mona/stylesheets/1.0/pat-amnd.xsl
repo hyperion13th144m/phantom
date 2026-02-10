@@ -7,7 +7,8 @@
      ====================================================================-->
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:jp="http://www.jpo.go.jp">
+    xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl">
 
     <xsl:variable name="node" select="name(//jp:pat-amnd/*)" />
     <xsl:variable name="kind-of-law" select="//jp:pat-amnd/*/@jp:kind-of-law" />
@@ -26,6 +27,7 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+
     <!-- ====================================================================
      jp:amendment-a51 | jp:amendment-a523 手続補正書（方式）| 手続補正書
      ====================================================================-->
@@ -194,4 +196,39 @@
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
 
+    <!--==============================================
+     for json schema
+    =================================================-->
+    <schema:object
+        name="pat-amnd">
+        <schema:property name="tag" type="string"
+            const="pat-amnd" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="addressed-to-person" />
+                <schema:ref name="agents" />
+                <schema:ref name="amendment-article" />
+                <schema:ref name="amendment-charge-article" />
+                <schema:ref name="applicants" />
+                <schema:ref name="charge-article" />
+                <schema:ref name="dispatch-date" />
+                <schema:ref name="dispatch-number" />
+                <schema:ref name="document-code" />
+                <schema:ref name="dtext" />
+                <schema:ref name="file-reference-id" />
+                <schema:ref name="indication-of-case-article" />
+                <schema:ref name="notice-contents-group" />
+                <schema:ref name="num-claim-decrease-amendment" />
+                <schema:ref name="num-claim-increase-amendment" />
+                <schema:ref name="opinion-contents-article" />
+                <schema:ref name="proof-means" />
+                <schema:ref name="proof-necessity" />
+                <schema:ref name="rule-outside-item-article" />
+                <schema:ref name="share-rate" />
+                <schema:ref name="submission-date" />
+                <schema:ref name="submission-object-list-article" />
+                <schema:ref name="submit-date-of-amendment" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 </xsl:stylesheet>
