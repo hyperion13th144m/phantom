@@ -14,6 +14,7 @@ SRC_XML_ARRAY=(
     "foreign-language-body.xsl"
     "v4xva_ntc-pt-e.xsl"
     "v4xva_ntc-pt-e-rn.xsl"
+    "v4xva_ntc-pt-f.xsl"
     "ntc-ninsyo.xsl"
     "common-templates/dispatch-control-article.xsl"
     "common-templates/pat_common.xsl"

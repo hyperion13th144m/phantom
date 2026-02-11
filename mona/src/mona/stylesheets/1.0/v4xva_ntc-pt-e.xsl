@@ -258,7 +258,8 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 <schema:ref name="inquiry-article" />
 
                 <!--child
-                under ntc-pt-e-rn/footer-article -->
+                under ntc-pt-e-rn/footer-article and
+                      ntc-pt-f/footer-article -->
                 <schema:ref name="approval-without-contents" />
             </schema:anyOf>
         </schema:property>
@@ -1571,16 +1572,16 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
     <xsl:template match="jp:document-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="notice-document-name" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    <schema:object name="document-name">
+    <schema:object name="notice-document-name">
         <schema:property name="tag" type="string"
-            const="jp:document-name" />
+            const="notice-document-name" />
         <schema:property name="text" type="string" />
     </schema:object>
 

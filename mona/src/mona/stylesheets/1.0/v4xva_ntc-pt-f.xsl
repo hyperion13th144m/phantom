@@ -11,6 +11,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl"
     xmlns:f="urn:phantom-mona:string-utils">
 
     <xsl:variable name="node" select="name(//jp:notice-pat-frm/*)" />
@@ -84,6 +85,23 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         <xsl:apply-templates select="jp:image-group" />
     </xsl:template>
 
+    <schema:object
+        name="notice-pat-frm">
+        <schema:property name="tag" type="string"
+            const="jp:notice-pat-frm" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="dispatch-control-article" />
+                <schema:ref name="document-name" />
+                <schema:ref name="bibliog-in-ntc-pat-frm" />
+                <schema:ref name="conclusion-part-article" />
+                <schema:ref name="drafting-body" />
+                <schema:ref name="footer-article" />
+                <schema:ref name="image-group" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+
     <!-- ====================================================================
      jp:invitation-to-correct-a111
      ====================================================================
@@ -117,13 +135,14 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
     <xsl:template match="jp:document-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="notice-document-name" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:bibliog-in-ntc-pat-frm
@@ -145,6 +164,23 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:present-date-of-a632" />
         </xsl:element>
     </xsl:template>
+    <schema:object name="bibliog-in-ntc-pat-frm">
+        <schema:property name="tag" type="string"
+            const="jp:bibliog-in-ntc-pat-frm" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="draft-person-group" />
+                <schema:ref name="drafting-date" />
+                <schema:ref name="addressed-to-person-group" />
+                <schema:ref name="application-reference" />
+                <schema:ref name="not-specify-apl-ref" />
+                <schema:ref name="refer-from" />
+                <schema:ref name="reference-date" />
+                <schema:ref name="refer-to" />
+                <schema:ref name="present-date-of-a632" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
      jp:conclusion-part-article
@@ -160,6 +196,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:for-each>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:drafting-body
@@ -173,6 +210,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:footer-article
@@ -197,6 +235,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
                                    | jp:devider/jp:staff-code" />
         </xsl:if>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:image-group
@@ -210,6 +249,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="img" />
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:drafting-date
@@ -223,6 +263,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:draft-person-group
@@ -244,6 +285,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:staff-code | jp:office-code" mode="unsupported" />
         </xsl:if>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:addressed-to-person-group
@@ -254,12 +296,16 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <!-- render jp-tag, text -->
             <xsl:call-template name="あて先編集" />
 
+            <!-- addressbook renders no children.
             <xsl:apply-templates select="jp:addressbook" />
+            -->
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      あて先編集
@@ -377,9 +423,13 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="''" />
+            </xsl:element>
             <xsl:apply-templates select="jp:document-id" />
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:not-specify-apl-ref
@@ -468,6 +518,14 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:if>
         </xsl:element>
     </xsl:template>
+    <schema:object name="refer-from">
+        <schema:property name="tag" type="string"
+            const="jp:refer-from" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="inline-text" />
+        </schema:property>
+    </schema:object>
+
 
     <!-- ====================================================================
      jp:reference-date
@@ -481,6 +539,13 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
+    <schema:object name="reference-date">
+        <schema:property name="tag" type="string" const="jp:reference-date" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
+
 
     <!-- ====================================================================
      jp:refer-to
@@ -508,6 +573,16 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:if>
         </xsl:element>
     </xsl:template>
+    <schema:object name="refer-to">
+        <schema:property name="tag" type="string" const="jp:refer-to" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="name" />
+                <schema:ref name="address" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+
 
     <!-- ====================================================================
      jp:present-date-of-a632
@@ -521,7 +596,14 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
-
+    <schema:object name="present-date-of-a632">
+        <schema:property name="tag" type="string" const="jp:present-date-of-a632" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="date" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
      p
@@ -596,6 +678,17 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
+    <schema:object name="administrative-appeal-sentence">
+        <schema:property name="tag" type="string"
+            const="jp:administrative-appeal-sentence" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="inline-text" />
+                <schema:ref name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+
 
     <!-- ====================================================================
      jp:approval-column-article
@@ -622,6 +715,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:approval-without-contents
@@ -719,6 +813,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- the schema:object of this element is defined in pat_common.xsl -->
 
     <!-- ====================================================================
      jp:name
@@ -734,6 +829,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:document-id
@@ -752,6 +848,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:if>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:address
@@ -764,6 +861,13 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:text" />
         </xsl:element>
     </xsl:template>
+    <schema:object name="address">
+        <schema:property name="tag" type="string"
+            const="jp:address" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="text" />
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
      jp:doc-number
@@ -793,6 +897,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:text
@@ -801,7 +906,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
     <xsl:template match="jp:text">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'notice-pat-frm-text'" />
             </xsl:element>
             <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
@@ -809,6 +914,11 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object name="notice-pat-frm-text">
+        <schema:property name="tag" type="string" const="notice-pat-frm-text" />
+        <schema:property name="indent-level" type="integer" />
+        <schema:property name="text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
      jp:official-title
@@ -825,13 +935,13 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:staff-code
      ====================================================================-->
     <!-- 担当者コード -->
     <xsl:template match="jp:staff-code">
-
         <xsl:variable name="code" select="f:to-fullwidth-alnum(normalize-space(.))" />
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -845,6 +955,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- ====================================================================
      jp:addressbook
@@ -878,6 +989,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:if>
         </xsl:element>
     </xsl:template>
+    <!-- no need to define schema for this template, due to no children rendered -->
 
     <!-- ====================================================================
      jp:number-of-other-persons
@@ -900,6 +1012,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
 
     <!-- 当面未対応。a242623 以外の書類で必要とされるtemplate のため
      jp:das-info

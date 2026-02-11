@@ -169,6 +169,9 @@
                     },
                     {
                         "$ref": "#/$defs/notice-pat-exam-rn"
+                    },
+                    {
+                        "$ref": "#/$defs/notice-pat-frm"
                     }
                 ]
             }
