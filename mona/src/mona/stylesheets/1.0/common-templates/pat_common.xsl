@@ -40,6 +40,20 @@
      jp:declaration-priority-ear-app 先の出願に基づく優先権主張
      jp:list-group 目録 
      jp:nationality 国籍
+
+     これらのテンプレートをまとめるときは、子要素の呼び出しに注意。
+     xsdでは
+      <parent-1>
+        <child-1>, <child-2>
+      <parent-2>
+        <child-2>, <child-3>
+     xslでは
+        <parent-1>
+            <xsl:apply-templates select="child-1" />
+        <parent-2>
+            <xsl:apply-templates select="child-2" />
+            <xsl:apply-templates select="child-3" />
+    のような場合、child-2 は xsl:if で parent-2のときのみ呼ぶ様にする or このテンプレートにまとめない
      ====================================================================-->
     <xsl:template
         match="jp:special-mention-matter-article |
@@ -1213,6 +1227,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="text" type="string" />
         <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
     </schema:object>
     <schema:object
         name="fax">
@@ -1220,6 +1235,7 @@
         <schema:property name="jp-tag" type="string" />
         <schema:property name="text" type="string" />
         <schema:property name="indent-level" type="string" />
+        <schema:property name="converted-text" type="string" />
     </schema:object>
     <schema:object
         name="kana">

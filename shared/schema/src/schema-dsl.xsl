@@ -38,6 +38,11 @@
             select='@name' />": { "type": "number" } <xsl:if test="position() != last()">,</xsl:if>
     </xsl:template>
 
+    <!-- プリミティブ: integer -->
+    <xsl:template match="schema:property[@type='integer']" mode="schema-property"> "<xsl:value-of
+            select='@name' />": { "type": "integer" } <xsl:if test="position() != last()">,</xsl:if>
+    </xsl:template>
+
     <!-- プリミティブ: boolean -->
     <xsl:template match="schema:property[@type='boolean']" mode="schema-property"> "<xsl:value-of
             select='@name' />": { "type": "boolean" } <xsl:if test="position() != last()">,</xsl:if>

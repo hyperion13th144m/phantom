@@ -12,6 +12,10 @@ SRC_XML_ARRAY=(
     "pat-etc.xsl"
     "fields.xsl"
     "foreign-language-body.xsl"
+    "v4xva_ntc-pt-e.xsl"
+    "v4xva_ntc-pt-e-rn.xsl"
+    "ntc-ninsyo.xsl"
+    "common-templates/dispatch-control-article.xsl"
     "common-templates/pat_common.xsl"
 )
 DSL="./src/schema-dsl.xsl"

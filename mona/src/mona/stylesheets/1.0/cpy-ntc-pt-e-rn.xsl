@@ -11,7 +11,8 @@
      ====================================================================-->
 <xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:jp="http://www.jpo.go.jp">
+    xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl">
 
     <xsl:include href="v4xva_ntc-pt-e-rn.xsl" />
 

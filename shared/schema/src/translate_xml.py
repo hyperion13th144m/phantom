@@ -1,4 +1,5 @@
 import json
+
 from lxml import etree
 
 
@@ -26,6 +27,7 @@ def transform_xml_with_xslt(xml_path: str, xslt_path: str, output_path: str):
         with open(output_path, "wb") as f:
             j = json.loads(str(result_tree))
             f.write(json.dumps(j, indent=4).encode("UTF-8"))
+            # f.write(result_tree)
 
         print(f"Transformation successful! Output saved to: {output_path}")
 

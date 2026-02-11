@@ -9,13 +9,12 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:f="urn:phantom-mona:string-utils"
-    exclude-result-prefixes="f jp"
->
+    xmlns:schema="urn:schema-dsl"
+    exclude-result-prefixes="f jp">
 
     <!-- ====================================================================
-     jp:certification-column-article
+     jp:certification-column-article 認証欄
      ====================================================================-->
-    <!-- 認証欄  -->
     <xsl:template match="jp:certification-column-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -25,11 +24,22 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:apply-templates select="img" />
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="certification-column-article">
+        <schema:property name="tag" type="string"
+            const="jp:certification-column-article" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="certification-column-group" />
+                <schema:ref name="other-images" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+
 
     <!-- ====================================================================
-     jp:inquiry-article
+     jp:inquiry-article 問い合わせ文
      ====================================================================-->
-    <!-- 問い合わせ文  -->
     <xsl:template match="jp:inquiry-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -41,53 +51,23 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:apply-templates select="jp:fax" />
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="inquiry-article">
+        <schema:property name="tag" type="string"
+            const="jp:inquiry-article" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="paragraph" />
+                <schema:ref name="inquiry-staff-group" />
+                <schema:ref name="phone" />
+                <schema:ref name="fax" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
-     img
-    イメージ
-    <xsl:template match="img">
-
-        <xsl:element name="IMG">
-            <xsl:attribute name="SRC">
-                <xsl:value-of select="./@file" />
-            </xsl:attribute>
-            <xsl:attribute name="WIDTH">
-                <xsl:value-of select="./@wi" />
-            </xsl:attribute>
-            <xsl:attribute name="HEIGHT">
-                <xsl:value-of select="./@he" />
-            </xsl:attribute>
-        </xsl:element>
-    </xsl:template>
+     jp:certification-column-group 認証文
      ====================================================================-->
-
-    <!-- ====================================================================
-     jp:certification-column-article/img
-     認証イメージ
-    <xsl:template match="jp:certification-column-article/img">
-
-        <xsl:element name="IMG">
-            <xsl:attribute name="SRC">
-                <xsl:value-of select="./@file" />
-            </xsl:attribute>
-            <xsl:attribute name="WIDTH">
-                <xsl:value-of select="./@wi" />
-            </xsl:attribute>
-            <xsl:attribute name="HEIGHT">
-                <xsl:value-of select="./@he" />
-            </xsl:attribute>
-
-            <xsl:attribute name="ALIGN">
-                <xsl:value-of select="'right'" />
-            </xsl:attribute>
-        </xsl:element>
-    </xsl:template>
-     ====================================================================-->
-
-    <!-- ====================================================================
-     jp:certification-column-group
-     ====================================================================-->
-    <!-- 認証文 -->
     <xsl:template match="jp:certification-column-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -100,11 +80,21 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
 
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="certification-column-group">
+        <schema:property name="tag" type="string"
+            const="jp:certification-column-group" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="paragraph" />
+                <schema:ref name="certification-group" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
-     jp:inquiry-staff-group
+     jp:inquiry-staff-group 担当者情報
      ====================================================================-->
-    <!-- 担当者情報 -->
     <xsl:template match="jp:inquiry-staff-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -114,11 +104,21 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:apply-templates select="jp:name" />
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="inquiry-staff-group">
+        <schema:property name="tag" type="string"
+            const="jp:inquiry-staff-group" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="division" />
+                <schema:ref name="name" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
-     jp:certification-group
+     jp:certification-group  認証情報
      ====================================================================-->
-    <!--  認証情報 -->
     <xsl:template match="jp:certification-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -129,11 +129,22 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:apply-templates select="jp:name" />
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="certification-group">
+        <schema:property name="tag" type="string"
+            const="jp:certification-group" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="date" />
+                <schema:ref name="official-title" />
+                <schema:ref name="name" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
-     jp:inclusion-payment-group
+     jp:inclusion-payment-group 包括納付情報
      ====================================================================-->
-    <!--  包括納付情報 -->
     <xsl:template match="jp:inclusion-payment-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -146,12 +157,23 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:apply-templates select="jp:payment-years" />
         </xsl:element>
     </xsl:template>
+    <schema:object
+        name="inclusion-payment-group">
+        <schema:property name="tag" type="string"
+            const="jp:inclusion-payment-group" />
+        <schema:property name="text" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="account" />
+                <schema:ref name="payment-years" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
      jp:certification-column-group/jp:phone |
-     jp:inquiry-article//jp:phone
+     jp:inquiry-article//jp:phone  電話番号
      ====================================================================-->
-    <!--  電話番号 -->
     <xsl:template
         match="jp:certification-column-group/jp:phone
                    | jp:inquiry-article//jp:phone">
@@ -167,13 +189,13 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'電話'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of
                     select="concat(substring(normalize-space(.),1,$tel1),'(',
                                   substring(normalize-space(.),($tel1 + 2),$tel2),')',
@@ -182,12 +204,12 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- <schema:object name="phone"> is defined in pat_common.xsl -->
 
     <!-- ====================================================================
      jp:certification-column-group/jp:fax |
-     jp:inquiry-article//jp:fax
+     jp:inquiry-article//jp:fax ファクシミリ番号
      ====================================================================-->
-    <!--  ファクシミリ番号 -->
     <xsl:template
         match="jp:certification-column-group/jp:fax
                    | jp:inquiry-article//jp:fax">
@@ -203,13 +225,13 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
                 <xsl:element name="tag">
                     <xsl:value-of select="name()" />
                 </xsl:element>
-                <xsl:element name="jpTag">
+                <xsl:element name="jp-tag">
                     <xsl:value-of select="'ファクシミリ'" />
                 </xsl:element>
                 <xsl:element name="text">
                     <xsl:value-of select="normalize-space(.)" />
                 </xsl:element>
-                <xsl:element name="convertedText">
+                <xsl:element name="converted-text">
                     <xsl:value-of
                         select="concat(substring(normalize-space(.),1,$fax1),'(',
                               substring(normalize-space(.),($fax1 + 2),$fax2),')',
@@ -218,11 +240,11 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             </xsl:element>
         </xsl:if>
     </xsl:template>
+    <!-- <schema:object name="fax"> is defined in pat_common.xsl -->
 
     <!-- ====================================================================
-     jp:division
+     jp:division 所属
      ====================================================================-->
-    <!-- 所属  -->
     <xsl:template match="jp:division">
         <xsl:variable name="division" select="translate(.,' ','')" />
 
@@ -235,17 +257,21 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object name="division">
+        <schema:property name="tag" type="string"
+            const="jp:division" />
+        <schema:property name="text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
-     jp:account
+     jp:account 予納台帳番号・納付書番号
      ====================================================================-->
-    <!-- 予納台帳番号・納付書番号  -->
     <xsl:template match="jp:account">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="./@account-type = 'deposit'">
                         <xsl:value-of select="'予納台帳番号　'" />
@@ -258,31 +284,33 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of select="f:to-fullwidth-digit(./@number)" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- <schema:object name="account"> is defined in pat_common.xsl -->
 
     <!-- ====================================================================
-     jp:certification-group/jp:date
+     jp:certification-group/jp:date 認証・日付
      ====================================================================-->
-    <!-- 認証・日付  -->
     <xsl:template match="jp:certification-group/jp:date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'認証日'" />
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:choose>
                     <xsl:when test="./@jp:error-code">
                         <xsl:value-of select="." />
@@ -298,41 +326,49 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- <schema:object name="date"> is defined in pat_common.xsl -->
 
     <!-- ====================================================================
-     jp:certification-group/jp:name
+     jp:certification-group/jp:name 認証・名前
      ====================================================================-->
-    <!-- 認証・名前  -->
     <xsl:template match="jp:certification-group/jp:name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'certification-group-name'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object name="certification-group-name">
+        <schema:property name="tag" type="string"
+            const="certification-group-name" />
+        <schema:property name="text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
-     jp:inquiry-article/jp:name
+     jp:inquiry-article/jp:name 担当者・名前
      ====================================================================-->
-    <!-- 担当者・名前  -->
     <xsl:template match="jp:inquiry-staff-group/jp:name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'inquiry-staff-group-name'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object name="inquiry-staff-group-name">
+        <schema:property name="tag" type="string"
+            const="inquiry-staff-group-name" />
+        <schema:property name="text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
-     jp:certification-group/jp:official-title
+     jp:certification-group/jp:official-title 認証・役職名
      ====================================================================-->
-    <!-- 認証・役職名  -->
     <xsl:template match="jp:certification-group/jp:official-title">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -343,25 +379,31 @@ sha256sum:825bb9cfe4200bb3555d5d162644d2bc7d60e1e479fe3e8707ecd6573a19de60
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:object name="official-title">
+        <schema:property name="tag" type="string"
+            const="jp:official-title" />
+        <schema:property name="text" type="string" />
+    </schema:object>
 
     <!-- ====================================================================
-     jp:payment-years
+     jp:payment-years 納付年分
      ====================================================================-->
-    <!-- 納付年分     -->
     <xsl:template match="jp:payment-years">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'納付年分'" />
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:apply-templates select="jp:year-from" />
                 <xsl:apply-templates select="jp:year-to" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- <schema:object name="payment-years"> is defined in pat_common.xsl -->
 
     <!-- ====================================================================
      jp:year-from

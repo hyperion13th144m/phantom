@@ -12,8 +12,8 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:f="urn:phantom-mona:string-utils"
-    exclude-result-prefixes="f jp"
->
+    xmlns:schema="urn:schema-dsl"
+    exclude-result-prefixes="f jp">
 
     <xsl:variable name="node" select="name(//jp:notice-pat-exam-rn/*)" />
     <xsl:variable name="kind-of-law">
@@ -137,52 +137,30 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
         <xsl:apply-templates select="jp:footer-article" />
     </xsl:template>
 
-    <!-- 2 -->
-    <!-- ====================================================================
-     jp:document-name
-     ====================================================================-->
-    <!-- 書類名 -->
-    <xsl:template match="jp:document-name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="." />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
+    <schema:object
+        name="notice-pat-exam-rn">
+        <schema:property name="tag" type="string"
+            const="jp:notice-pat-exam-rn" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="dispatch-control-article" />
+                <schema:ref name="bibliog-in-ntc-pat-exam-rn" />
+                <schema:ref name="conclusion-part-article" />
+                <schema:ref name="document-name" />
+                <schema:ref name="drafting-body" />
+                <schema:ref name="final-decision-group-rn" />
+                <schema:ref name="final-decision-memo-rn" />
+                <schema:ref name="footer-article" />
+                <schema:ref name="image-group" />
+                <schema:ref name="kind-of-application" />
+                <schema:ref name="reconsideration-before-appeal" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 
     <!-- ====================================================================
-     jp:kind-of-application
+     begin: type A elements have a tag and blocks.
      ====================================================================-->
-    <!-- 出願種別 -->
-    <xsl:template match="jp:kind-of-application">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:final-decision-group">
-                        <xsl:value-of select="'１．出願種別'" />
-                    </xsl:when>
-                    <xsl:otherwise />
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:final-decision-group">
-                        <xsl:value-of select="." />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'（' || . || '）'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
     <!-- ====================================================================
      jp:bibliog-in-ntc-pat-exam-rn
      ====================================================================-->
@@ -221,28 +199,29 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             </xsl:choose>
         </xsl:element>
     </xsl:template>
+    <schema:object name="bibliog-in-ntc-pat-exam-rn">
+        <schema:property name="tag" type="string"
+            const="jp:bibliog-in-ntc-pat-exam-rn" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="addressed-to-person-group" />
+                <schema:ref name="application-reference" />
+                <schema:ref name="article-group" />
+                <schema:ref name="draft-person-group" />
+                <schema:ref name="drafting-date" />
+                <schema:ref name="notice-invention-title" />
+                <schema:ref name="number-of-claim" />
+                <schema:ref name="remark" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+
 
     <!-- ====================================================================
-     jp:reconsideration-before-appeal
+     jp:conclusion-part-article 結論
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
      ====================================================================-->
-    <!-- 前置審査 -->
-    <xsl:template match="jp:reconsideration-before-appeal">
-        <xsl:if test="./@jp:true-or-false = 'true'">
-            <xsl:element name="blocks">
-                <xsl:element name="tag">
-                    <xsl:value-of select="name()" />
-                </xsl:element>
-                <xsl:element name="text">
-                    <xsl:value-of select="'［前置審査］'" />
-                </xsl:element>
-            </xsl:element>
-        </xsl:if>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:conclusion-part-article
-     ====================================================================-->
-    <!-- 結論 -->
     <xsl:template match="jp:conclusion-part-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -255,9 +234,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:drafting-body
+     jp:drafting-body 本文部
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
      ====================================================================-->
-    <!-- 本文部 -->
     <xsl:template match="jp:drafting-body">
         <xsl:if test="p/* or jp:heading">
             <xsl:element name="blocks">
@@ -270,9 +250,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:footer-article
+     jp:footer-article フッタ部
+     this template is similar as defined in v4xva_ntc-pt-e.xsl
+     this schema of the template is merged to the schema in v4xva_ntc-pt-e.xsl
      ====================================================================-->
-    <!-- フッタ部 -->
     <xsl:template match="jp:footer-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -287,6 +268,8 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:final-decision-group-rn
+      this template is similar as defined in v4xva_ntc-pt-e.xsl
+     this schema of the template is merged to the schema in v4xva_ntc-pt-e.xsl
      ====================================================================-->
     <!-- 査定固有部 -->
     <xsl:template match="jp:final-decision-group-rn">
@@ -305,6 +288,8 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:final-decision-memo-rn
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
      ====================================================================-->
     <!-- 査定メモ -->
     <xsl:template match="jp:final-decision-memo-rn">
@@ -319,48 +304,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:image-group
-     ====================================================================-->
-    <!-- イメージ -->
-    <xsl:template match="jp:image-group">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="img" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- 3 -->
-    <!-- ====================================================================
-     jp:application-reference
-     ====================================================================-->
-    <!-- 出願書類参照 -->
-    <xsl:template match="jp:application-reference">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-
-            <xsl:if test="ancestor::jp:parent-application-article">
-                <xsl:if test="position() = 1">
-                    <xsl:element name="blocks">
-                        <xsl:element name="tag">
-                            <xsl:value-of select="'text'" />
-                        </xsl:element>
-                        <xsl:element name="text">
-                            <xsl:value-of select="'　遡及を認める原出願の出願番号、原出願の出願日'" />
-                        </xsl:element>
-                    </xsl:element>
-                </xsl:if>
-            </xsl:if>
-
-            <xsl:apply-templates select="jp:document-id" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:drafting-date
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
      ====================================================================-->
     <!-- 起案日 -->
     <xsl:template match="jp:drafting-date">
@@ -373,58 +319,202 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:draft-person-group
-     ====================================================================-->
-    <!-- 起案者 -->
-    <xsl:template match="jp:draft-person-group">
+     jp:heading
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 中央段落 -->
+    <xsl:template match="jp:heading">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:choose>
-                    <xsl:when
-                        test="$node = 'jp:examiner-notification-a2515-rn'
-                 or $node = 'jp:examiner-notification-a2516-rn'
-                 or $node = 'jp:examiner-notification-a2522-rn'">
-                        <xsl:value-of select="'特許庁長官'" />
-                    </xsl:when>
-                    <xsl:when test="$node = 'jp:examiner-notification-a242623-rn'" />
-                    <xsl:when test="$node = 'jp:examiner-notification-a2541-rn'" />
-                    <xsl:when test="$node = 'jp:examiner-notification-a2542-rn'" />
-                    <xsl:otherwise>
-                        <xsl:value-of select="'特許庁審査官'" />
-                    </xsl:otherwise>
-                </xsl:choose>
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:final-decision-bibliog-rn
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+     ====================================================================-->
+    <!-- メモ内書誌部 -->
+    <xsl:template match="jp:final-decision-bibliog-rn">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:application-reference" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:final-decision-body-rn
+     this template is similar as defined in v4xva_ntc-pt-e.xsl
+     this schema of the template is merged to the schema in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- メモ内本文部 -->
+    <xsl:template match="jp:final-decision-body-rn">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:fi-article" />
+            <xsl:apply-templates select="jp:field-of-search-article" />
+            <xsl:apply-templates select="jp:patent-reference-article" />
+            <xsl:apply-templates select="jp:reference-books-article" />
+            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-art" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:document-id
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+     ====================================================================-->
+    <!-- ドキュメント識別 -->
+    <xsl:template match="jp:document-id">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:choose>
-                <xsl:when
-                    test="$node = 'jp:examiner-notification-a242623-rn' or
-                        $node = 'jp:examiner-notification-a2541-rn'  or
-                        $node = 'jp:examiner-notification-a2542-rn'">
-                    <xsl:apply-templates select="jp:name" />
+                <xsl:when test="ancestor::jp:parent-application-article">
+                    <xsl:apply-templates select="jp:doc-number | jp:date" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates select="jp:name" />
-                    <xsl:apply-templates select="jp:staff-code" />
-                    <xsl:apply-templates select="jp:office-code" />
+                    <xsl:apply-templates select="jp:doc-number" />
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
-     invention-title
+     jp:approval-column-article
+
+     <u>     <u> で区切りの下線を引いているように思われる。
+     XSLT はこのような出力はせず、のちのRendererで引かせる実装とする。
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 決裁欄 -->
+    <xsl:template match="jp:approval-column-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:choose>
+                <xsl:when test="$node = 'jp:decision-of-registration-a01-rn'">
+                    <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
+                    <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
+                    <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
+                    <xsl:if test="following-sibling::jp:devider">
+                        <xsl:apply-templates
+                            select="following-sibling::jp:devider/jp:official-title" />
+                    </xsl:if>
+
+                    <xsl:apply-templates select="jp:staff2-group/jp:name" />
+                    <xsl:apply-templates select="jp:staff3-group/jp:name" />
+                    <xsl:apply-templates select="jp:staff4-group/jp:name" />
+                    <xsl:if test="following-sibling::jp:devider">
+                        <xsl:apply-templates select="following-sibling::jp:devider/jp:name" />
+                    </xsl:if>
+
+                    <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
+                    <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
+                    <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
+                    <xsl:if test="following-sibling::jp:devider">
+                        <xsl:apply-templates select="following-sibling::jp:devider/jp:staff-code" />
+                    </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
+                    <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
+                    <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
+
+                    <xsl:apply-templates select="jp:staff2-group/jp:name" />
+                    <xsl:apply-templates select="jp:staff3-group/jp:name" />
+                    <xsl:apply-templates select="jp:staff4-group/jp:name" />
+
+                    <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
+                    <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
+                    <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:image-group
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- イメージ -->
+    <xsl:template match="jp:image-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="img" />
+        </xsl:element>
+    </xsl:template>
+    <!-- ====================================================================
+     end: type A elements have a tag and blocks.
      ====================================================================-->
-    <!-- 発明または考案の名称 -->
-    <xsl:template match="invention-title">
+
+    <!-- ====================================================================
+     begin:
+       type B elements have tag, jp-tag, indent-level and text.
+       optional: converted-text
+     ====================================================================-->
+    <!-- ====================================================================
+     jp:kind-of-application
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 出願種別 -->
+    <xsl:template match="jp:kind-of-application">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:final-decision-group">
+                        <xsl:value-of select="'１．出願種別'" />
+                    </xsl:when>
+                    <xsl:otherwise />
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:final-decision-group">
+                        <xsl:value-of select="." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'（' || . || '）'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     invention-title
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 発明または考案の名称 -->
+    <xsl:template match="invention-title">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="'notice-invention-title'" />
+            </xsl:element>
+            <xsl:element name="jpTag">
                 <xsl:value-of select="'発明の名称'" />
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="." />
             </xsl:element>
@@ -433,7 +523,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:number-of-claim
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 請求項の数 -->
     <xsl:template match="jp:number-of-claim">
         <xsl:element name="blocks">
@@ -443,6 +535,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="jpTag">
                 <xsl:value-of select="'請求項の数'" />
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="f:remove-nbsp(.)" />
             </xsl:element>
@@ -450,8 +543,38 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
+     jp:exist-of-reference-doc
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 参考文献有無 -->
+    <xsl:template match="jp:exist-of-reference-doc">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・参考文献'" />
+            </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./@jp:true-or-false = 'true'">
+                        <xsl:value-of select="'有'" />
+                    </xsl:when>
+                    <xsl:when test="./@jp:true-or-false = 'false'">
+                        <xsl:value-of select="'無'" />
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
      jp:addressed-to-person-group
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- あて先  -->
     <xsl:template match="jp:addressed-to-person-group">
         <!-- moved content of 
@@ -698,6 +821,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="$allname" />
             </xsl:element>
@@ -705,204 +829,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:article-group
-     ====================================================================-->
-    <!-- 適用条文グループ -->
-    <xsl:template match="jp:article-group">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'適用条文'" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:article" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:article
-     ====================================================================-->
-    <!-- 適用条文 -->
-    <xsl:template match="jp:article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space()" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:remark
-     ====================================================================-->
-    <!-- 備考 -->
-    <xsl:template match="jp:remark">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'備考'" />
-            </xsl:element>
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:heading
-     ====================================================================-->
-    <!-- 中央段落 -->
-    <xsl:template match="jp:heading">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
-
-    <!--  イメージ   -->
-    <xsl:template match="img">
-        <!-- 次の「有意ノード」を見る -->
-        <xsl:variable name="nextNode"
-            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
-
-        <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
-            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'other-images'" />
-            </xsl:element>
-            <xsl:element name="isLastSentence">
-                <xsl:value-of select="$isLastSentence" />
-            </xsl:element>
-            <xsl:for-each select="key('images-table-key', @file)">
-                <xsl:element name="images">
-                    <xsl:element name="src">
-                        <xsl:value-of select="@new" />
-                    </xsl:element>
-                    <xsl:element name="width">
-                        <xsl:value-of select="@width" />
-                    </xsl:element>
-                    <xsl:element name="height">
-                        <xsl:value-of select="@height" />
-                    </xsl:element>
-                    <xsl:element name="kind">
-                        <xsl:value-of select="@kind" />
-                    </xsl:element>
-                    <xsl:element name="sizeTag">
-                        <xsl:value-of select="@sizeTag" />
-                    </xsl:element>
-                </xsl:element>
-            </xsl:for-each>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:approval-column-article
-
-     <u>     <u> で区切りの下線を引いているように思われる。
-     XSLT はこのような出力はせず、のちのRendererで引かせる実装とする。
-     ====================================================================-->
-    <!-- 決裁欄 -->
-    <xsl:template match="jp:approval-column-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:choose>
-                <xsl:when test="$node = 'jp:decision-of-registration-a01-rn'">
-                    <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:apply-templates
-                            select="following-sibling::jp:devider/jp:official-title" />
-                    </xsl:if>
-
-                    <xsl:apply-templates select="jp:staff2-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:name" />
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:apply-templates select="following-sibling::jp:devider/jp:name" />
-                    </xsl:if>
-
-                    <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:apply-templates select="following-sibling::jp:devider/jp:staff-code" />
-                    </xsl:if>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
-
-                    <xsl:apply-templates select="jp:staff2-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:name" />
-
-                    <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:approval-without-contents
-     ====================================================================-->
-    <!-- 内容無し決裁欄 -->
-    <xsl:template match="jp:approval-without-contents">
-        <!--編集しない-->
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:administrative-appeal-sentence
-     ====================================================================-->
-    <!-- 行服部 -->
-    <xsl:template match="jp:administrative-appeal-sentence">
-        <xsl:call-template name="unsupported-tag" />
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:exist-of-reference-doc
-     ====================================================================-->
-    <!-- 参考文献有無 -->
-    <xsl:template match="jp:exist-of-reference-doc">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・参考文献'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:choose>
-                    <xsl:when test="./@jp:true-or-false = 'true'">
-                        <xsl:value-of select="'有'" />
-                    </xsl:when>
-                    <xsl:when test="./@jp:true-or-false = 'false'">
-                        <xsl:value-of select="'無'" />
-                    </xsl:when>
-                </xsl:choose>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:patent-law-section30
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 特許法第３０条適用有無 -->
     <xsl:template match="jp:patent-law-section30">
         <xsl:element name="blocks">
@@ -912,6 +842,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="jpTag">
                 <xsl:value-of select="'・特許法第３０条適用'" />
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:choose>
                     <xsl:when test="./@jp:true-or-false = 'true'">
@@ -927,7 +858,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:change-flag-invention-title
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 発明の名称の変更有無 -->
     <xsl:template match="jp:change-flag-invention-title">
         <xsl:element name="blocks">
@@ -944,6 +877,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:choose>
                     <xsl:when test="./@jp:true-or-false = 'true'">
@@ -958,165 +892,42 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:deposit-article
-     ====================================================================-->
-    <!-- 菌寄託の記事 -->
-    <xsl:template match="jp:deposit-article">
+     jp:date
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 日付 -->
+    <xsl:template match="jp:date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'・菌寄託'" />
+                <xsl:call-template name="日付タイトル" />
             </xsl:element>
-            <xsl:apply-templates select="jp:deposit" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:deposit
-     ====================================================================-->
-    <!-- 菌寄託 -->
-    <xsl:template match="jp:deposit">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'菌寄託'" />
-                <xsl:value-of select="f:to-fullwidth-digit(string(position()))" />
-            </xsl:element>
-            <xsl:element name="indentLevel">1</xsl:element>
-
-            <xsl:apply-templates select="jp:depository-ins-code" />
-            <xsl:apply-templates select="jp:depository-number" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:depository-ins-code
-     ====================================================================-->
-    <!-- 受託機関コード -->
-    <xsl:template match="jp:depository-ins-code">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'受託機関コード'" />
-            </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
             <xsl:element name="convertedText">
-                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:depository-number
-     ====================================================================-->
-    <!-- 受託番号 -->
-    <xsl:template match="jp:depository-number">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'受託番号'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:parent-application-article
-     ====================================================================-->
-    <!-- 分割変更表示の記事 -->
-    <xsl:template match="jp:parent-application-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・出願日の遡及を認めない旨の表示'" />
-            </xsl:element>
-            <xsl:element name="text">
                 <xsl:choose>
-                    <xsl:when test="./jp:application-reference">
-                        <xsl:value-of select="'　出願日の遡及を一部認めない。'" />
+                    <xsl:when test="number(normalize-space(.)) &lt; 19261225" /><!--編集しない-->
+                    <xsl:when test="string-length(normalize-space(.)) = 8">
+                        <xsl:call-template name="format-date-jp2">
+                            <xsl:with-param name="date-str" select="normalize-space(.)" />
+                        </xsl:call-template>
                     </xsl:when>
-                    <xsl:when test="not(./jp:application-reference)">
-                        <xsl:value-of select="'　出願日の遡及を認めない。'" />
-                    </xsl:when>
+                    <xsl:otherwise />
                 </xsl:choose>
             </xsl:element>
-            <xsl:apply-templates select="jp:application-reference" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:final-decision-bibliog-rn
-     ====================================================================-->
-    <!-- メモ内書誌部 -->
-    <xsl:template match="jp:final-decision-bibliog-rn">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:application-reference" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:final-decision-body-rn
-     ====================================================================-->
-    <!-- メモ内本文部 -->
-    <xsl:template match="jp:final-decision-body-rn">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:fi-article" />
-            <xsl:apply-templates select="jp:field-of-search-article" />
-            <xsl:apply-templates select="jp:patent-reference-article" />
-            <xsl:apply-templates select="jp:reference-books-article" />
-            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-art" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- 4 -->
-    <!-- ====================================================================
-     jp:document-id
-     ====================================================================-->
-    <!-- ドキュメント識別 -->
-    <xsl:template match="jp:document-id">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:choose>
-                <xsl:when test="ancestor::jp:parent-application-article">
-                    <xsl:apply-templates select="jp:doc-number | jp:date" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="jp:doc-number" />
-                </xsl:otherwise>
-            </xsl:choose>
         </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
      jp:doc-number
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 文書番号 -->
     <xsl:template match="jp:doc-number">
         <!-- moved content of
@@ -1176,6 +987,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
@@ -1216,42 +1028,440 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:date
-     ====================================================================-->
-    <!-- 日付 -->
-    <xsl:template match="jp:date">
+     jp:depository-ins-code
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 受託機関コード -->
+    <xsl:template match="jp:depository-ins-code">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:call-template name="日付タイトル" />
+                <xsl:value-of select="'受託機関コード'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
             <xsl:element name="convertedText">
+                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
+            </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:depository-number
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 受託番号 -->
+    <xsl:template match="jp:depository-number">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'受託番号'" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+            <xsl:element name="convertedText">
+                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
+            </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:application-section
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 適用条項 -->
+    <xsl:template match="jp:application-section">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'適用条文'" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+            <xsl:element name="convertedText">
+                <xsl:value-of select="'特許法第３０条' || . || 'の規定の適用'" />
+            </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:exceptions-to-lack-of-novelty
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 新規性喪失例外適用 -->
+    <xsl:template match="jp:exceptions-to-lack-of-novelty">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'内容'" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:for-each select="p">
+                    <xsl:value-of select="normalize-space(.)" />
+                </xsl:for-each>
+            </xsl:element>
+            <xsl:element name="indentLevel">2</xsl:element>
+        </xsl:element>
+    </xsl:template>
+    <!--=========================================
+     End: type B
+     ===========================================-->
+
+    <!-- ====================================================================
+     Begin:
+       type C elements have tag, jp-tag, child elements and optional indent-level.
+     ====================================================================-->
+    <!-- ====================================================================
+     jp:draft-person-group
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 起案者 -->
+    <xsl:template match="jp:draft-person-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
                 <xsl:choose>
-                    <xsl:when test="number(normalize-space(.)) &lt; 19261225" /><!--編集しない-->
-                    <xsl:when test="string-length(normalize-space(.)) = 8">
-                        <xsl:call-template name="format-date-jp2">
-                            <xsl:with-param name="date-str" select="normalize-space(.)" />
-                        </xsl:call-template>
+                    <xsl:when
+                        test="$node = 'jp:examiner-notification-a2515-rn'
+                 or $node = 'jp:examiner-notification-a2516-rn'
+                 or $node = 'jp:examiner-notification-a2522-rn'">
+                        <xsl:value-of select="'特許庁長官'" />
                     </xsl:when>
-                    <xsl:otherwise />
+                    <xsl:when test="$node = 'jp:examiner-notification-a242623-rn'" />
+                    <xsl:when test="$node = 'jp:examiner-notification-a2541-rn'" />
+                    <xsl:when test="$node = 'jp:examiner-notification-a2542-rn'" />
+                    <xsl:otherwise>
+                        <xsl:value-of select="'特許庁審査官'" />
+                    </xsl:otherwise>
                 </xsl:choose>
+            </xsl:element>
+            <xsl:choose>
+                <xsl:when
+                    test="$node = 'jp:examiner-notification-a242623-rn' or
+                        $node = 'jp:examiner-notification-a2541-rn'  or
+                        $node = 'jp:examiner-notification-a2542-rn'">
+                    <xsl:apply-templates select="jp:name" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="jp:name" />
+                    <xsl:apply-templates select="jp:staff-code" />
+                    <xsl:apply-templates select="jp:office-code" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:article-group
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 適用条文グループ -->
+    <xsl:template match="jp:article-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'適用条文'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:article" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:remark
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 備考 -->
+    <xsl:template match="jp:remark">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'備考'" />
+            </xsl:element>
+            <xsl:apply-templates select="p" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:fi-article
+     ====================================================================-->
+    <!-- ＦＩの記事 -->
+    <xsl:template match="jp:fi-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・ＦＩ'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:fi" />
+        </xsl:element>
+    </xsl:template>
+    <schema:object name="fi-article">
+        <schema:property name="tag" type="string"
+            const="jp:fi-article" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="fi" />
+        </schema:property>
+    </schema:object>
+
+    <!-- ====================================================================
+     jp:deposit-article
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 菌寄託の記事 -->
+    <xsl:template match="jp:deposit-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・菌寄託'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:deposit" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:parent-application-article
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 分割変更表示の記事 -->
+    <xsl:template match="jp:parent-application-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・出願日の遡及を認めない旨の表示'" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:choose>
+                    <xsl:when test="./jp:application-reference">
+                        <xsl:value-of select="'　出願日の遡及を一部認めない。'" />
+                    </xsl:when>
+                    <xsl:when test="not(./jp:application-reference)">
+                        <xsl:value-of select="'　出願日の遡及を認めない。'" />
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:apply-templates select="jp:application-reference" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:field-of-search-article
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 調査分野の記事 -->
+    <xsl:template match="jp:field-of-search-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・調査した分野（ＩＰＣ，ＤＢ名）'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:field-of-search" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:patent-reference-article
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 参考特許文献の記事 -->
+    <xsl:template match="jp:patent-reference-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・参考特許文献'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:patent-reference-group" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:reference-books-article
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 参考図書雑誌の記事 -->
+    <xsl:template match="jp:reference-books-article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・参考図書雑誌'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:reference-books" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:exceptions-to-lack-of-novelty-art
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 新規性喪失例外の記事 -->
+    <xsl:template match="jp:exceptions-to-lack-of-novelty-art">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'・新規性喪失例外規定の適用の事実'" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-grp" />
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:exceptions-to-lack-of-novelty-grp
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 新規性喪失の例外 -->
+    <xsl:template match="jp:exceptions-to-lack-of-novelty-grp">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jpTag">
+                <xsl:value-of select="'新規性喪失の例外'" />
+                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
+            </xsl:element>
+            <xsl:element name="indentLevel">1</xsl:element>
+            <xsl:apply-templates select="jp:application-section" />
+            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
+        </xsl:element>
+    </xsl:template>
+    <!-- ====================================================================
+     End: type C elements.
+     ====================================================================-->
+
+
+    <!-- ====================================================================
+     Begin:
+       type D elements have tag, text and optional converted-text.
+     ====================================================================-->
+    <!-- ====================================================================
+     jp:document-name
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 書類名 -->
+    <xsl:template match="jp:document-name">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="." />
             </xsl:element>
         </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
-     jp:name
+     jp:reconsideration-before-appeal
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 前置審査 -->
+    <xsl:template match="jp:reconsideration-before-appeal">
+        <xsl:if test="./@jp:true-or-false = 'true'">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="name()" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:value-of select="'［前置審査］'" />
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:article
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 適用条文 -->
+    <xsl:template match="jp:article">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space()" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:fi
      ====================================================================-->
+    <!-- ＦＩ -->
+    <xsl:template match="jp:fi">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    <schema:object name="fi">
+        <schema:property name="tag" type="string" const="jp:fi" />
+        <schema:property name="text" type="string" />
+    </schema:object>
+
+
+    <!-- ====================================================================
+     jp:name
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 氏名、氏名または名称 -->
     <xsl:template match="jp:name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'notice-name'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:choose>
@@ -1293,7 +1503,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:staff-code
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 担当者コード -->
     <xsl:template match="jp:staff-code">
         <xsl:variable name="code" select="normalize-space(.)" />
@@ -1325,7 +1537,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:office-code
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 所属コード -->
     <xsl:template match="jp:office-code">
         <xsl:element name="blocks">
@@ -1343,7 +1557,9 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
     <!-- ====================================================================
      jp:official-title
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 役職名 -->
     <xsl:template match="jp:official-title">
         <xsl:variable name="name" select="normalize-space(.)" />
@@ -1358,55 +1574,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:fi-article
-     ====================================================================-->
-    <!-- ＦＩの記事 -->
-    <xsl:template match="jp:fi-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・ＦＩ'" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:fi" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:fi
-     ====================================================================-->
-    <!-- ＦＩ -->
-    <xsl:template match="jp:fi">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:field-of-search-article
-     ====================================================================-->
-    <!-- 調査分野の記事 -->
-    <xsl:template match="jp:field-of-search-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・調査した分野（ＩＰＣ，ＤＢ名）'" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:field-of-search" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:field-of-search
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 調査分野 -->
     <xsl:template match="jp:field-of-search">
         <xsl:element name="blocks">
@@ -1420,29 +1591,18 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:patent-reference-article
-     ====================================================================-->
-    <!-- 参考特許文献の記事 -->
-    <xsl:template match="jp:patent-reference-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・参考特許文献'" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:patent-reference-group" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:patent-reference-group
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 参考特許文献グル－プ -->
     <xsl:template match="jp:patent-reference-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
             <xsl:element name="convertedText">
                 <xsl:value-of select="jp:document-number || '　' || jp:kind-of-document" />
@@ -1451,24 +1611,10 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
     </xsl:template>
 
     <!-- ====================================================================
-     jp:reference-books-article
-     ====================================================================-->
-    <!-- 参考図書雑誌の記事 -->
-    <xsl:template match="jp:reference-books-article">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・参考図書雑誌'" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:reference-books" />
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
      jp:reference-books
-     ====================================================================-->
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
     <!-- 参考図書雑誌 -->
     <xsl:template match="jp:reference-books">
         <xsl:element name="blocks">
@@ -1480,90 +1626,105 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <!-- ====================================================================
+     End: type D elements.
+     ====================================================================-->
 
     <!-- ====================================================================
-     jp:exceptions-to-lack-of-novelty-art
+     Begin:
+       other types.
      ====================================================================-->
-    <!-- 新規性喪失例外の記事 -->
-    <xsl:template match="jp:exceptions-to-lack-of-novelty-art">
+    <!-- ====================================================================
+     jp:application-reference
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 出願書類参照 -->
+    <xsl:template match="jp:application-reference">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'・新規性喪失例外規定の適用の事実'" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-grp" />
+
+            <xsl:if test="ancestor::jp:parent-application-article">
+                <xsl:if test="position() = 1">
+                    <xsl:element name="blocks">
+                        <xsl:element name="tag">
+                            <xsl:value-of select="'text'" />
+                        </xsl:element>
+                        <xsl:element name="text">
+                            <xsl:value-of select="'　遡及を認める原出願の出願番号、原出願の出願日'" />
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:if>
+            </xsl:if>
+
+            <xsl:apply-templates select="jp:document-id" />
         </xsl:element>
     </xsl:template>
 
     <!-- ====================================================================
-     jp:exceptions-to-lack-of-novelty-grp
-     ====================================================================-->
-    <!-- 新規性喪失の例外 -->
-    <xsl:template match="jp:exceptions-to-lack-of-novelty-grp">
+     jp:deposit
+     this template is same as defined in <v4xva_ntc-pat-e.xsl
+     the template's schema definition is also same as in v4xva_ntc-pt-e.xsl
+      ====================================================================-->
+    <!-- 菌寄託 -->
+    <xsl:template match="jp:deposit">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:element name="jpTag">
-                <xsl:value-of select="'新規性喪失の例外'" />
-                <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
+                <xsl:value-of select="'菌寄託'" />
+                <xsl:value-of select="f:to-fullwidth-digit(string(position()))" />
             </xsl:element>
             <xsl:element name="indentLevel">1</xsl:element>
-            <xsl:apply-templates select="jp:application-section" />
-            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
+
+            <xsl:apply-templates select="jp:depository-ins-code" />
+            <xsl:apply-templates select="jp:depository-number" />
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     jp:application-section
-     ====================================================================-->
-    <!-- 適用条項 -->
-    <xsl:template match="jp:application-section">
+    <!-- 変換元XMLにある images/image のlookup -->
+    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
+
+    <!--  イメージ   -->
+    <xsl:template match="img">
+        <!-- 次の「有意ノード」を見る -->
+        <xsl:variable name="nextNode"
+            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
+
+        <!-- 次が br か、次が存在しない（p末尾）なら true -->
+        <xsl:variable name="isLastSentence"
+            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
+
         <xsl:element name="blocks">
             <xsl:element name="tag">
-                <xsl:value-of select="name()" />
+                <xsl:value-of select="'other-images'" />
             </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'適用条文'" />
+            <xsl:element name="isLastSentence">
+                <xsl:value-of select="$isLastSentence" />
             </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-            <xsl:element name="convertedText">
-                <xsl:value-of select="'特許法第３０条' || . || 'の規定の適用'" />
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:for-each select="key('images-table-key', @file)">
+                <xsl:element name="images">
+                    <xsl:element name="src">
+                        <xsl:value-of select="@new" />
+                    </xsl:element>
+                    <xsl:element name="width">
+                        <xsl:value-of select="@width" />
+                    </xsl:element>
+                    <xsl:element name="height">
+                        <xsl:value-of select="@height" />
+                    </xsl:element>
+                    <xsl:element name="kind">
+                        <xsl:value-of select="@kind" />
+                    </xsl:element>
+                    <xsl:element name="sizeTag">
+                        <xsl:value-of select="@sizeTag" />
+                    </xsl:element>
+                </xsl:element>
+            </xsl:for-each>
         </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:exceptions-to-lack-of-novelty
-     ====================================================================-->
-    <!-- 新規性喪失例外適用 -->
-    <xsl:template match="jp:exceptions-to-lack-of-novelty">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jpTag">
-                <xsl:value-of select="'内容'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:for-each select="p">
-                    <xsl:value-of select="normalize-space(.)" />
-                </xsl:for-each>
-            </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:addressbook
-     ====================================================================-->
-    <xsl:template match="jp:addressbook">
-        <xsl:call-template name="unsupported-tag" />
     </xsl:template>
 
     <!-- ====================================================================
@@ -1592,6 +1753,79 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
+    <!-- ====================================================================
+     p
+     ====================================================================-->
+    <!-- 段落 ,段落内テキスト -->
+    <xsl:template
+        match="p">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">paragraph</xsl:element>
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+    <!-- <schema:object name="paragraph"> is defined in pat_common.xsl -->
+
+    <xsl:template match="text() | sup | sub | u">
+        <xsl:variable name="tag">
+            <xsl:choose>
+                <xsl:when test="self::text()">text</xsl:when>
+                <xsl:when test="self::sup">sup</xsl:when>
+                <xsl:when test="self::sub">sub</xsl:when>
+                <xsl:when test="self::u">underline</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- 次の「有意ノード」を見る -->
+        <xsl:variable name="nextNode"
+            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
+
+        <!-- 次が br か、次が存在しない（p末尾）なら true -->
+        <xsl:variable name="isLastSentence"
+            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
+
+        <xsl:if test="normalize-space() != ''">
+            <xsl:element name="blocks">
+                <xsl:element name="tag">
+                    <xsl:value-of select="$tag" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:call-template name="trim">
+                        <xsl:with-param name="text" select="f:remove-nbsp(.)" />
+                    </xsl:call-template>
+                </xsl:element>
+                <xsl:element name="isLastSentence">
+                    <xsl:value-of select="$isLastSentence" />
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+    <!-- <schema:object name="inline-text"> is defined in pat_common.xsl -->
+
+    <!-- ====================================================================
+     jp:administrative-appeal-sentence
+     ====================================================================-->
+    <!-- 行服部 -->
+    <xsl:template match="jp:administrative-appeal-sentence">
+        <xsl:call-template name="unsupported-tag" />
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:approval-without-contents
+     ====================================================================-->
+    <!-- 内容無し決裁欄 -->
+    <xsl:template match="jp:approval-without-contents">
+        <!--編集しない-->
+    </xsl:template>
+
+    <!-- ====================================================================
+     jp:addressbook
+     ====================================================================-->
+    <xsl:template match="jp:addressbook">
+        <xsl:call-template name="unsupported-tag" />
+    </xsl:template>
+
 
     <!-- ====================================================================
      未サポートタグ（全角空白１つあけて表示）
@@ -1664,51 +1898,5 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
         </xsl:element>
     </xsl:template>
 
-    <!-- ====================================================================
-     p
-     ====================================================================-->
-    <!-- 段落 ,段落内テキスト -->
-    <xsl:template
-        match="p">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">paragraph</xsl:element>
-            <xsl:apply-templates />
-        </xsl:element>
-    </xsl:template>
 
-
-    <xsl:template match="text() | sup | sub | u">
-        <xsl:variable name="tag">
-            <xsl:choose>
-                <xsl:when test="self::text()">text</xsl:when>
-                <xsl:when test="self::sup">sup</xsl:when>
-                <xsl:when test="self::sub">sub</xsl:when>
-                <xsl:when test="self::u">underline</xsl:when>
-            </xsl:choose>
-        </xsl:variable>
-
-        <!-- 次の「有意ノード」を見る -->
-        <xsl:variable name="nextNode"
-            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
-
-        <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
-            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
-
-        <xsl:if test="normalize-space() != ''">
-            <xsl:element name="blocks">
-                <xsl:element name="tag">
-                    <xsl:value-of select="$tag" />
-                </xsl:element>
-                <xsl:element name="text">
-                    <xsl:call-template name="trim">
-                        <xsl:with-param name="text" select="f:remove-nbsp(.)" />
-                    </xsl:call-template>
-                </xsl:element>
-                <xsl:element name="isLastSentence">
-                    <xsl:value-of select="$isLastSentence" />
-                </xsl:element>
-            </xsl:element>
-        </xsl:if>
-    </xsl:template>
 </xsl:stylesheet>

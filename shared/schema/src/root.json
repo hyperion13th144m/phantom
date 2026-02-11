@@ -163,6 +163,12 @@
                     },
                     {
                         "$ref": "#/$defs/foreign-document"
+                    },
+                    {
+                        "$ref": "#/$defs/notice-pat-exam"
+                    },
+                    {
+                        "$ref": "#/$defs/notice-pat-exam-rn"
                     }
                 ]
             }
