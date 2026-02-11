@@ -30,8 +30,7 @@ TARGET_DOCUMENT_CODES = [
     # 実用新案
     "A263",  # 実用新案登録願
     "A2523",  # 手続補正書
-    # xsl が必要。あとで。
-    # "A2242623",  # 実用新案技術評価の通知
+    "A2242623",  # 実用新案技術評価の通知
 ]
 
 # 全角記号と半角記号の対応表
@@ -176,6 +175,14 @@ translator_config = [
         force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam-rn",
+        postprocessor=postprocess_application_body,
+    ),
+    TranslatorConfig(
+        ### 実案技術評価書の通知
+        xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-f.xsl",
+        force_list=["blocks"],
+        namespace="http://www.jpo.go.jp",
+        doctype="cpy-notice-pat-frm",
         postprocessor=postprocess_application_body,
     ),
     TranslatorConfig(

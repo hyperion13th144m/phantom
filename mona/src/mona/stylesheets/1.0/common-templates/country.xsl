@@ -866,7 +866,7 @@
                 <xsl:value-of select="'９９'" />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:call-template name="書誌編集エラー処理" />
+                <xsl:value-of select="'Unknown country'" />
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

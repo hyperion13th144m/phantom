@@ -960,13 +960,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    <schema:object name="date">
-        <schema:property name="tag" type="string" const="jp:date" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="indent-level" type="integer" />
-        <schema:property name="text" type="string" />
-        <schema:property name="converted-text" type="string" />
-    </schema:object>
+    <!-- the schema:object of this element is defined in pat_common.xsl -->
 
     <!-- ====================================================================
      jp:version-number
@@ -1969,7 +1963,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             <xsl:element name="tag">
                 <xsl:value-of select="'other-images'" />
             </xsl:element>
-            <xsl:element name="isLastSentence">
+            <xsl:element name="is-last-sentence">
                 <xsl:value-of select="$isLastSentence" />
             </xsl:element>
             <xsl:for-each select="key('images-table-key', @file)">
@@ -2057,7 +2051,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                         <xsl:with-param name="text" select="f:remove-nbsp(.)" />
                     </xsl:call-template>
                 </xsl:element>
-                <xsl:element name="isLastSentence">
+                <xsl:element name="is-last-sentence">
                     <xsl:value-of select="$isLastSentence" />
                 </xsl:element>
             </xsl:element>
