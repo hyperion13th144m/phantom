@@ -632,7 +632,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
 
         <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
+        <xsl:variable name="is-last-sentence"
             select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
 
         <xsl:if test="normalize-space() != ''">
@@ -646,7 +646,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
                     </xsl:call-template>
                 </xsl:element>
                 <xsl:element name="is-last-sentence">
-                    <xsl:value-of select="$isLastSentence" />
+                    <xsl:value-of select="$is-last-sentence" />
                 </xsl:element>
             </xsl:element>
         </xsl:if>
@@ -748,15 +748,15 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
 
         <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
+        <xsl:variable name="is-last-sentence"
             select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
 
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="'other-images'" />
             </xsl:element>
-            <xsl:element name="isLastSentence">
-                <xsl:value-of select="$isLastSentence" />
+            <xsl:element name="is-last-sentence">
+                <xsl:value-of select="$is-last-sentence" />
             </xsl:element>
             <xsl:for-each select="key('images-table-key', @file)">
                 <xsl:element name="images">

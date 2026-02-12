@@ -47,7 +47,7 @@
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="indentLevel">0</xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>

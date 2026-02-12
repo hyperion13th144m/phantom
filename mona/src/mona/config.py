@@ -59,7 +59,7 @@ def zenkaku_to_hankaku_all(text: str) -> str:
 
 
 def postprocess_application_body(path: List[str], key: str, value: str) -> None:
-    if key in ["representative", "isLastSentence", "isIndependent"]:
+    if key in ["representative", "is-last-sentence", "is-independent"]:
         return key, value.lower() == "true"
     if key in ["width", "height"]:
         if value.isdigit():
@@ -67,7 +67,7 @@ def postprocess_application_body(path: List[str], key: str, value: str) -> None:
     if len(path) > 0 and path[0][0] == "root" and key in ["images"]:
         if value is None:
             return key, []
-    if key == "fileReferenceId" and value is not None:
+    if key == "file-reference-id" and value is not None:
         # 発送系書類は整理番号が全角文字なので半角化
         return key, zenkaku_to_hankaku_all(value).strip()
     return key, value
@@ -189,14 +189,14 @@ translator_config = [
         ### 全文検索用フィールド
         xsl_path=f"{SCHEMA_VER}/fields.xsl",
         force_list=[
-            "independentClaims",
-            "dependentClaims",
-            "specialMentionMatterArticle",
-            "rejectionReasonArticle",
+            "independent-claims",
+            "dependent-claims",
+            "special-mention-matter-article",
+            "rejection-reason-article",
             "applicants",
             "agents",
             "inventors",
-            "contentsOfAmendment",
+            "contents-of-amendment",
         ],
         namespace="",
         doctype="root",

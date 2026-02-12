@@ -30,14 +30,14 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
 
 
     <!-- ====================================================================
-     jp:notice-pat-exam
+     jp:notice-pat-exam-rn
 
      jp:decision-of-registration-a01-rn  A[12]01 特許査定
      jp:decision-of-rejection-a02-rn     A[12]02 拒絶査定
      jp:notice-of-rejection-a131-rn      A1131   拒絶理由通知
      jp:declining-the-amendment-a191-rn  A[12]191    補正却下の決定
      jp:declining-the-amendment-a192-rn  A[12]192    補正却下の決定
-     jp:examiner-notification-a251-rn    A[12]251    審査官通知i(その他の通知）（期間有）
+     jp:examiner-notification-a251-rn    A[12]251    審査官通知(その他の通知）（期間有）
      jp:examiner-notification-a2514-rn   A[12]2514   立会実験申請書の提出命令書
      jp:examiner-notification-a2515-rn   A[12]2515   同一出願人による同日出願通知書
      jp:examiner-notification-a2516-rn   A[12]2516   出願人相違の同日出願通知書
@@ -478,7 +478,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:final-decision-group">
                         <xsl:value-of select="'１．出願種別'" />
@@ -511,7 +511,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="'notice-invention-title'" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'発明の名称'" />
             </xsl:element>
             <xsl:element name="indent-level">0</xsl:element>
@@ -532,7 +532,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'請求項の数'" />
             </xsl:element>
             <xsl:element name="indent-level">0</xsl:element>
@@ -553,7 +553,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・参考文献'" />
             </xsl:element>
             <xsl:element name="indent-level">0</xsl:element>
@@ -618,7 +618,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$kind-of-law = 'patent'">
                         <xsl:choose>
@@ -839,7 +839,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・特許法第３０条適用'" />
             </xsl:element>
             <xsl:element name="indent-level">0</xsl:element>
@@ -867,7 +867,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when test="$kind-of-law = 'patent'">
                         <xsl:value-of select="'・発明の名称の変更'" />
@@ -902,14 +902,14 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:call-template name="日付タイトル" />
             </xsl:element>
             <xsl:element name="indent-level">0</xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:choose>
                     <xsl:when test="number(normalize-space(.)) &lt; 19261225" /><!--編集しない-->
                     <xsl:when test="string-length(normalize-space(.)) = 8">
@@ -945,7 +945,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:examiner-notification-a242623-rn' or
@@ -991,7 +991,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:application-reference and $appl-type = 'application'">
@@ -1038,16 +1038,16 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'受託機関コード'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:element name="indent-level">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -1062,16 +1062,16 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'受託番号'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:element name="indent-level">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -1086,16 +1086,16 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'適用条文'" />
             </xsl:element>
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of select="'特許法第３０条' || . || 'の規定の適用'" />
             </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:element name="indent-level">2</xsl:element>
         </xsl:element>
     </xsl:template>
 
@@ -1110,7 +1110,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'内容'" />
             </xsl:element>
             <xsl:element name="text">
@@ -1118,7 +1118,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
                     <xsl:value-of select="normalize-space(.)" />
                 </xsl:for-each>
             </xsl:element>
-            <xsl:element name="indentLevel">2</xsl:element>
+            <xsl:element name="indent-level">2</xsl:element>
         </xsl:element>
     </xsl:template>
     <!--=========================================
@@ -1140,7 +1140,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:examiner-notification-a2515-rn'
@@ -1183,7 +1183,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'適用条文'" />
             </xsl:element>
             <xsl:apply-templates select="jp:article" />
@@ -1201,7 +1201,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'備考'" />
             </xsl:element>
             <xsl:apply-templates select="p" />
@@ -1217,7 +1217,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・ＦＩ'" />
             </xsl:element>
             <xsl:apply-templates select="jp:fi" />
@@ -1243,7 +1243,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・菌寄託'" />
             </xsl:element>
             <xsl:apply-templates select="jp:deposit" />
@@ -1261,7 +1261,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・出願日の遡及を認めない旨の表示'" />
             </xsl:element>
             <xsl:element name="text">
@@ -1289,7 +1289,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・調査した分野（ＩＰＣ，ＤＢ名）'" />
             </xsl:element>
             <xsl:apply-templates select="jp:field-of-search" />
@@ -1307,7 +1307,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・参考特許文献'" />
             </xsl:element>
             <xsl:apply-templates select="jp:patent-reference-group" />
@@ -1325,7 +1325,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・参考図書雑誌'" />
             </xsl:element>
             <xsl:apply-templates select="jp:reference-books" />
@@ -1343,7 +1343,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'・新規性喪失例外規定の適用の事実'" />
             </xsl:element>
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-grp" />
@@ -1361,11 +1361,11 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'新規性喪失の例外'" />
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
             </xsl:element>
-            <xsl:element name="indentLevel">1</xsl:element>
+            <xsl:element name="indent-level">1</xsl:element>
             <xsl:apply-templates select="jp:application-section" />
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
         </xsl:element>
@@ -1516,7 +1516,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:devider">
                         <xsl:value-of select="f:to-fullwidth-digit($code)" />
@@ -1549,7 +1549,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xsl:element>
         </xsl:element>
@@ -1604,7 +1604,7 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xsl:element>
-            <xsl:element name="convertedText">
+            <xsl:element name="converted-text">
                 <xsl:value-of select="jp:document-number || '　' || jp:kind-of-document" />
             </xsl:element>
         </xsl:element>
@@ -1674,11 +1674,11 @@ sha256sum:d13dddcf939f5289fb8528834cf0ddbf0f3bff28b7857ad6ba6c0399b08db28d
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jpTag">
+            <xsl:element name="jp-tag">
                 <xsl:value-of select="'菌寄託'" />
                 <xsl:value-of select="f:to-fullwidth-digit(string(position()))" />
             </xsl:element>
-            <xsl:element name="indentLevel">1</xsl:element>
+            <xsl:element name="indent-level">1</xsl:element>
 
             <xsl:apply-templates select="jp:depository-ins-code" />
             <xsl:apply-templates select="jp:depository-number" />

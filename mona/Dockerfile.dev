@@ -8,8 +8,11 @@ ENV TZ=Asia/Tokyo
 
 #RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/sh -u $UID -g $GID $USERNAME
 RUN apt-get update && \
-    apt-get install -y bash tesseract-ocr tesseract-ocr-jpn && \
+    apt-get install -y bash tesseract-ocr tesseract-ocr-jpn openjdk-17-jdk && \
     rm -rf /var/lib/apt/lists/*
+RUN wget https://sourceforge.net/projects/saxon/files/Saxon-HE/10/Java/SaxonHE10-8J.zip/download -O /tmp/SaxonHE10-8J.zip && \
+    unzip /tmp/SaxonHE10-8J.zip -d /opt/saxon-he && \
+    rm /tmp/SaxonHE10-8J.zip
 RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir poetry
 

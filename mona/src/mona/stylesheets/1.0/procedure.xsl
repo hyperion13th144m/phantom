@@ -81,7 +81,7 @@
     <xsl:template
         match="jp:file-reference-id">
         <xsl:if test="normalize-space(.) != ''">
-            <xsl:element name="fileReferenceId">
+            <xsl:element name="file-reference-id">
                 <xsl:value-of select="." />
             </xsl:element>
         </xsl:if>

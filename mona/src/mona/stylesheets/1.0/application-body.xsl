@@ -22,4 +22,18 @@
             <xsl:apply-templates select="root/application-body/drawings" />
         </xsl:element>
     </xsl:template>
+    
+    <schema:title>application-body</schema:title>
+    <schema:object name="application-body">
+        <schema:property name="tag" type="string"
+                         const="application-body" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref file="pat_common.json" name="description" />
+                <schema:ref file="pat_common.json" name="claims" />
+                <schema:ref file="pat_common.json" name="abstract" />
+                <schema:ref file="pat_common.json" name="drawings" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
 </xsl:stylesheet>

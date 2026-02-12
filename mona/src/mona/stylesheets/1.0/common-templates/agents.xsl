@@ -539,10 +539,10 @@
             </xsl:choose>
         </xsl:variable>
 
-        <xsl:element name="jpTag">
+        <xsl:element name="jp-tag">
             <xsl:value-of select="$agentKind" />
         </xsl:element>
-        <xsl:element name="indentLevel">
+        <xsl:element name="indent-level">
             <xsl:value-of select="$base-num-of-spaces + $num-of-spaces" />
         </xsl:element>
     </xsl:template>

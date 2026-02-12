@@ -35,7 +35,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
      jp:notice-of-rejection-a131      A1131   拒絶理由通知
      jp:declining-the-amendment-a191  A[12]191    補正却下の決定
      jp:declining-the-amendment-a192  A[12]192    補正却下の決定
-     jp:examiner-notification-a251    A[12]251    審査官通知i(その他の通知）（期間有）
+     jp:examiner-notification-a251    A[12]251    審査官通知(その他の通知）（期間有）
      jp:examiner-notification-a2514   A[12]2514   立会実験申請書の提出命令書
      jp:examiner-notification-a2515   A[12]2515   同一出願人による同日出願通知書
      jp:examiner-notification-a2516   A[12]2516   出願人相違の同日出願通知書
@@ -124,7 +124,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="dispatch-control-article" />
-                <schema:ref name="bibliog-in-ntc-pat-exam" />
+                <schema:ref name="bibliog-in-ntc-pat-exam" /><!-- ok -->
                 <schema:ref name="conclusion-part-article" />
                 <schema:ref name="document-name" />
                 <schema:ref name="drafting-body" />
@@ -1957,7 +1957,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
 
         <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
+        <xsl:variable name="is-last-sentence"
             select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
 
         <xsl:element name="blocks">
@@ -1965,7 +1965,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                 <xsl:value-of select="'other-images'" />
             </xsl:element>
             <xsl:element name="is-last-sentence">
-                <xsl:value-of select="$isLastSentence" />
+                <xsl:value-of select="$is-last-sentence" />
             </xsl:element>
             <xsl:for-each select="key('images-table-key', @file)">
                 <xsl:element name="images">
@@ -2039,7 +2039,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
 
         <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
+        <xsl:variable name="is-last-sentence"
             select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
 
         <xsl:if test="normalize-space() != ''">
@@ -2053,7 +2053,7 @@ sha256sum:a7320028fed94b06b18c588279b712cf52305aa76b5f4472c1d76604fe84d07d
                     </xsl:call-template>
                 </xsl:element>
                 <xsl:element name="is-last-sentence">
-                    <xsl:value-of select="$isLastSentence" />
+                    <xsl:value-of select="$is-last-sentence" />
                 </xsl:element>
             </xsl:element>
         </xsl:if>
