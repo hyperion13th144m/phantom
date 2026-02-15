@@ -9,23 +9,27 @@ const { camelCase, snakeCase } = require('lodash');
  * Recursively convert all object keys in a JSON Schema to camelCase.
  * This ensures generated TypeScript interfaces use camelCase property names.
  */
-function convertKeys(schema, converter) {
+function convertKeys(schema, func) {
     if (Array.isArray(schema)) {
-        return schema.map(convertKeys);
+        return schema.map((item) => convertKeys(item, func));
     } else if (schema && typeof schema === 'object') {
         const newObj = {};
         for (const [key, value] of Object.entries(schema)) {
-            // Only convert property names in "properties" section
             if (key === 'properties' && typeof value === 'object') {
                 const newProps = {};
                 for (const [propKey, propValue] of Object.entries(value)) {
-                    newProps[converter(propKey)] = convertKeys(propValue, converter);
+                    newProps[func(propKey)] = convertKeys(propValue, func);
                 }
                 newObj[key] = newProps;
             } else if (key === 'required' && Array.isArray(value)) {
-                newObj[key] = value.map(converter);
+                newObj[key] = value.map(func);
+            } else if (key === '$ref' && typeof value === 'string') {
+                const refParts = value.split('/');
+                const lastPart = refParts[refParts.length - 1];
+                refParts[refParts.length - 1] = func(lastPart);
+                newObj[key] = refParts.join('/');
             } else {
-                newObj[key] = convertKeys(value, converter);
+                newObj[key] = convertKeys(value, func);
             }
         }
         return newObj;
@@ -33,19 +37,16 @@ function convertKeys(schema, converter) {
     return schema;
 }
 
-// Example schema file
 const srcPath = process.argv[2] || 'example.schema.json';
 const srcJson = JSON.parse(fs.readFileSync(srcPath, 'utf8'));
 const dst = process.argv[3] || 'example.camelCase.json';
 const converter = process.argv[4] || 'camelCase';
 
-// Convert keys to camelCase
 const converterFunc =
     converter === 'camelCase' ? camelCase :
         converter === 'snake_case' ? snakeCase :
             (s) => s;
 const camelSchema = convertKeys(srcJson, converterFunc);
-// Generate TypeScript
 
 (async () => {
     try {

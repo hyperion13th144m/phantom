@@ -27,7 +27,10 @@
     <xsl:include
         href="doc-number.xsl" />
     <xsl:include href="date-templates.xsl" />
-    
+
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>pat_common</schema:title>
+  
     <!-- ====================================================================
          type A elements have a tag and blocks.
          
@@ -4016,14 +4019,15 @@
             <schema:anyOf>
                 <schema:ref name="doc-number" />
                 <schema:ref name="date" />
-                <schema:object name="shutugan-kubun">
-                    <schema:property name="tag" type="string" const="shutugan-kubun" />
-                    <schema:property name="jp-tag" type="string" />
-                    <schema:property name="text" type="string" />
-                    <schema:property name="indent-level" type="string" />
-                </schema:object>
+                <schema:ref name="shutugan-kubun" />
             </schema:anyOf>
         </schema:property>
+    </schema:object>
+    <schema:object name="shutugan-kubun">
+        <schema:property name="tag" type="string" const="shutugan-kubun" />
+        <schema:property name="jp-tag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indent-level" type="string" />
     </schema:object>
     
     <!-- ====================================================================

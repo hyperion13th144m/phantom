@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="3.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jp="http://www.jpo.go.jp">
-
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:jp="http://www.jpo.go.jp"
+                xmlns:schema="urn:schema-dsl">
+    
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:apply-templates select="root/images" />
         </xsl:element>
     </xsl:template>
-
+    
+    <schema:title>images-information</schema:title>
+    
     <!-- 画像 -->
     <xsl:template match="images">
         <xsl:choose>
@@ -22,24 +25,24 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
     <xsl:template match="image">
         <!-- 変換前の画像ファイル名-->
         <xsl:variable name="orig" select="@orig-filename" />
-
+        
         <!-- 変換前の画像ファイルを参照しているノードを探す-->
         <xsl:variable name="img-node" select="//img[@file=$orig]" />
-
+        
         <!-- そのノードの親ノードから属性num を図番とする-->
         <xsl:variable name="img-number" select="$img-node/parent::node()/@num" />
-
+        
         <!-- 代表図のファイル名 -->
         <xsl:variable name="repr"
             select="//jp:procedure//jp:representation-image/jp:file-name"/>
-
+        
         <!-- 図面の簡単な説明から図番号に対応するものを得る -->
         <xsl:variable name="desc" select="//description-of-drawings//figref[@num=$img-number]" />
-
+        
         <xsl:element name="images">
             <xsl:element name="number">
                 <xsl:for-each select="//img[@file=$orig]">
@@ -86,9 +89,27 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    
     <!-- override build-in template for text and attribute nodes. -->
     <xsl:template match="text()|@*">
         <!-- <xsl:value-of select="normalize-space(.)"/> -->
     </xsl:template>
+    
+    <schema:object
+        name="images-information">
+        <schema:property name="images" type="array">
+            <schema:ref name="image-properties"/>
+        </schema:property>
+    </schema:object>
+    <schema:object
+        name="images-properties">
+        <schema:property name="number" type="string"/>
+        <schema:property name="filename" type="string"/>
+        <schema:property name="kind" type="string"/>
+        <schema:property name="size-tag" type="string"/>
+        <schema:property name="width" type="integer"/>
+        <schema:property name="height" type="integer"/>
+        <schema:property name="representative" type="boolean"/>
+        <schema:property name="description" type="string"/>
+    </schema:object>
 </xsl:stylesheet>

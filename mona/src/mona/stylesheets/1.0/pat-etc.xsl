@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ====================================================================
-　　　変換対象書類名：申請書類（その他）
-    original: pat-etc.xsl at Apr  4  2023
-    sha256sum: e92b7b0cf3dc490ebe277718403b962639716522066812695e6854d963233adf
+     変換対象書類名：申請書類（その他）
+     original: pat-etc.xsl at Apr  4  2023
+     sha256sum: e92b7b0cf3dc490ebe277718403b962639716522066812695e6854d963233adf
      ====================================================================-->
 <xsl:stylesheet version="3.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:jp="http://www.jpo.go.jp"
-    xmlns:schema="urn:schema-dsl">
-
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:jp="http://www.jpo.go.jp"
+                xmlns:schema="urn:schema-dsl">
+    
     <xsl:variable name="node" select="name(//jp:pat-etc/*)" />
     <xsl:variable name="kind-of-law" select="//jp:pat-etc/*/@jp:kind-of-law" />
     <xsl:variable name="payment" select="substring($node,1,11)" />
-
+    
     <xsl:include href="common-templates/pat_common.xsl" />
-
+    
     <!-- ====================================================================
-     root
-     ====================================================================-->
+         root
+         ====================================================================-->
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="blocks">
@@ -29,15 +29,18 @@
                 <xsl:apply-templates select="root/jp:pat-etc/jp:etcetera-a871" />
                 <!-- 早期審査に関する事情説明補充書 -->
                 <xsl:apply-templates select="root/jp:pat-etc/jp:etcetera-a872" />
-
+                
                 <!-- その他の書類は必要になったら取り込む -->
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>pat-etc</schema:title>
+    
     <!-- ====================================================================
-     jp:etcetera-a601 期間延長請求書
-     ====================================================================-->
+         jp:etcetera-a601 期間延長請求書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a601">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -55,10 +58,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a621 審査請求書
-     ====================================================================-->
+         jp:etcetera-a621 審査請求書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a621">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -68,9 +71,7 @@
         <xsl:apply-templates select="jp:number-of-claim" />
         <xsl:apply-templates select="jp:applicants" />
         <xsl:apply-templates select="jp:agents" />
-        <!-- Y05M04　ＳＲ添付による審査請求料の減額対応　追加　Start-->
         <xsl:apply-templates select="jp:srep-request-no" />
-        <!-- Y05M04　ＳＲ添付による審査請求料の減額対応　追加　End-->
         <xsl:apply-templates select="jp:share-rate" />
         <xsl:apply-templates select="jp:charge-article" />
         <xsl:apply-templates select="jp:opinion-contents-article">
@@ -80,13 +81,11 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a623 | jp:etcetera-a624 実用新案技術評価請求書
-     ====================================================================-->
-    <!-- Y05M04　実用新案法改正　追加　Start-->
+         jp:etcetera-a623 | jp:etcetera-a624 実用新案技術評価請求書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a623 | jp:etcetera-a624">
-        <!-- Y05M04　実用新案法改正　追加　End-->
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
         <xsl:apply-templates select="jp:submission-date" />
@@ -98,18 +97,16 @@
         <xsl:apply-templates select="jp:agents" />
         <xsl:apply-templates select="jp:charge-article" />
         <xsl:apply-templates select="jp:dtext" />
-        <!-- Y05M04　実用新案法改正　追加　Start-->
         <xsl:apply-templates select="jp:opinion-contents-article">
             <xsl:with-param name="document" select="$node" />
         </xsl:apply-templates>
-        <!-- Y05M04　実用新案法改正　追加　End-->
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a625 審査請求書(by他人)
-     ====================================================================-->
+         jp:etcetera-a625 審査請求書(by他人)
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a625">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -119,18 +116,16 @@
         <xsl:apply-templates select="jp:number-of-claim" />
         <xsl:apply-templates select="jp:applicants" />
         <xsl:apply-templates select="jp:agents" />
-        <!-- Y05M04　ＳＲ添付による審査請求料の減額対応　追加　Start-->
         <xsl:apply-templates select="jp:srep-request-no" />
-        <!-- Y05M04　ＳＲ添付による審査請求料の減額対応　追加　End-->
         <xsl:apply-templates select="jp:charge-article" />
         <xsl:apply-templates select="jp:dtext" />
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a626 | jp:etcetera-a627 国内処理請求書、出願公開請求書
-     ====================================================================-->
+         jp:etcetera-a626 | jp:etcetera-a627 国内処理請求書、出願公開請求書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a626 | jp:etcetera-a627">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -143,10 +138,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a67 受託番号変更届
-     ====================================================================-->
+         jp:etcetera-a67 受託番号変更届
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a67">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -164,10 +159,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a691 雑書類
-     ====================================================================-->
+         jp:etcetera-a691 雑書類
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a691">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -181,33 +176,61 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a781 上申書
-     ====================================================================-->
+         jp:etcetera-a781 上申書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a781">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:proof-necessity" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:dispatch-number" />
-        <xsl:apply-templates select="jp:dispatch-date" />
-        <xsl:apply-templates select="jp:opinion-contents-article">
-            <xsl:with-param name="document" select="$node" />
-        </xsl:apply-templates>
-        <xsl:apply-templates select="jp:proof-means" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:proof-necessity" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:dispatch-number" />
+            <xsl:apply-templates select="jp:dispatch-date" />
+            <xsl:apply-templates select="jp:opinion-contents-article">
+                <xsl:with-param name="document" select="$node" />
+            </xsl:apply-templates>
+            <xsl:apply-templates select="jp:proof-means" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
-
+    <schema:object name="etcetera-a781">
+        <schema:property name="tag" type="string"
+                         const="jp:etcetera-a781" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref file="pat_common.json" name="document-code" />
+                <schema:ref file="pat_common.json" name="file-reference-id" />
+                <schema:ref file="pat_common.json" name="submission-date" />
+                <schema:ref file="pat_common.json" name="addressed-to-person" />
+                <schema:ref file="pat_common.json" name="indication-of-case-article" />
+                <schema:ref file="pat_common.json" name="proof-necessity" />
+                <schema:ref file="pat_common.json" name="applicants" />
+                <schema:ref file="pat_common.json" name="agents" />
+                <schema:ref file="pat_common.json" name="dispatch-number" />
+                <schema:ref file="pat_common.json" name="dispatch-date" />
+                <schema:ref file="pat_common.json" name="opinion-contents-article" />
+                <schema:ref file="pat_common.json" name="proof-means" />
+                <schema:ref file="pat_common.json" name="dtext" />
+                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    
     <!-- ====================================================================
-     jp:etcetera-a821 手続補足書
-     ====================================================================-->
+         jp:etcetera-a821 手続補足書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a821">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -223,10 +246,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a831 刊行物提出書
-     ====================================================================-->
+         jp:etcetera-a831 刊行物提出書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a831">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -242,10 +265,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a87 優先審査に関する事情説明書
-     ====================================================================-->
+         jp:etcetera-a87 優先審査に関する事情説明書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a87">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -261,51 +284,102 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a871 早期審査に関する事情説明書
-     ====================================================================-->
+         jp:etcetera-a871 早期審査に関する事情説明書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a871">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:proof-necessity" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:kind-of-accelerated-examination" /><!--ADD-->
-        <xsl:apply-templates select="jp:opinion-contents-article">
-            <xsl:with-param name="document" select="$node" />
-        </xsl:apply-templates>
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:proof-necessity" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:kind-of-accelerated-examination" />
+            <xsl:apply-templates select="jp:opinion-contents-article">
+                <xsl:with-param name="document" select="$node" />
+            </xsl:apply-templates>
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
-
+    <schema:object name="etcetera-a871">
+        <schema:property name="tag" type="string"
+                         const="jp:etcetera-a871" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref file="pat_common.json" name="document-code" />
+                <schema:ref file="pat_common.json" name="file-reference-id" />
+                <schema:ref file="pat_common.json" name="submission-date" />
+                <schema:ref file="pat_common.json" name="addressed-to-person" />
+                <schema:ref file="pat_common.json" name="indication-of-case-article" />
+                <schema:ref file="pat_common.json" name="proof-necessity" />
+                <schema:ref file="pat_common.json" name="applicants" />
+                <schema:ref file="pat_common.json" name="agents" />
+                <schema:ref file="pat_common.json" name="kind-of-accelerated-examination" />
+                <schema:ref file="pat_common.json" name="opinion-contents-article"/>
+                <schema:ref file="pat_common.json" name="dtext" />
+                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    
     <!-- ====================================================================
-     jp:etcetera-a872 早期審査に関する事情説明補充書
-     ====================================================================-->
+         jp:etcetera-a872 早期審査に関する事情説明補充書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a872">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:proof-necessity" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:opinion-contents-article">
-            <xsl:with-param name="document" select="$node" />
-        </xsl:apply-templates>
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:proof-necessity" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:opinion-contents-article">
+                <xsl:with-param name="document" select="$node" />
+            </xsl:apply-templates>
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
-
+    <schema:object name="etcetera-a872">
+        <schema:property name="tag" type="string"
+                         const="jp:etcetera-a872" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref file="pat_common.json" name="document-code" />
+                <schema:ref file="pat_common.json" name="file-reference-id" />
+                <schema:ref file="pat_common.json" name="submission-date" />
+                <schema:ref file="pat_common.json" name="addressed-to-person" />
+                <schema:ref file="pat_common.json" name="indication-of-case-article" />
+                <schema:ref file="pat_common.json" name="proof-necessity" />
+                <schema:ref file="pat_common.json" name="applicants" />
+                <schema:ref file="pat_common.json" name="agents" />
+                <schema:ref file="pat_common.json" name="opinion-contents-article"/>
+                <schema:ref file="pat_common.json" name="dtext" />
+                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    
     <!-- ====================================================================
-     jp:etcetera-a914
-     ====================================================================-->
+         jp:etcetera-a914
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a914">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -323,10 +397,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a915
-     ====================================================================-->
+         jp:etcetera-a915
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a915">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -344,10 +418,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a916 世界知的所有権機関へのアクセスコード付与請求書 
-     ====================================================================-->
+         jp:etcetera-a916 世界知的所有権機関へのアクセスコード付与請求書 
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a916">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -363,10 +437,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a603 期間延長請求書（期間徒過）
-     ====================================================================-->
+         jp:etcetera-a603 期間延長請求書（期間徒過）
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a603">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -378,20 +452,16 @@
         <xsl:apply-templates select="jp:dispatch-number" />
         <xsl:apply-templates select="jp:dispatch-date" />
         <xsl:apply-templates select="jp:notice-contents-group" />
-        <!--Y20M04
-        期間延長請求書（期間徒過）の様式変更対応 2019/06/21 Start-->
         <xsl:apply-templates select="jp:share-rate" />
-        <!--Y20M04
-        期間延長請求書（期間徒過）の様式変更対応 2019/06/21 End-->
         <xsl:apply-templates select="jp:charge-article" />
         <xsl:apply-templates select="jp:dtext" />
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a917 回復理由書
-     ====================================================================-->
+         jp:etcetera-a917 回復理由書
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a917">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -405,19 +475,15 @@
         <xsl:apply-templates select="jp:opinion-contents-article">
             <xsl:with-param name="document" select="$node" />
         </xsl:apply-templates>
-        <!--Y23M04
-        権利の回復の要件緩和 2022/06/29 Start-->
         <xsl:apply-templates select="jp:charge-article" />
-        <!--Y23M04
-        権利の回復の要件緩和 2022/06/29 End-->
         <xsl:apply-templates select="jp:dtext" />
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a918
-     ====================================================================-->
+         jp:etcetera-a918
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a918">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -434,10 +500,10 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:etcetera-a919
-     ====================================================================-->
+         jp:etcetera-a919
+         ====================================================================-->
     <xsl:template match="jp:etcetera-a919">
         <xsl:apply-templates select="jp:document-code" />
         <xsl:apply-templates select="jp:file-reference-id" />
@@ -450,45 +516,4 @@
         <xsl:apply-templates select="jp:submission-object-list-article" />
         <xsl:apply-templates select="jp:rule-outside-item-article" />
     </xsl:template>
-
-    <!--==============================================
-     for json schema
-    =================================================-->
-    <schema:object
-        name="pat-etc">
-        <schema:property name="tag" type="string"
-            const="pat-etc" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="addressed-to-person" />
-                <schema:ref name="agents" />
-                <!-- 未サポート
-                <schema:ref name="amount-paid" />
-                <schema:ref name="amount-proper-payment" />
-                <schema:ref name="amount-restoration-claim" />
-                <schema:ref name="bank-account" />
-                <schema:ref name="invention-contents-article" />
-                <schema:ref name="target-document" />
-                <schema:ref name="target-document-article" />
-                -->
-                <schema:ref name="applicants" />
-                <schema:ref name="charge-article" />
-                <schema:ref name="dispatch-date" />
-                <schema:ref name="dispatch-number" />
-                <schema:ref name="document-code" />
-                <schema:ref name="dtext" />
-                <schema:ref name="file-reference-id" />
-                <schema:ref name="indication-of-case-article" />
-                <schema:ref name="notice-contents-group" />
-                <schema:ref name="opinion-contents-article" />
-                <schema:ref name="priority-claims" />
-                <schema:ref name="proof-necessity" />
-                <schema:ref name="rule-outside-item-article" />
-                <schema:ref name="share-rate" />
-                <schema:ref name="submission-date" />
-                <schema:ref name="submission-object-list-article" />
-                <schema:ref name="use-of-das" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
 </xsl:stylesheet>

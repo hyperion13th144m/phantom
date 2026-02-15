@@ -30,28 +30,33 @@
          jp:application-a63 特許願,実用新案登録願
          ====================================================================-->
     <xsl:template match="jp:application-a63">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:special-mention-matter-article" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:parent-application-article" />
-        <xsl:apply-templates select="jp:ipc-article" />
-        <xsl:apply-templates select="jp:inventors" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:trust-relation" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:attorney-change-article" />
-        <xsl:apply-templates select="jp:priority-claims" />
-        <xsl:apply-templates select="jp:declaration-priority-ear-app" />
-        <xsl:apply-templates select="jp:law-of-industrial-regenerate" />
-        <xsl:apply-templates select="jp:payment-years" />
-        <xsl:apply-templates select="jp:share-rate" />
-        <xsl:apply-templates select="jp:charge-article" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:proof-necessity" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:special-mention-matter-article" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:parent-application-article" />
+            <xsl:apply-templates select="jp:ipc-article" />
+            <xsl:apply-templates select="jp:inventors" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:trust-relation" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:attorney-change-article" />
+            <xsl:apply-templates select="jp:priority-claims" />
+            <xsl:apply-templates select="jp:declaration-priority-ear-app" />
+            <xsl:apply-templates select="jp:law-of-industrial-regenerate" />
+            <xsl:apply-templates select="jp:payment-years" />
+            <xsl:apply-templates select="jp:share-rate" />
+            <xsl:apply-templates select="jp:charge-article" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:proof-necessity" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
     <schema:object name="application-a63">
         <schema:property name="tag" type="string"
@@ -89,20 +94,25 @@
          jp:application-a631 翻訳文提出書
          ====================================================================-->
     <xsl:template match="jp:application-a631">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:proof-necessity" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:dispatch-number" />
-        <xsl:apply-templates select="jp:dispatch-date" />
-        <xsl:apply-templates select="jp:notice-contents-group" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:proof-necessity" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:dispatch-number" />
+            <xsl:apply-templates select="jp:dispatch-date" />
+            <xsl:apply-templates select="jp:notice-contents-group" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
     <schema:object name="application-a631">
         <schema:property name="tag" type="string"
@@ -131,25 +141,30 @@
          jp:application-a632 国内書面
          ====================================================================-->
     <xsl:template match="jp:application-a632">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:inventors" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:trust-relation" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:attorney-change-article" />
-        <xsl:apply-templates select="jp:law-of-industrial-regenerate" />
-        <xsl:apply-templates select="jp:payment-years" />
-        <xsl:apply-templates select="jp:share-rate" />
-        <xsl:apply-templates select="jp:charge-article" />
-        <xsl:apply-templates select="jp:dispatch-number" />
-        <xsl:apply-templates select="jp:notice-contents-group" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:inventors" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:trust-relation" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:attorney-change-article" />
+            <xsl:apply-templates select="jp:law-of-industrial-regenerate" />
+            <xsl:apply-templates select="jp:payment-years" />
+            <xsl:apply-templates select="jp:share-rate" />
+            <xsl:apply-templates select="jp:charge-article" />
+            <xsl:apply-templates select="jp:dispatch-number" />
+            <xsl:apply-templates select="jp:notice-contents-group" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
     <schema:object name="application-a632">
         <schema:property name="tag" type="string"
@@ -183,17 +198,22 @@
          jp:application-a633 図面の提出書（実案）
          ====================================================================-->
     <xsl:template match="jp:application-a633">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:dispatch-number" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:dispatch-number" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
     <schema:object name="application-a633">
         <schema:property name="tag" type="string"
@@ -219,16 +239,21 @@
          jp:application-a634 国際出願翻訳文提出書
          ====================================================================-->
     <xsl:template match="jp:application-a634">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
     <schema:object name="application-a634">
         <schema:property name="tag" type="string"
@@ -253,17 +278,22 @@
          jp:application-a635 国際出願翻訳文提出書（職権）
          ====================================================================-->
     <xsl:template match="jp:application-a635">
-        <xsl:apply-templates select="jp:document-code" />
-        <xsl:apply-templates select="jp:file-reference-id" />
-        <xsl:apply-templates select="jp:submission-date" />
-        <xsl:apply-templates select="jp:addressed-to-person" />
-        <xsl:apply-templates select="jp:indication-of-case-article" />
-        <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:notice-contents-group" />
-        <xsl:apply-templates select="jp:dtext" />
-        <xsl:apply-templates select="jp:submission-object-list-article" />
-        <xsl:apply-templates select="jp:rule-outside-item-article" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-code" />
+            <xsl:apply-templates select="jp:file-reference-id" />
+            <xsl:apply-templates select="jp:submission-date" />
+            <xsl:apply-templates select="jp:addressed-to-person" />
+            <xsl:apply-templates select="jp:indication-of-case-article" />
+            <xsl:apply-templates select="jp:applicants" />
+            <xsl:apply-templates select="jp:agents" />
+            <xsl:apply-templates select="jp:notice-contents-group" />
+            <xsl:apply-templates select="jp:dtext" />
+            <xsl:apply-templates select="jp:submission-object-list-article" />
+            <xsl:apply-templates select="jp:rule-outside-item-article" />
+        </xsl:element>
     </xsl:template>
     <schema:object name="application-a635">
         <schema:property name="tag" type="string"

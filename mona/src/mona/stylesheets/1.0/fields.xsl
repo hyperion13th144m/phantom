@@ -25,6 +25,9 @@
     <xsl:include href="common-templates/special-mention-matter-article.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
 
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>fields</schema:title>
+
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="fields">
@@ -202,14 +205,14 @@
         <schema:property name="jp:drafting-body" type="string" optional="true" />
         <schema:property name="jp:opinion-contents-article" type="string" optional="true" />
 
-        <schema:property name="independent-claims" type="array" itemType="string" optional="true" />
-        <schema:property name="dependent-claims" type="array" itemType="string" optional="true" />
-        <schema:property name="inventors" type="array" itemType="string" optional="true" />
-        <schema:property name="applicants" type="array" itemType="string" />
-        <schema:property name="agents" type="array" itemType="string" optional="true" />
-        <schema:property name="rejection-reason-article" type="array" itemType="string"
+        <schema:property name="independent-claims" type="array" item-type="string" optional="true" />
+        <schema:property name="dependent-claims" type="array" item-type="string" optional="true" />
+        <schema:property name="inventors" type="array" item-type="string" optional="true" />
+        <schema:property name="applicants" type="array" item-type="string" />
+        <schema:property name="agents" type="array" item-type="string" optional="true" />
+        <schema:property name="rejection-reason-article" type="array" item-type="string"
             optional="true" />
-        <schema:property name="contents-of-amendment" type="array" itemType="string"
+        <schema:property name="contents-of-amendment" type="array" item-type="string"
             optional="true" />
     </schema:object>
 </xsl:stylesheet>

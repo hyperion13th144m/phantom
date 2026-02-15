@@ -1,94 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
- original xsl: v4xva_ntc-pt-f.xsl at Apr 28  2022
-sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
+     original xsl: v4xva_ntc-pt-f.xsl at Apr 28  2022
+     sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
 -->
+
+<!-- 当面、A242623 実案技術評価書の通知のみ対応 -->
+
 <!-- ====================================================================
-　　　変換対象書類名：特実方式審査（共通部）
+     変換対象書類名：特実方式審査（共通部）
      ====================================================================-->
 <xsl:stylesheet version="1.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jp="http://www.jpo.go.jp"
-    xmlns:schema="urn:schema-dsl"
-    xmlns:f="urn:phantom-mona:string-utils">
-
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:jp="http://www.jpo.go.jp"
+                xmlns:schema="urn:schema-dsl"
+                xmlns:f="urn:phantom-mona:string-utils">
+    
     <xsl:variable name="node" select="name(//jp:notice-pat-frm/*)" />
     <xsl:variable name="kind-of-law">
         <xsl:value-of select="/root/jp:cpy-notice-pat-frm/jp:notice-pat-frm/*/@jp:kind-of-law[1]" />
     </xsl:variable>
-
-    <xsl:include href="ntc-ninsyo.xsl" />
+    
+    <xsl:include href="common-templates/ntc-ninsyo.xsl" />
+    <xsl:include href="common-templates/ntc-paragraph.xsl" />
     <xsl:include href="common-templates/country.xsl" />
     <xsl:include href="common-templates/v4xva_prm.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
     <xsl:include href="common-templates/date-templates.xsl" />
-
-    <!-- 当面、A242623 実案技術評価書の通知のみ対応 -->
-
+    
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>v4xva_ntc-pt-e-rn</schema:title>
+    
     <!-- ====================================================================
-     jp:notice-pat-frm
-     ====================================================================-->
+         jp:notice-pat-frm
+         ====================================================================-->
     <xsl:template match="jp:notice-pat-frm">
-        <xsl:apply-templates
-            select="jp:notification-a242623" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates
+                select="jp:notification-a242623" />
+        </xsl:element>
         <!--
-        <xsl:apply-templates
-            select="jp:disposition-a042 | jp:disposition-a043 | jp:disposition-a072
-                   | jp:disposition-a073 | jp:invitation-a101 | jp:disposition-a071
-                   | jp:invitation-a102 | jp:notification-a103 | jp:invitation-to-correct-a111
-                   | jp:invitation-to-correct-a112 | jp:reference-a115 | jp:invitation-a121
-                   | jp:invitation-a141 | jp:notification-a231 | jp:notification-a232
-                   | jp:commissioner-notifie-a241 | jp:notification-a241764
-                   | jp:commissioner-notifie-a242 | jp:commissioner-notifie-a24214
-                   | jp:notification-a242623 | jp:notification-a242625 | jp:notification-a242764
-                   | jp:notification-a242831 | jp:written-answer-inquiry-a242902
-                   | jp:notification-a26 | jp:correction-by-ex-officio-a273
-                   | jp:correction-by-ex-officio-a274 | jp:notification-a275
-                   | jp:notification-a244001
-                   | jp:notification-a242624 | jp:notification-a243624
-                   | jp:notification-a243631 | jp:notification-a24379" />
+             <xsl:apply-templates
+             select="jp:disposition-a042 | jp:disposition-a043 | jp:disposition-a072
+             | jp:disposition-a073 | jp:invitation-a101 | jp:disposition-a071
+             | jp:invitation-a102 | jp:notification-a103 | jp:invitation-to-correct-a111
+             | jp:invitation-to-correct-a112 | jp:reference-a115 | jp:invitation-a121
+             | jp:invitation-a141 | jp:notification-a231 | jp:notification-a232
+             | jp:commissioner-notifie-a241 | jp:notification-a241764
+             | jp:commissioner-notifie-a242 | jp:commissioner-notifie-a24214
+             | jp:notification-a242623 | jp:notification-a242625 | jp:notification-a242764
+             | jp:notification-a242831 | jp:written-answer-inquiry-a242902
+             | jp:notification-a26 | jp:correction-by-ex-officio-a273
+             | jp:correction-by-ex-officio-a274 | jp:notification-a275
+             | jp:notification-a244001
+             | jp:notification-a242624 | jp:notification-a243624
+             | jp:notification-a243631 | jp:notification-a24379" />
         -->
     </xsl:template>
-
-    <!-- ====================================================================
-     jp:disposition-a042 | jp:disposition-a043 | jp:disposition-a072 | jp:disposition-a073 |
-     jp:invitation-a101 | jp:disposition-a071 | jp:invitation-a102 | jp:notification-a103 |
-     jp:invitation-to-correct-a111 | jp:invitation-to-correct-a112 | jp:reference-a115 |
-     jp:invitation-a121 | jp:invitation-a141 | jp:notification-a231 | jp:notification-a232 |
-     jp:commissioner-notifie-a241 | jp:notification-a241764 | jp:commissioner-notifie-a242 |
-     jp:commissioner-notifie-a24214 | jp:notification-a242623 | jp:notification-a242625 |
-     jp:notification-a242764 | jp:notification-a242831 | jp:written-answer-inquiry-a242902 |
-     jp:notification-a26 | jp:correction-by-ex-officio-a273 | jp:correction-by-ex-officio-a274 |
-     jp:notification-a275 | jp:notification-a242624 | jp:notification-a243624
-     ====================================================================-->
-    <xsl:template
-        match="jp:disposition-a042 | jp:disposition-a043 | jp:disposition-a072
-                   | jp:disposition-a073 | jp:invitation-a101 | jp:disposition-a071
-                   | jp:invitation-a102 | jp:notification-a103 | jp:invitation-to-correct-a111
-                   | jp:invitation-to-correct-a112 | jp:reference-a115 | jp:invitation-a121
-                   | jp:invitation-a141 | jp:notification-a231 | jp:notification-a232
-                   | jp:commissioner-notifie-a241 | jp:notification-a241764
-                   | jp:commissioner-notifie-a242 | jp:commissioner-notifie-a24214
-                   | jp:notification-a242623 | jp:notification-a242625 | jp:notification-a242764
-                   | jp:notification-a242831 | jp:written-answer-inquiry-a242902
-                   | jp:notification-a26 | jp:correction-by-ex-officio-a273
-                   | jp:correction-by-ex-officio-a274 | jp:notification-a275
-                   | jp:notification-a242624 | jp:notification-a243624
-                   | jp:notification-a243631 | jp:notification-a24379">
-        <xsl:apply-templates select="jp:document-name" />
-        <xsl:apply-templates select="jp:bibliog-in-ntc-pat-frm" />
-        <xsl:apply-templates select="jp:conclusion-part-article" />
-        <xsl:apply-templates select="jp:drafting-body" />
-        <xsl:apply-templates select="jp:footer-article" />
-        <xsl:apply-templates select="jp:image-group" />
-    </xsl:template>
-
-    <schema:object
-        name="notice-pat-frm">
+    <schema:object name="notice-pat-frm">
         <schema:property name="tag" type="string"
-            const="jp:notice-pat-frm" />
+                         const="jp:notice-pat-frm" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="notification-a242623"/>
+        </schema:property>
+    </schema:object>
+    
+    <!-- ====================================================================
+         jp:disposition-a042 | jp:disposition-a043 | jp:disposition-a072 | jp:disposition-a073 |
+         jp:invitation-a101 | jp:disposition-a071 | jp:invitation-a102 | jp:notification-a103 |
+         jp:invitation-to-correct-a111 | jp:invitation-to-correct-a112 | jp:reference-a115 |
+         jp:invitation-a121 | jp:invitation-a141 | jp:notification-a231 | jp:notification-a232 |
+         jp:commissioner-notifie-a241 | jp:notification-a241764 | jp:commissioner-notifie-a242 |
+         jp:commissioner-notifie-a24214 | jp:notification-a242623 | jp:notification-a242625 |
+         jp:notification-a242764 | jp:notification-a242831 | jp:written-answer-inquiry-a242902 |
+         jp:notification-a26 | jp:correction-by-ex-officio-a273 | jp:correction-by-ex-officio-a274 |
+         jp:notification-a275 | jp:notification-a242624 | jp:notification-a243624
+         ====================================================================-->
+    <xsl:template
+        match="jp:notification-a242623">
+        <!-- match="jp:disposition-a042 | jp:disposition-a043 | jp:disposition-a072
+             | jp:disposition-a073 | jp:invitation-a101 | jp:disposition-a071
+             | jp:invitation-a102 | jp:notification-a103 | jp:invitation-to-correct-a111
+             | jp:invitation-to-correct-a112 | jp:reference-a115 | jp:invitation-a121
+             | jp:invitation-a141 | jp:notification-a231 | jp:notification-a232
+             | jp:commissioner-notifie-a241 | jp:notification-a241764
+             | jp:commissioner-notifie-a242 | jp:commissioner-notifie-a24214
+             | jp:notification-a242623 | jp:notification-a242625 | jp:notification-a242764
+             | jp:notification-a242831 | jp:written-answer-inquiry-a242902
+             | jp:notification-a26 | jp:correction-by-ex-officio-a273
+             | jp:correction-by-ex-officio-a274 | jp:notification-a275
+             | jp:notification-a242624 | jp:notification-a243624
+             | jp:notification-a243631 | jp:notification-a24379"> -->
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:apply-templates select="jp:document-name" />
+            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-frm" />
+            <xsl:apply-templates select="jp:conclusion-part-article" />
+            <xsl:apply-templates select="jp:drafting-body" />
+            <xsl:apply-templates select="jp:footer-article" />
+            <xsl:apply-templates select="jp:image-group" />
+        </xsl:element>
+    </xsl:template>
+    <schema:object
+        name="notification-a242623">
+        <schema:property name="tag" type="string"
+                         const="jp:notification-a242623" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="dispatch-control-article" />
@@ -101,37 +123,103 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </schema:anyOf>
         </schema:property>
     </schema:object>
-
+    
     <!-- ====================================================================
-     jp:invitation-to-correct-a111
-     ====================================================================
-    <xsl:template match="jp:invitation-to-correct-a111">
-        <xsl:apply-templates select="jp:document-name" />
-        <xsl:apply-templates select="jp:bibliog-in-ntc-pat-frm" />
-        <xsl:apply-templates select="jp:conclusion-part-article" />
-        <xsl:apply-templates select="jp:drafting-body" />
-        <xsl:apply-templates select="jp:footer-article" />
-        <xsl:apply-templates select="jp:image-group" />
-    </xsl:template>
+         jp:invitation-to-correct-a111
+         ====================================================================
+         <xsl:template match="jp:invitation-to-correct-a111">
+         <xsl:apply-templates select="jp:document-name" />
+         <xsl:apply-templates select="jp:bibliog-in-ntc-pat-frm" />
+         <xsl:apply-templates select="jp:conclusion-part-article" />
+         <xsl:apply-templates select="jp:drafting-body" />
+         <xsl:apply-templates select="jp:footer-article" />
+         <xsl:apply-templates select="jp:image-group" />
+         </xsl:template>
     -->
-
+    
     <!-- ====================================================================
-     jp:notification-a244001
-     ====================================================================
-    <xsl:template match="jp:notification-a244001">
-        <xsl:apply-templates select="jp:document-name" />
-        <xsl:apply-templates select="jp:bibliog-in-ntc-pat-frm" />
-        <xsl:apply-templates select="jp:conclusion-part-article" />
-        <xsl:apply-templates select="jp:das-info" />
-        <xsl:apply-templates select="jp:footer-article" />
-        <xsl:apply-templates select="jp:image-group" />
-    </xsl:template>
+         jp:notification-a244001
+         ====================================================================
+         <xsl:template match="jp:notification-a244001">
+         <xsl:apply-templates select="jp:document-name" />
+         <xsl:apply-templates select="jp:bibliog-in-ntc-pat-frm" />
+         <xsl:apply-templates select="jp:conclusion-part-article" />
+         <xsl:apply-templates select="jp:das-info" />
+         <xsl:apply-templates select="jp:footer-article" />
+         <xsl:apply-templates select="jp:image-group" />
+         </xsl:template>
     -->
-
+    
+    
+    
     <!-- ====================================================================
-     jp:document-name
-     ====================================================================-->
-    <!-- 書類名 -->
+         begin:
+         terminal type elements have tag, and text.
+         optional: jp-tag,  converted-text
+         no child elements
+         ====================================================================-->
+    <!-- ====================================================================
+         jp:doc-number 文書番号
+         ====================================================================-->
+    <xsl:template match="jp:doc-number">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:das-group">
+                        <xsl:value-of select="'基礎出願番号'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="''" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:call-template name="文書番号編集" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:date 日付
+         import from <xsl:template name="日付タイトル">
+         ====================================================================-->
+    <xsl:template match="jp:date">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="jp-tag">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:reference-date">
+                        <xsl:value-of select="'Date'" />
+                    </xsl:when>
+                    <xsl:when test="ancestor::jp:present-date-of-a632">
+                        <xsl:value-of select="'国内書面差出日'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:call-template name="format-date-jp2">
+                    <xsl:with-param name="date-str" select="normalize-space(.)" />
+                </xsl:call-template>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:document-name 書類名
+         ====================================================================-->
     <xsl:template match="jp:document-name">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -142,12 +230,135 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:bibliog-in-ntc-pat-frm
-     ====================================================================-->
-    <!-- 書誌部 -->
+         jp:name 氏名
+         ====================================================================-->
+    <xsl:template match="jp:name">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="'notice-name'" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:text 住所
+         ====================================================================-->
+    <xsl:template match="jp:text">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="'notice-pat-frm-text'" />
+            </xsl:element>
+            <xsl:element name="indent-level">0</xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:official-title 役職名
+         ====================================================================-->
+    <xsl:template match="jp:official-title">
+        <xsl:variable name="name" select="normalize-space(.)" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="$name" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:staff-code 担当者コード
+         ====================================================================-->
+    <xsl:template match="jp:staff-code">
+        <xsl:variable name="code" select="f:to-fullwidth-alnum(normalize-space(.))" />
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="normalize-space(.)" />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:value-of select="$code" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:number-of-other-persons 外何名
+         ====================================================================-->
+    <xsl:template match="jp:number-of-other-persons">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:element name="text">
+                <xsl:value-of select="f:remove-nbsp(.)" />
+            </xsl:element>
+            <xsl:element name="converted-text">
+                <xsl:value-of select="'（外'" />
+                <xsl:value-of
+                    select="f:to-fullwidth-digit(f:remove-nbsp(.))" />
+                <xsl:value-of select="'名）'" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- ====================================================================
+         jp:addressed-to-person-group
+         ====================================================================-->
+    <!-- あて先  -->
+    <xsl:template match="jp:addressed-to-person-group">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <!-- render jp-tag, text -->
+            <xsl:call-template name="あて先編集" />
+            
+            <!-- addressbook renders no children.
+                 <xsl:apply-templates select="jp:addressbook" />
+            -->
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- all of terminal type elements follow the same pattern. -->
+    <schema:object name="ntc-pt-f-terminal-items-type">
+        <schema:property
+            name="tag" type="string"
+                   enum="jp:doc-number,
+                         jp:date,
+                         jp:document-name,
+                         jp:name,
+                         jp:text,
+                         jp:official-title,
+                         jp:staff-code,
+                         jp:number-of-other-persons,
+                         jp:addressed-to-person-group" />
+        <schema:property name="text" type="string" />
+        <schema:property name="jp-tag" type="string" optional="true" />
+        <schema:property name="converted-text" type="string" optional="true" />
+    </schema:object>
+    <!--=========================================
+         End: terminal type
+         ===========================================-->
+    
+    
+    <!-- ====================================================================
+         begin: container type A elements have a tag and blocks.
+         ====================================================================--> 
+    <!-- ====================================================================
+         jp:bibliog-in-ntc-pat-frm 書誌部
+         ====================================================================-->
     <xsl:template match="jp:bibliog-in-ntc-pat-frm">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -157,7 +368,9 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:draft-person-group" />
             <xsl:apply-templates select="jp:addressed-to-person-group" />
             <xsl:apply-templates select="jp:application-reference" />
-            <xsl:apply-templates select="jp:not-specify-apl-ref" />
+            <!-- empty element
+                 <xsl:apply-templates select="jp:not-specify-apl-ref" />
+            -->
             <xsl:apply-templates select="jp:refer-from" />
             <xsl:apply-templates select="jp:reference-date" />
             <xsl:apply-templates select="jp:refer-to" />
@@ -166,7 +379,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
     </xsl:template>
     <schema:object name="bibliog-in-ntc-pat-frm">
         <schema:property name="tag" type="string"
-            const="jp:bibliog-in-ntc-pat-frm" />
+                         const="jp:bibliog-in-ntc-pat-frm" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="draft-person-group" />
@@ -181,11 +394,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </schema:anyOf>
         </schema:property>
     </schema:object>
-
+    
     <!-- ====================================================================
-     jp:conclusion-part-article
-     ====================================================================-->
-    <!-- 結論部 -->
+         jp:conclusion-part-article 結論部
+         ====================================================================-->
     <xsl:template match="jp:conclusion-part-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -197,11 +409,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:element>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:drafting-body
-     ====================================================================-->
-    <!-- 記部 -->
+         jp:drafting-body 記部
+         ====================================================================-->
     <xsl:template match="jp:drafting-body">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -211,11 +422,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:element>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:footer-article
-     ====================================================================-->
-    <!-- フッタ部  -->
+         jp:footer-article フッタ部
+         ====================================================================-->
     <xsl:template match="jp:footer-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -223,24 +433,59 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
             <xsl:apply-templates select="jp:administrative-appeal-sentence" />
             <xsl:apply-templates select="jp:approval-column-article" />
-            <xsl:apply-templates select="jp:approval-without-contents" />
+            <!-- empty element
+                 <xsl:apply-templates select="jp:approval-without-contents" />
+            -->
             <xsl:apply-templates select="jp:certification-column-article" />
             <xsl:apply-templates select="jp:inquiry-article" />
         </xsl:element>
-
+        
         <!-- 未サポート -->
         <xsl:if test="jp:devider">
             <xsl:apply-templates
                 select="jp:devider/jp:official-title | jp:devider/jp:name
-                                   | jp:devider/jp:staff-code" />
+                    | jp:devider/jp:staff-code" />
         </xsl:if>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:image-group
-     ====================================================================-->
-    <!-- イメージグループ  -->
+         jp:administrative-appeal-sentence 行服部
+         ====================================================================-->
+    <xsl:template match="jp:administrative-appeal-sentence">
+        <xsl:element name="blocks">
+            <xsl:element name="tag">
+                <xsl:value-of select="name()" />
+            </xsl:element>
+            <xsl:if test="$node = 'jp:notification-a232'">
+                <xsl:element name="blocks">
+                    <xsl:element name="tag">
+                        <xsl:value-of select="'text'" />
+                    </xsl:element>
+                    <xsl:element name="text">
+                        <xsl:value-of select="'　お願い：'" />
+                    </xsl:element>
+                    <xsl:element name="is-last-sentence">
+                        <xsl:value-of select="'true'" />
+                    </xsl:element>
+                </xsl:element>
+            </xsl:if>
+            <xsl:apply-templates select="p" />
+        </xsl:element>
+    </xsl:template>
+    <schema:object name="administrative-appeal-sentence">
+        <schema:property name="tag" type="string"
+                         const="jp:administrative-appeal-sentence" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref file="ntc-paragraph.json" name="inline-text" />
+                <schema:ref file="ntc-paragraph.json" name="paragraph" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object> 
+    <!-- ====================================================================
+         jp:image-group イメージグループ
+         ====================================================================-->
     <xsl:template match="jp:image-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -250,11 +495,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:element>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:drafting-date
-     ====================================================================-->
-    <!-- 起案日  -->
+         jp:drafting-date 起案日
+         ====================================================================-->
     <xsl:template match="jp:drafting-date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -264,184 +508,47 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:element>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:draft-person-group
-     ====================================================================-->
-    <!-- 起案者  -->
+         jp:draft-person-group 起案者
+         ====================================================================-->
     <xsl:template match="jp:draft-person-group">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jp-tag">
-                <xsl:value-of select="''" />
-            </xsl:element>
             <xsl:apply-templates select="jp:name" />
         </xsl:element>
-
+        
         <!-- 未サポート -->
         <xsl:if test="jp:staff-code or jp:office-code">
             <xsl:apply-templates select="jp:staff-code | jp:office-code" mode="unsupported" />
         </xsl:if>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:addressed-to-person-group
-     ====================================================================-->
-    <!-- あて先  -->
-    <xsl:template match="jp:addressed-to-person-group">
+         jp:reference-date 照会日
+         ====================================================================-->
+    <xsl:template match="jp:reference-date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="indent-level">0</xsl:element>
-            <!-- render jp-tag, text -->
-            <xsl:call-template name="あて先編集" />
-
-            <!-- addressbook renders no children.
-            <xsl:apply-templates select="jp:addressbook" />
-            -->
+            <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    <schema:object name="reference-date">
+        <schema:property name="tag" type="string" const="jp:reference-date" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="date" />
+        </schema:property>
+    </schema:object>
+    
     <!-- ====================================================================
-     あて先編集
-     ====================================================================-->
-    <xsl:template name="あて先編集">
-        <xsl:variable name="name" select="normalize-space(.//jp:name)" />
-
-        <xsl:choose>
-            <xsl:when test="$node = 'jp:notification-a232'">
-                <xsl:element name="jp-tag">
-                    <xsl:value-of select="'出願人'" />
-                </xsl:element>
-                <xsl:element name="text">
-                    <xsl:if test="string-length(normalize-space(.//jp:registered-number)) != 0">
-                        <xsl:value-of select="f:to-fullwidth-alnum(.//jp:registered-number)" />
-                    </xsl:if>
-                    <xsl:value-of select="$name || '　様'" />
-                    <xsl:if
-                        test="string-length(normalize-space(.//jp:number-of-other-persons)) != 0">
-                        <xsl:value-of select="'　外'" />
-                        <xsl:apply-templates select=".//jp:number-of-other-persons" />
-                        <xsl:value-of select="'名'" />
-                    </xsl:if>
-                </xsl:element>
-            </xsl:when>
-
-            <xsl:otherwise>
-                <xsl:choose>
-                    <xsl:when test="./@jp:kind-of-applicant = 'evaluation-requester'">
-                        <xsl:element name="jp-tag">
-                            <xsl:if test="./@kind-of-applicant">
-                                <xsl:call-template name="出願人種別編集" />
-                            </xsl:if>
-                            <xsl:if test="./@kind-of-agent">
-                                <xsl:call-template name="代理人種別編集" />
-                            </xsl:if>
-                        </xsl:element>
-                        <xsl:element name="text">
-                            <xsl:value-of select="$name" />
-                            <xsl:call-template name="あて先項目内容編集" />
-                        </xsl:element>
-                    </xsl:when>
-                    <xsl:when
-                        test="(./@jp:kind-of-applicant = 'inheritor'
-                    and ($node = 'jp:invitation-a141' or $node = 'jp:invitation-a141'
-                     or $node = 'jp:commissioner-notifie-a24214'
-                     or $node = 'jp:written-answer-inquiry-a242902'
-                     or $node = 'jp:commissioner-notifie-a241'
-                     or $node = 'jp:commissioner-notifie-a242'))">
-                        <xsl:element name="jp-tag">
-                            <xsl:if test="./@kind-of-applicant">
-                                <xsl:call-template name="出願人種別編集" />
-                            </xsl:if>
-                            <xsl:if test="./@kind-of-agent">
-                                <xsl:call-template name="代理人種別編集" />
-                            </xsl:if>
-                        </xsl:element>
-                        <xsl:element name="text">
-                            <xsl:value-of select="$name" />
-                            <xsl:call-template name="あて先項目内容編集" />
-                        </xsl:element>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:element name="jp-tag">
-                            <xsl:choose>
-                                <xsl:when test="$kind-of-law = 'patent'">
-                                    <xsl:value-of select="'特許'" />
-                                </xsl:when>
-                                <xsl:when test="$kind-of-law = 'utility'">
-                                    <xsl:value-of select="'実用新案登録'" />
-                                </xsl:when>
-                            </xsl:choose>
-                            <xsl:if test="./@kind-of-representative">
-                                <xsl:value-of select="'代表'" />
-                            </xsl:if>
-                            <xsl:if test="./@kind-of-applicant">
-                                <xsl:call-template name="出願人種別編集" />
-                            </xsl:if>
-                            <xsl:if test="./@kind-of-agent">
-                                <xsl:call-template name="代理人種別編集" />
-                            </xsl:if>
-                        </xsl:element>
-                        <xsl:element name="text">
-                            <xsl:value-of select="$name" />
-                            <xsl:call-template name="あて先項目内容編集" />
-                        </xsl:element>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-
-    <!-- ====================================================================
-     あて先項目内容編集
-     ====================================================================-->
-    <xsl:template name="あて先項目内容編集">
-        <xsl:variable name="persons"
-            select="translate(normalize-space(.//jp:number-of-other-persons),'&#160;',0)" />
-        <xsl:choose>
-            <xsl:when test=".//jp:number-of-other-persons">
-                <xsl:value-of select="'（外' || $persons || '名）　様'" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="'　様'" />
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:application-reference
-     ====================================================================-->
-    <!-- 出願書類参照  -->
-    <xsl:template match="jp:application-reference">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="''" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:document-id" />
-        </xsl:element>
-    </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
-    <!-- ====================================================================
-     jp:not-specify-apl-ref
-     ====================================================================-->
-    <!-- 不特定願番  -->
-    <xsl:template match="jp:not-specify-apl-ref">
-    </xsl:template>
-
-    <!-- ====================================================================
-     jp:refer-from 照会元
-     import from <xsl:template name="照会元編集">
-     ====================================================================-->
+         jp:refer-from 照会元
+         import from <xsl:template name="照会元編集">
+         ====================================================================-->
     <xsl:template match="jp:refer-from">
         <xsl:variable name="data" select="normalize-space(.//jp:text)" />
         <xsl:element name="blocks">
@@ -503,54 +610,32 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
                     <xsl:value-of select="'true'" />
                 </xsl:element>
             </xsl:element>
-
+            
             <!-- 未サポート -->
             <xsl:if
                 test=".//address-1 or .//address-2 or .//address-3 or .//address-4 or .//address-5 or .//mailcode or .//pobox or .//room
-             or .//address-floor or .//building or .//street or .//city or .//county or .//state
-             or .//postcode or .//country or .//jp:original-language-of-address">
+                    or .//address-floor or .//building or .//street or .//city or .//county or .//state
+                    or .//postcode or .//country or .//jp:original-language-of-address">
                 <xsl:apply-templates
                     select=".//address-1 | .//address-2 | .//address-3 | .//address-4 | .//address-5 | .//mailcode
-                                 | .//pobox | .//room | .//address-floor | .//building
-                                 | .//street | .//city | .//county | .//state | .//country
-                                 | .//postcode | .//jp:original-language-of-address"
+                        | .//pobox | .//room | .//address-floor | .//building
+                        | .//street | .//city | .//county | .//state | .//country
+                        | .//postcode | .//jp:original-language-of-address"
                     mode="unsupported" />
             </xsl:if>
         </xsl:element>
     </xsl:template>
     <schema:object name="refer-from">
         <schema:property name="tag" type="string"
-            const="jp:refer-from" />
+                         const="jp:refer-from" />
         <schema:property name="blocks" type="array">
             <schema:ref name="inline-text" />
         </schema:property>
-    </schema:object>
-
-
+    </schema:object> 
+    
     <!-- ====================================================================
-     jp:reference-date
-     ====================================================================-->
-    <!-- 照会日  -->
-    <xsl:template match="jp:reference-date">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="jp:date" />
-        </xsl:element>
-    </xsl:template>
-    <schema:object name="reference-date">
-        <schema:property name="tag" type="string" const="jp:reference-date" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="date" />
-        </schema:property>
-    </schema:object>
-
-
-    <!-- ====================================================================
-     jp:refer-to
-     ====================================================================-->
-    <!-- 紹介先  -->
+         jp:refer-to 紹介先
+         ====================================================================-->
     <xsl:template match="jp:refer-to">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -558,17 +643,17 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
             <xsl:apply-templates select="jp:name" />
             <xsl:apply-templates select="jp:address" />
-
+            
             <!-- 未サポート -->
             <xsl:if
                 test=".//address-1 or .//address-2 or .//address-3 or .//address-4 or .//address-5 or .//mailcode or .//pobox or .//room
-             or .//address-floor or .//building or .//street or .//city or .//county or .//state
-             or .//postcode or .//country or .//jp:original-language-of-address">
+                    or .//address-floor or .//building or .//street or .//city or .//county or .//state
+                    or .//postcode or .//country or .//jp:original-language-of-address">
                 <xsl:apply-templates
                     select=".//address-1 | .//address-2 | .//address-3 | .//address-4 | .//address-5 | .//mailcode
-                                 | .//pobox | .//room | .//address-floor | .//building
-                                 | .//street | .//city | .//county | .//state | .//country
-                                 | .//postcode | .//jp:original-language-of-address"
+                        | .//pobox | .//room | .//address-floor | .//building
+                        | .//street | .//city | .//county | .//state | .//country
+                        | .//postcode | .//jp:original-language-of-address"
                     mode="unsupported" />
             </xsl:if>
         </xsl:element>
@@ -582,12 +667,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </schema:anyOf>
         </schema:property>
     </schema:object>
-
-
+    
     <!-- ====================================================================
-     jp:present-date-of-a632
-     ====================================================================-->
-    <!-- 国内書面差出日  -->
+         jp:present-date-of-a632 国内書面差出日
+         ====================================================================-->
     <xsl:template match="jp:present-date-of-a632">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -604,96 +687,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </schema:anyOf>
         </schema:property>
     </schema:object>
-
+    
     <!-- ====================================================================
-     p
-     ====================================================================-->
-    <!-- 段落、段落内テキスト  -->
-    <xsl:template match="p">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">paragraph</xsl:element>
-            <xsl:apply-templates />
-        </xsl:element>
-    </xsl:template>
-    <!-- <schema:object name="paragraph"> is defined in pat_common.xsl -->
-
-    <xsl:template match="text() | sup | sub | u">
-        <xsl:variable name="tag">
-            <xsl:choose>
-                <xsl:when test="self::text()">text</xsl:when>
-                <xsl:when test="self::sup">sup</xsl:when>
-                <xsl:when test="self::sub">sub</xsl:when>
-                <xsl:when test="self::u">underline</xsl:when>
-            </xsl:choose>
-        </xsl:variable>
-
-        <!-- 次の「有意ノード」を見る -->
-        <xsl:variable name="nextNode"
-            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
-
-        <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="is-last-sentence"
-            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
-
-        <xsl:if test="normalize-space() != ''">
-            <xsl:element name="blocks">
-                <xsl:element name="tag">
-                    <xsl:value-of select="$tag" />
-                </xsl:element>
-                <xsl:element name="text">
-                    <xsl:call-template name="trim">
-                        <xsl:with-param name="text" select="f:remove-nbsp(.)" />
-                    </xsl:call-template>
-                </xsl:element>
-                <xsl:element name="is-last-sentence">
-                    <xsl:value-of select="$is-last-sentence" />
-                </xsl:element>
-            </xsl:element>
-        </xsl:if>
-    </xsl:template>
-    <!-- <schema:object name="inline-text"> is defined in pat_common.xsl -->
-
-    <!-- ====================================================================
-     jp:administrative-appeal-sentence
-     ====================================================================-->
-    <!-- 行服部  -->
-    <xsl:template match="jp:administrative-appeal-sentence">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:if test="$node = 'jp:notification-a232'">
-                <xsl:element name="blocks">
-                    <xsl:element name="tag">
-                        <xsl:value-of select="'text'" />
-                    </xsl:element>
-                    <xsl:element name="text">
-                        <xsl:value-of select="'　お願い：'" />
-                    </xsl:element>
-                    <xsl:element name="is-last-sentence">
-                        <xsl:value-of select="'true'" />
-                    </xsl:element>
-                </xsl:element>
-            </xsl:if>
-            <xsl:apply-templates select="p" />
-        </xsl:element>
-    </xsl:template>
-    <schema:object name="administrative-appeal-sentence">
-        <schema:property name="tag" type="string"
-            const="jp:administrative-appeal-sentence" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="inline-text" />
-                <schema:ref name="paragraph" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
-
-
-    <!-- ====================================================================
-     jp:approval-column-article
-     ====================================================================-->
-    <!-- 決裁欄  -->
+         jp:approval-column-article 決裁欄
+         ====================================================================-->
     <xsl:template match="jp:approval-column-article">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -703,12 +700,12 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
             <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
             <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
-
+            
             <xsl:apply-templates select="jp:staff1-group/jp:name" />
             <xsl:apply-templates select="jp:staff2-group/jp:name" />
             <xsl:apply-templates select="jp:staff3-group/jp:name" />
             <xsl:apply-templates select="jp:staff4-group/jp:name" />
-
+            
             <xsl:apply-templates select="jp:staff1-group/jp:staff-code" />
             <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
             <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
@@ -716,132 +713,17 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:element>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:approval-without-contents
-     ====================================================================-->
-    <!-- 内容なし決裁欄  -->
-    <xsl:template match="jp:approval-without-contents">
-    </xsl:template>
-
-    <!-- ====================================================================
-     img
-     ====================================================================-->
-    <!-- イメージ
-    <xsl:template match="jp:image-group/img">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:apply-templates select="img" />
-        </xsl:element>
-    </xsl:template>
-  -->
-
-    <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
-
-    <!--  イメージ   -->
-    <xsl:template match="img">
-        <!-- 次の「有意ノード」を見る -->
-        <xsl:variable name="nextNode"
-            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
-
-        <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="is-last-sentence"
-            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
-
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'other-images'" />
-            </xsl:element>
-            <xsl:element name="is-last-sentence">
-                <xsl:value-of select="$is-last-sentence" />
-            </xsl:element>
-            <xsl:for-each select="key('images-table-key', @file)">
-                <xsl:element name="images">
-                    <xsl:element name="src">
-                        <xsl:value-of select="@new" />
-                    </xsl:element>
-                    <xsl:element name="width">
-                        <xsl:value-of select="@width" />
-                    </xsl:element>
-                    <xsl:element name="height">
-                        <xsl:value-of select="@height" />
-                    </xsl:element>
-                    <xsl:element name="kind">
-                        <xsl:value-of select="@kind" />
-                    </xsl:element>
-                    <xsl:element name="sizeTag">
-                        <xsl:value-of select="@sizeTag" />
-                    </xsl:element>
-                </xsl:element>
-            </xsl:for-each>
-        </xsl:element>
-    </xsl:template>
-    <!-- schema:object name="other-images" is defined in pat_common.xsl -->
-
-    <!-- ====================================================================
-     jp:date 日付
-　　　import from <xsl:template name="日付タイトル">　
-     ====================================================================-->
-    <xsl:template match="jp:date">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="jp-tag">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:reference-date">
-                        <xsl:value-of select="'Date'" />
-                    </xsl:when>
-                    <xsl:when test="ancestor::jp:present-date-of-a632">
-                        <xsl:value-of select="'国内書面差出日'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indent-level">0</xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-            <xsl:element name="converted-text">
-                <xsl:call-template name="format-date-jp2">
-                    <xsl:with-param name="date-str" select="normalize-space(.)" />
-                </xsl:call-template>
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-    <!-- the schema:object of this element is defined in pat_common.xsl -->
-
-    <!-- ====================================================================
-     jp:name
-     ====================================================================-->
-    <!-- 氏名 -->
-    <xsl:template match="jp:name">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'notice-name'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
-    <!-- ====================================================================
-     jp:document-id
-     ====================================================================-->
-    <!-- ドキュメント識別 -->
+         jp:document-id ドキュメント識別
+         ====================================================================-->
     <xsl:template match="jp:document-id">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
             <xsl:apply-templates select="jp:doc-number | jp:date" />
-
+            
             <!-- 未サポート -->
             <xsl:if test="country or kind or name">
                 <xsl:apply-templates select="country | kind | name" mode="unsupported" />
@@ -849,10 +731,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:element>
     </xsl:template>
     <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:address
-     ====================================================================-->
+         jp:address
+         ====================================================================-->
     <xsl:template match="jp:address">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -863,175 +745,237 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
     </xsl:template>
     <schema:object name="address">
         <schema:property name="tag" type="string"
-            const="jp:address" />
+                         const="jp:address" />
         <schema:property name="blocks" type="array">
             <schema:ref name="text" />
         </schema:property>
     </schema:object>
-
+    
     <!-- ====================================================================
-     jp:doc-number
-     ====================================================================-->
-    <!-- 文書番号 -->
-    <xsl:template match="jp:doc-number">
+         jp:application-reference 出願書類参照
+         ====================================================================-->
+    <xsl:template match="jp:application-reference">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="jp-tag">
+            <xsl:apply-templates select="jp:document-id" />
+        </xsl:element>
+    </xsl:template>
+    
+    <schema:object name="ntc-pt-f-container-items-type">
+        <schema:property
+            name="tag" type="string"
+                   enum="jp:bibliog-in-ntc-pat-frm
+                         jp:conclusion-part-article,
+                         jp:drafting-body,
+                         jp:footer-article,
+                         jp:administrative-appeal-sentence,
+                         jp:image-group,
+                         jp:drafting-date,
+                         jp:draft-person-group,
+                         jp:reference-date,
+                         jp:refer-from,
+                         jp:refer-to,
+                         jp:present-date-of-a632,
+                         jp:approval-column-article,
+                         jp:document-id,
+                         jp:address,
+                         jp:application-reference" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="ntc-pt-f-container-items-type" />
+                <schema:ref name="ntc-pt-f-terminal-items-type" />
+                <schema:ref file="ntc-ninsyo.json" name="certification-column-article" />
+                <schema:ref file="ntc-ninsyo.json" name="inquiry-article" />
+                <schema:ref name="refer-from" />
+                <schema:ref name="jp:administrative-appeal-sentence" />
+                <schema:ref file="ntc-paragraph.json" name="paragraph" />
+                <schema:ref file="ntc-paragraph.json" name="inline-text" />
+                <schema:ref file="ntc-ninsyo.json" name="other-images" />
+                <!-- empty element 
+                     <schema:ref name="not-specify-apl-ref" />
+                     <schema:ref name="jp:approval-without-contents" />
+                -->
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
+    <!-- ====================================================================
+         end: container type A elements have a tag and blocks.
+         ====================================================================--> 
+       
+    <!-- ====================================================================
+         あて先編集
+         ====================================================================-->
+    <xsl:template name="あて先編集">
+        <xsl:variable name="name" select="normalize-space(.//jp:name)" />
+        
+        <xsl:choose>
+            <xsl:when test="$node = 'jp:notification-a232'">
+                <xsl:element name="jp-tag">
+                    <xsl:value-of select="'出願人'" />
+                </xsl:element>
+                <xsl:element name="text">
+                    <xsl:if test="string-length(normalize-space(.//jp:registered-number)) != 0">
+                        <xsl:value-of select="f:to-fullwidth-alnum(.//jp:registered-number)" />
+                    </xsl:if>
+                    <xsl:value-of select="$name || '　様'" />
+                    <xsl:if
+                        test="string-length(normalize-space(.//jp:number-of-other-persons)) != 0">
+                        <xsl:value-of select="'　外'" />
+                        <xsl:apply-templates select=".//jp:number-of-other-persons" />
+                        <xsl:value-of select="'名'" />
+                    </xsl:if>
+                </xsl:element>
+            </xsl:when>
+            
+            <xsl:otherwise>
                 <xsl:choose>
-                    <xsl:when test="ancestor::jp:das-group">
-                        <xsl:value-of select="'基礎出願番号'" />
+                    <xsl:when test="./@jp:kind-of-applicant = 'evaluation-requester'">
+                        <xsl:element name="jp-tag">
+                            <xsl:if test="./@kind-of-applicant">
+                                <xsl:call-template name="出願人種別編集" />
+                            </xsl:if>
+                            <xsl:if test="./@kind-of-agent">
+                                <xsl:call-template name="代理人種別編集" />
+                            </xsl:if>
+                        </xsl:element>
+                        <xsl:element name="text">
+                            <xsl:value-of select="$name" />
+                            <xsl:call-template name="あて先項目内容編集" />
+                        </xsl:element>
+                    </xsl:when>
+                    <xsl:when
+                        test="(./@jp:kind-of-applicant = 'inheritor'
+                                and ($node = 'jp:invitation-a141' or $node = 'jp:invitation-a141'
+                                    or $node = 'jp:commissioner-notifie-a24214'
+                                    or $node = 'jp:written-answer-inquiry-a242902'
+                                    or $node = 'jp:commissioner-notifie-a241'
+                                    or $node = 'jp:commissioner-notifie-a242'))">
+                        <xsl:element name="jp-tag">
+                            <xsl:if test="./@kind-of-applicant">
+                                <xsl:call-template name="出願人種別編集" />
+                            </xsl:if>
+                            <xsl:if test="./@kind-of-agent">
+                                <xsl:call-template name="代理人種別編集" />
+                            </xsl:if>
+                        </xsl:element>
+                        <xsl:element name="text">
+                            <xsl:value-of select="$name" />
+                            <xsl:call-template name="あて先項目内容編集" />
+                        </xsl:element>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="''" />
+                        <xsl:element name="jp-tag">
+                            <xsl:choose>
+                                <xsl:when test="$kind-of-law = 'patent'">
+                                    <xsl:value-of select="'特許'" />
+                                </xsl:when>
+                                <xsl:when test="$kind-of-law = 'utility'">
+                                    <xsl:value-of select="'実用新案登録'" />
+                                </xsl:when>
+                            </xsl:choose>
+                            <xsl:if test="./@kind-of-representative">
+                                <xsl:value-of select="'代表'" />
+                            </xsl:if>
+                            <xsl:if test="./@kind-of-applicant">
+                                <xsl:call-template name="出願人種別編集" />
+                            </xsl:if>
+                            <xsl:if test="./@kind-of-agent">
+                                <xsl:call-template name="代理人種別編集" />
+                            </xsl:if>
+                        </xsl:element>
+                        <xsl:element name="text">
+                            <xsl:value-of select="$name" />
+                            <xsl:call-template name="あて先項目内容編集" />
+                        </xsl:element>
                     </xsl:otherwise>
                 </xsl:choose>
-            </xsl:element>
-            <xsl:element name="indent-level">0</xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-            <xsl:element name="converted-text">
-                <xsl:call-template name="文書番号編集" />
-            </xsl:element>
-        </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:text
-     ====================================================================-->
-    <!-- 住所 -->
-    <xsl:template match="jp:text">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'notice-pat-frm-text'" />
-            </xsl:element>
-            <xsl:element name="indent-level">0</xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-        </xsl:element>
+         あて先項目内容編集
+         ====================================================================-->
+    <xsl:template name="あて先項目内容編集">
+        <xsl:variable name="persons"
+            select="translate(normalize-space(.//jp:number-of-other-persons),'&#160;',0)" />
+        <xsl:choose>
+            <xsl:when test=".//jp:number-of-other-persons">
+                <xsl:value-of select="'（外' || $persons || '名）　様'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="'　様'" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
-    <schema:object name="notice-pat-frm-text">
-        <schema:property name="tag" type="string" const="notice-pat-frm-text" />
-        <schema:property name="indent-level" type="integer" />
-        <schema:property name="text" type="string" />
-    </schema:object>
-
+    
+    
     <!-- ====================================================================
-     jp:official-title
-     ====================================================================-->
-    <!-- 役職名 -->
-    <xsl:template match="jp:official-title">
-        <xsl:variable name="name" select="normalize-space(.)" />
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="$name" />
-            </xsl:element>
-        </xsl:element>
+         jp:not-specify-apl-ref
+         ====================================================================-->
+    <!-- 不特定願番  -->
+    <xsl:template match="jp:not-specify-apl-ref">
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
     <!-- ====================================================================
-     jp:staff-code
-     ====================================================================-->
-    <!-- 担当者コード -->
-    <xsl:template match="jp:staff-code">
-        <xsl:variable name="code" select="f:to-fullwidth-alnum(normalize-space(.))" />
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="normalize-space(.)" />
-            </xsl:element>
-            <xsl:element name="converted-text">
-                <xsl:value-of select="$code" />
-            </xsl:element>
-        </xsl:element>
+         jp:approval-without-contents
+         ====================================================================-->
+    <!-- 内容なし決裁欄  -->
+    <xsl:template match="jp:approval-without-contents">
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
+    
+    <!-- 当面未対応。a242623 以外の書類で必要とされるtemplate のため
+         jp:das-info
+         jp:das-group
+         jp:country
+         jp:access-code
+    -->
     <!-- ====================================================================
-     jp:addressbook
-     ====================================================================-->
+         jp:addressbook
+         ====================================================================-->
     <xsl:template match="jp:addressbook">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-
+            
             <!-- 未サポート -->
             <xsl:if
                 test="jp:kana or prefix or last-name or first-name or midle-name or suffix or iid
-             or role or orgname or department or synonym or jp:address or jp:phone or jp:fax
-             or email or url or ead or dtext or text">
+                    or role or orgname or department or synonym or jp:address or jp:phone or jp:fax
+                    or email or url or ead or dtext or text">
                 <xsl:apply-templates
                     select="jp:kana | prefix | last-name | first-name | midle-name | iid
-                                     | role | orgname | department | synonym"
+                        | role | orgname | department | synonym"
                     mode="unsupported" />
                 <xsl:if test="jp:address">
                     <xsl:apply-templates
                         select=".//address-1 | .//address-2 | .//address-3 | .//address-4 | .//address-5 | .//mailcode
-                                       | .//pobox | .//room | .//address-floor | .//building
-                                       | .//street | .//city | .//county | .//state | .//country 
-                                       | .//postcode | .//jp:text
-                                       | .//jp:original-language-of-address"
+                            | .//pobox | .//room | .//address-floor | .//building
+                            | .//street | .//city | .//county | .//state | .//country 
+                            | .//postcode | .//jp:text
+                            | .//jp:original-language-of-address"
                         mode="unsupported" />
                 </xsl:if>
                 <xsl:apply-templates select="jp:phone | jp:fax | email | url | ead | dtext | text"
-                    mode="unsupported" />
+                                     mode="unsupported" />
             </xsl:if>
         </xsl:element>
     </xsl:template>
-    <!-- no need to define schema for this template, due to no children rendered -->
-
+    
     <!-- ====================================================================
-     jp:number-of-other-persons
-     ====================================================================-->
-    <!-- 外何名 -->
-    <xsl:template match="jp:number-of-other-persons">
-        <xsl:variable name="persons" select="normalize-space(.)" />
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="f:remove-nbsp(.)" />
-            </xsl:element>
-            <xsl:element name="converted-text">
-                <xsl:value-of select="'（外'" />
-                <xsl:value-of
-                    select="f:to-fullwidth-digit(f:remove-nbsp(.))" />
-                <xsl:value-of select="'名）'" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
-
-    <!-- 当面未対応。a242623 以外の書類で必要とされるtemplate のため
-     jp:das-info
-     jp:das-group
-     jp:country
-     jp:access-code
-    -->
-
-    <!-- ====================================================================
-     jp:das-info
-     ====================================================================-->
+         jp:das-info
+         ====================================================================-->
     <!-- （ＤＡＳアクセスコード情報） -->
     <xsl:template match="jp:das-info">
         <xsl:apply-templates select="jp:das-group" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:das-group
-     ====================================================================-->
+         jp:das-group
+         ====================================================================-->
     <!-- ＤＡＳアクセスコードグループ -->
     <xsl:template match="jp:das-group">
         <BR /><!--子要素編集前の改行-->
@@ -1039,10 +983,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         <xsl:apply-templates select="jp:doc-number" />
         <xsl:apply-templates select="jp:access-code" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:country
-     ====================================================================-->
+         jp:country
+         ====================================================================-->
     <!-- 国コード -->
     <xsl:template match="jp:country">
         <xsl:element name="blocks">
@@ -1073,10 +1017,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     jp:access-code
-     ====================================================================-->
+         jp:access-code
+         ====================================================================-->
     <!-- アクセスコード -->
     <xsl:template match="jp:access-code">
         <xsl:value-of select="'　アクセスコード　'" />
@@ -1091,10 +1035,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
         </xsl:choose>
         <BR />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     タイトル編集
-     ====================================================================-->
+         タイトル編集
+         ====================================================================-->
     <xsl:template name="タイトル編集">
         <xsl:choose>
             <xsl:when test="$node = 'jp:disposition-a042'">
@@ -1199,11 +1143,11 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             <xsl:otherwise />
         </xsl:choose>
     </xsl:template>
-
-
+    
+    
     <!-- ====================================================================
-     出願人種別編集
-     ====================================================================-->
+         出願人種別編集
+         ====================================================================-->
     <xsl:template name="出願人種別編集">
         <xsl:choose>
             <xsl:when test="./@jp:kind-of-applicant = 'application'">
@@ -1259,10 +1203,10 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     代理人種別編集
-     ====================================================================-->
+         代理人種別編集
+         ====================================================================-->
     <xsl:template name="代理人種別編集">
         <xsl:choose>
             <xsl:when test="./@jp:kind-of-agent = 'representative'">
@@ -1279,14 +1223,14 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     文書番号編集
-     ====================================================================-->
+         文書番号編集
+         ====================================================================-->
     <xsl:template name="文書番号編集">
         <xsl:variable name="first-part" select="substring(normalize-space(.),1,4)" />
         <xsl:variable name="second-part" select="substring(normalize-space(.),5,6)" />
-
+        
         <xsl:choose>
             <xsl:when test="ancestor::jp:das-group [@jp:is-jpo = 'true']">
                 <xsl:choose>
@@ -1322,11 +1266,11 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:when>
             <xsl:when
                 test="ancestor::jp:application-reference
-                and ancestor::jp:application-reference [@appl-type = 'international-application']">
+                    and ancestor::jp:application-reference [@appl-type = 'international-application']">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:bibliog-in-ntc-pat-frm
-                    and ancestor::jp:bibliog-in-ntc-pat-frm [@jp:designated-form = 'related']">
+                            and ancestor::jp:bibliog-in-ntc-pat-frm [@jp:designated-form = 'related']">
                         <xsl:call-template name="国際出願番号編集" />
                         <xsl:value-of select="'　に関し'" />
                     </xsl:when>
@@ -1337,11 +1281,11 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:when>
             <xsl:when
                 test="ancestor::jp:application-reference
-                and ancestor::jp:application-reference [@appl-type = 'application']">
+                    and ancestor::jp:application-reference [@appl-type = 'application']">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:bibliog-in-ntc-pat-frm
-                    and ancestor::jp:bibliog-in-ntc-pat-frm [@jp:designated-form = 'related']">
+                            and ancestor::jp:bibliog-in-ntc-pat-frm [@jp:designated-form = 'related']">
                         <xsl:choose>
                             <xsl:when test="substring(normalize-space(.),1,4) &lt; '2000'">
                                 <xsl:call-template name="出願番号編集" />
@@ -1368,7 +1312,7 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:when>
             <xsl:when
                 test="ancestor::jp:application-reference
-                and ancestor::jp:application-reference [@appl-type = 'registration']">
+                    and ancestor::jp:application-reference [@appl-type = 'registration']">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:application-reference [@jp:kind-of-law = 'patent']">
                         <xsl:value-of
@@ -1383,13 +1327,13 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     国際出願番号編集
-     ====================================================================-->
+         国際出願番号編集
+         ====================================================================-->
     <xsl:template name="国際出願番号編集">
         <xsl:variable name="number" select="normalize-space(.)" />
-
+        
         <xsl:choose>
             <xsl:when test="string-length($number) = '12'">
                 <xsl:variable name="first-part"
@@ -1409,16 +1353,16 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     出願番号編集
-     ====================================================================-->
+         出願番号編集
+         ====================================================================-->
     <xsl:template name="出願番号編集">
         <xsl:variable name="kind-of-law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
         <xsl:variable name="number" select="normalize-space(.)" />
         <xsl:variable name="first-part" select="f:to-fullwidth-alnum(substring($number,1,4))" />
         <xsl:variable name="second-part" select="f:to-fullwidth-alnum(substring($number,5,6))" />
-
+        
         <xsl:choose>
             <xsl:when test="$number &gt;= 2000000000">
                 <xsl:choose>
@@ -1447,16 +1391,16 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     和暦変換
-     ====================================================================-->
+         和暦変換
+         ====================================================================-->
     <xsl:template name="和暦変換">
         <xsl:variable name="day" select="normalize-space(.)" />
         <xsl:variable name="day-as-int" select="xs:integer($day)" as="xs:integer" />
         <xsl:variable name="year" select="xs:integer(substring($day, 1, 4))" as="xs:integer" />
-
-
+        
+        
         <xsl:choose>
             <xsl:when test="($day-as-int &gt;= 1912000001) and ($day-as-int &lt;= 1926000000)">
                 <xsl:value-of select="'大正'" />
@@ -1539,66 +1483,66 @@ sha256sum:dba97bafc2a6370c6e85ef6a80a368bf618fe479236e6a53e2e803183ee73474
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
     <!-- ====================================================================
-     未サポートタグ（全角空白１つあけて表示）
-     ====================================================================-->
+         未サポートタグ（全角空白１つあけて表示）
+         ====================================================================-->
     <xsl:template
         match="jp:draft-person-group/jp:staff-code | jp:draft-person-group/jp:office-code
-                   | jp:kana | country | kind | name | last-name
-                   | first-name | midle-name | iid | role | orgname | orgname | department
-                   | synonym | jp:phone | jp:fax | email | url | ead | dtext | text
-                   | jp:refer-from//address-1 | jp:refer-from//address-2 | jp:refer-from//address-3
-                   | jp:refer-from//address-4 | jp:refer-from//address-5
-                   | jp:refer-from//mailcode | jp:refer-from//pobox | jp:refer-from//room
-                   | jp:refer-from//address-floor | jp:refer-from//building | jp:refer-from//street
-                   | jp:refer-from//city | jp:refer-from//county | jp:refer-from//state
-                   | jp:refer-from//postcode | jp:refer-from//country
-                   | jp:refer-from//jp:original-language-of-address
-                   | jp:refer-to//address-1 | jp:refer-to//address-2 | jp:refer-to//address-3
-                   | jp:refer-to//address-4 | jp:refer-to//address-5
-                   | jp:refer-to//mailcode | jp:refer-to//pobox | jp:refer-to//room
-                   | jp:refer-to//address-floor | jp:refer-to//building | jp:refer-to//street
-                   | jp:refer-to//city | jp:refer-to//county | jp:refer-to//state
-                   | jp:refer-to//postcode | jp:refer-to//country | jp:date
-                   | jp:refer-to//jp:original-language-of-address"
+            | jp:kana | country | kind | name | last-name
+            | first-name | midle-name | iid | role | orgname | orgname | department
+            | synonym | jp:phone | jp:fax | email | url | ead | dtext | text
+            | jp:refer-from//address-1 | jp:refer-from//address-2 | jp:refer-from//address-3
+            | jp:refer-from//address-4 | jp:refer-from//address-5
+            | jp:refer-from//mailcode | jp:refer-from//pobox | jp:refer-from//room
+            | jp:refer-from//address-floor | jp:refer-from//building | jp:refer-from//street
+            | jp:refer-from//city | jp:refer-from//county | jp:refer-from//state
+            | jp:refer-from//postcode | jp:refer-from//country
+            | jp:refer-from//jp:original-language-of-address
+            | jp:refer-to//address-1 | jp:refer-to//address-2 | jp:refer-to//address-3
+            | jp:refer-to//address-4 | jp:refer-to//address-5
+            | jp:refer-to//mailcode | jp:refer-to//pobox | jp:refer-to//room
+            | jp:refer-to//address-floor | jp:refer-to//building | jp:refer-to//street
+            | jp:refer-to//city | jp:refer-to//county | jp:refer-to//state
+            | jp:refer-to//postcode | jp:refer-to//country | jp:date
+            | jp:refer-to//jp:original-language-of-address"
         mode="unsupported">
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     未サポートタグ（全角空白２つあけて表示）
-     ====================================================================-->
+         未サポートタグ（全角空白２つあけて表示）
+         ====================================================================-->
     <xsl:template
         match="jp:addressbook//address-1 | jp:addressbook//address-2 | jp:addressbook//address-3
-                   | jp:addressbook//address-4 | jp:addressbook//address-5
-                   | jp:addressbook//mailcode | jp:addressbook//pobox | jp:addressbook//room
-                   | jp:addressbook//address-floor | jp:addressbook//building | jp:addressbook//street
-                   | jp:addressbook//city | jp:addressbook//county | jp:addressbook//state
-                   | jp:addressbook//postcode | jp:addressbook//country | jp:addressbook//jp:text
-                   | jp:addressbook//jp:original-language-of-address
-                   | jp:devider/jp:official-title | jp:devider/jp:name | jp:devider/jp:staff-code"
+            | jp:addressbook//address-4 | jp:addressbook//address-5
+            | jp:addressbook//mailcode | jp:addressbook//pobox | jp:addressbook//room
+            | jp:addressbook//address-floor | jp:addressbook//building | jp:addressbook//street
+            | jp:addressbook//city | jp:addressbook//county | jp:addressbook//state
+            | jp:addressbook//postcode | jp:addressbook//country | jp:addressbook//jp:text
+            | jp:addressbook//jp:original-language-of-address
+            | jp:devider/jp:official-title | jp:devider/jp:name | jp:devider/jp:staff-code"
         mode="unsupported">
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     未サポートタグ（ｐタグ用）
-     ====================================================================-->
+         未サポートタグ（ｐタグ用）
+         ====================================================================-->
     <xsl:template
         match="b | i | smallcaps | ul | ol | figref | patcit | nplcit
-                   | bio-deposit | crossref | maths | tables | chemistry
-                   | o | pre | table-external-doc">
+            | bio-deposit | crossref | maths | tables | chemistry
+            | o | pre | table-external-doc">
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
-
+    
     <!-- ====================================================================
-     属性値出力
-     ====================================================================-->
+         属性値出力
+         ====================================================================-->
     <xsl:template match="@*" mode="unsupported">
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
-
+    
     <xsl:template name="unsupported-tag">
         <xsl:element name="blocks">
             <xsl:element name="tag">
