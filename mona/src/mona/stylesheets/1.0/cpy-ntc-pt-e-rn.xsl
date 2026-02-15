@@ -29,8 +29,6 @@
         </xsl:element>
     </xsl:template>
     
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>cpy-ntc-pt-e-rn</schema:title>
     
     <!-- ====================================================================
          jp:cpy-notice-pat-exam-rn
@@ -44,7 +42,10 @@
             <xsl:apply-templates select="jp:notice-pat-exam-rn" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="cpy-notice-pat-exam-rn">
+
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>cpy-ntc-pt-e-rn</schema:title>
+    <schema:object name="cpy-notice-pat-exam-rn" is-root="true">
         <schema:property name="tag" type="string"
                          const="jp:cpy-notice-pat-exam-rn" />
         <schema:property name="blocks" type="array">

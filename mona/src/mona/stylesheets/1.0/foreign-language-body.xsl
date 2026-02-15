@@ -43,8 +43,6 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>foreign-language-body</schema:title>
     
     <!-- 明細書 特許請求の範囲-->
     <xsl:template
@@ -58,7 +56,9 @@
         </xsl:element>
     </xsl:template>
     
-    <schema:object name="foreign-language-body-documents">
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>foreign-language-body</schema:title>
+    <schema:object name="foreign-language-body-documents" is-root="true">
         <schema:property name="tag" type="string"
                          enum="jp:foreign-language-description,jp:foreign-language-claims,jp:foreign-language-abstract,jp:foreign-language-drawings" />
         <schema:property name="indent-level" type="string" />

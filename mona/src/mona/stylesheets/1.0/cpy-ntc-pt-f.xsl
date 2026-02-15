@@ -28,8 +28,6 @@
         </xsl:element>
     </xsl:template>
     
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>cpy-ntc-pt-f</schema:title>
     
     <!-- ====================================================================
          jp:cpy-notice-pat-frm
@@ -44,7 +42,9 @@
         </xsl:element>
     </xsl:template>
     
-    <schema:object name="cpy-notice-pat-frm">
+    <!-- schema:title is set to the name of this stylesheet -->
+    <schema:title>cpy-ntc-pt-f</schema:title>
+    <schema:object name="cpy-notice-pat-frm" is-root="true">
         <schema:property name="tag" type="string"
                          const="jp:cpy-notice-pat-frm" />
         <schema:property name="blocks" type="array">

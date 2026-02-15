@@ -27,7 +27,7 @@
     </xsl:template>
     
     <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title is-root="true">application-body</schema:title>
+    <schema:title>application-body</schema:title>
     <schema:object name="application-body" is-root="true">
         <schema:property name="tag" type="string"
                          const="application-body" />

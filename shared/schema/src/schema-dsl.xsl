@@ -20,18 +20,20 @@
                 <f:string key="title">
                     <xsl:value-of select="//schema:title" />
                 </f:string>
-                <xsl:choose>
-                    <xsl:when test="//schema:object/@is-root = 'true'">
-                        <f:map key="properties">
-                            <xsl:apply-templates select="//schema:property" />
-                        </f:map>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <f:map key="$defs">
-                            <xsl:apply-templates select="//schema:object" />
-                        </f:map>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:for-each select="//schema:object">
+                    <xsl:choose>
+                        <xsl:when test="@is-root = 'true'">
+                            <f:map key="properties">
+                                <xsl:apply-templates select="./schema:property" />
+                            </f:map>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <f:map key="$defs">
+                                <xsl:apply-templates select="." />
+                            </f:map>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
             </f:map>
         </xsl:variable>
         <xsl:value-of
