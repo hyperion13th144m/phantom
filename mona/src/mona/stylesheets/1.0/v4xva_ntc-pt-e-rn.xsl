@@ -28,8 +28,8 @@
     <xsl:include href="common-templates/v4xva_prm.xsl" />
     <xsl:include href="common-templates/dispatch-control-article.xsl" />
     <xsl:include href="common-templates/date-templates.xsl" />
+    <xsl:include href="common-templates/unsupported-tags.xsl" />
     
-    <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>v4xva_ntc-pt-e-rn</schema:title>
     
     
@@ -72,17 +72,15 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="notice-pat-exam-rn">
-        <schema:property name="tag" type="string"
-                         const="jp:notice-pat-exam-rn" />
+        <schema:property name="tag" type="string" const="jp:notice-pat-exam-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="decision-of-registration-a01-rn"/>
                 <schema:ref name="decision-of-rejection-a02-rn"/>
                 <schema:ref name="examiner-notification-a30-rn"/>
                 <schema:ref name="examiner-notification-a242623-rn"/>
-                <schema:ref name="examiner-notification-a2541-rn"/>
-                <schema:ref name="examiner-notification-a2542-rn"/>
-                <schema:ref name="notice-a131-a191-a251-a2515-a2516-a252-a2522-a2529-a2530-rn"/>
+                <schema:ref name="notice-a2541-a2542-rn"/>
+                <schema:ref name="notice-others-rn"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -107,15 +105,15 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="decision-of-registration-a01-rn">
-        <schema:property name="tag" type="string"
-                         const="jp:decision-of-registration-a01-rn" />
+        <schema:property
+            name="tag" type="string" const="jp:decision-of-registration-a01-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
-           </schema:anyOf>
+            </schema:anyOf>
         </schema:property>
     </schema:object>
     
@@ -135,8 +133,8 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="decision-of-rejection-a02-rn">
-        <schema:property name="tag" type="string"
-                         const="jp:decision-of-rejection-a02-rn" />
+        <schema:property
+            name="tag" type="string" const="jp:decision-of-rejection-a02-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
@@ -161,8 +159,8 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="examiner-notification-a30-rn">
-        <schema:property name="tag" type="string"
-                         const="jp:examiner-notification-a30-rn" />
+        <schema:property
+            name="tag" type="string" const="jp:examiner-notification-a30-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
@@ -189,8 +187,8 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="examiner-notification-a242623-rn">
-        <schema:property name="tag" type="string"
-                         const="jp:examiner-notification-a242623-rn" />
+        <schema:property
+            name="tag" type="string" const="jp:examiner-notification-a242623-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
@@ -218,7 +216,8 @@
     </xsl:template>
     <schema:object name="notice-a2541-a2542-rn">
         <schema:property name="tag" type="string"
-                         enum="jp:examiner-notification-a2541-rn,jp:examiner-notification-a2542-rn" />
+                         enum="jp:examiner-notification-a2541-rn,
+                               jp:examiner-notification-a2542-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
@@ -250,29 +249,27 @@
             <xsl:apply-templates select="jp:footer-article" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="notice-a131-a191-a251-a2515-a2516-a252-a2522-a2529-a2530-rn">
-        <schema:property
-            name="tag" type="string"
-                   enum="jp:notice-of-rejection-a131-rn,
-                         jp:declining-the-amendment-a191-rn,
-                         jp:declining-the-amendment-a192-rn,
-                         jp:examiner-notification-a251-rn,
-                         jp:examiner-notification-a2515-rn,
-                         jp:examiner-notification-a2516-rn,
-                         jp:examiner-notification-a252-rn,
-                         jp:examiner-notification-a2522-rn,
-                         jp:examiner-notification-a2529-rn,
-                         jp:examiner-notification-a2530-rn" />
+    <schema:object name="notice-others-rn">
+        <schema:property name="tag" type="string"
+                         enum="jp:notice-of-rejection-a131-rn,
+                               jp:declining-the-amendment-a191-rn,
+                               jp:declining-the-amendment-a192-rn,
+                               jp:examiner-notification-a251-rn,
+                               jp:examiner-notification-a2515-rn,
+                               jp:examiner-notification-a2516-rn,
+                               jp:examiner-notification-a252-rn,
+                               jp:examiner-notification-a2522-rn,
+                               jp:examiner-notification-a2529-rn,
+                               jp:examiner-notification-a2530-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
-           </schema:anyOf>
+            </schema:anyOf>
         </schema:property>
     </schema:object>
-    
     
     <!-- ====================================================================
          begin:
@@ -1340,7 +1337,7 @@
             </xsl:choose>
         </xsl:element>
     </xsl:template>
-
+    
     <!-- ====================================================================
          jp:approval-column-article 決裁欄
          
@@ -1456,18 +1453,15 @@
                 <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
                 <schema:ref file="ntc-ninsyo.json" name="certification-column-article" />
                 <schema:ref file="ntc-ninsyo.json" name="inquiry-article" />
+                <schema:ref file="ntc-ninsyo.json" name="other-images" />
                 <schema:ref file="ntc-paragraph.json" name="paragraph" />
-                <schema:ref name="heading" />
-                <schema:ref name="approval-without-contents" />
                 <schema:ref file="ntc-paragraph.json" name="inline-text" />
-                <schema:ref file="ntc-ninsyo.json" name="img" />
             </schema:anyOf>
         </schema:property>
     </schema:object> 
     <!-- ====================================================================
          end: container type A elements have a tag and blocks.
          ====================================================================-->
-    
     
     <!-- ====================================================================
          Begin:
@@ -1648,7 +1642,7 @@
             <xsl:apply-templates select="jp:patent-reference-group" />
         </xsl:element>
     </xsl:template>
-
+    
     <!-- ====================================================================
          jp:reference-books-article 参考図書雑誌の記事
          ====================================================================-->
@@ -1720,14 +1714,14 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
-                <schema:ref name="paragraph" />
+                <schema:ref file="ntc-paragraph.json" name="paragraph" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
     <!-- ====================================================================
          End: container type B elements.
          ====================================================================-->
-       
+    
     <!-- ====================================================================
          日付タイトル
          ====================================================================-->
@@ -1754,7 +1748,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-       
+    
     <!-- ====================================================================
          jp:administrative-appeal-sentence
          ====================================================================-->
@@ -1835,23 +1829,4 @@
             | o | pre | table-external-doc">
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
-    
-    <xsl:template name="unsupported-tag">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'unsupported-tag'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="'&lt;' || name() || '&gt;'" />
-                <xsl:value-of select="." />
-                <xsl:value-of select="'&lt;/', name(), '&gt;'" />
-                <xsl:value-of select="'is not supported in v4xva_ntc-pt-e.xsl'" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-    <schema:object name="unsupported-tag">
-        <schema:property name="tag" type="string"
-                         const="unsupported-tag" />
-        <schema:property name="text" type="string" />
-    </schema:object>
 </xsl:stylesheet>

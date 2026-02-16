@@ -115,8 +115,7 @@
     </xsl:template>
     
     <schema:title>bibliographic-items</schema:title>
-    <schema:object
-        name="bibliographic-items">
+    <schema:object name="bibliographic-items" is-root="true">
         <schema:property name="law" type="string" enum="patent,utilityModel,design,trademark" />
         <schema:property name="document-name" type="string"/>
         <schema:property name="application-number" type="string" optional="true"/>

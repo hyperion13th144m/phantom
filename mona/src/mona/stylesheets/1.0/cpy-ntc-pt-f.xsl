@@ -27,7 +27,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    
+    <schema:title>cpy-ntc-pt-f</schema:title>
+    <schema:object name="cpy-notice-pat-frm" is-root="true">
+        <schema:property name="tag" type="string" const="jp:cpy-notice-pat-frm" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="cpy-notice-pat-frm" />
+        </schema:property>
+    </schema:object>
     
     <!-- ====================================================================
          jp:cpy-notice-pat-frm
@@ -41,12 +47,8 @@
             <xsl:apply-templates select="jp:notice-pat-frm" />
         </xsl:element>
     </xsl:template>
-    
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>cpy-ntc-pt-f</schema:title>
-    <schema:object name="cpy-notice-pat-frm" is-root="true">
-        <schema:property name="tag" type="string"
-                         const="jp:cpy-notice-pat-frm" />
+    <schema:object name="cpy-notice-pat-frm">
+        <schema:property name="tag" type="string" const="jp:cpy-notice-pat-frm" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="dispatch-control-article.json" name="dispatch-control-article" />

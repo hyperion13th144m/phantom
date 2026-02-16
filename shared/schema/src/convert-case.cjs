@@ -21,6 +21,12 @@ function convertKeys(schema, func) {
                     newProps[func(propKey)] = convertKeys(propValue, func);
                 }
                 newObj[key] = newProps;
+            } else if (key === '$defs' && typeof value === 'object') {
+                const newProps = {};
+                for (const [propKey, propValue] of Object.entries(value)) {
+                    newProps[func(propKey)] = convertKeys(propValue, func);
+                }
+                newObj[key] = newProps;
             } else if (key === 'required' && Array.isArray(value)) {
                 newObj[key] = value.map(func);
             } else if (key === '$ref' && typeof value === 'string') {

@@ -27,10 +27,8 @@
             <xsl:apply-templates select="img" />
         </xsl:element>
     </xsl:template>
-    <schema:object
-        name="certification-column-article">
-        <schema:property name="tag" type="string"
-                         const="jp:certification-column-article" />
+    <schema:object name="certification-column-article">
+        <schema:property name="tag" type="string" const="jp:certification-column-article" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="certification-column-group" />
@@ -80,12 +78,10 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    <schema:object
-        name="inquiry-article">
-        <schema:property name="tag" type="string"
-                         const="jp:inquiry-article" />
+    <schema:object name="inquiry-article">
+        <schema:property name="tag" type="string" const="jp:inquiry-article" />
         <schema:property name="blocks" type="array">
-            <schema:ref name="inline-text" />
+            <schema:ref file="ntc-paragraph.json" name="inline-text" />
         </schema:property>
     </schema:object>
     
@@ -147,12 +143,10 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    <schema:object
-        name="certification-column-group">
-        <schema:property name="tag" type="string"
-                         const="jp:certification-column-group" />
+    <schema:object name="certification-column-group">
+        <schema:property name="tag" type="string" const="jp:certification-column-group" />
         <schema:property name="blocks" type="array">
-            <schema:ref name="inline-text" />
+            <schema:ref file="ntc-paragraph.json" name="inline-text" />
         </schema:property>
     </schema:object>
     
@@ -364,9 +358,9 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:year-from 納付年分（自） -->
-         returns string
-         ====================================================================-->
+         jp:year-from 納付年分（自）
+     returns string
+     ====================================================================-->
     <xsl:template match="jp:year-from">
         <xsl:choose>
             <xsl:when test="./@jp:error-code">

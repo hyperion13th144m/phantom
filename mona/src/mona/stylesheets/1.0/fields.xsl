@@ -184,8 +184,7 @@
 
     <xsl:template match="text()" />
 
-    <schema:object
-        name="fields">
+    <schema:object name="fields" is-root="true">
         <schema:property name="tag" type="string"
             const="fields" />
         <schema:property name="invention-title" type="string" optional="true" />

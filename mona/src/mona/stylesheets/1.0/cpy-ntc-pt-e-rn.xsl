@@ -28,6 +28,13 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:title>cpy-ntc-pt-e-rn</schema:title>
+    <schema:object name="cpy-ntc-pt-e-rn" is-root="true">
+        <schema:property name="tag" type="string" const="cpy-ntc-pt-e-rn" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="cpy-notice-pat-exam-rn" />
+        </schema:property>
+    </schema:object>
     
     
     <!-- ====================================================================
@@ -42,12 +49,8 @@
             <xsl:apply-templates select="jp:notice-pat-exam-rn" />
         </xsl:element>
     </xsl:template>
-
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>cpy-ntc-pt-e-rn</schema:title>
-    <schema:object name="cpy-notice-pat-exam-rn" is-root="true">
-        <schema:property name="tag" type="string"
-                         const="jp:cpy-notice-pat-exam-rn" />
+    <schema:object name="cpy-notice-pat-exam-rn">
+        <schema:property name="tag" type="string" const="jp:cpy-notice-pat-exam-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="dispatch-control-article.json" name="dispatch-control-article" />
@@ -55,5 +58,4 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
 </xsl:stylesheet>

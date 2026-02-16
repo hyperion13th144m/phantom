@@ -28,9 +28,10 @@
     <xsl:include href="common-templates/v4xva_prm.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
     <xsl:include href="common-templates/date-templates.xsl" />
+    <xsl:include href="common-templates/unsupported-tags.xsl" />
     
     <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>v4xva_ntc-pt-e-rn</schema:title>
+    <schema:title>v4xva_ntc-pt-f</schema:title>
     
     <!-- ====================================================================
          jp:notice-pat-frm
@@ -62,8 +63,7 @@
         -->
     </xsl:template>
     <schema:object name="notice-pat-frm">
-        <schema:property name="tag" type="string"
-                         const="jp:notice-pat-frm" />
+        <schema:property name="tag" type="string" const="jp:notice-pat-frm" />
         <schema:property name="blocks" type="array">
             <schema:ref name="notification-a242623"/>
         </schema:property>
@@ -109,17 +109,11 @@
     </xsl:template>
     <schema:object
         name="notification-a242623">
-        <schema:property name="tag" type="string"
-                         const="jp:notification-a242623" />
+        <schema:property name="tag" type="string" const="jp:notification-a242623" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="dispatch-control-article" />
-                <schema:ref name="document-name" />
-                <schema:ref name="bibliog-in-ntc-pat-frm" />
-                <schema:ref name="conclusion-part-article" />
-                <schema:ref name="drafting-body" />
-                <schema:ref name="footer-article" />
-                <schema:ref name="image-group" />
+                <schema:ref name="ntc-pt-f-terminal-items-type"/>
+                <schema:ref name="ntc-pt-f-container-items-type"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -149,8 +143,6 @@
          <xsl:apply-templates select="jp:image-group" />
          </xsl:template>
     -->
-    
-    
     
     <!-- ====================================================================
          begin:
@@ -377,24 +369,7 @@
             <xsl:apply-templates select="jp:present-date-of-a632" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="bibliog-in-ntc-pat-frm">
-        <schema:property name="tag" type="string"
-                         const="jp:bibliog-in-ntc-pat-frm" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="draft-person-group" />
-                <schema:ref name="drafting-date" />
-                <schema:ref name="addressed-to-person-group" />
-                <schema:ref name="application-reference" />
-                <schema:ref name="not-specify-apl-ref" />
-                <schema:ref name="refer-from" />
-                <schema:ref name="reference-date" />
-                <schema:ref name="refer-to" />
-                <schema:ref name="present-date-of-a632" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
-    
+   
     <!-- ====================================================================
          jp:conclusion-part-article 結論部
          ====================================================================-->
@@ -408,7 +383,6 @@
             </xsl:for-each>
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:drafting-body 記部
@@ -421,7 +395,6 @@
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:footer-article フッタ部
@@ -447,7 +420,6 @@
                     | jp:devider/jp:staff-code" />
         </xsl:if>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:administrative-appeal-sentence 行服部
@@ -473,16 +445,7 @@
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="administrative-appeal-sentence">
-        <schema:property name="tag" type="string"
-                         const="jp:administrative-appeal-sentence" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref file="ntc-paragraph.json" name="inline-text" />
-                <schema:ref file="ntc-paragraph.json" name="paragraph" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object> 
+
     <!-- ====================================================================
          jp:image-group イメージグループ
          ====================================================================-->
@@ -494,7 +457,6 @@
             <xsl:apply-templates select="img" />
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:drafting-date 起案日
@@ -507,7 +469,6 @@
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:draft-person-group 起案者
@@ -525,7 +486,6 @@
             <xsl:apply-templates select="jp:staff-code | jp:office-code" mode="unsupported" />
         </xsl:if>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:reference-date 照会日
@@ -538,12 +498,6 @@
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="reference-date">
-        <schema:property name="tag" type="string" const="jp:reference-date" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="date" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:refer-from 照会元
@@ -625,13 +579,6 @@
             </xsl:if>
         </xsl:element>
     </xsl:template>
-    <schema:object name="refer-from">
-        <schema:property name="tag" type="string"
-                         const="jp:refer-from" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="inline-text" />
-        </schema:property>
-    </schema:object> 
     
     <!-- ====================================================================
          jp:refer-to 紹介先
@@ -658,15 +605,6 @@
             </xsl:if>
         </xsl:element>
     </xsl:template>
-    <schema:object name="refer-to">
-        <schema:property name="tag" type="string" const="jp:refer-to" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="name" />
-                <schema:ref name="address" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:present-date-of-a632 国内書面差出日
@@ -679,14 +617,6 @@
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="present-date-of-a632">
-        <schema:property name="tag" type="string" const="jp:present-date-of-a632" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="date" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:approval-column-article 決裁欄
@@ -712,7 +642,6 @@
             <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:document-id ドキュメント識別
@@ -730,7 +659,6 @@
             </xsl:if>
         </xsl:element>
     </xsl:template>
-    <!-- schema is defined in v4xva_ntc-pt-e.xsl -->
     
     <!-- ====================================================================
          jp:address
@@ -743,13 +671,6 @@
             <xsl:apply-templates select="jp:text" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="address">
-        <schema:property name="tag" type="string"
-                         const="jp:address" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="text" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:application-reference 出願書類参照
@@ -788,11 +709,9 @@
                 <schema:ref name="ntc-pt-f-terminal-items-type" />
                 <schema:ref file="ntc-ninsyo.json" name="certification-column-article" />
                 <schema:ref file="ntc-ninsyo.json" name="inquiry-article" />
-                <schema:ref name="refer-from" />
-                <schema:ref name="jp:administrative-appeal-sentence" />
+                <schema:ref file="ntc-ninsyo.json" name="other-images" />
                 <schema:ref file="ntc-paragraph.json" name="paragraph" />
                 <schema:ref file="ntc-paragraph.json" name="inline-text" />
-                <schema:ref file="ntc-ninsyo.json" name="other-images" />
                 <!-- empty element 
                      <schema:ref name="not-specify-apl-ref" />
                      <schema:ref name="jp:approval-without-contents" />
@@ -803,7 +722,7 @@
     <!-- ====================================================================
          end: container type A elements have a tag and blocks.
          ====================================================================--> 
-       
+    
     <!-- ====================================================================
          あて先編集
          ====================================================================-->
@@ -926,7 +845,7 @@
     <xsl:template match="jp:approval-without-contents">
     </xsl:template>
     
-    <!-- 当面未対応。a242623 以外の書類で必要とされるtemplate のため
+    <!-- 当面未対応。a242623 以外の書類で必要とされる 以下のtemplate は未編集
          jp:das-info
          jp:das-group
          jp:country
@@ -1541,19 +1460,5 @@
          ====================================================================-->
     <xsl:template match="@*" mode="unsupported">
         <xsl:call-template name="unsupported-tag" />
-    </xsl:template>
-    
-    <xsl:template name="unsupported-tag">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'unsupported-tag'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="'&lt;' || name() || '&gt;'" />
-                <xsl:value-of select="." />
-                <xsl:value-of select="'&lt;/', name(), '&gt;'" />
-                <xsl:value-of select="'is not supported in v4xva_ntc-pt-f.xsl'" />
-            </xsl:element>
-        </xsl:element>
     </xsl:template>
 </xsl:stylesheet>

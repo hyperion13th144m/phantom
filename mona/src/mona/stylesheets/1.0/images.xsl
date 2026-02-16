@@ -95,14 +95,13 @@
         <!-- <xsl:value-of select="normalize-space(.)"/> -->
     </xsl:template>
     
-    <schema:object
-        name="images-information">
+    <schema:object name="images-information" is-root="true">
         <schema:property name="images" type="array">
             <schema:ref name="image-properties"/>
         </schema:property>
     </schema:object>
     <schema:object
-        name="images-properties">
+        name="image-properties">
         <schema:property name="number" type="string"/>
         <schema:property name="filename" type="string"/>
         <schema:property name="kind" type="string"/>

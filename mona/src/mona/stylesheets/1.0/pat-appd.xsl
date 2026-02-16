@@ -23,8 +23,20 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    
     <schema:title>pat-app-doc</schema:title>
+    <schema:object name="pat-app-doc" is-root="true">
+        <schema:property name="tag" type="string" const="pat-app-doc" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="application-a63"/>
+                <schema:ref name="application-a631"/>
+                <schema:ref name="application-a632"/>
+                <schema:ref name="application-a633"/>
+                <schema:ref name="application-a634"/>
+                <schema:ref name="application-a635"/>
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>    
     
     <!-- ====================================================================
          jp:application-a63 特許願,実用新案登録願
@@ -59,31 +71,12 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="application-a63">
-        <schema:property name="tag" type="string"
-                         const="jp:application-a63" />
+        <schema:property name="tag" type="string" const="jp:application-a63" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="special-mention-matter-article" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="parent-application-article" />
-                <schema:ref file="pat_common.json" name="ipc-article" />
-                <schema:ref file="pat_common.json" name="inventors" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="trust-relation" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="attorney-change-article" />
-                <schema:ref file="pat_common.json" name="priority-claims" />
-                <schema:ref file="pat_common.json" name="declaration-priority-ear-app" />
-                <schema:ref file="pat_common.json" name="law-of-industrial-regenerate" />
-                <schema:ref file="pat_common.json" name="payment-years" />
-                <schema:ref file="pat_common.json" name="share-rate" />
-                <schema:ref file="pat_common.json" name="charge-article" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -115,23 +108,12 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="application-a631">
-        <schema:property name="tag" type="string"
-                         const="jp:application-a631" />
+        <schema:property name="tag" type="string" const="jp:application-a631" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="dispatch-number" />
-                <schema:ref file="pat_common.json" name="dispatch-date" />
-                <schema:ref file="pat_common.json" name="notice-contents-group" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -167,29 +149,13 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="application-a632">
-        <schema:property name="tag" type="string"
-                         const="jp:application-a632" />
+        <schema:property name="tag" type="string" const="jp:application-a632" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="jp:document-code" />
-                <schema:ref file="pat_common.json" name="jp:file-reference-id" />
-                <schema:ref file="pat_common.json" name="jp:submission-date" />
-                <schema:ref file="pat_common.json" name="jp:addressed-to-person" />
-                <schema:ref file="pat_common.json" name="jp:indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="jp:inventors" />
-                <schema:ref file="pat_common.json" name="jp:applicants" />
-                <schema:ref file="pat_common.json" name="jp:trust-relation" />
-                <schema:ref file="pat_common.json" name="jp:agents" />
-                <schema:ref file="pat_common.json" name="jp:attorney-change-article" />
-                <schema:ref file="pat_common.json" name="jp:law-of-industrial-regenerate" />
-                <schema:ref file="pat_common.json" name="jp:payment-years" />
-                <schema:ref file="pat_common.json" name="jp:share-rate" />
-                <schema:ref file="pat_common.json" name="jp:charge-article" />
-                <schema:ref file="pat_common.json" name="jp:dispatch-number" />
-                <schema:ref file="pat_common.json" name="jp:notice-contents-group" />
-                <schema:ref file="pat_common.json" name="jp:dtext" />
-                <schema:ref file="pat_common.json" name="jp:submission-object-list-article" />
-                <schema:ref file="pat_common.json" name="jp:rule-outside-item-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -216,21 +182,13 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="application-a633">
-        <schema:property name="tag" type="string"
-                         const="jp:application-a633" />
+        <schema:property name="tag" type="string" const="jp:application-a633" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="jp:document-code" />
-                <schema:ref file="pat_common.json" name="jp:file-reference-id" />
-                <schema:ref file="pat_common.json" name="jp:submission-date" />
-                <schema:ref file="pat_common.json" name="jp:addressed-to-person" />
-                <schema:ref file="pat_common.json" name="jp:indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="jp:applicants" />
-                <schema:ref file="pat_common.json" name="jp:agents" />
-                <schema:ref file="pat_common.json" name="jp:dispatch-number" />
-                <schema:ref file="pat_common.json" name="jp:dtext" />
-                <schema:ref file="pat_common.json" name="jp:submission-object-list-article" />
-                <schema:ref file="pat_common.json" name="jp:rule-outside-item-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -256,20 +214,13 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="application-a634">
-        <schema:property name="tag" type="string"
-                         const="jp:application-a634" />
+        <schema:property name="tag" type="string" const="jp:application-a634" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="jp:document-code" />
-                <schema:ref file="pat_common.json" name="jp:file-reference-id" />
-                <schema:ref file="pat_common.json" name="jp:submission-date" />
-                <schema:ref file="pat_common.json" name="jp:addressed-to-person" />
-                <schema:ref file="pat_common.json" name="jp:indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="jp:applicants" />
-                <schema:ref file="pat_common.json" name="jp:agents" />
-                <schema:ref file="pat_common.json" name="jp:dtext" />
-                <schema:ref file="pat_common.json" name="jp:submission-object-list-article" />
-                <schema:ref file="pat_common.json" name="jp:rule-outside-item-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -296,21 +247,13 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="application-a635">
-        <schema:property name="tag" type="string"
-                         const="jp:application-a635" />
+        <schema:property name="tag" type="string" const="jp:application-a635" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="jp:document-code" />
-                <schema:ref file="pat_common.json" name="jp:file-reference-id" />
-                <schema:ref file="pat_common.json" name="jp:submission-date" />
-                <schema:ref file="pat_common.json" name="jp:addressed-to-person" />
-                <schema:ref file="pat_common.json" name="jp:indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="jp:applicants" />
-                <schema:ref file="pat_common.json" name="jp:agents" />
-                <schema:ref file="pat_common.json" name="jp:notice-contents-group" />
-                <schema:ref file="pat_common.json" name="jp:dtext" />
-                <schema:ref file="pat_common.json" name="jp:submission-object-list-article" />
-                <schema:ref file="pat_common.json" name="jp:rule-outside-item-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
     </schema:object>

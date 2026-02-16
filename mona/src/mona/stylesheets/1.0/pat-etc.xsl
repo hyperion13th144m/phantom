@@ -34,9 +34,17 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    
-    <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>pat-etc</schema:title>
+    <schema:object name="pat-etc" is-root="true">
+        <schema:property name="tag" type="string" const="pat-etc" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="etcetera-a781" />
+                <schema:ref name="etcetera-a871" />
+                <schema:ref name="etcetera-a872" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object> 
     
     <!-- ====================================================================
          jp:etcetera-a601 期間延長請求書
@@ -205,24 +213,12 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="etcetera-a781">
-        <schema:property name="tag" type="string"
-                         const="jp:etcetera-a781" />
+        <schema:property name="tag" type="string" const="jp:etcetera-a781" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="dispatch-number" />
-                <schema:ref file="pat_common.json" name="dispatch-date" />
-                <schema:ref file="pat_common.json" name="opinion-contents-article" />
-                <schema:ref file="pat_common.json" name="proof-means" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -311,22 +307,13 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="etcetera-a871">
-        <schema:property name="tag" type="string"
-                         const="jp:etcetera-a871" />
+        <schema:property name="tag" type="string" const="jp:etcetera-a871" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="kind-of-accelerated-examination" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="opinion-contents-article"/>
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -357,21 +344,13 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="etcetera-a872">
-        <schema:property name="tag" type="string"
-                         const="jp:etcetera-a872" />
+        <schema:property name="tag" type="string" const="jp:etcetera-a872" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="opinion-contents-article"/>
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>

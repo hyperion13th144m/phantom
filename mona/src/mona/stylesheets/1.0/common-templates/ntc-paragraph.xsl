@@ -80,8 +80,7 @@
             </xsl:element>
         </xsl:if>
     </xsl:template>
-    <schema:object
-        name="inline-text">
+    <schema:object name="inline-text">
         <schema:property name="tag" type="string" enum="text sup sub underline" />
         <schema:property name="text" type="string" />
         <schema:property name="is-last-sentence" type="boolean" />

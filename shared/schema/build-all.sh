@@ -52,25 +52,19 @@ fi
 # ============================
 # Paths and files.
 # ============================
-JSON_SCHEMA="$WORK_DIR/merged-schema.json"
-JSON_SCHEMA_CAMEL="$WORK_DIR/merged-schema-camel.json"
-JSON_SCHEMA_SNAKE="$WORK_DIR/merged-schema-snake.json"
-PY_MODEL="$OUTPUT_DIR/patent_document_schema.py"
-TS_MODEL="$OUTPUT_DIR/patent-document-schema.ts"
-TS_GUARD="$OUTPUT_DIR/patent-document-schema.guard.ts"
-
 STAGE1_DIR="$WORK_DIR/stage1"
 STAGE2_DIR_PY="$WORK_DIR/stage2-py"
 STAGE2_DIR_TS="$WORK_DIR/stage2-ts"
 
 JSON_SCHEMA_ARRAY=(
     "fields.json"
-    #"images.json"
+    "images.json"
     "procedure.json"
     "pat-appd.json"
     "pat-amnd.json"
     "pat-rspn.json"
     "pat-etc.json"
+    "application-body.json"
     "foreign-language-body.json"
     "cpy-ntc-pt-e.json"
     "cpy-ntc-pt-e-rn.json"
@@ -135,15 +129,13 @@ if [ "$TARGET" = "typescript" ]; then
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.ts"
+    echo "Generating TypeScript type for $file -> $dst_file"
     npx json2ts "$STAGE2_DIR_TS/$file" "$dst_file" --cwd "$STAGE2_DIR_TS"
     if [ ! -f "$dst_file" ]; then
       echo "ERROR: Expected JSON schema file not found for TypeScript generation: $dst_file"
       exit 1
-    else
-      echo "Found JSON schema for TypeScript generation: $dst_file"
     fi
   done
-
 
   # ============================
   # Step 4: Generate TypeScript type guards
@@ -177,7 +169,7 @@ if [ "$TARGET" = "python" ]; then
   for file in "$STAGE1_DIR"/*.json; do
     base_name=$(basename "$file" .json)
     dst_file="$STAGE2_DIR_PY/${base_name}.json"
-    #node ./src/convert-case.cjs "$file" "$dst_file" "snake_case"
+    node ./src/convert-case.cjs "$file" "$dst_file" "snake_case"
     if [ ! -f "$dst_file" ]; then
       echo "ERROR: Schema snake_case conversion failed for $file. Output not found: $dst_file"
       exit 1
@@ -194,7 +186,6 @@ if [ "$TARGET" = "python" ]; then
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.py"
-    echo "$STAGE2_DIR_PY/$file"
     datamodel-codegen \
       --input "$STAGE2_DIR_PY/$file" \
       --input-file-type jsonschema \

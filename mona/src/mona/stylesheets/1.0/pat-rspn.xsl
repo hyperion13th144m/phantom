@@ -21,11 +21,21 @@
     <xsl:template match="/">
         <xsl:element name="root">
             <xsl:element name="blocks">
-                <xsl:element name="tag">pat-rspns</xsl:element>
+                <xsl:element name="tag">pat-rspn</xsl:element>
                 <xsl:apply-templates select="root/jp:pat-rspns" />
             </xsl:element>
         </xsl:element>
     </xsl:template>
+    <schema:title>pat-rspn</schema:title>
+    <schema:object
+        name="pat-rspn" is-root="true">
+        <schema:property name="tag" type="string" const="pat-rspn" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="pat-rspn-a53-a59" />
+            </schema:anyOf>
+        </schema:property>
+    </schema:object>
     
     <!-- ====================================================================
          jp:response-a53 | jp:response-a59
@@ -54,39 +64,17 @@
             <xsl:apply-templates select="jp:rule-outside-item-article" />
         </xsl:element>
     </xsl:template>
-
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>pat-rspn</schema:title>
+    
     <schema:object
-        name="pat-rspns" is-root="true">
-        <schema:property name="tag" type="string"
-                         enum="pat-rspns" />
+        name="pat-rspn-a53-a59">
+        <schema:property
+            name="tag" type="string" enum="jp:response-a53,jp:response-a59" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="pat-rspns-a53-a59" />
-           </schema:anyOf>
-        </schema:property>
-    </schema:object>
-    <schema:object
-        name="pat-rspns-a53-a59">
-        <schema:property name="tag" type="string"
-                         enum="jp:response-a53,jp:response-a59" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="dispatch-number" />
-                <schema:ref file="pat_common.json" name="dispatch-date" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="opinion-contents-article" />
-                <schema:ref file="pat_common.json" name="proof-means" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>

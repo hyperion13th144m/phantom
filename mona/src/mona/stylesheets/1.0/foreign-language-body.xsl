@@ -42,28 +42,35 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    <schema:title>foreign-language-body</schema:title>
+    <schema:object name="foreign-language-body" is-root="true">
+        <schema:property name="tag" type="string"
+                         const="foreign-language-body"/>
+        <schema:property name="blocks" type="array">
+            <schema:ref name="foreign-language-documents" />
+        </schema:property>
+    </schema:object>
     
-    <!-- 明細書 特許請求の範囲-->
+    <!-- 明細書 特許請求の範囲,図面,要約書-->
     <xsl:template
-        match="jp:foreign-language-description | jp:foreign-language-claims | jp:foreign-language-abstract | jp:foreign-language-drawings">
+        match="jp:foreign-language-description | jp:foreign-language-claims |
+            jp:foreign-language-abstract | jp:foreign-language-drawings">
         <xsl:element name="blocks">
             <xsl:element name="tag">
                 <xsl:value-of select="name()" />
             </xsl:element>
-            <xsl:element name="indent-level">0</xsl:element>
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
-    
-    <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>foreign-language-body</schema:title>
-    <schema:object name="foreign-language-body-documents" is-root="true">
-        <schema:property name="tag" type="string"
-                         enum="jp:foreign-language-description,jp:foreign-language-claims,jp:foreign-language-abstract,jp:foreign-language-drawings" />
-        <schema:property name="indent-level" type="string" />
+    <schema:object name="foreign-language-documents">
+        <schema:property
+            name="tag" type="string"
+                   enum="jp:foreign-language-description,
+                         jp:foreign-language-claims,
+                         jp:foreign-language-abstract,
+                         jp:foreign-language-drawings" />
         <schema:property name="blocks" type="array">
-            <schema:ref name="paragraph" />
+            <schema:ref file="pat_common.json" name="paragraph" />
         </schema:property>
     </schema:object>
 </xsl:stylesheet>

@@ -27,9 +27,20 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    
-    <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>pat-amnd</schema:title>
+    <schema:object name="pat-amnd" is-root="true">
+        <schema:property name="tag" type="string" const="pat-amnd" />
+        <schema:property name="blocks" type="array">
+            <schema:anyOf>
+                <schema:ref name="amendment-a51-a523" />
+                <schema:ref name="amendment-a524"/>
+                <schema:ref name="amendment-a525-a529"/>
+                <schema:ref name="amendment-a526-a5210"/>
+                <schema:ref name="amendment-a527-a5211"/>
+                <schema:ref name="amendment-a528-a5212"/>
+            </schema:anyOf>
+        </schema:property>
+    </schema:object> 
     
     <!-- ====================================================================
          jp:amendment-a51 | jp:amendment-a523 手続補正書（方式）| 手続補正書
@@ -67,30 +78,16 @@
     </xsl:template>
     <schema:object
         name="amendment-a51-a523">
-        <schema:property name="tag" type="string"
-                         enum="jp:amendment-a51,jp:amendment-a523" />
+        <schema:property
+            name="tag" type="string" enum="jp:amendment-a51,jp:amendment-a523" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.xsl" name="document-code" />
-                <schema:ref file="pat_common.xsl" name="file-reference-id" />
-                <schema:ref file="pat_common.xsl" name="submission-date" />
-                <schema:ref file="pat_common.xsl" name="addressed-to-person" />
-                <schema:ref file="pat_common.xsl" name="indication-of-case-article" />
-                <schema:ref file="pat_common.xsl" name="proof-necessity" />
-                <schema:ref file="pat_common.xsl" name="applicants" />
-                <schema:ref file="pat_common.xsl" name="agents" />
-                <schema:ref file="pat_common.xsl" name="dispatch-number" />
-                <schema:ref file="pat_common.xsl" name="dispatch-date" />
-                <schema:ref file="pat_common.xsl" name="num-claim-decrease-amendment" />
-                <schema:ref file="pat_common.xsl" name="num-claim-increase-amendment" />
-                <schema:ref file="pat_common.xsl" name="amendment-article" />
-                <schema:ref file="pat_common.xsl" name="amendment-charge-article" />
-                <schema:ref file="pat_common.xsl" name="proof-means" />
-                <schema:ref file="pat_common.xsl" name="share-rate" />
-                <schema:ref file="pat_common.xsl" name="charge-article" />
-                <schema:ref file="pat_common.xsl" name="dtext" />
-                <schema:ref file="pat_common.xsl" name="submission-object-list-article" />
-                <schema:ref file="pat_common.xsl" name="rule-outside-item-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
+                <schema:ref file="pat_common.json" name="amendment-article" />
+                <schema:ref file="pat_common.json" name="amendment-charge-article" />
+                <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -132,33 +129,19 @@
     </xsl:template>
     <schema:object
         name="amendment-a524">
-        <schema:property name="tag" type="string"
-                         const="jp:amendment-a524" />
+        <schema:property
+            name="tag" type="string" const="jp:amendment-a524" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="dispatch-number" />
-                <schema:ref file="pat_common.json" name="dispatch-date" />
-                <schema:ref file="pat_common.json" name="num-claim-decrease-amendment"/>
-                <schema:ref file="pat_common.json" name="num-claim-increase-amendment"/>
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="amendment-article" />
-                <schema:ref file="pat_common.json" name="opinion-contents-article"/>
-                <schema:ref file="pat_common.json" name="share-rate" />
-                <schema:ref file="pat_common.json" name="charge-article" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
+                <schema:ref file="pat_common.json" name="opinion-contents-article"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
     
     <!-- ====================================================================
          jp:amendment-a525 | jp:amendment-a529
@@ -192,24 +175,14 @@
     </xsl:template>
     <schema:object
         name="amendment-a525-a529">
-        <schema:property name="tag" type="string"
-                         enum="jp:amendment-a525,jp:amendment-a529" />
+        <schema:property
+            name="tag" type="string" enum="jp:amendment-a525,jp:amendment-a529" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="submit-date-of-amendment" />
-                <schema:ref file="pat_common.json" name="num-claim-decrease-amendment"/>
-                <schema:ref file="pat_common.json" name="num-claim-increase-amendment"/>
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="amendment-article" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -249,25 +222,14 @@
     </xsl:template>
     <schema:object
         name="amendment-a526-a5210">
-        <schema:property name="tag" type="string"
-                         enum="jp:amendment-a526,jp:amendment-a5210" />
+        <schema:property
+            name="tag" type="string" enum="jp:amendment-a526,jp:amendment-a5210" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="submit-date-of-amendment" />
-                <schema:ref file="pat_common.json" name="num-claim-decrease-amendment"/>
-                <schema:ref file="pat_common.json" name="num-claim-increase-amendment"/>
-                <schema:ref file="pat_common.json" name="notice-contents-group" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="amendment-article" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -305,23 +267,13 @@
     </xsl:template>
     <schema:object
         name="amendment-a527-a5211">
-        <schema:property name="tag" type="string"
-                         enum="jp:amendment-a527,jp:amendment-a5211" />
+        <schema:property
+            name="tag" type="string" enum="jp:amendment-a527,jp:amendment-a5211" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="submit-date-of-amendment" />
-                <schema:ref file="pat_common.json" name="num-claim-decrease-amendment"/>
-                <schema:ref file="pat_common.json" name="num-claim-increase-amendment"/>
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>
@@ -359,26 +311,15 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="amendment-a528-a5212">
-        <schema:property name="tag" type="string"
-                         enum="jp:amendment-a528,jp:amendment-a5212" />
+        <schema:property
+            name="tag" type="string" enum="jp:amendment-a528,jp:amendment-a5212" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref file="pat_common.json" name="document-code" />
-                <schema:ref file="pat_common.json" name="file-reference-id" />
-                <schema:ref file="pat_common.json" name="submission-date" />
-                <schema:ref file="pat_common.json" name="addressed-to-person" />
-                <schema:ref file="pat_common.json" name="indication-of-case-article" />
-                <schema:ref file="pat_common.json" name="proof-necessity" />
-                <schema:ref file="pat_common.json" name="applicants" />
-                <schema:ref file="pat_common.json" name="agents" />
-                <schema:ref file="pat_common.json" name="submit-date-of-amendment" />
-                <schema:ref file="pat_common.json" name="num-claim-decrease-amendment"/>
-                <schema:ref file="pat_common.json" name="num-claim-increase-amendment"/>
-                <schema:ref file="pat_common.json" name="notice-contents-group" />
-                <schema:ref file="pat_common.json" name="dtext" />
-                <schema:ref file="pat_common.json" name="submission-object-list-article" />
+                <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
+                <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
-            </schema:anyOf>
+           </schema:anyOf>
         </schema:property>
     </schema:object>
 </xsl:stylesheet>

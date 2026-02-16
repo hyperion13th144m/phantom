@@ -26,11 +26,10 @@
     <xsl:include href="common-templates/v4xva_prm.xsl" />
     <xsl:include href="common-templates/dispatch-control-article.xsl" />
     <xsl:include href="common-templates/date-templates.xsl" />
+    <xsl:include href="common-templates/unsupported-tags.xsl" />
     
     <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>v4xva_ntc-pt-e</schema:title>
-    <!-- container type a, b の個別 schema は astro レンダリング確認したら消す
-         merge 版 schema 残す-->
     
     <!-- ====================================================================
          jp:notice-pat-exam
@@ -68,29 +67,17 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="notice-pat-exam">
-        <schema:property name="tag" type="string"
-                         const="jp:notice-pat-exam" />
+        <schema:property name="tag" type="string" const="jp:notice-pat-exam" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="jp:decision-of-registration-a01"/>
                 <schema:ref name="jp:decision-of-rejection-a02"/>
-                <schema:ref name="jp:notice-of-rejection-a131"/>
-                <schema:ref name="jp:declining-the-amendment-a191"/>
-                <schema:ref name="jp:declining-the-amendment-a192"/>
-                <schema:ref name="jp:examiner-notification-a251"/>
-                <schema:ref name="jp:examiner-notification-a2514"/>
-                <schema:ref name="jp:examiner-notification-a2515"/>
-                <schema:ref name="jp:examiner-notification-a2516"/>
-                <schema:ref name="jp:examiner-notification-a252"/>
-                <schema:ref name="jp:examiner-notification-a2522"/>
-                <schema:ref name="jp:examiner-notification-a2529"/>
                 <schema:ref name="jp:examiner-notification-a30"/>
-                <schema:ref name="jp:examiner-notification-a25110"/>
-                <schema:ref name="jp:examiner-notification-a25111" />
+                <schema:ref name="jp:notice-others"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
+
     <!-- ====================================================================
          jp:decision-of-registration-a01
          ====================================================================-->
@@ -111,8 +98,8 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="decision-of-registration-a01">
-        <schema:property name="tag" type="string"
-                         const="jp:decision-of-registration-a01" />
+        <schema:property
+            name="tag" type="string" const="jp:decision-of-registration-a01" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="document-name" />
@@ -144,8 +131,8 @@
         </xsl:element>
     </xsl:template>
     <schema:object name="decision-of-rejection-a02">
-        <schema:property name="tag" type="string"
-                         const="jp:decision-of-rejection-a02" />
+        <schema:property
+            name="tag" type="string" const="jp:decision-of-rejection-a02" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="document-name" />
@@ -185,7 +172,7 @@
         </xsl:element>
     </xsl:template>
     <schema:object
-        name="notice-a131-a191-a192-a251-a2514-a2515-a2516-a252-a2522-a2529-a25110-a25111">
+        name="notice-others">
         <schema:property
             name="tag" type="string"
                    enum="jp:notice-of-rejection-a131,
@@ -278,9 +265,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         invention-title
+         invention-title 発明または考案の名称
          ====================================================================-->
-    <!-- 発明または考案の名称  -->
     <xsl:template match="invention-title">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -307,9 +293,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:number-of-claim
+         jp:number-of-claim 請求項の数
          ====================================================================-->
-    <!-- 請求項の数  -->
     <xsl:template match="jp:number-of-claim">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -333,9 +318,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:exist-of-reference-doc
+         jp:exist-of-reference-doc 参考文献有無
          ====================================================================-->
-    <!-- 参考文献有無  -->
     <xsl:template match="jp:exist-of-reference-doc">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -359,9 +343,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:addressed-to-person-group
+         jp:addressed-to-person-group あて先
          ====================================================================-->
-    <!-- あて先  -->
     <xsl:template match="jp:addressed-to-person-group">
         <!-- moved content of 
              <xsl:call-template name="あて先取得" />
@@ -536,9 +519,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:patent-law-section30
+         jp:patent-law-section30 特許法第３０条適用有無
          ====================================================================-->
-    <!-- 特許法第３０条適用有無  -->
     <xsl:template match="jp:patent-law-section30">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -562,9 +544,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:change-flag-invention-title
+         jp:change-flag-invention-title 発明の名称の変更有無
          ====================================================================-->
-    <!-- 発明の名称の変更有無  -->
     <xsl:template match="jp:change-flag-invention-title">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -595,9 +576,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:date
+         jp:date 日付
          ====================================================================-->
-    <!-- 日付 -->
     <xsl:template match="jp:date">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -619,9 +599,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:version-number
+         jp:version-number 版コード
          ====================================================================-->
-    <!-- 版コード -->
     <xsl:template match="jp:version-number">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -641,10 +620,9 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:doc-number
+         jp:doc-number 文書番号
          元 <xsl:template name="文書番号編集">
          ====================================================================-->
-    <!-- 文書番号 -->
     <xsl:template match="jp:doc-number">
         <xsl:variable name="kind-of-law" select="ancestor::jp:application-reference/@jp:kind-of-law" />
         <xsl:element name="blocks">
@@ -700,9 +678,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:depository-ins-code
+         jp:depository-ins-code 受託機関コード
          ====================================================================-->
-    <!-- 受託機関コード -->
     <xsl:template match="jp:depository-ins-code">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -722,9 +699,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:depository-number
+         jp:depository-number 受託番号
          ====================================================================-->
-    <!-- 受託番号 -->
     <xsl:template match="jp:depository-number">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -744,9 +720,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:application-section
+         jp:application-section 適用条項
          ====================================================================-->
-    <!-- 適用条項 -->
     <xsl:template match="jp:application-section">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -773,9 +748,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:exceptions-to-lack-of-novelty
+         jp:exceptions-to-lack-of-novelty 新規性喪失例外適用
          ====================================================================-->
-    <!-- 新規性喪失例外適用 -->
     <xsl:template match="jp:exceptions-to-lack-of-novelty">
         <xsl:element name="blocks">
             <xsl:element name="tag">
@@ -819,7 +793,6 @@
     <!--=========================================
          End: terminal type A
          ===========================================-->
-    
     
     <!-- ====================================================================
          Begin:
@@ -1086,7 +1059,6 @@
          end: terminal type B elements.
          ====================================================================-->
     
-    
     <!-- ====================================================================
          begin: container type A elements have a tag and blocks.
          ====================================================================-->
@@ -1112,22 +1084,6 @@
             <xsl:apply-templates select="jp:remark" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="bibliog-in-ntc-pat-exam">
-        <schema:property name="tag" type="string"
-                         const="jp:bibliog-in-ntc-pat-exam" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="addressed-to-person-group" />
-                <schema:ref name="application-reference" />
-                <schema:ref name="article-group" />
-                <schema:ref name="draft-person-group" />
-                <schema:ref name="drafting-date" />
-                <schema:ref name="notice-invention-title" />
-                <schema:ref name="number-of-claim" />
-                <schema:ref name="remark" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:conclusion-part-article 結論
@@ -1142,13 +1098,6 @@
             </xsl:for-each>
         </xsl:element>
     </xsl:template>
-    <schema:object name="conclusion-part-article">
-        <schema:property name="tag" type="string"
-                         const="jp:conclusion-part-article" />
-        <schema:property name="blocks" type="array">
-            <schema:ref file="ntc-paragraph.json" name="paragraph" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:drafting-body 本文部
@@ -1163,16 +1112,6 @@
             </xsl:element>
         </xsl:if>
     </xsl:template>
-    <schema:object name="drafting-body">
-        <schema:property name="tag" type="string"
-                         const="jp:drafting-body" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="heading" />
-                <schema:ref file="ntc-paragraph.json" name="paragraph" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:footer-article フッタ部 -->
@@ -1192,18 +1131,6 @@
             <xsl:apply-templates select="jp:inquiry-article" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="footer-article">
-        <schema:property name="tag" type="string"
-                         const="jp:footer-article" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="administrative-appeal-sentence" />
-                <schema:ref name="approval-column-article" />
-                <schema:ref name="certification-column-article" />
-                <schema:ref name="inquiry-article" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:final-decision-group 査定固有部 -->
@@ -1223,22 +1150,6 @@
             <xsl:apply-templates select="jp:parent-application-article" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="final-decision-group">
-        <schema:property name="tag" type="string"
-                         enum="jp:final-decision-group jp:final-decision-group-rn" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="kind-of-application" />
-                <schema:ref name="exist-of-reference-doc" />
-                <schema:ref name="patent-law-section30" />
-                <schema:ref name="change-flag-invention-title" />
-                <schema:ref name="ipc-article" />
-                <schema:ref name="classification-article" />
-                <schema:ref name="deposit-article" />
-                <schema:ref name="parent-application-article" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:final-decision-memo 査定メモ -->
@@ -1253,17 +1164,6 @@
             <xsl:apply-templates select="jp:final-decision-body" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="final-decision-memo">
-        <schema:property name="tag" type="string"
-                         const="jp:final-decision-memo" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="document-name" />
-                <schema:ref name="final-decision-bibliog" />
-                <schema:ref name="final-decision-body" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:drafting-date 起案日
@@ -1276,12 +1176,6 @@
             <xsl:apply-templates select="jp:date" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="drafting-date">
-        <schema:property name="tag" type="string" const="jp:drafting-date" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="date" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:heading 中央段落
@@ -1294,12 +1188,6 @@
             <xsl:apply-templates />
         </xsl:element>
     </xsl:template>
-    <schema:object name="heading">
-        <schema:property name="tag" type="string" const="jp:heading" />
-        <schema:property name="blocks" type="array">
-            <schema:ref file="ntc-paragraph.json" name="inline-text" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:final-decision-bibliog メモ内書誌部
@@ -1312,13 +1200,6 @@
             <xsl:apply-templates select="jp:application-reference" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="final-decision-bibliog">
-        <schema:property name="tag" type="string"
-                         const="jp:final-decision-bibliog" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="application-reference" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:final-decision-body メモ内本文部
@@ -1335,19 +1216,6 @@
             <xsl:apply-templates select="jp:deposit-article" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="final-decision-body">
-        <schema:property name="tag" type="string"
-                         enum="jp:final-decision-body jp:final-decision-body-rn" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="field-of-search-article" />
-                <schema:ref name="patent-reference-article" />
-                <schema:ref name="reference-books-article" />
-                <schema:ref name="exceptions-to-lack-of-novelty-art" />
-                <schema:ref name="deposit-article" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:document-id ドキュメント識別
@@ -1360,16 +1228,6 @@
             <xsl:apply-templates select="jp:doc-number | jp:date" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="document-id">
-        <schema:property name="tag" type="string"
-                         const="jp:document-id" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="doc-number" />
-                <schema:ref name="date" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:approval-column-article 決裁欄
@@ -1423,17 +1281,6 @@
             </xsl:choose>
         </xsl:element>
     </xsl:template>
-    <schema:object name="approval-column-article">
-        <schema:property name="tag" type="string"
-                         const="jp:approval-column-article" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="official-title" />
-                <schema:ref name="name" />
-                <schema:ref name="staff-code" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:image-group イメージ
@@ -1446,13 +1293,6 @@
             <xsl:apply-templates select="img" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="image-group">
-        <schema:property name="tag" type="string"
-                         const="jp:image-group" />
-        <schema:property name="blocks" type="array">
-            <schema:ref file="ntc-ninsyo.json" name="img" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:application-reference 出願書類参照
@@ -1481,14 +1321,6 @@
             <xsl:apply-templates select="jp:document-id" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="application-reference">
-        <schema:property name="tag" type="string"
-                         const="jp:application-reference" />
-        <schema:property name="blocks" type="array">
-            <schema:ref file="ntc-paragraph.json" name="inline-text" />
-            <schema:ref name="document-id" />
-        </schema:property>
-    </schema:object>
     
     <schema:object name="ntc-pt-e-container-items-type-a">
         <schema:property
@@ -1515,17 +1347,15 @@
                 <schema:ref name="ntc-pt-e-container-items-type-b" />
                 <schema:ref file="ntc-ninsyo.json" name="certification-column-article" />
                 <schema:ref file="ntc-ninsyo.json" name="inquiry-article" />
+                <schema:ref file="ntc-ninsyo.json" name="other-images" />
                 <schema:ref file="ntc-paragraph.json" name="paragraph" />
-                <schema:ref name="heading" />
                 <schema:ref file="ntc-paragraph.json" name="inline-text" />
-                <schema:ref file="ntc-ninsyo.json" name="img" />
             </schema:anyOf>
         </schema:property>
     </schema:object> 
     <!-- ====================================================================
          end: container type A elements have a tag and blocks.
          ====================================================================-->
-    
     
     <!-- ====================================================================
          Begin:
@@ -1561,18 +1391,6 @@
             <xsl:apply-templates select="jp:office-code" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="draft-person-group">
-        <schema:property name="tag" type="string"
-                         const="jp:draft-person-group" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="name" />
-                <schema:ref name="staff-code" />
-                <schema:ref name="office-code" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:article-group 適用条文グループ
@@ -1588,14 +1406,6 @@
             <xsl:apply-templates select="jp:article" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="article-group">
-        <schema:property name="tag" type="string"
-                         const="jp:article-group" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="article" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:remark 備考
@@ -1611,15 +1421,6 @@
             <xsl:apply-templates select="p" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="remark">
-        <schema:property name="tag" type="string" const="jp:remark" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref file="ntc-paragraph.json" name="paragraph" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:ipc-article 国際特許分類の記事
@@ -1635,14 +1436,6 @@
             <xsl:apply-templates select="jp:ipc" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="ipc-article">
-        <schema:property name="tag" type="string"
-                         const="jp:ipc-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="ipc" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:classification-article 併記特許分類の記事
@@ -1668,17 +1461,6 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    <schema:object name="classification-article">
-        <schema:property name="tag" type="string"
-                         const="jp:classification-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="version-number" />
-                <schema:ref name="ipc" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:deposit-article 菌寄託の記事
@@ -1720,14 +1502,6 @@
             <xsl:apply-templates select="jp:deposit" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="deposit-article">
-        <schema:property name="tag" type="string"
-                         const="jp:deposit-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="deposit" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:deposit 菌寄託
@@ -1756,19 +1530,6 @@
             </xsl:if>
         </xsl:element>
     </xsl:template>
-    <schema:object name="deposit">
-        <schema:property name="tag" type="string"
-                         const="jp:deposit" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="indent-level" type="integer" optional="true"/>
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="depository-ins-code" />
-                <schema:ref name="depository-number" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
-    
     
     <!-- ====================================================================
          jp:parent-application-article 分割変更表示の記事
@@ -1796,14 +1557,6 @@
             <xsl:apply-templates select="jp:application-reference" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="parent-application-article">
-        <schema:property name="tag" type="string"
-                         const="jp:parent-application-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="application-reference" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:field-of-search-article 調査分野の記事
@@ -1831,14 +1584,6 @@
             <xsl:apply-templates select="jp:field-of-search" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="field-of-search-article">
-        <schema:property name="tag" type="string"
-                         const="jp:field-of-search-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="field-of-search" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:patent-reference-article 参考特許文献の記事
@@ -1854,14 +1599,6 @@
             <xsl:apply-templates select="jp:patent-reference-group" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="patent-reference-article">
-        <schema:property name="tag" type="string"
-                         const="jp:patent-reference-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="patent-reference-group" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:reference-books-article 参考図書雑誌の記事
@@ -1877,14 +1614,6 @@
             <xsl:apply-templates select="jp:reference-books" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="reference-books-article">
-        <schema:property name="tag" type="string"
-                         const="jp:reference-books-article" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="reference-books" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:exceptions-to-lack-of-novelty-art 新規性喪失例外の記事
@@ -1900,14 +1629,6 @@
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-grp" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="exceptions-to-lack-of-novelty-art">
-        <schema:property name="tag" type="string"
-                         const="jp:exceptions-to-lack-of-novelty-art" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="exceptions-to-lack-of-novelty-grp" />
-        </schema:property>
-    </schema:object>
     
     <!-- ====================================================================
          jp:exceptions-to-lack-of-novelty-grp
@@ -1927,18 +1648,6 @@
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
         </xsl:element>
     </xsl:template>
-    <schema:object name="exceptions-to-lack-of-novelty-grp">
-        <schema:property name="tag" type="string"
-                         const="jp:exceptions-to-lack-of-novelty-grp" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="indent-level" type="integer" />
-        <schema:property name="blocks" type="array">
-            <schema:anyOf>
-                <schema:ref name="application-section" />
-                <schema:ref name="exceptions-to-lack-of-novelty" />
-            </schema:anyOf>
-        </schema:property>
-    </schema:object>
     
     <schema:object name="ntc-pt-e-container-items-type-b">
         <schema:property
@@ -2055,23 +1764,4 @@
             | o | pre | table-external-doc">
         <xsl:call-template name="unsupported-tag" />
     </xsl:template>
-    
-    <xsl:template name="unsupported-tag">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'unsupported-tag'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="'&lt;' || name() || '&gt;'" />
-                <xsl:value-of select="." />
-                <xsl:value-of select="'&lt;/', name(), '&gt;'" />
-                <xsl:value-of select="'is not supported in v4xva_ntc-pt-e.xsl'" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-    <schema:object name="unsupported-tag">
-        <schema:property name="tag" type="string"
-                         const="unsupported-tag" />
-        <schema:property name="text" type="string" />
-    </schema:object>
 </xsl:stylesheet>

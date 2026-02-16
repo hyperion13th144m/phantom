@@ -14,19 +14,16 @@
     <xsl:variable name="doc-code"
         select="normalize-space(/descendant::jp:document-code[1])" />
     
-    <xsl:include
-        href="v4xva_prm.xsl" />
+    <xsl:include href="v4xva_prm.xsl" />
     <xsl:include href="applicants.xsl" />
     <xsl:include href="agents.xsl" />
-    <xsl:include
-        href="string-utils.xsl" />
+    <xsl:include href="string-utils.xsl" />
     <xsl:include href="doc-code.xsl" />
-    <xsl:include
-        href="special-mention-matter-article.xsl" />
+    <xsl:include href="special-mention-matter-article.xsl" />
     <xsl:include href="country.xsl" />
-    <xsl:include
-        href="doc-number.xsl" />
+    <xsl:include href="doc-number.xsl" />
     <xsl:include href="date-templates.xsl" />
+    <xsl:include href="unsupported-tags.xsl" />
     
     <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>pat_common</schema:title>
@@ -2015,8 +2012,7 @@
     </xsl:variable>
     
     <!-- schema for terminal type a -->
-    <schema:object
-        name="pat-common-terminal-items-type-a">
+    <schema:object name="pat-common-terminal-type-a">
         <schema:property
             name="tag" type="string"
                    enum="jp:document-code,
@@ -2191,7 +2187,7 @@
     
     <!-- schema for container type a -->
     <schema:object
-        name="pat-common-container-items-type-a">
+        name="pat-common-container-type-a">
         <schema:property
             name="tag" type="string"
                    enum="jp:special-mention-matter-article,
@@ -2208,8 +2204,8 @@
                          jp:representative-group,
                          jp:representative"/>
         <schema:property name="blocks" type="array">
-            <schema:ref name="pat-common-terminal-items-type-a" />
-            <schema:ref name="pat-common-container-items-type-a" />
+            <schema:ref name="pat-common-terminal-type-a" />
+            <schema:ref name="pat-common-container-type-a" />
             <schema:ref name="inventor" /><!-- defined seperately -->
             <schema:ref name="applicant" /><!-- defined seperately -->
             <schema:ref name="agent" /><!-- defined seperately -->
@@ -2318,13 +2314,13 @@
         <schema:property name="tag" type="string" const="jp:amendment-group" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <!-- below refs are included in pat-common-terminal-items-type-a
+                <!-- below refs are included in pat-common-terminal-type-a
                      <schema:ref name="document-code" />
                      <schema:ref name="receipt-number" />
                      <schema:ref name="submission-date" />
                      <schema:ref name="file-reference-id" />
                 -->
-                <schema:ref name="pat-common-terminal-items-type-a" />
+                <schema:ref name="pat-common-terminal-type-a" />
                 <schema:ref name="amendment-terminal-items" />
                 <schema:ref name="contents-of-amendment" />
             </schema:anyOf>
@@ -2508,9 +2504,9 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="pat-common-terminal-items-type-a" />
-                <schema:ref name="pat-common-container-items-type-a" />
-                <schema:ref name="pat-common-container-items-type-b" />
+                <schema:ref name="pat-common-terminal-type-a" />
+                <schema:ref name="pat-common-container-type-a" />
+                <schema:ref name="pat-common-container-type-b" />
                 
                 <!-- 審判系の補補正対項目 -->
                 <schema:ref name="appeal-article" />
@@ -2521,17 +2517,15 @@
                 <schema:ref name="amendment-charge-article" />
                 <schema:ref name="amendment-group" />
                 
-                <schema:ref name="abstract" /><!-- defined seperately -->
-                <schema:ref name="agents" /><!-- defined seperately -->
-                <schema:ref name="applicants" /><!-- defined seperately -->
-                <schema:ref name="claim" /><!-- defined seperately -->
-                <schema:ref name="claims" /><!-- defined seperately -->
-                <schema:ref name="description" /><!-- defined seperately -->
-                <schema:ref name="drawings" /><!-- defined seperately -->
-                <schema:ref name="figure" /><!-- defined seperately -->
-                <schema:ref name="invention-title" /><!-- defined seperately -->
-                <schema:ref name="opinion-contents-article" /><!-- defined seperately -->
-                <schema:ref name="paragraph" /><!-- defined seperately -->
+                <schema:ref name="abstract" />
+                <schema:ref name="claim" />
+                <schema:ref name="claims" />
+                <schema:ref name="description" />
+                <schema:ref name="drawings" />
+                <schema:ref name="figure" />
+                <schema:ref name="invention-title" />
+                <schema:ref name="opinion-contents-article" />
+                <schema:ref name="paragraph" />
                 
                 <!-- 当面取り扱わない書類の項目. 補正対象でも扱わない -->
                 <!-- <schema:ref name="amount-paid" /> -->
@@ -2593,15 +2587,15 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <!-- below refs are included in pat-common-terminal-items-type-a
+                <!-- below refs are included in pat-common-terminal-type-a
                      <schema:ref name="document-code" />
                 -->
-                <schema:ref name="pat-common-terminal-items-type-a" />
+                <schema:ref name="pat-common-terminal-type-a" />
                 
-                <!-- below refs are included in pat-common-terminal-items-type-a
+                <!-- below refs are included in pat-common-terminal-type-a
                      <schema:ref name="charge-article" />
                 -->
-                <schema:ref name="pat-common-container-items-type-b" />
+                <schema:ref name="pat-common-container-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -2646,9 +2640,9 @@
                 <!-- XSD には doc-number,date ないけど、xsl ではある。
                      doc-number, date kind-of-appeals and
                      file-reference-id are included
-                     in pat-common-terminal-items-type-a -->
-                <schema:ref name="pat-common-terminal-items-type-a" />
-                <schema:ref name="pat-common-container-items-type-b" />
+                     in pat-common-terminal-type-a -->
+                <schema:ref name="pat-common-terminal-type-a" />
+                <schema:ref name="pat-common-container-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -3935,8 +3929,7 @@
         </xsl:element>
     </xsl:template>
     
-    <schema:object
-        name="pat-common-container-type-b">
+    <schema:object name="pat-common-container-type-b">
         <schema:property
             name="tag" type="string"
                    enum="jp:priority-claim,
@@ -3953,7 +3946,7 @@
         <schema:property name="indent-level" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <!-- below refs are included in pat-common-terminal-items-type-a, so commented out here to avoid duplication
+                <!-- below refs are included in pat-common-terminal-type-a, so commented out here to avoid duplication
                      <schema:ref name="kana" />
                      <schema:ref name="name" />
                      <schema:ref name="office-address" />
@@ -3978,22 +3971,22 @@
                      <schema:ref name="receipt-number" />
                      <schema:ref name="shutugan-kubun" />
                 -->
-                <schema:ref name="pat-common-terminal-items-type-a" />
+                <schema:ref name="pat-common-terminal-type-a" />
                 
-                <!-- below ref is included in pat-common-container-items-type-a, so commented out here to avoid duplication
+                <!-- below ref is included in pat-common-container-type-a, so commented out here to avoid duplication
                      <schema:ref name="nationality" />
                      <schema:ref name="list-group" />
                      <schema:ref name="priority-doc-location-info" />
                      <schema:ref name="payment" />
                      <schema:ref name="representative-group" />
                 -->
-                <schema:ref name="pat-common-container-items-type-a" />
+                <schema:ref name="pat-common-container-type-a" />
                 
-                <!-- below ref is included in pat-common-container-items-type-b.
+                <!-- below ref is included in pat-common-container-type-b.
                      called as child by earlier-app
                      <schema:ref name="application-reference" />
                 -->
-                <schema:ref name="pat-common-container-items-type-b" />
+                <schema:ref name="pat-common-container-type-b" />
                 
                 <schema:ref name="attorney" />
                 <schema:ref name="lawyer" />
@@ -7035,20 +7028,5 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    
-    <xsl:template
-        name="unsupported-tag">
-        <xsl:element name="blocks">
-            <xsl:element name="tag">
-                <xsl:value-of select="'unsupported-tag'" />
-            </xsl:element>
-            <xsl:element name="text">
-                <xsl:value-of select="name()" />
-            </xsl:element>
-        </xsl:element>
-    </xsl:template>
-    <schema:object name="unsupported-tag">
-        <schema:property name="tag" type="string" const="unsupported-tag" />
-        <schema:property name="text" type="string" />
-    </schema:object>
+
 </xsl:stylesheet>

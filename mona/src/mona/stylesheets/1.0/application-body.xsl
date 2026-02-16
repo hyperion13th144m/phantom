@@ -25,12 +25,9 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-    
-    <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>application-body</schema:title>
     <schema:object name="application-body" is-root="true">
-        <schema:property name="tag" type="string"
-                         const="application-body" />
+        <schema:property name="tag" type="string" const="application-body" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="description" />
