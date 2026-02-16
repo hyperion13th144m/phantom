@@ -201,10 +201,13 @@ def process_archive(
 
     manifest_path = output_dir / "manifest.json"
     data = get_data(manifest_path)
-    dst_path = output_dir / f"document.json"
-    with open(dst_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"Processed: {archive_path} -> {dst_path}")
+    for item in data:
+        for key, value in item.items():
+            dst_path = output_dir / key
+            with open(dst_path, "w", encoding="utf-8") as f:
+                f.write(value)
+                #json.dump(json.loads(value), f, ensure_ascii=False, indent=2)
+                logger.info(f"Processed: {archive_path} -> {dst_path}")
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:
@@ -212,23 +215,23 @@ def get_output_dir(doc_id: str, base_dir: Path) -> Path:
     return base_dir.joinpath(doc_id[0:2], doc_id[2:4], doc_id)
 
 
-def get_data(manifest_path: Path) -> dict:
+def get_data(manifest_path: Path) -> list[dict]:
     """read manifest and translate to data dict."""
     processors: List[ManifestProcessor] = [
-        MetadataProcessor(manifest_path),
+        #   MetadataProcessor(manifest_path),
         XSLTProcessor(manifest_path, translator_config),
-        OCRProcessor(manifest_path),
+        #   OCRProcessor(manifest_path),
     ]
     data = []
     for p in processors:
         translated_data = p.translate()
-        data.extend(translated_data)
+        data.append(translated_data)
+    return data
+    # merged_dict = {}
+    # for d in data:
+    #    merged_dict = deep_merge(merged_dict, d)
 
-    merged_dict = {}
-    for d in data:
-        merged_dict = deep_merge(merged_dict, d)
-
-    return merged_dict["root"]
+    # return merged_dict["root"]
 
 
 if __name__ == "__main__":

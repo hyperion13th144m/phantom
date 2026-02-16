@@ -6,7 +6,7 @@ from libefiling.image.params import ImageConvertParam
 
 from .manifest_processor.xslt import TranslatorConfig
 
-SCHEMA_VER = "1.0"
+SCHEMA_VER = "2.0"
 
 TARGET_DOCUMENT_CODES = [
     "A101",
@@ -104,6 +104,7 @@ translator_config = [
         force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="procedure",
+        output_path="bibliography.json",
     ),
     TranslatorConfig(
         ### A163 日本語特許出願関連
@@ -112,6 +113,7 @@ translator_config = [
         force_list=["blocks"],
         namespace="http://www.jpo.go.jp",
         doctype="pat-app-doc",
+        output_path="pat-app-doc-blocks.json",
     ),
     TranslatorConfig(
         ### 明細書 テキストブロック
@@ -120,6 +122,7 @@ translator_config = [
         namespace="",
         doctype="application-body",
         postprocessor=postprocess_application_body,
+        output_path="application-body-blocks.json",
     ),
     TranslatorConfig(
         ### A163 外国語書面出願
@@ -128,6 +131,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="foreign-language-body",
         postprocessor=postprocess_application_body,
+        output_path="foreign-language-body-blocks.json",
     ),
     TranslatorConfig(
         ### 画像情報
@@ -136,6 +140,7 @@ translator_config = [
         namespace="",
         doctype="images",
         postprocessor=postprocess_application_body,
+        output_path="images-information.json",
     ),
     TranslatorConfig(
         ### A1523 手続補正書
@@ -144,6 +149,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="pat-amnd",
         postprocessor=postprocess_application_body,
+        output_path="pat-amnd-blocks.json",
     ),
     TranslatorConfig(
         ### A153/A159 意見書、弁明書 テキストブロック
@@ -152,6 +158,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="pat-rspns",
         postprocessor=postprocess_application_body,
+        output_path="pat-rspns-blocks.json",
     ),
     TranslatorConfig(
         ### A1781, A871, A872 上申書, 早期審査に関する事情説明書, 早期審査に関する事情説明補充書
@@ -160,6 +167,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="pat-etc",
         postprocessor=postprocess_application_body,
+        output_path="pat-etc-blocks.json",
     ),
     TranslatorConfig(
         ### A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
@@ -168,6 +176,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam",
         postprocessor=postprocess_application_body,
+        output_path="cpy-notice-pat-exam-blocks.json",
     ),
     TranslatorConfig(
         ### 新形式 A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
@@ -176,6 +185,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam-rn",
         postprocessor=postprocess_application_body,
+        output_path="cpy-notice-pat-exam-rn-blocks.json",
     ),
     TranslatorConfig(
         ### 実案技術評価書の通知
@@ -184,6 +194,7 @@ translator_config = [
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-frm",
         postprocessor=postprocess_application_body,
+        output_path="cpy-notice-pat-frm-blocks.json",
     ),
     TranslatorConfig(
         ### 全文検索用フィールド
@@ -201,5 +212,6 @@ translator_config = [
         namespace="",
         doctype="root",
         postprocessor=postprocess_application_body,
+        output_path="fields.json",
     ),
 ]

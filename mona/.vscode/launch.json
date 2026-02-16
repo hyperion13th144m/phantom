@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "-l debug /src_dir reference/A2242623 A2242623"
+            "args": "-l debug /src_dir reference/A163 A163"
         },
         {
             "name": "multi",
@@ -26,32 +26,34 @@
             "name": "xslt",
             "type": "debugpy",
             "request": "launch",
-            "program": "tests/translate_xml.py",
+            "program": "scripts/translate_xml.py",
             "console": "integratedTerminal",
             "args": [
-                "${input:src_name}",
-                "src/mona/stylesheets/1.0/schema/schema-dsl.xsl",
+                "${input:src_xml}",
+                "${input:src_xsl}",
                 "${input:out_name}"
             ]
         }
     ],
     "inputs": [
         {
-            "id": "src_name",
-            "type": "pickString",
-            "description": "src xml",
-            "default": "src/mona/stylesheets/1.0/common-templates/pat_common.xsl",
-            "options": [
-                "src/mona/stylesheets/1.0/common-templates/pat_common.xsl",
-            ]
+            "id": "src_xml",
+            "type": "promptString",
+            "description": "input xml"
+        },
+        {
+            "id": "src_xsl",
+            "type": "promptString",
+            "description": "src xsl",
+            "default": "src/mona/stylesheets/2.0/application-body.xsl"
         },
         {
             "id": "out_name",
             "type": "pickString",
             "description": "output json",
-            "default": "src/mona/models/application-body.schema.json",
+            "default": "reference/0xsl-out/output.json",
             "options": [
-                "src/mona/models/application-body.schema.json"
+                "reference/0xsl-out/output.json"
             ]
         }
     ]

@@ -10,7 +10,7 @@ RUN wget https://sourceforge.net/projects/saxon/files/Saxon-HE/10/Java/SaxonHE10
     rm /tmp/SaxonHE10-8J.zip
  
 # setup python
-RUN pip install --no-cache-dir 'datamodel-code-generator[ruff]' lxml pydantic ruff
+RUN pip install --no-cache-dir 'datamodel-code-generator[ruff]' pydantic ruff
 
 WORKDIR /schema
 COPY . .

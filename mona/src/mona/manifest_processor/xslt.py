@@ -17,6 +17,7 @@ class TranslatorConfig(BaseModel):
     force_list: List[str]
     postprocessor: Callable[[List[str], str, str], None] | None = None
     strip_whitespace: bool = False
+    output_path: str | None = None
 
 
 class XSLTProcessor(ManifestProcessor):
@@ -28,8 +29,8 @@ class XSLTProcessor(ManifestProcessor):
         super().__init__(manifest_path)
         self.translator_config = translator_config
 
-    def translate(self) -> list[dict]:
-        data = []
+    def translate(self) -> dict:
+        data = {}
         xml_files = [
             self.manifest_dir / xml_file.path for xml_file in self.manifest.xml_files
         ]
@@ -51,19 +52,19 @@ class XSLTProcessor(ManifestProcessor):
             translated_xml = translate_xml(
                 src_xml=merged_xml_path, xsl_name=config.xsl_path
             )
-            debug_path = self.manifest_dir / f"translated_{config.doctype}.xml"
-            with open(debug_path, "w", encoding="utf-8") as f:
-                xml = ET.fromstring(translated_xml)  # validate XML
-                ET.indent(xml, space="  ")
-                f.write(ET.tostring(xml, encoding="unicode"))
+            # debug_path = self.manifest_dir / f"translated_{config.doctype}.xml"
+            # with open(debug_path, "w", encoding="utf-8") as f:
+            #    xml = ET.fromstring(translated_xml)  # validate XML
+            #    ET.indent(xml, space="  ")
+            #    f.write(ET.tostring(xml, encoding="unicode"))
 
-            translated_data = xmltodict.parse(
-                translated_xml,
-                strip_whitespace=config.strip_whitespace,
-                force_list=config.force_list,
-                postprocessor=config.postprocessor,
-            )
-            data.append(translated_data)
+            # translated_data = xmltodict.parse(
+            #    translated_xml,
+            #    strip_whitespace=config.strip_whitespace,
+            #    force_list=config.force_list,
+            #    postprocessor=config.postprocessor,
+            # )
+            data[config.output_path] = translated_xml
 
         return data
 
