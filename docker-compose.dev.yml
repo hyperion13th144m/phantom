@@ -50,20 +50,7 @@ services:
     environment:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
- 
-  #queen-dev:
-  #  container_name: queen-dev
-  #  image: python:3.14-bookworm
-  #  volumes:
-  #    - .:/workspaces:cached
-  #  tty: true
-  #  environment:
-  #    LANG: ja_JP.UTF-8
-  #    TZ: Asia/Tokyo
-  #  restart: always
-  #  networks:
-  #    - dev-net
- 
+
   fox-dev:
     container_name: fox-dev
     image: node:24-bookworm

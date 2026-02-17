@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="3.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:jp="http://www.jpo.go.jp"
+                xmlns:schema="urn:schema-dsl">
+    
+    <xsl:template match="/">
+        <xsl:element name="root">
+            <xsl:apply-templates select="root/images" />
+        </xsl:element>
+    </xsl:template>
+    
+    <schema:title>images-information</schema:title>
+    
+    <!-- 画像 -->
+    <xsl:template match="images">
+        <xsl:choose>
+            <xsl:when test="count(image) = 0">
+                <xsl:element name="images">
+                </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="image" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="image">
+        <!-- 変換前の画像ファイル名-->
+        <xsl:variable name="orig" select="@orig-filename" />
+        
+        <!-- 変換前の画像ファイルを参照しているノードを探す-->
+        <xsl:variable name="img-node" select="//img[@file=$orig]" />
+        
+        <!-- そのノードの親ノードから属性num を図番とする-->
+        <xsl:variable name="img-number" select="$img-node/parent::node()/@num" />
+        
+        <!-- 代表図のファイル名 -->
+        <xsl:variable name="repr"
+            select="//jp:procedure//jp:representation-image/jp:file-name"/>
+        
+        <!-- 図面の簡単な説明から図番号に対応するものを得る -->
+        <xsl:variable name="desc" select="//description-of-drawings//figref[@num=$img-number]" />
+        
+        <xsl:element name="images">
+            <xsl:element name="number">
+                <xsl:for-each select="//img[@file=$orig]">
+                    <xsl:variable name="parent-node" select="name(parent::node())" />
+                    <xsl:choose>
+                        <xsl:when
+                            test="$parent-node = 'chemistry' or $parent-node = 'tables' or $parent-node = 'maths' or $parent-node = 'figure'">
+                            <xsl:value-of select="parent::node()/@num" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- jpfolb の場合は親要素の@numはないので、ファイル名を図番代わりにする -->
+                            <xsl:value-of select="$orig" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </xsl:element>
+            <xsl:element name="filename">
+                <xsl:value-of select="@new" />
+            </xsl:element>
+            <xsl:element name="kind">
+                <xsl:value-of select="@kind" />
+            </xsl:element>
+            <xsl:element name="sizeTag">
+                <xsl:value-of select="@sizeTag" />
+            </xsl:element>
+            <xsl:element name="width">
+                <xsl:value-of select="@width" />
+            </xsl:element>
+            <xsl:element name="height">
+                <xsl:value-of select="@height" />
+            </xsl:element>
+            <xsl:element name="representative">
+                <xsl:choose>
+                    <xsl:when test="$orig=$repr">
+                        <xsl:value-of select="true()" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="false()" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:element>
+            <xsl:element name="description">
+                <xsl:value-of select="$desc" />
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- override build-in template for text and attribute nodes. -->
+    <xsl:template match="text()|@*">
+        <!-- <xsl:value-of select="normalize-space(.)"/> -->
+    </xsl:template>
+    
+    <schema:object name="images-information" is-root="true">
+        <schema:property name="images" type="array">
+            <schema:ref name="image-properties"/>
+        </schema:property>
+    </schema:object>
+    <schema:object
+        name="image-properties">
+        <schema:property name="number" type="string"/>
+        <schema:property name="filename" type="string"/>
+        <schema:property name="kind" type="string"/>
+        <schema:property name="size-tag" type="string"/>
+        <schema:property name="width" type="integer"/>
+        <schema:property name="height" type="integer"/>
+        <schema:property name="representative" type="boolean"/>
+        <schema:property name="description" type="string"/>
+    </schema:object>
+</xsl:stylesheet>
