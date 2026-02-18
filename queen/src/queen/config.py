@@ -1,168 +1,122 @@
-import re
-import unicodedata
-from typing import List
+from typing import Literal
 
-from libefiling.image.params import ImageConvertParam
+import pyprojroot
+from pydantic import BaseModel
 
-from .manifest_processor.xslt import TranslatorConfig
-
+project_root = pyprojroot.here()
 SCHEMA_VER = "2.0"
+XSL_DIR = project_root / "stylesheets" / SCHEMA_VER
 
-# 全角記号と半角記号の対応表
-ZENKAKU_TO_HANKAKU_MAP = {
-    "\u2212": "-",  # 全角マイナス記号 → 半角マイナス
-    "\uff0d": "-",  # 全角ハイフンマイナス → 半角マイナス
-    "\u2015": "-",  # 横線（ダッシュ） → 半角マイナス
-    "\u2010": "-",  # ハイフン → 半角マイナス
-    "\u30fc": "-",  # 長音記号 → 半角マイナス（用途による）
-}
-
-
-def zenkaku_to_hankaku_all(text: str) -> str:
-    """
-    全角英数字・記号を半角に変換。
-    U+2212（全角マイナス）なども正規表現で一括変換。
-    """
-    # まずNFKC正規化で全角英数字・記号を半角化
-    text = unicodedata.normalize("NFKC", text)
-
-    # 全角記号を半角に置換
-    pattern = re.compile("|".join(map(re.escape, ZENKAKU_TO_HANKAKU_MAP.keys())))
-    text = pattern.sub(lambda m: ZENKAKU_TO_HANKAKU_MAP[m.group()], text)
-
-    return text
+TranslatorKey = Literal[
+    "bibliography",
+    "pat-app-doc",
+    "application-body",
+    "foreign-language-body",
+    "images-information",
+    "pat-amnd",
+    "pat-rspn",
+    "pat-etc",
+    "cpy-notice-pat-exam",
+    "cpy-notice-pat-exam-rn",
+    "cpy-notice-pat-frm",
+    "full-text",
+]
 
 
-def postprocess_application_body(path: List[str], key: str, value: str) -> None:
-    if key in ["representative", "is-last-sentence", "is-independent"]:
-        return key, value.lower() == "true"
-    if key in ["width", "height"]:
-        if value.isdigit():
-            return key, int(value)
-    if len(path) > 0 and path[0][0] == "root" and key in ["images"]:
-        if value is None:
-            return key, []
-    if key == "file-reference-id" and value is not None:
-        # 発送系書類は整理番号が全角文字なので半角化
-        return key, zenkaku_to_hankaku_all(value).strip()
-    return key, value
+class TranslatorConfigItems(BaseModel):
+    xsl_path: str
+    namespace: str
+    doctype: str
+    default_filename: str
 
 
-translator_config = [
-    ### procedure.xml テキスト
-    TranslatorConfig(
-        xsl_path=f"{SCHEMA_VER}/procedure.xsl",
-        force_list=["blocks"],
+TranslatorConfig = dict[TranslatorKey, TranslatorConfigItems]
+
+
+translator_config: TranslatorConfig = {
+    "bibliography": TranslatorConfigItems(
+        ### procedure.xml テキスト
+        xsl_path=str(XSL_DIR / "procedure.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="procedure",
-        output_path="bibliography.json",
+        default_filename="bibliography.json",
     ),
-    TranslatorConfig(
+    "pat-app-doc": TranslatorConfigItems(
         ### A163 日本語特許出願関連
         ### 願書 テキストブロック
-        xsl_path=f"{SCHEMA_VER}/pat-appd.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "pat-appd.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-app-doc",
-        output_path="pat-app-doc-blocks.json",
+        default_filename="pat-app-doc.json",
     ),
-    TranslatorConfig(
+    "application-body": TranslatorConfigItems(
         ### 明細書 テキストブロック
-        xsl_path=f"{SCHEMA_VER}/application-body.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "application-body.xsl"),
         namespace="",
         doctype="application-body",
-        postprocessor=postprocess_application_body,
-        output_path="application-body-blocks.json",
+        default_filename="application-body-blocks.json",
     ),
-    TranslatorConfig(
+    "foreign-language-body": TranslatorConfigItems(
         ### A163 外国語書面出願
-        xsl_path=f"{SCHEMA_VER}/foreign-language-body.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "foreign-language-body.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="foreign-language-body",
-        postprocessor=postprocess_application_body,
-        output_path="foreign-language-body-blocks.json",
+        default_filename="foreign-language-body-blocks.json",
     ),
-    TranslatorConfig(
-        ### 画像情報
-        xsl_path=f"{SCHEMA_VER}/images.xsl",
-        force_list=["blocks", "image"],
-        namespace="",
-        doctype="images",
-        postprocessor=postprocess_application_body,
-        output_path="images-information.json",
-    ),
-    TranslatorConfig(
+    # "images-information": TranslatorConfigItems(
+    #    ### 画像情報
+    #    xsl_path=str(XSL_DIR / "images.xsl"),
+    #    namespace="",
+    #    doctype="images",
+    #    default_filename="images-information.json",
+    # ),
+    "pat-amnd": TranslatorConfigItems(
         ### A1523 手続補正書
-        xsl_path=f"{SCHEMA_VER}/pat-amnd.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "pat-amnd.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-amnd",
-        postprocessor=postprocess_application_body,
-        output_path="pat-amnd-blocks.json",
+        default_filename="pat-amnd-blocks.json",
     ),
-    TranslatorConfig(
+    "pat-rspn": TranslatorConfigItems(
         ### A153/A159 意見書、弁明書 テキストブロック
-        xsl_path=f"{SCHEMA_VER}/pat-rspn.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "pat-rspn.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-rspns",
-        postprocessor=postprocess_application_body,
-        output_path="pat-rspns-blocks.json",
+        default_filename="pat-rspns-blocks.json",
     ),
-    TranslatorConfig(
+    "pat-etc": TranslatorConfigItems(
         ### A1781, A871, A872 上申書, 早期審査に関する事情説明書, 早期審査に関する事情説明補充書
-        xsl_path=f"{SCHEMA_VER}/pat-etc.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "pat-etc.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-etc",
-        postprocessor=postprocess_application_body,
-        output_path="pat-etc-blocks.json",
+        default_filename="pat-etc-blocks.json",
     ),
-    TranslatorConfig(
+    "cpy-notice-pat-exam": TranslatorConfigItems(
         ### A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
-        xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-e.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "cpy-ntc-pt-e.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam",
-        postprocessor=postprocess_application_body,
-        output_path="cpy-notice-pat-exam-blocks.json",
+        default_filename="cpy-notice-pat-exam-blocks.json",
     ),
-    TranslatorConfig(
+    "cpy-notice-pat-exam-rn": TranslatorConfigItems(
         ### 新形式 A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
-        xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-e-rn.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "cpy-ntc-pt-e-rn.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam-rn",
-        postprocessor=postprocess_application_body,
-        output_path="cpy-notice-pat-exam-rn-blocks.json",
+        default_filename="cpy-notice-pat-exam-rn-blocks.json",
     ),
-    TranslatorConfig(
+    "cpy-notice-pat-frm": TranslatorConfigItems(
         ### 実案技術評価書の通知
-        xsl_path=f"{SCHEMA_VER}/cpy-ntc-pt-f.xsl",
-        force_list=["blocks"],
+        xsl_path=str(XSL_DIR / "cpy-ntc-pt-f.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-frm",
-        postprocessor=postprocess_application_body,
-        output_path="cpy-notice-pat-frm-blocks.json",
+        default_filename="cpy-notice-pat-frm-blocks.json",
     ),
-    TranslatorConfig(
+    "full-text": TranslatorConfigItems(
         ### 全文検索用フィールド
-        xsl_path=f"{SCHEMA_VER}/fields.xsl",
-        force_list=[
-            "independent-claims",
-            "dependent-claims",
-            "special-mention-matter-article",
-            "rejection-reason-article",
-            "applicants",
-            "agents",
-            "inventors",
-            "contents-of-amendment",
-        ],
+        xsl_path=str(XSL_DIR / "fields.xsl"),
         namespace="",
-        doctype="root",
-        postprocessor=postprocess_application_body,
-        output_path="fields.json",
+        doctype="*",
+        default_filename="fields.json",
     ),
-]
+}

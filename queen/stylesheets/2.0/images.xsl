@@ -4,6 +4,8 @@
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:jp="http://www.jpo.go.jp"
                 xmlns:schema="urn:schema-dsl">
+
+    <xsl:output method="text" encoding="UTF-8" />
     
     <xsl:template match="/">
         <xsl:element name="root">

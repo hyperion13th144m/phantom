@@ -53,7 +53,7 @@
             description-of-embodiments | best-mode | industrial-applicability |
             reference-to-deposited-biological-material | abstract |
             jp:law-of-industrial-regenerate | jp:conclusion-part-article |
-            jp:drafting-body | jp:opinion-contents-article | jp:contents-of-amendment">
+            jp:drafting-body | jp:opinion-contents-article">
         <xsl:if test="normalize-space(.) != ''">
             <xf:string key="{local-name()}">
                 <xsl:value-of select="normalize-space(.)" />
@@ -83,7 +83,7 @@
             </xsl:for-each>
         </xf:array>
     </xsl:template>
-
+    
     <xsl:template match="claims">
         <xf:array key="independent-claims">
             <xsl:for-each select=".//claim-text[not(contains(., '請求項'))]">
@@ -98,9 +98,9 @@
                     <xsl:value-of select="normalize-space(.)" />
                 </xf:string>
             </xsl:for-each>
-         </xf:array>
-     </xsl:template>
-       
+        </xf:array>
+    </xsl:template>
+    
     <!-- 
          amendment-grooup 下の applicants，agents を処理しない。
          そのために、jp:amendment-a51 の直下の jp:applicants, jp:agents を処理対処にする
@@ -114,7 +114,14 @@
             jp:amendment-a528 | jp:amendment-a5212">
         <xsl:apply-templates select="jp:applicants" />
         <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:amendment-article" />
+        
+        <xf:array key="contents-of-amendment">
+            <xsl:for-each select=".//jp:contents-of-amendment">
+                <xf:string>
+                    <xsl:value-of select="normalize-space(.)" />
+                </xf:string>
+            </xsl:for-each>
+        </xf:array>
     </xsl:template>
     
     <xsl:template
@@ -123,8 +130,15 @@
             jp:application-a634 | jp:application-a635">
         <xsl:apply-templates select="jp:inventors" />
         <xsl:apply-templates select="jp:applicants" />
-        <xsl:apply-templates select="jp:agents" />
-        <xsl:apply-templates select="jp:attorney-change-article" />
+        <!--jp:agents/jp:agent, jp:change-attorney-article/jp:agent
+        をまとめるため、ここに記載 -->
+        <xf:array key="agents">
+            <xsl:for-each select=".//jp:agent">
+                <xf:string>
+                    <xsl:value-of select=".//jp:name" />
+                </xf:string>
+            </xsl:for-each>
+        </xf:array>
     </xsl:template>
     
     <xsl:template match="jp:response-a53 | jp:response-a59">
@@ -174,17 +188,6 @@
     <!-- 代理人 -->
     <xsl:template match="jp:agents">
         <xf:array key="agents">
-            <xsl:for-each select="jp:agent">
-                <xf:string>
-                    <xsl:value-of select=".//jp:name" />
-                </xf:string>
-            </xsl:for-each>
-        </xf:array>
-    </xsl:template>
-    
-    <!-- 代理人 -->
-    <xsl:template match="jp:attorney-change-article">
-        <xf:array key="attorney-change-article">
             <xsl:for-each select="jp:agent">
                 <xf:string>
                     <xsl:value-of select=".//jp:name" />
