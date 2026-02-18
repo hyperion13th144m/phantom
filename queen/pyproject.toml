@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "datamodel-code-generator[ruff]>=0.54.0",
     "pydantic>=2.12.5",
     "pyprojroot>=0.3.0",
+    "ruff>=0.15.1",
     "saxonche>=12.9.0",
 ]
 

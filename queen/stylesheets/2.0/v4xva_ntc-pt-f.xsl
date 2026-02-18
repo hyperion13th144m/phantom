@@ -156,7 +156,7 @@
     <!-- ====================================================================
          begin:
          terminal type elements have tag, and text.
-         optional: jp-tag,  converted-text
+         optional: jpTag,  convertedText
          no child elements
          ====================================================================-->
     <!-- ====================================================================
@@ -167,7 +167,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:das-group">
                         <xsl:value-of select="'基礎出願番号'" />
@@ -180,7 +180,7 @@
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:call-template name="文書番号編集" />
             </xf:string>
         </xf:map>
@@ -195,7 +195,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:reference-date">
                         <xsl:value-of select="'Date'" />
@@ -210,7 +210,7 @@
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:call-template name="format-date-jp2">
                     <xsl:with-param name="date-str" select="normalize-space(.)" />
                 </xsl:call-template>
@@ -254,7 +254,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="'notice-pat-frm-text'" />
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
@@ -288,7 +288,7 @@
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="$code" />
             </xf:string>
         </xf:map>
@@ -305,7 +305,7 @@
             <xf:string key="text">
                 <xsl:value-of select="f:remove-nbsp(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="'（外'" />
                 <xsl:value-of
                     select="f:to-fullwidth-digit(f:remove-nbsp(.))" />
@@ -323,7 +323,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <!-- render jp-tag, text -->
+            <!-- render jpTag, text -->
             <xsl:call-template name="あて先編集" />
             
             <!-- addressbook renders no children.
@@ -346,8 +346,8 @@
                          jp:number-of-other-persons,
                          jp:addressed-to-person-group" />
         <schema:property name="text" type="string" />
-        <schema:property name="jp-tag" type="string" optional="true" />
-        <schema:property name="converted-text" type="string" optional="true" />
+        <schema:property name="jpTag" type="string" optional="true" />
+        <schema:property name="convertedText" type="string" optional="true" />
     </schema:object>
     <!--=========================================
          End: terminal type
@@ -455,7 +455,7 @@
                         <xf:string key="text">
                             <xsl:value-of select="'　お願い：'" />
                         </xf:string>
-                        <xf:boolean key="is-last-sentence">
+                        <xf:boolean key="isLastSentence">
                             <xsl:value-of select="'true'" />
                         </xf:boolean>
                     </xf:map>
@@ -543,7 +543,7 @@
                 <xf:string key="text">
                     <xsl:value-of select="'－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－'" />
                 </xf:string>
-                <xf:boolean key="is-last-sentence">
+                <xf:boolean key="isLastSentence">
                     <xsl:value-of select="'true'" />
                 </xf:boolean>
             </xf:map>
@@ -554,7 +554,7 @@
                 <xf:string key="text">
                     <xsl:value-of select="'Address:' || $data" />
                 </xf:string>
-                <xf:boolean key="is-last-sentence">
+                <xf:boolean key="isLastSentence">
                     <xsl:value-of select="'true'" />
                 </xf:boolean>
             </xf:map>
@@ -565,7 +565,7 @@
                 <xf:string key="text">
                     <xsl:value-of select="'Telephone:' || jp:phone" />
                 </xf:string>
-                <xf:boolean key="is-last-sentence">
+                <xf:boolean key="isLastSentence">
                     <xsl:value-of select="'true'" />
                 </xf:boolean>
             </xf:map>
@@ -576,7 +576,7 @@
                 <xf:string key="text">
                     <xsl:value-of select="'Fax:' || jp:fax" />
                 </xf:string>
-                <xf:boolean key="is-last-sentence">
+                <xf:boolean key="isLastSentence">
                     <xsl:value-of select="'true'" />
                 </xf:boolean>
             </xf:map>
@@ -587,7 +587,7 @@
                 <xf:string key="text">
                     <xsl:value-of select="'－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－'" />
                 </xf:string>
-                <xf:boolean key="is-last-sentence">
+                <xf:boolean key="isLastSentence">
                     <xsl:value-of select="'true'" />
                 </xf:boolean>
             </xf:map>
@@ -771,7 +771,7 @@
         
         <xsl:choose>
             <xsl:when test="$node = 'jp:notification-a232'">
-                <xf:string key="jp-tag">
+                <xf:string key="jpTag">
                     <xsl:value-of select="'出願人'" />
                 </xf:string>
                 <xf:string key="text">
@@ -791,7 +791,7 @@
             <xsl:otherwise>
                 <xsl:choose>
                     <xsl:when test="./@jp:kind-of-applicant = 'evaluation-requester'">
-                        <xf:string key="jp-tag">
+                        <xf:string key="jpTag">
                             <xsl:if test="./@kind-of-applicant">
                                 <xsl:call-template name="出願人種別編集" />
                             </xsl:if>
@@ -811,7 +811,7 @@
                                     or $node = 'jp:written-answer-inquiry-a242902'
                                     or $node = 'jp:commissioner-notifie-a241'
                                     or $node = 'jp:commissioner-notifie-a242'))">
-                        <xf:string key="jp-tag">
+                        <xf:string key="jpTag">
                             <xsl:if test="./@kind-of-applicant">
                                 <xsl:call-template name="出願人種別編集" />
                             </xsl:if>
@@ -825,7 +825,7 @@
                         </xf:string>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xf:string key="jp-tag">
+                        <xf:string key="jpTag">
                             <xsl:choose>
                                 <xsl:when test="$kind-of-law = 'patent'">
                                     <xsl:value-of select="'特許'" />
@@ -956,7 +956,7 @@
                 <xf:string key="tag">
                     <xsl:value-of select="'country-name'" />
                 </xf:string>
-                <xf:string key="jp-tag">
+                <xf:string key="jpTag">
                     <xsl:value-of select="'国名・地域'" />
                 </xf:string>
                 <xf:string key="text">
@@ -967,7 +967,7 @@
                 <xf:string key="tag">
                     <xsl:value-of select="'country-code'" />
                 </xf:string>
-                <xf:string key="jp-tag">
+                <xf:string key="jpTag">
                     <xsl:value-of select="'国・地域コード'" />
                 </xf:string>
                 <xf:string key="text">

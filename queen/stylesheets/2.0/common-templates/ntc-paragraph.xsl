@@ -65,7 +65,7 @@
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
 
         <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="is-last-sentence"
+        <xsl:variable name="isLastSentence"
             select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
 
         <xsl:if test="normalize-space() != ''">
@@ -78,8 +78,8 @@
                         <xsl:with-param name="text" select="f:remove-nbsp(.)" />
                     </xsl:call-template>
                 </xf:string>
-                <xf:boolean key="is-last-sentence">
-                    <xsl:value-of select="$is-last-sentence" />
+                <xf:boolean key="isLastSentence">
+                    <xsl:value-of select="$isLastSentence" />
                 </xf:boolean>
             </xf:map>
         </xsl:if>
@@ -87,7 +87,7 @@
     <schema:object name="inline-text">
         <schema:property name="tag" type="string" enum="text sup sub underline" />
         <schema:property name="text" type="string" />
-        <schema:property name="is-last-sentence" type="boolean" />
+        <schema:property name="isLastSentence" type="boolean" />
     </schema:object>
 
     <schema:object name="unsupported-tag">

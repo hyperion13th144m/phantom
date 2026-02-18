@@ -409,15 +409,15 @@
             select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
         
         <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="is-last-sentence"
+        <xsl:variable name="isLastSentence"
             select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
         
         <xf:map>
             <xf:string key="tag">
                 <xsl:value-of select="'other-images'" />
             </xf:string>
-            <xf:boolean key="is-last-sentence">
-                <xsl:value-of select="$is-last-sentence" />
+            <xf:boolean key="isLastSentence">
+                <xsl:value-of select="$isLastSentence" />
             </xf:boolean>
             <xsl:for-each select="key('images-table-key', @file)">
                 <xf:map>
@@ -444,7 +444,7 @@
         name="other-images">
         <schema:property name="tag" type="string"
                          const="other-images" />
-        <schema:property name="indent-level" type="string" />
+        <schema:property name="indentLevel" type="string" />
         <schema:property name="images" type="array">
             <schema:ref name="image" />
         </schema:property>

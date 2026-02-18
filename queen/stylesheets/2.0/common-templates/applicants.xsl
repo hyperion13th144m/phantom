@@ -21,7 +21,7 @@
         name="申請者編集">
         <xsl:param name="code" />
         
-        <xf:string key="indent-level">
+        <xf:string key="indentLevel">
             <xsl:choose>
                 <xsl:when test="ancestor::jp:contents-of-amendment">
                     <xsl:sequence select="2" />
@@ -32,7 +32,7 @@
             </xsl:choose>
         </xf:string>
         
-        <xf:string key="jp-tag">
+        <xf:string key="jpTag">
             <xsl:choose>
                 <xsl:when test="./@jp:kind-of-application = 'appeal'">
                     <xsl:value-of select="'【審判請求人】'" />

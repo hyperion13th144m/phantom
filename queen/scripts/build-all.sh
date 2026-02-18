@@ -1,8 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-WORK_DIR="./dist"
-OUTPUT_DIR="./dist/outputs"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR/.."
+cd "$PROJECT_ROOT" || exit 1
+
+WORK_DIR="$PROJECT_ROOT/out"
+OUTPUT_DIR="$WORK_DIR/schema"
 
 # ============================
 # Utility
@@ -52,9 +56,7 @@ fi
 # ============================
 # Paths and files.
 # ============================
-STAGE1_DIR="$WORK_DIR/stage1"
-STAGE2_DIR_PY="$WORK_DIR/stage2-py"
-STAGE2_DIR_TS="$WORK_DIR/stage2-ts"
+JSON_SCHEMA_DIR="$WORK_DIR/json-schema"
 
 JSON_SCHEMA_ARRAY=(
     "fields.json"
@@ -70,6 +72,10 @@ JSON_SCHEMA_ARRAY=(
     "cpy-ntc-pt-e-rn.json"
     "cpy-ntc-pt-f.json"
 )
+BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
+BUILD_TS_SCHEMA="$PROJECT_ROOT/scripts/build-ts-schema.sh"
+BUILD_TS_GUARD="$PROJECT_ROOT/scripts/build-ts-guard.sh"
+XSL_ROOT="$PROJECT_ROOT/stylesheets/2.0"
 
 # ============================
 # Step 0: Prepare directories
@@ -82,21 +88,16 @@ fi
 if [ ! -d "$WORK_DIR" ]; then
   mkdir -p "$WORK_DIR"
 fi
-if [ ! -d "$STAGE1_DIR" ]; then
-  mkdir -p "$STAGE1_DIR"
+if [ ! -d "$JSON_SCHEMA_DIR" ]; then
+  mkdir -p "$JSON_SCHEMA_DIR"
 fi
-if [ ! -d "$STAGE2_DIR_PY" ]; then
-  mkdir -p "$STAGE2_DIR_PY"
-fi
-if [ ! -d "$STAGE2_DIR_TS" ]; then
-  mkdir -p "$STAGE2_DIR_TS"
-fi
+
 
 # ============================
 # Step 1: translate xsl as xml to json schemas.
 # ============================
 log "Step 1: translate xsl as xml to json schemas."
-./build-schema.sh -o "$STAGE1_DIR" -x /xsl
+"$BUILD_SCHEMA" -o "$JSON_SCHEMA_DIR" -x "$XSL_ROOT"
 
 
 # ============================
@@ -104,33 +105,15 @@ log "Step 1: translate xsl as xml to json schemas."
 # ============================
 if [ "$TARGET" = "typescript" ]; then
   # ============================
-  # Step 2: Convert schema to camelCase
+  # Step 2: Generate TypeScript types
   # ============================
-  log "Step 2: Converting schema to camelCase"
-  
-  for file in "$STAGE1_DIR"/*.json; do
-    base_name=$(basename "$file" .json)
-    dst_file="$STAGE2_DIR_TS/${base_name}.json"
-    node ./src/convert-case.cjs "$file" "$dst_file" "camelCase"
-    if [ ! -f "$dst_file" ]; then
-      echo "ERROR: Schema camelCase conversion failed for $file. Output not found: $dst_file"
-      exit 1
-    else
-      echo "Schema converted to camelCase successfully: $dst_file"
-    fi
-  done
-
-
-  # ============================
-  # Step 3: Generate TypeScript types
-  # ============================
-  log "Step 3: Generating TypeScript types"
+  log "Step 2: Generating TypeScript types"
 
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.ts"
     echo "Generating TypeScript type for $file -> $dst_file"
-    npx json2ts "$STAGE2_DIR_TS/$file" "$dst_file" --cwd "$STAGE2_DIR_TS"
+    $BUILD_TS_SCHEMA "$JSON_SCHEMA_DIR/$file" "$dst_file"
     if [ ! -f "$dst_file" ]; then
       echo "ERROR: Expected JSON schema file not found for TypeScript generation: $dst_file"
       exit 1
@@ -138,21 +121,19 @@ if [ "$TARGET" = "typescript" ]; then
   done
 
   # ============================
-  # Step 4: Generate TypeScript type guards
+  # Step 3: Generate TypeScript type guards
   # ============================
-  log "Step 4: Generating TypeScript type guards"
+  log "Step 3: Generating TypeScript type guards"
   
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.guard.ts"
-    npx ts-auto-guard --export-all "$OUTPUT_DIR/$base_name.ts" "$dst_file"
+    $BUILD_TS_GUARD "$OUTPUT_DIR/$base_name.ts" "$dst_file"
     sed -i -e 's/import/import type/g' "$dst_file"
 
     if [ ! -f "$dst_file" ]; then
       echo "ERROR: Expected TypeScript model file not found for type guard generation: $dst_file"
       exit 1
-    else
-      echo "Found TypeScript model for type guard generation: $dst_file"
     fi
   done
 fi
@@ -162,32 +143,15 @@ fi
 # ============================
 if [ "$TARGET" = "python" ]; then
   # ============================
-  # Step 2: Convert schema to snake_case
+  # Step 2: Generate Python models
   # ============================
-  log "Step 2: Converting schema to snake_case"
-  
-  for file in "$STAGE1_DIR"/*.json; do
-    base_name=$(basename "$file" .json)
-    dst_file="$STAGE2_DIR_PY/${base_name}.json"
-    node ./src/convert-case.cjs "$file" "$dst_file" "snake_case"
-    if [ ! -f "$dst_file" ]; then
-      echo "ERROR: Schema snake_case conversion failed for $file. Output not found: $dst_file"
-      exit 1
-    else
-      echo "Schema converted to snake_case successfully: $dst_file"
-    fi
-  done
-
-  # ============================
-  # Step 3: Generate Python models
-  # ============================
-  log "Step 3: Generating Python models"
+  log "Step 2: Generating Python models"
   
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.py"
-    datamodel-codegen \
-      --input "$STAGE2_DIR_PY/$file" \
+    uv run datamodel-codegen \
+      --input "$JSON_SCHEMA_DIR/$file" \
       --input-file-type jsonschema \
       --output "$dst_file" \
       --output-model-type pydantic_v2.BaseModel \

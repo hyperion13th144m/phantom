@@ -2,3 +2,4 @@ out
 .venv
 .envrc
 __pycache__
+reference

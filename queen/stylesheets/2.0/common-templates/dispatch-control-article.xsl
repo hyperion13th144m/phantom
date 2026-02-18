@@ -35,7 +35,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when test="self::jp:file-reference-id">
                         <xsl:value-of select="'整理番号'" />
@@ -48,7 +48,7 @@
                     </xsl:when>
                 </xsl:choose>
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="." />
             </xf:string>
@@ -60,8 +60,8 @@
                          enum="jp:file-reference-id,
                                jp:dispatch-number,
                                jp:dispatch-date" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="indent-level" type="string" />
+        <schema:property name="jpTag" type="string" />
+        <schema:property name="indentLevel" type="string" />
         <schema:property name="text" type="string" />
     </schema:object>
     

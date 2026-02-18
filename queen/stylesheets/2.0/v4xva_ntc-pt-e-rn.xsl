@@ -291,8 +291,8 @@
     
     <!-- ====================================================================
          begin:
-         terminal type A elements have tag, jp-tag, indent-level and text.
-         optional: converted-text
+         terminal type A elements have tag, jpTag, indentLevel and text.
+         optional: convertedText
          no child elements
          ====================================================================-->
     <!-- ====================================================================
@@ -303,7 +303,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:final-decision-group">
                         <xsl:value-of select="'１．出願種別'" />
@@ -311,7 +311,7 @@
                     <xsl:otherwise />
                 </xsl:choose>
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:final-decision-group">
@@ -333,10 +333,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'発明の名称'" />
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="." />
             </xf:string>
@@ -351,10 +351,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'請求項の数'" />
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="f:remove-nbsp(.)" />
             </xf:string>
@@ -369,10 +369,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・参考文献'" />
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:choose>
                     <xsl:when test="./@jp:true-or-false = 'true'">
@@ -428,7 +428,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when test="$kind-of-law = 'patent'">
                         <xsl:choose>
@@ -631,7 +631,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="$allname" />
             </xf:string>
@@ -646,10 +646,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・特許法第３０条適用'" />
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:choose>
                     <xsl:when test="./@jp:true-or-false = 'true'">
@@ -671,7 +671,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when test="$kind-of-law = 'patent'">
                         <xsl:value-of select="'・発明の名称の変更'" />
@@ -681,7 +681,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:choose>
                     <xsl:when test="./@jp:true-or-false = 'true'">
@@ -703,14 +703,14 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:call-template name="日付タイトル" />
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:choose>
                     <xsl:when test="number(normalize-space(.)) &lt; 19261225" /><!--編集しない-->
                     <xsl:when test="string-length(normalize-space(.)) = 8">
@@ -740,7 +740,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:examiner-notification-a242623-rn' or
@@ -782,11 +782,11 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xf:string>
-            <xf:string key="indent-level">0</xf:string>
+            <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:choose>
                     <xsl:when
                         test="ancestor::jp:application-reference and $appl-type = 'application'">
@@ -830,16 +830,16 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'受託機関コード'" />
             </xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xf:string>
-            <xf:string key="indent-level">2</xf:string>
+            <xf:string key="indentLevel">2</xf:string>
         </xf:map>
     </xsl:template>
     
@@ -851,16 +851,16 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'受託番号'" />
             </xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xf:string>
-            <xf:string key="indent-level">2</xf:string>
+            <xf:string key="indentLevel">2</xf:string>
         </xf:map>
     </xsl:template>
     
@@ -872,16 +872,16 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'適用条文'" />
             </xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="'特許法第３０条' || . || 'の規定の適用'" />
             </xf:string>
-            <xf:string key="indent-level">2</xf:string>
+            <xf:string key="indentLevel">2</xf:string>
         </xf:map>
     </xsl:template>
     
@@ -893,7 +893,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'内容'" />
             </xf:string>
             <xf:string key="text">
@@ -901,7 +901,7 @@
                     <xsl:value-of select="normalize-space(.)" />
                 </xsl:for-each>
             </xf:string>
-            <xf:string key="indent-level">2</xf:string>
+            <xf:string key="indentLevel">2</xf:string>
         </xf:map>
     </xsl:template>
     
@@ -922,10 +922,10 @@
                          jp:depository-number,
                          jp:application-section,
                          jp:exceptions-to-lack-of-novelty" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="indent-level" type="integer" />
+        <schema:property name="jpTag" type="string" />
+        <schema:property name="indentLevel" type="integer" />
         <schema:property name="text" type="string" />
-        <schema:property name="converted-text" type="string" optional="true" />
+        <schema:property name="convertedText" type="string" optional="true" />
     </schema:object>
     <!--=========================================
          End: terminal type A
@@ -933,7 +933,7 @@
     
     <!-- ====================================================================
          Begin:
-         terminal type B elements have tag, text and optional converted-text.
+         terminal type B elements have tag, text and optional convertedText.
          no child elements.
          ====================================================================-->
     <!-- ====================================================================
@@ -1052,7 +1052,7 @@
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:devider">
                         <xsl:value-of select="f:to-fullwidth-digit($code)" />
@@ -1082,7 +1082,7 @@
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(.))" />
             </xf:string>
         </xf:map>
@@ -1128,7 +1128,7 @@
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
-            <xf:string key="converted-text">
+            <xf:string key="convertedText">
                 <xsl:value-of select="jp:document-number || '　' || jp:kind-of-document" />
             </xf:string>
         </xf:map>
@@ -1164,7 +1164,7 @@
                          jp:patent-reference-group,
                          jp:reference-books" />
         <schema:property name="text" type="string" />
-        <schema:property name="converted-text" type="string" optional="true" />
+        <schema:property name="convertedText" type="string" optional="true" />
     </schema:object>
     <!-- ====================================================================
          end: terminal type B elements.
@@ -1509,8 +1509,8 @@
     
     <!-- ====================================================================
          Begin:
-         container type B elements have tag, jp-tag, child elements and
-         optional indent-level.
+         container type B elements have tag, jpTag, child elements and
+         optional indentLevel.
          ====================================================================-->
     <!-- ====================================================================
          jp:draft-person-group 起案者
@@ -1520,7 +1520,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:choose>
                     <xsl:when
                         test="$node = 'jp:examiner-notification-a2515-rn'
@@ -1562,7 +1562,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'適用条文'" />
             </xf:string>
             <xf:array key="blocks">
@@ -1579,7 +1579,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'備考'" />
             </xf:string>
             <xf:array key="blocks">
@@ -1596,7 +1596,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・ＦＩ'" />
             </xf:string>
                        <xf:array key="blocks">
@@ -1614,7 +1614,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・菌寄託'" />
             </xf:string>
               <xf:array key="blocks">
@@ -1631,11 +1631,11 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'菌寄託'" />
                 <xsl:value-of select="f:to-fullwidth-digit(string(position()))" />
             </xf:string>
-            <xf:string key="indent-level">1</xf:string>
+            <xf:string key="indentLevel">1</xf:string>
                        <xf:array key="blocks">
             <xsl:apply-templates select="jp:depository-ins-code" />
             <xsl:apply-templates select="jp:depository-number" />
@@ -1651,7 +1651,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・出願日の遡及を認めない旨の表示'" />
             </xf:string>
             <xf:string key="text">
@@ -1678,7 +1678,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・調査した分野（ＩＰＣ，ＤＢ名）'" />
             </xf:string>
             <xf:array key="blocks">
@@ -1695,7 +1695,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・参考特許文献'" />
             </xf:string>
                <xf:array key="blocks">
@@ -1712,7 +1712,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・参考図書雑誌'" />
             </xf:string>
                      <xf:array key="blocks">
@@ -1729,7 +1729,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'・新規性喪失例外規定の適用の事実'" />
             </xf:string>
                 <xf:array key="blocks">
@@ -1746,11 +1746,11 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:string key="jp-tag">
+            <xf:string key="jpTag">
                 <xsl:value-of select="'新規性喪失の例外'" />
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
             </xf:string>
-            <xf:string key="indent-level">1</xf:string>
+            <xf:string key="indentLevel">1</xf:string>
                <xf:array key="blocks">
           <xsl:apply-templates select="jp:application-section" />
             <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
@@ -1773,8 +1773,8 @@
                          jp:reference-books-article,
                          jp:exceptions-to-lack-of-novelty-art,
                          jp:exceptions-to-lack-of-novelty-grp" />
-        <schema:property name="jp-tag" type="string" />
-        <schema:property name="indent-level" type="integer" optional="true" />
+        <schema:property name="jpTag" type="string" />
+        <schema:property name="indentLevel" type="integer" optional="true" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />

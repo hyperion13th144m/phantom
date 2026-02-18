@@ -3,9 +3,10 @@
 # This script builds the patent document schema
 # by translating XSL as XML to JSON files.
 
-
-OUTPUT_DIR="./dist"
-XSL_ROOT="/xsl"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.." || exit 1
+OUTPUT_DIR="./out/generated-schema"
+XSL_ROOT="./stylesheets/2.0"
 SRC_XML_ARRAY=(
     "fields.xsl"
     "images.xsl"
@@ -28,8 +29,7 @@ SRC_XML_ARRAY=(
     "common-templates/dispatch-control-article.xsl"
     "common-templates/unsupported-tags.xsl"
 )
-DSL="./src/schema-dsl.xsl"
-SAXON_JAR="/opt/saxon-he/saxon-he-10.8.jar"
+DSL="./stylesheets/schema/schema-dsl.xsl"
 
 usage() {
   echo "Usage: $0 [ -o output_dir ] [ -x xsl_root ] [ -s schema_xsl ]"
@@ -73,11 +73,8 @@ for src_xml in "${SRC_XML_ARRAY[@]}"; do
     echo "Translating $src_xml to $dst_json"
 
     # read xsl as xml and translate them to json using the DSL
-    java -cp $SAXON_JAR net.sf.saxon.Transform \
-         -xsl:"$DSL" \
-         -s:"$XSL_ROOT/$src_xml" \
-         -o:"$dst_json" --allowSyntaxExtensions:off 
-    if [ -f "$dst_json" ]; then
-        jq . "$dst_json" > "${dst_json}.tmp" && mv "${dst_json}.tmp" "$dst_json"
-    fi
+    uv run src/queen/translate.py \
+       "$XSL_ROOT/$src_xml" \
+       "$DSL" \
+       "$dst_json" --prettify
 done

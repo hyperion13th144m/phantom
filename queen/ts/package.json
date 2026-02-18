@@ -3,7 +3,6 @@
     "dependencies": {
         "json-schema-to-typescript": "^15.0.4",
         "lodash": "^4.17.23",
-        "schema-typescript": "^0.14.1",
         "ts-auto-guard": "^5.0.1",
         "typescript": "^5.9.3"
     }

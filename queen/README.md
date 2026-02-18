@@ -212,3 +212,23 @@ src_xml は 文字コードが UTF-8であること。
 libefiling parse_archive で出力された xml ディレクトリにあるxml を想定している。
 
 ## 型生成
+```bash
+scripts/
+├── build-all.sh
+├── build-fox.sh
+├── build-image.sh
+├── build-panther.sh
+├── build-schema.sh
+├── build-ts-guard.sh
+├── build-ts-schema.sh
+├── translate-all.sh
+└── translate.sh
+```
+ - build-fox.sh: fox 用 interface, type guard を生成
+ - build-panther.sh: panther 用 interface を生成
+ - build-image.sh: build-fox.sh で使われるnode実行環境 docker image 作成
+ - translate-all.sh: src_xml 配下の全ての xml を変換
+ - translate.sh: src_xml 配下の特定の xml を変換
+ - build-schema.sh, build-ts-guard.sh, build-ts-schema.sh, build-all.sh: build-fox.sh, build-panther.sh などから呼ばれる
+
+xsl のschemaを更新したら build-fox.sh, build-panther.sh を実行して型を生成する。

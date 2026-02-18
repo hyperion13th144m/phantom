@@ -55,14 +55,15 @@
             jp:law-of-industrial-regenerate | jp:conclusion-part-article |
             jp:drafting-body | jp:opinion-contents-article">
         <xsl:if test="normalize-space(.) != ''">
-            <xf:string key="{local-name()}">
+            <xsl:variable name="camel-key" select="key('field-mapping-key', local-name())" />
+            <xf:string key="{$camel-key/@camel}">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
         </xsl:if>
     </xsl:template>
     
     <xsl:template match="jp:special-mention-matter-article">
-        <xf:array key="special-mention-matter-article">
+        <xf:array key="specialMentionMatterArticle">
             <xsl:for-each select="jp:article">
                 <xf:string>
                     <xsl:call-template name="convert-special-mention-matter-article">
@@ -75,7 +76,7 @@
     </xsl:template>
     
     <xsl:template match="jp:article-group">
-        <xf:array key="rejection-reason-article">
+        <xf:array key="rejectionReasonArticle">
             <xsl:for-each select="jp:article">
                 <xf:string>
                     <xsl:value-of select="normalize-space(.)" />
@@ -85,14 +86,14 @@
     </xsl:template>
     
     <xsl:template match="claims">
-        <xf:array key="independent-claims">
+        <xf:array key="independentClaims">
             <xsl:for-each select=".//claim-text[not(contains(., '請求項'))]">
                 <xf:string>
                     <xsl:value-of select="normalize-space(.)" />
                 </xf:string>
             </xsl:for-each>
         </xf:array>
-        <xf:array key="dependent-claims">
+        <xf:array key="dependentClaims">
             <xsl:for-each select=".//claim-text[contains(., '請求項')]">
                 <xf:string>
                     <xsl:value-of select="normalize-space(.)" />
@@ -115,7 +116,7 @@
         <xsl:apply-templates select="jp:applicants" />
         <xsl:apply-templates select="jp:agents" />
         
-        <xf:array key="contents-of-amendment">
+        <xf:array key="contentsOfAmendment">
             <xsl:for-each select=".//jp:contents-of-amendment">
                 <xf:string>
                     <xsl:value-of select="normalize-space(.)" />
@@ -220,34 +221,53 @@
     
     <xsl:template match="text()" />
     
+    <xsl:key name="field-mapping-key" match="item" use="@key" />
+    <xsl:variable name="field-mapping">
+        <item key="invention-title" camel="inventionTitle"/>
+        <item key="technical-field" camel="technicalField"/>
+        <item key="background-art" camel="backgroundArt"/>
+        <item key="tech-problem" camel="techProblem"/>
+        <item key="tech-solution" camel="techSolution"/>
+        <item key="advantageous-effects" camel="advantageousEffects"/>
+        <item key="description-of-embodiments" camel="descriptionOfEmbodiments"/>
+        <item key="best-mode" camel="bestMode"/>
+        <item key="industrial-applicability" camel="industrialApplicability"/>
+        <item key="reference-to-deposited-biological-material" camel="referenceToDepositedBiologicalMaterial"/>
+        <item key="abstract" camel="abstract"/>
+        <item key="law-of-industrial-regenerate" camel="lawOfIndustrialRegenerate"/>
+        <item key="conclusion-part-article" camel="conclusionPartArticle"/>
+        <item key="drafting-body" camel="draftingBody"/>
+        <item key="opinion-contents-article" camel="opinionContentsArticle"/>
+    </xsl:variable>
+    
     <schema:object name="fields" is-root="true">
         <schema:property name="tag" type="string"
                          const="fields" />
-        <schema:property name="invention-title" type="string" optional="true" />
-        <schema:property name="technical-field" type="string" optional="true" />
-        <schema:property name="background-art" type="string" optional="true" />
-        <schema:property name="tech-problem" type="string" optional="true" />
-        <schema:property name="tech-solution" type="string" optional="true" />
-        <schema:property name="advantageous-effects" type="string" optional="true" />
-        <schema:property name="description-of-embodiments" type="string" optional="true" />
-        <schema:property name="best-mode" type="string" optional="true" />
-        <schema:property name="industrial-applicability" type="string" optional="true" />
-        <schema:property name="reference-to-deposited-biological-material" type="string"
+        <schema:property name="inventionTitle" type="string" optional="true" />
+        <schema:property name="technicalField" type="string" optional="true" />
+        <schema:property name="backgroundArt" type="string" optional="true" />
+        <schema:property name="techProblem" type="string" optional="true" />
+        <schema:property name="techSolution" type="string" optional="true" />
+        <schema:property name="advantageousEffects" type="string" optional="true" />
+        <schema:property name="descriptionOfEmbodiments" type="string" optional="true" />
+        <schema:property name="bestMode" type="string" optional="true" />
+        <schema:property name="industrialApplicability" type="string" optional="true" />
+        <schema:property name="referenceToDepositedBiologicalMaterial" type="string"
                          optional="true" />
         <schema:property name="abstract" type="string" optional="true" />
-        <schema:property name="jp:law-of-industrial-regenerate" type="string" optional="true" />
-        <schema:property name="jp:conclusion-part-article" type="string" optional="true" />
-        <schema:property name="jp:drafting-body" type="string" optional="true" />
-        <schema:property name="jp:opinion-contents-article" type="string" optional="true" />
+        <schema:property name="lawOfIndustrialRegenerate" type="string" optional="true" />
+        <schema:property name="conclusionPartArticle" type="string" optional="true" />
+        <schema:property name="draftingBody" type="string" optional="true" />
+        <schema:property name="opinionContentsArticle" type="string" optional="true" />
         
-        <schema:property name="independent-claims" type="array" item-type="string" optional="true" />
-        <schema:property name="dependent-claims" type="array" item-type="string" optional="true" />
+        <schema:property name="independentClaims" type="array" item-type="string" optional="true" />
+        <schema:property name="dependentClaims" type="array" item-type="string" optional="true" />
         <schema:property name="inventors" type="array" item-type="string" optional="true" />
         <schema:property name="applicants" type="array" item-type="string" />
         <schema:property name="agents" type="array" item-type="string" optional="true" />
-        <schema:property name="rejection-reason-article" type="array" item-type="string"
+        <schema:property name="rejectionReasonArticle" type="array" item-type="string"
                          optional="true" />
-        <schema:property name="contents-of-amendment" type="array" item-type="string"
+        <schema:property name="contentsOfAmendment" type="array" item-type="string"
                          optional="true" />
     </schema:object>
 </xsl:stylesheet>
