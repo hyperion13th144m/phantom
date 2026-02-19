@@ -1,39 +1,20 @@
-import argparse
-import json
 import logging
-import shutil
-import sys
 import tempfile
-import traceback
-from logging import Logger
 from pathlib import Path
-from typing import List
 
-from libefiling import Manifest, generate_sha256, parse_archive
-from queen.translate_all import translate_all
+from libefiling import Manifest, parse_archive
+from queen.translate_all import DoctypePathMap, translate_all
 
-from mona.config import TARGET_DOCUMENT_CODES, image_params
-from mona.find_archives import find_archives
-from mona.logger import setup_logger
-from mona.manifest_processor.base import ManifestProcessor
-from mona.manifest_processor.metadata import MetadataProcessor
-from mona.manifest_processor.ocr import OCRProcessor
+from mona.config import image_params
+from mona.manifest_processor.image_info import image_info
+from mona.manifest_processor.metadata import metadata
+from mona.manifest_processor.ocr import ocr
 
 # from mona.manifest_processor.xslt import XSLTProcessor
-from mona.merge_dict import deep_merge
+from mona.merge_json import merge_image_info, merge_json, merge_jsons_as_array
 
 
 def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
-    logger = logging.getLogger(__name__)
-    logger.info(
-        f"Processing archive",
-        extra={
-            "archive_path": str(archive_path),
-            "procedure_path": str(procedure_path),
-            "output_dir": str(output_dir),
-        },
-    )
-
     ### Parse the archive into output_dir
     parse_archive(
         str(archive_path),
@@ -46,51 +27,67 @@ def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
     manifest_path = output_dir / "manifest.json"
     manifest = Manifest.model_validate_json(manifest_path.open(encoding="utf-8").read())
 
-    xml_files = [str(output_dir / x.path) for x in manifest.xml_files]
-    json_dir = output_dir / "json"
-    json_dir.mkdir(exist_ok=True)
-    translate_all(src_xml=xml_files, output_dir=str(json_dir))
-    # new version
-    # 1. each xml file is translated to json by XSLT with a reference to the manifest
-    #    pat-app-doc.json, application-body.json, etc.
-    #    image-description.json, representative-image.json, etc.
-    #    bib.json, fields.json
-    #    using: TranslatorConfig
-    #    save in working directory (not output_dir)
+    # rewrite path to manifest.json to output_dir
+    manifest.paths.root = str(output_dir)
 
-    process_manifest()
-    # 2. generate json from manifest
-    #    manifest -> metadata.json
-    #    manifest -> ocr.json
-    #    manifest -> image-information.json
-    #    using: ManifestToJsonConfig
-    #    save in working directory (not output_dir)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # final output jsons are stored in json_dir
+        json_dir = output_dir / "json"
+        json_dir.mkdir(exist_ok=True)
 
-    merge_json()
-    # 3. merge json
-    #    output_dir: {doc_id}/json
-    #      document.json:
-    #        from metadata.json, bib.json
-    #      document-blocks.json:
-    #        from application-body.json, pat-app-doc.json, etc.
-    #           { "root": [ {doc1}, {doc2}}]}
-    #      image.json:
-    #        from image-information,
-    #             if exists representative-image and image-description
-    #      fields.json
-    #    using: MergeConfig?
+        # working directories
+        work_dir = Path(temp_dir)
+        doc_dir = Path(temp_dir) / "doc"
+        doc_dir.mkdir(exist_ok=True)
 
+        # setup output file names for each doctype
+        bibliography_path = str(work_dir / "bibliography.json")
+        full_text_path = str(work_dir / "full-text.json")
+        image_desc_path = str(work_dir / "image-description.json")
+        doctype_path_map: DoctypePathMap = {
+            "images-description": image_desc_path,
+            "bibliography": bibliography_path,
+            "full-text": full_text_path,
+            "application-body": str(doc_dir / "application-body.json"),
+            "foreign-language-body": str(doc_dir / "foreign-language-body.json"),
+            "pat-app-doc": str(doc_dir / "pat-app-doc.json"),
+            "pat-amnd": str(doc_dir / "pat-amnd.json"),
+            "pat-rspn": str(doc_dir / "pat-rspn.json"),
+            "pat-etc": str(doc_dir / "pat-etc.json"),
+            "cpy-notice-pat-exam": str(doc_dir / "cpy-notice-pat-exam.json"),
+            "cpy-notice-pat-exam-rn": str(doc_dir / "cpy-notice-pat-exam-rn.json"),
+            "cpy-notice-pat-frm": str(doc_dir / "cpy-notice-pat-frm.json"),
+        }
 
-def process_xml():
-    pass
+        # 1. translate all xml to json
+        xml_dir = output_dir / manifest.paths.xml_dir
+        xml_files = [str(xml_dir / x.filename) for x in manifest.xml_files]
+        translate_all(src_xml=xml_files, doctype_path_map=doctype_path_map)
 
+        # 2. generate json from manifest
+        metadata_path = str(work_dir / "metadata.json")
+        metadata(manifest, metadata_path)
+        ocr_path = str(work_dir / "ocr.json")
+        ocr(manifest, ocr_path)
+        image_info_path = str(work_dir / "image-information.json")
+        image_info(manifest, image_info_path)
 
-def process_manifest():
-    pass
-
-
-def merge_json():
-    pass
-    pass
-    pass
-    pass
+        # 3. merge json
+        merge_json(
+            [metadata_path, bibliography_path],
+            str(json_dir / "bibliography.json"),
+        )
+        merge_json(
+            [metadata_path, full_text_path],
+            str(json_dir / "full-text.json"),
+        )
+        merge_jsons_as_array(
+            [str(f) for f in doc_dir.glob("*.json")],
+            str(json_dir / "document.json"),
+        )
+        merge_image_info(
+            image_info_path,
+            image_desc_path,
+            ocr_path,
+            str(json_dir / "images.json"),
+        )

@@ -22,7 +22,7 @@ TranslatorKey = Literal[
     "pat-app-doc",
     "application-body",
     "foreign-language-body",
-    "images-information",
+    "images-description",
     "pat-amnd",
     "pat-rspn",
     "pat-etc",
@@ -64,69 +64,69 @@ translator_config: TranslatorConfig = {
         xsl_path=xsl_path("application-body.xsl"),
         namespace="",
         doctype="application-body",
-        default_filename="application-body-blocks.json",
+        default_filename="application-body.json",
     ),
     "foreign-language-body": TranslatorConfigItems(
         ### A163 外国語書面出願
         xsl_path=xsl_path("foreign-language-body.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="foreign-language-body",
-        default_filename="foreign-language-body-blocks.json",
+        default_filename="foreign-language-body.json",
     ),
-    # "images-information": TranslatorConfigItems(
-    #    ### 画像情報
-    #    xsl_path=str(XSL_DIR / "images.xsl"),
-    #    namespace="",
-    #    doctype="images",
-    #    default_filename="images-information.json",
-    # ),
+    "images-description": TranslatorConfigItems(
+        ### 画像情報
+        xsl_path=xsl_path("image-desc.xsl"),
+        namespace="",
+        doctype="application-body",
+        default_filename="image-description.json",
+    ),
     "pat-amnd": TranslatorConfigItems(
         ### A1523 手続補正書
         xsl_path=xsl_path("pat-amnd.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-amnd",
-        default_filename="pat-amnd-blocks.json",
+        default_filename="pat-amnd.json",
     ),
     "pat-rspn": TranslatorConfigItems(
         ### A153/A159 意見書、弁明書 テキストブロック
         xsl_path=xsl_path("pat-rspn.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-rspns",
-        default_filename="pat-rspns-blocks.json",
+        default_filename="pat-rspns.json",
     ),
     "pat-etc": TranslatorConfigItems(
         ### A1781, A871, A872 上申書, 早期審査に関する事情説明書, 早期審査に関する事情説明補充書
         xsl_path=xsl_path("pat-etc.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="pat-etc",
-        default_filename="pat-etc-blocks.json",
+        default_filename="pat-etc.json",
     ),
     "cpy-notice-pat-exam": TranslatorConfigItems(
         ### A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
         xsl_path=xsl_path("cpy-ntc-pt-e.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam",
-        default_filename="cpy-notice-pat-exam-blocks.json",
+        default_filename="cpy-notice-pat-exam.json",
     ),
     "cpy-notice-pat-exam-rn": TranslatorConfigItems(
         ### 新形式 A101, A102, A1131 特許査定、拒絶査定、拒絶理由通知書 テキストブロック
         xsl_path=xsl_path("cpy-ntc-pt-e-rn.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-exam-rn",
-        default_filename="cpy-notice-pat-exam-rn-blocks.json",
+        default_filename="cpy-notice-pat-exam-rn.json",
     ),
     "cpy-notice-pat-frm": TranslatorConfigItems(
         ### 実案技術評価書の通知
         xsl_path=xsl_path("cpy-ntc-pt-f.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="cpy-notice-pat-frm",
-        default_filename="cpy-notice-pat-frm-blocks.json",
+        default_filename="cpy-notice-pat-frm.json",
     ),
     "full-text": TranslatorConfigItems(
         ### 全文検索用フィールド
         xsl_path=xsl_path("fields.xsl"),
         namespace="",
         doctype="*",
-        default_filename="fields.json",
+        default_filename="full-text.json",
     ),
 }

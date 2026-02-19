@@ -1,34 +1,57 @@
+import json
 import re
+from pathlib import Path
 
-from .base import ManifestProcessor
+from libefiling import Manifest, generate_sha256, parse_archive
 
 
-class OCRProcessor(ManifestProcessor):
-    def sanitize_for_json(self, text: str) -> str:
-        """
-        JSONファイルに安全に保存できるよう、問題のある文字を削除します。
+def ocr(manifest: Manifest, output_path: str) -> None:
+    ocr_results = []
+    for i in manifest.images:
+        fn = i.filename
+        if i.ocr:
+            ocr_text_path = (
+                Path(manifest.paths.root) / manifest.paths.ocr_dir / i.ocr.filename
+            )
+            text = load_ocr_text(ocr_text_path)
+            ocr_results.append(
+                {
+                    "file": fn,
+                    "text": text,
+                }
+            )
+        else:
+            continue
+    json.dump(
+        ocr_results,
+        open(output_path, "w", encoding="utf-8"),
+        ensure_ascii=False,
+        indent=2,
+    )
 
-        Args:
-            text: 処理対象のテキスト
 
-        Returns:
-            サニタイズされたテキスト
-        """
-        # シングルクォート、ダブルクォート、バックスラッシュ、改行コードを削除
-        text = text.replace("'", "")
-        text = text.replace('"', "")
-        text = text.replace("\\", "")
-        text = text.replace("\n", "")
-        text = text.replace("\r", "")
-        return text
+def load_ocr_text(ocr_path: Path) -> str:
+    with ocr_path.open("r", encoding="utf-8") as f:
+        text = f.read()
+        return sanitize(text)
 
-    def translate(self) -> list[dict]:
-        ocr_results = []
-        ocr_files = [image.ocr.path for image in self.manifest.images if image.ocr]
-        for ocr_file in ocr_files:
-            ocr_path = self.manifest_dir / ocr_file
-            with open(ocr_path, "r", encoding="utf-8") as f:
-                text = f.read()
-            sanitized_text = self.sanitize_for_json(text)
-            ocr_results.append(re.sub(r"\s+", " ", sanitized_text).strip())
-        return [{"root": {"ocrText": "".join(ocr_results)}}]
+
+def sanitize(text: str) -> str:
+    """
+    JSONファイルに安全に保存できるよう、問題のある文字を削除します。
+
+    Args:
+        text: 処理対象のテキスト
+
+    Returns:
+        サニタイズされたテキスト
+    """
+    # シングルクォート、ダブルクォート、バックスラッシュ、改行コードを削除
+    text = text.replace("'", "")
+    text = text.replace('"', "")
+    text = text.replace("\\", "")
+    text = text.replace("\n", "")
+    text = text.replace("\r", "")
+    text = re.sub(r"\s+", " ", text)
+    text = text.strip()
+    return text

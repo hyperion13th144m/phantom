@@ -187,14 +187,14 @@ def main_process(
         parse(archive_path, procedure_path, output_dir)
     except Exception as e:
         logger.info(
-            "Failed to process",
+            f"Failed to process: {traceback.format_exc()}",
             extra={
                 "archive_path": str(archive_path),
                 "doc_id": doc_id,
                 "traceback": traceback.format_exc(),
             },
         )
-        shutil.rmtree(output_dir)
+        #shutil.rmtree(output_dir)
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:

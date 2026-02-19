@@ -6,6 +6,10 @@ ARG UID=1000
 ARG GID=1000
 ENV TZ=Asia/Tokyo
 
+### disable multi-threading for tesseract-ocr 
+### to avoid low performance on running in multi-processing environment
+ENV OMP_THREAD_LIMIT=1
+
 RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/sh -u $UID -g $GID $USERNAME
 RUN apt-get update && \
     apt-get install -y bash tesseract-ocr tesseract-ocr-jpn && \

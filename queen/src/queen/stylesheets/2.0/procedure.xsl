@@ -44,45 +44,45 @@
     
     <!-- 文書名 文書コード-->
     <xsl:template match="jp:document-name">
-        <xf:string key="document-name">
+        <xf:string key="documentName">
             <xsl:value-of select="." />
         </xf:string>
-        <xf:string key="document-code">
+        <xf:string key="documentCode">
             <xsl:value-of select="@jp:document-code" />
         </xf:string>
     </xsl:template>
     
     <!-- 出願番号 -->
     <xsl:template match="jp:application-number">
-        <xf:string key="application-number">
+        <xf:string key="applicationNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
     
     <!-- 登録番号 -->
     <xsl:template match="jp:registration-number">
-        <xf:string key="registration-number">
+        <xf:string key="registrationNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
     
     <!-- 国際出願番号 -->
     <xsl:template match="jp:international-application-number">
-        <xf:string key="international-application-number">
+        <xf:string key="internationalApplicationNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
     
     <!-- 審判番号 -->
     <xsl:template match="jp:appeal-reference-number">
-        <xf:string key="appeal-reference-number">
+        <xf:string key="appealReferenceNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
     
     <!-- 受領番号 -->
     <xsl:template match="jp:receipt-number">
-        <xf:string key="receipt-number">
+        <xf:string key="receiptNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
@@ -90,7 +90,7 @@
     <!-- 整理番号 -->
     <xsl:template match="jp:file-reference-id">
         <xsl:if test="normalize-space(.) != ''">
-            <xf:string key="file-reference-id">
+            <xf:string key="fileReferenceId">
                 <xsl:value-of select="." />
             </xf:string>
         </xsl:if>
@@ -98,10 +98,10 @@
     
     <!-- 提出日(出願日) -->
     <xsl:template match="jp:submission-date">
-        <xf:string key="submission-date">
+        <xf:string key="submissionDate">
             <xsl:value-of select="jp:date" />
         </xf:string>
-        <xf:string key="submission-time">
+        <xf:string key="submissionTime">
             <xsl:value-of select="jp:time" />
         </xf:string>
     </xsl:template>
@@ -109,10 +109,10 @@
     <!-- 発送日 -->
     <xsl:template match="jp:dispatch-date">
         <xsl:if test="jp:date and jp:time">
-            <xf:string key="dispatch-date">
+            <xf:string key="dispatchDate">
                 <xsl:value-of select="jp:date" />
             </xf:string>
-            <xf:string key="dispatch-time">
+            <xf:string key="dispatchTime">
                 <xsl:value-of select="jp:time" />
             </xf:string>
         </xsl:if>
@@ -126,16 +126,16 @@
     <schema:title>bibliographic-items</schema:title>
     <schema:object name="bibliographic-items" is-root="true">
         <schema:property name="law" type="string" enum="patent,utilityModel,design,trademark" />
-        <schema:property name="document-name" type="string"/>
-        <schema:property name="application-number" type="string" optional="true"/>
-        <schema:property name="registration-number" type="string" optional="true"/>
-        <schema:property name="international-application-number" type="string" optional="true"/>
-        <schema:property name="appeal-reference-number" type="string" optional="true"/>
-        <schema:property name="receipt-number" type="string" optional="true"/>
-        <schema:property name="file-reference-id" type="string" optional="true"/>
-        <schema:property name="submission-date" type="string" optional="true"/>
-        <schema:property name="submission-time" type="string" optional="true"/>
-        <schema:property name="dispatch-date" type="string" optional="true"/>
-        <schema:property name="dispatch-time" type="string" optional="true"/>
+        <schema:property name="documentName" type="string"/>
+        <schema:property name="applicationNumber" type="string" optional="true"/>
+        <schema:property name="registrationNumber" type="string" optional="true"/>
+        <schema:property name="internationalApplicationNumber" type="string" optional="true"/>
+        <schema:property name="appealReferenceNumber" type="string" optional="true"/>
+        <schema:property name="receiptNumber" type="string" optional="true"/>
+        <schema:property name="fileReferenceId" type="string" optional="true"/>
+        <schema:property name="submissionDate" type="string" optional="true"/>
+        <schema:property name="submissionTime" type="string" optional="true"/>
+        <schema:property name="dispatchDate" type="string" optional="true"/>
+        <schema:property name="dispatchTime" type="string" optional="true"/>
     </schema:object>
 </xsl:stylesheet>
