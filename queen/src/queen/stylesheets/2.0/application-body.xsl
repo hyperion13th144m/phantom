@@ -13,8 +13,10 @@
     <xsl:variable name="kind-of-law" select="//jp:pat-app-doc/*/@jp:kind-of-law" />
     <xsl:variable name="law" select="$kind-of-law" />
     <xsl:variable name="payment" select="substring($node,1,11)" />
+    <xsl:param name="debug" select="'false'"/>
     
     <xsl:include href="common-templates/pat_common.xsl" />
+    <xsl:include href="debug.xsl"/>
     
     <xsl:template match="/">
         <xsl:variable name="root">
@@ -28,7 +30,15 @@
                 </xf:array>
             </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <schema:title>application-body</schema:title>

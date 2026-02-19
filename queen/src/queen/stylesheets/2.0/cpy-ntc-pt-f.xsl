@@ -15,10 +15,12 @@
     xmlns:schema="urn:schema-dsl"
     xmlns:xf="http://www.w3.org/2005/xpath-functions"
     exclude-result-prefixes="xsl jp schema xf">
-
+    
     <xsl:output method="text" encoding="UTF-8" />
+    <xsl:param name="debug" select="'false'"/>
     
     <xsl:include href="v4xva_ntc-pt-f.xsl" />
+    <xsl:include href="debug.xsl"/>
     
     <!-- ====================================================================
          root
@@ -32,7 +34,14 @@
                 </xf:array>
             </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <schema:title>cpy-ntc-pt-f</schema:title>
     <schema:object name="cpy-notice-pat-frm" is-root="true">

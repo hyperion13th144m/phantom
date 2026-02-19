@@ -18,9 +18,11 @@
             <xsl:otherwise>unknown</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+    <xsl:param name="debug" select="'false'"/>
     
     <xsl:include href="common-templates/special-mention-matter-article.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
+    <xsl:include href="debug.xsl"/>
     
     <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>fields</schema:title>
@@ -28,7 +30,6 @@
     <xsl:template match="/">
         <xsl:variable name="root">
             <xf:map>
-                <xf:string key="tag">fields</xf:string>
                 <xsl:apply-templates select="root/application-body/description" />
                 <xsl:apply-templates select="root/application-body/claims" />
                 <xsl:apply-templates select="root/application-body/abstract" />
@@ -44,7 +45,14 @@
                 <xsl:apply-templates select="root/jp:m-mi-notice-doc" />
             </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template
@@ -55,7 +63,7 @@
             jp:law-of-industrial-regenerate | jp:conclusion-part-article |
             jp:drafting-body | jp:opinion-contents-article">
         <xsl:if test="normalize-space(.) != ''">
-            <xsl:variable name="camel-key" select="key('field-mapping-key', local-name())" />
+            <xsl:variable name="camel-key" select="key('field-mapping-key', local-name(), $field-mapping)" />
             <xf:string key="{$camel-key/@camel}">
                 <xsl:value-of select="normalize-space(.)" />
             </xf:string>
@@ -132,7 +140,7 @@
         <xsl:apply-templates select="jp:inventors" />
         <xsl:apply-templates select="jp:applicants" />
         <!--jp:agents/jp:agent, jp:change-attorney-article/jp:agent
-        をまとめるため、ここに記載 -->
+             をまとめるため、ここに記載 -->
         <xf:array key="agents">
             <xsl:for-each select=".//jp:agent">
                 <xf:string>

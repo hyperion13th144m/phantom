@@ -1821,13 +1821,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <!-- render jpTag -->
+            <!-- render jpTag, indentLevel -->
             <xsl:call-template name="日付タイトル" />
             <xf:string key="text">
                 <xsl:value-of select="normalize-space()" />
-            </xf:string>
-            <xf:string key="indentLevel">
-                <xsl:value-of select="'0'" />
             </xf:string>
             <xf:string key="convertedText">
                 <xsl:call-template name="format-date-jp">
@@ -1838,13 +1835,10 @@
         </xf:map>
     </xsl:template>
     <xsl:template match="jp:date" mode="no-blocks">
-        <!-- render jpTag -->
+        <!-- render jpTag, indentLevel -->
         <xsl:call-template name="日付タイトル" />
         <xf:string key="text">
             <xsl:value-of select="normalize-space()" />
-        </xf:string>
-        <xf:string key="indentLevel">
-            <xsl:value-of select="'0'" />
         </xf:string>
         <xf:string key="convertedText">
             <xsl:call-template name="format-date-jp">
@@ -5170,25 +5164,27 @@
                 <xsl:value-of select="'0'" />
             </xf:string>
             
-            <xsl:for-each select="key('images-table-key', @file)">
-                <xf:map>
-                    <xf:string key="src">
-                        <xsl:value-of select="@new" />
-                    </xf:string>
-                    <xf:integer name="width">
-                        <xsl:value-of select="@width" />
-                    </xf:integer>
-                    <xf:integer name="height">
-                        <xsl:value-of select="@height" />
-                    </xf:integer>
-                    <xf:string key="kind">
-                        <xsl:value-of select="@kind" />
-                    </xf:string>
-                    <xf:string key="size-tag">
-                        <xsl:value-of select="@sizeTag" />
-                    </xf:string>
-                </xf:map>
-            </xsl:for-each>
+            <xf:array key="images">
+                <xsl:for-each select="key('images-table-key', @file)">
+                    <xf:map>
+                        <xf:string key="src">
+                            <xsl:value-of select="@new" />
+                        </xf:string>
+                        <xf:number key="width">
+                            <xsl:value-of select="@width" />
+                        </xf:number>
+                        <xf:number key="height">
+                            <xsl:value-of select="@height" />
+                        </xf:number>
+                        <xf:string key="kind">
+                            <xsl:value-of select="@kind" />
+                        </xf:string>
+                        <xf:string key="size-tag">
+                            <xsl:value-of select="@sizeTag" />
+                        </xf:string>
+                    </xf:map>
+                </xsl:for-each>
+            </xf:array>
         </xf:map>
     </xsl:template>
     <schema:object
@@ -5851,45 +5847,37 @@
             <xsl:otherwise>
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:submit-date-of-amendment">
-                        <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xf:string key="indentLevel">
-                                <xsl:value-of select="'2'" />
-                            </xf:string>
-                        </xsl:if>
                         <xf:string key="jpTag">
                             <xsl:value-of select="'【補正書の提出年月日】'" />
                         </xf:string>
                     </xsl:when>
                     <xsl:when test="ancestor::jp:notice-filing-date">
-                        <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xf:string key="indentLevel">
-                                <xsl:value-of select="'2'" />
-                            </xf:string>
-                        </xsl:if>
                         <xf:string key="jpTag">
                             <xsl:value-of select="'【出願番号通知の出願日】'" />
                         </xf:string>
                     </xsl:when>
                     <xsl:when test="ancestor::jp:proof-filing-date">
-                        <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xf:string key="indentLevel">
-                                <xsl:value-of select="'2'" />
-                            </xf:string>
-                        </xsl:if>
                         <xf:string key="jpTag">
                             <xsl:value-of select="'【証明しようとする出願日】'" />
                         </xf:string>
                     </xsl:when>
                     <xsl:when test="ancestor::jp:receipt-date">
-                        <xsl:if test="ancestor::jp:contents-of-amendment">
-                            <xf:string key="indentLevel">
-                                <xsl:value-of select="'2'" />
-                            </xf:string>
-                        </xsl:if>
                         <xf:string key="jpTag">
                             <xsl:value-of select="'【１９条補正のＷＩＰＯ受領日】'" />
                         </xf:string>
                     </xsl:when>
+                </xsl:choose>
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xf:string key="indentLevel">
+                            <xsl:value-of select="'2'" />
+                        </xf:string>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xf:string key="indentLevel">
+                            <xsl:value-of select="'0'" />
+                        </xf:string>
+                    </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
         </xsl:choose>

@@ -5,7 +5,8 @@
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:schema="urn:schema-dsl"
     xmlns:xf="http://www.w3.org/2005/xpath-functions"
-    exclude-result-prefixes="xsl jp schema xf">
+    xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+    exclude-result-prefixes="xsl jp schema xf map">
     
     <!-- this xslt was created with reference to pat_common.xsl
          of Internet Application Software version i5.30 provided by JPO -->
@@ -16,8 +17,10 @@
     <xsl:variable name="kind-of-law" select="//jp:pat-app-doc/*/@jp:kind-of-law" />
     <xsl:variable name="kinddoc" select="name(//jp:pat-app-doc/*)" />
     <xsl:variable name="payment" select="substring($node,1,11)" />
+    <xsl:param name="debug" select="'false'"/>
     
     <xsl:include href="common-templates/pat_common.xsl" />
+    <xsl:include href="debug.xsl"/>
     
     <xsl:template match="/">
         <xsl:variable name="root">
@@ -28,7 +31,15 @@
                 </xf:array>
             </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <schema:title>pat-app-doc</schema:title>
     <schema:object name="pat-app-doc" is-root="true">

@@ -10,9 +10,13 @@ dependencies = [
     "libefiling (>=0.1.30,<0.2.0)",
     "saxonche (>=12.9.0,<13.0.0)",
     "python-json-logger>=4.0.0",
+    "queen",
 ]
 [tool.poetry]
 packages = [{ include = "mona", from = "src" }]
+
+[tool.uv.sources]
+queen = { path = "../queen" }
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

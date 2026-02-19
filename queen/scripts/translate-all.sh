@@ -11,4 +11,12 @@ if [ ! -d "$OUTPUT_DIR" ]; then
     echo "Output directory does not exist. Creating it."
     mkdir -p "$OUTPUT_DIR"
 fi
-uv run src/queen/translate_all.py $SRC_XML --output-dir $OUTPUT_DIR --prettify
+if [ "$3" = "--debug" ]; then
+    uv run src/queen/translate_all.py $SRC_XML --output-dir $OUTPUT_DIR --debug
+    for f in $OUTPUT_DIR/*.json; do
+        echo "Prettifying $f"
+        jq . $f > tmp.$$.json && mv tmp.$$.json $f
+    done
+else
+    uv run src/queen/translate_all.py $SRC_XML --output-dir $OUTPUT_DIR --prettify
+fi

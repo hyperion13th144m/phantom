@@ -17,8 +17,10 @@
         select="name(//jp:foreign-language-body/*)" />
     <xsl:variable name="payment"
         select="substring($node,1,11)" />
+    <xsl:param name="debug" select="'false'"/>
     
     <xsl:include href="common-templates/pat_common.xsl" />
+    <xsl:include href="debug.xsl"/>
     
     <xsl:variable
         name="law">
@@ -44,7 +46,15 @@
                 </xf:array>
             </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <schema:title>foreign-language-body</schema:title>
     <schema:object name="foreign-language-body" is-root="true">

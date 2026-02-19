@@ -8,6 +8,8 @@
     exclude-result-prefixes="xsl jp schema xf">
     
     <xsl:output method="text" encoding="UTF-8" />
+    <xsl:param name="debug" select="'false'"/>
+    <xsl:include href="debug.xsl"/>
     
     <xsl:template match="/">
         <xsl:variable name="root">
@@ -15,7 +17,14 @@
                 <xsl:apply-templates select="root/jp:procedure" />
             </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <!-- 法律種別 -->

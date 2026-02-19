@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
-     original xsl: cpy-ntc-pt-e.xsl at Oct 27  2009
-     sha256sum:7c869dc6d82b1fb8a8d10bef39834b63c685c0861db940621db140fb50a4d84d
+     original xsl: cpy-ntc-pt-e-rn.xsl at May 20  2019
+     sha256sum:7fe3870976f66447086dcf83ebef7a8c3e4f571d072b3c477d2f1edfd1066670
 -->
 
-
 <!-- ====================================================================
-     変換対象書類名：特実審査周辺
+     変換対象書類名：謄本用 発送書類 特実審査（分類付与、実体審査）Y21M05-
      ====================================================================-->
 <xsl:stylesheet
     version="3.0"
@@ -18,47 +17,57 @@
     exclude-result-prefixes="xsl jp schema xf">
     
     <xsl:output method="text" encoding="UTF-8" />
-
-    <xsl:include href="v4xva_ntc-pt-e.xsl" />
+    <xsl:param name="debug" select="'false'"/>
+    
+    <xsl:include href="v4xva_ntc-pt-e-rn.xsl" />
+    <xsl:include href="debug.xsl"/>
     
     <!-- ====================================================================
          root
          ====================================================================-->
     <xsl:template match="/">
         <xsl:variable name="root">
-        <xf:map>
-            <xf:string key="tag">cpy-ntc-pt-e</xf:string>
-            <xf:array key="blocks">
-                <xsl:apply-templates select="root/jp:cpy-notice-pat-exam" />
-            </xf:array>
-        </xf:map>
+            <xf:map>
+                <xf:string key="tag">cpy-ntc-pt-e-rn</xf:string>
+                <xf:array key="blocks">
+                    <xsl:apply-templates select="root/jp:cpy-notice-pat-exam-rn" />
+                </xf:array>
+            </xf:map>
         </xsl:variable>
-        <xsl:value-of select="xml-to-json($root)" />
+        <xsl:choose>
+            <xsl:when test="$debug = 'true'">
+                <xsl:apply-templates select="$root/xf:map"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="xml-to-json($root)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
-    <schema:title>cpy-ntc-pt-e</schema:title>
-    <schema:object name="cpy-ntc-pt-e" is-root="true">
-        <schema:property name="tag" type="string" const="jp:cpy-ntc-pt-e" />
+    <schema:title>cpy-ntc-pt-e-rn</schema:title>
+    <schema:object name="cpy-ntc-pt-e-rn" is-root="true">
+        <schema:property name="tag" type="string" const="cpy-ntc-pt-e-rn" />
         <schema:property name="blocks" type="array">
-            <schema:ref name="cpy-notice-pat-exam" />
+            <schema:ref name="cpy-notice-pat-exam-rn" />
         </schema:property>
     </schema:object>
     
+    
     <!-- ====================================================================
-         jp:cpy-notice-pat-exam
+         jp:cpy-notice-pat-exam-rn
          ====================================================================-->
-    <xsl:template match="jp:cpy-notice-pat-exam">
+    <xsl:template match="jp:cpy-notice-pat-exam-rn">
         <xf:map>
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
                 <xsl:apply-templates select="jp:dispatch-control-article" />
-                <xsl:apply-templates select="jp:notice-pat-exam" />
+                <xsl:apply-templates select="jp:notice-pat-exam-rn" />
             </xf:array>
         </xf:map>
     </xsl:template>
-    <schema:object name="cpy-notice-pat-exam">
-        <schema:property name="tag" type="string" const="jp:cpy-notice-pat-exam" />
+    <schema:object name="cpy-notice-pat-exam-rn">
+        <schema:property name="tag" type="string" const="jp:cpy-notice-pat-exam-rn" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="dispatch-control-article.json" name="dispatch-control-article" />

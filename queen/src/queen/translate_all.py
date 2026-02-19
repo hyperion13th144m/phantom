@@ -14,6 +14,7 @@ def translate_all(
     doctype_path_map: DoctypePathMap | None = None,
     output_dir: str | None = None,
     prettify: bool = False,
+    debug: bool = False,
 ) -> None:
     """Translate all XML files according to the provided configuration.
 
@@ -21,6 +22,8 @@ def translate_all(
         src_xml (list[str]): List of source XML file paths.
         doctype_path_map (DoctypePathMap | None): Mapping of doctype keys to output file paths.
         output_dir (str | None): Directory to save the translated XML files.
+        prettify (bool): Whether to prettify the output XML files.
+        debug (bool): Whether to enable debug mode.
 
         if doctype_path_map is None and output_dir is not None,
         the translated XML files will be saved in output_dir
@@ -63,6 +66,7 @@ def translate_all(
                 xsl_path=config.xsl_path,
                 output_path=output_path,
                 prettify=prettify,
+                debug=debug,
             )
 
 
@@ -91,8 +95,16 @@ if __name__ == "__main__":
     parser.add_argument(
         "--prettify", action="store_true", help="Prettify the output XML files."
     )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Whether to enable debug mode (default: False)",
+    )
     args = parser.parse_args()
-
     translate_all(
-        src_xml=args.src_xml, output_dir=args.output_dir, prettify=args.prettify
+        src_xml=args.src_xml,
+        output_dir=args.output_dir,
+        prettify=args.prettify,
+        debug=args.debug,
     )
