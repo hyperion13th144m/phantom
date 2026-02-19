@@ -1,43 +1,31 @@
 import argparse
-import json
 import logging
+import queue as queue_module
 import shutil
 import sys
+import time
 import traceback
-from logging import Logger
+from multiprocessing import Event, Process, Queue
 from pathlib import Path
 from typing import List
 
-from libefiling import generate_sha256, parse_archive
+from libefiling import generate_sha256
 
-from mona.config import TARGET_DOCUMENT_CODES, image_params, translator_config
+from mona.config import TARGET_DOCUMENT_CODES, image_params
 from mona.find_archives import find_archives
-from mona.logger import setup_logger
-from mona.manifest_processor.base import ManifestProcessor
-from mona.manifest_processor.metadata import MetadataProcessor
-from mona.manifest_processor.ocr import OCRProcessor
-from mona.manifest_processor.xslt import XSLTProcessor
-from mona.merge_dict import deep_merge
+from mona.logger import setup_child_logging, setup_logger
+from mona.parse import parse
 
 
 def main():
-    src_dir, output_dir_root, doc_code, log_level, multi_processors, overwrite = (
-        get_args()
-    )
-
-    if multi_processors > 1:
-        multi_processes_parent(
-            src_dir, output_dir_root, doc_code, log_level, overwrite, multi_processors
-        )
-    else:
-        single_process(src_dir, output_dir_root, doc_code, log_level, overwrite)
+    multi_processes_parent(**get_args())
 
 
-def get_args() -> tuple[Path, Path, str, int, bool]:
+def get_args() -> dict:
     p = argparse.ArgumentParser(
-        description="Batch parse e-filing archives in a directory"
+        description="An application for parsing XML handled by the Internet Application Software."
     )
-    p.add_argument("src_dir", type=str, help="Directory containing e-filing archives")
+    p.add_argument("src_dir", type=str, help="Directory containing archives")
     p.add_argument("output_dir", type=str, help="Directory to store parsed output")
     p.add_argument(
         "doc_code",
@@ -75,27 +63,14 @@ def get_args() -> tuple[Path, Path, str, int, bool]:
         print(f"Output directory {args.output_dir} does not exist.")
         sys.exit(1)
 
-    return (
-        src_dir,
-        output_dir_root,
-        args.doc_code,
-        args.log_level,
-        args.multi_processors,
-        args.overwrite,
-    )
-
-
-def single_process(
-    src_dir: Path,
-    output_dir_root: Path,
-    doc_code: List[str],
-    log_level: str,
-    overwrite: bool,
-):
-    for archive_path, procedure_path in find_archives(src_dir, doc_code):
-        main_process(
-            archive_path, procedure_path, output_dir_root, log_level, overwrite
-        )
+    return {
+        "src_dir": src_dir,
+        "output_dir_root": output_dir_root,
+        "doc_code": args.doc_code,
+        "log_level": args.log_level,
+        "num_processors": args.multi_processors,
+        "overwrite": args.overwrite,
+    }
 
 
 def multi_processes_parent(
@@ -106,47 +81,77 @@ def multi_processes_parent(
     overwrite: bool,
     num_processors: int,
 ):
-    from multiprocessing import Process, Queue
 
     queue = Queue()
+    stop_event = Event()
     processes: List[Process] = []
+    log_queue, listener = setup_logger(log_level=log_level)
 
-    # create and initialize processes
     for _ in range(num_processors):
         p = Process(
             target=multi_processes_child,
-            args=(output_dir_root, queue, log_level, overwrite),
+            args=(output_dir_root, queue, log_queue, log_level, overwrite, stop_event),
         )
         p.start()
         processes.append(p)
 
     try:
         # give archive to each processes via queue
-        for item in find_archives(src_dir, doc_code):
+        for item in find_archives(str(src_dir), doc_code):
+            if stop_event.is_set():
+                break
             queue.put(item)
 
-        # give None for quit processes
+        # 正常終了ルート：sentinel投入
         for _ in range(num_processors):
             queue.put(None)
 
     except KeyboardInterrupt:
+        stop_event.set()
+
+        # 子がqueue.getから抜けられるようにsentinelも投げる（重要）
+        for _ in range(num_processors):
+            queue.put(None)
+
+        # “穏当停止”を少し待つ
+        deadline = time.time() + 5
         for p in processes:
-            p.terminate()
+            remaining = max(0, deadline - time.time())
+            p.join(timeout=remaining)
+
+        # まだ残ってたら強制停止
+        for p in processes:
+            if p.is_alive():
+                p.terminate()
     finally:
         # wait for all processes
         for p in processes:
             p.join()
+        listener.stop()
 
 
-def multi_processes_child(output_dir_root, queue, log_level, overwrite: bool):
+def multi_processes_child(
+    output_dir_root, queue, log_queue, log_level, overwrite: bool, stop_event
+):
+    setup_child_logging(log_queue, log_level)
     while True:
-        item = queue.get()
+        if stop_event.is_set():
+            break
+        try:
+            item = queue.get(timeout=0.5)
+        except queue_module.Empty:
+            continue
+
         if item is None:
             break
-        archive_path, procedure_path = item
 
+        archive_path, procedure_path = item
         main_process(
-            archive_path, procedure_path, output_dir_root, log_level, overwrite
+            archive_path,
+            procedure_path,
+            output_dir_root,
+            overwrite,
+            stop_event,
         )
 
 
@@ -154,15 +159,12 @@ def main_process(
     archive_path: Path,
     procedure_path: Path,
     output_dir_root: Path,
-    log_level: str,
     overwrite: bool,
+    stop_event,
 ):
-    setup_logger()
     logger = logging.getLogger(__name__)
-    logger.setLevel(
-        getattr(logging, log_level.upper(), None)
-    )  ### check if already processed
 
+    ### check if already processed
     doc_id = generate_sha256(str(archive_path))
     output_dir = get_output_dir(doc_id, output_dir_root)
     if overwrite is False and output_dir.exists():
@@ -175,107 +177,29 @@ def main_process(
 
     output_dir.mkdir(parents=True, exist_ok=True)
     try:
-        process_archive(archive_path, procedure_path, output_dir, logger)
-    except KeyboardInterrupt:
-        logger.info("Process interrupted by user.")
-        logger.debug(f"doc_id: {doc_id}")
-        shutil.rmtree(output_dir)
-        sys.exit(0)
+        if stop_event.is_set():
+            logger.info(
+                "Process interrupted by user.",
+                extra={"archive_path": str(archive_path), "doc_id": doc_id},
+            )
+            shutil.rmtree(output_dir)
+            sys.exit(0)
+        parse(archive_path, procedure_path, output_dir)
     except Exception as e:
-        logger.info(f"Failed to process {archive_path}: {e}")
-        logger.debug(f"doc_id: {doc_id}")
-        logger.info(traceback.format_exc())
+        logger.info(
+            "Failed to process",
+            extra={
+                "archive_path": str(archive_path),
+                "doc_id": doc_id,
+                "traceback": traceback.format_exc(),
+            },
+        )
         shutil.rmtree(output_dir)
-
-
-def process_archive(
-    archive_path: Path, procedure_path: Path, output_dir: Path, logger: Logger
-):
-    ### Parse the archive into output_dir
-    parse_archive(
-        str(archive_path),
-        str(procedure_path),
-        str(output_dir),
-        image_params=image_params,
-        skip_ocr=False,
-    )
-
-    # new version
-    process_xml()
-    # 1. each xml file is translated to json by XSLT with a reference to the manifest
-    #    pat-app-doc.json, application-body.json, etc.
-    #    image-description.json, representative-image.json, etc.
-    #    bib.json, fields.json
-    #    using: TranslatorConfig
-    #    save in working directory (not output_dir)
-
-    process_manifest()
-    # 2. generate json from manifest
-    #    manifest -> metadata.json
-    #    manifest -> ocr.json
-    #    manifest -> image-information.json
-    #    using: ManifestToJsonConfig
-    #    save in working directory (not output_dir)
-
-    merge_json()
-    # 3. merge json
-    #    output_dir: {doc_id}/json
-    #      document.json:
-    #        from metadata.json, bib.json
-    #      document-blocks.json:
-    #        from application-body.json, pat-app-doc.json, etc.
-    #           { "root": [ {doc1}, {doc2}}]}
-    #      image.json:
-    #        from image-information,
-    #             if exists representative-image and image-description
-    #      fields.json
-    #    using: MergeConfig?
-
-    manifest_path = output_dir / "manifest.json"
-    data = get_data(manifest_path)
-    for item in data:
-        for key, value in item.items():
-            dst_path = output_dir / key
-            with open(dst_path, "w", encoding="utf-8") as f:
-                f.write(value)
-                # json.dump(json.loads(value), f, ensure_ascii=False, indent=2)
-                logger.info(f"Processed: {archive_path} -> {dst_path}")
-
-
-def process_xml():
-    pass
-
-
-def process_manifest():
-    pass
-
-
-def merge_json():
-    pass
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:
     """Convert document ID to directory path."""
     return base_dir.joinpath(doc_id[0:2], doc_id[2:4], doc_id)
-
-
-def get_data(manifest_path: Path) -> list[dict]:
-    """read manifest and translate to data dict."""
-    processors: List[ManifestProcessor] = [
-        #   MetadataProcessor(manifest_path),
-        XSLTProcessor(manifest_path, translator_config),
-        #   OCRProcessor(manifest_path),
-    ]
-    data = []
-    for p in processors:
-        translated_data = p.translate()
-        data.append(translated_data)
-    return data
-    # merged_dict = {}
-    # for d in data:
-    #    merged_dict = deep_merge(merged_dict, d)
-
-    # return merged_dict["root"]
 
 
 if __name__ == "__main__":
