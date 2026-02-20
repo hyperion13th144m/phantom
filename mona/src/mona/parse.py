@@ -16,12 +16,15 @@ from mona.merge_json import merge_image_info, merge_json, merge_jsons_as_array
 
 def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
     ### Parse the archive into output_dir
+    ### other-images are only processed to ocr. other-images are used
+    ### for foreign language documents, which are not processed to full-text, but only ocr-ed.
+    ### other-images are also used for non patent documents.
     parse_archive(
         str(archive_path),
         str(procedure_path),
         str(output_dir),
         image_params=image_params,
-        skip_ocr=False,
+        ocr_target=["other-images"],
     )
 
     manifest_path = output_dir / "manifest.json"

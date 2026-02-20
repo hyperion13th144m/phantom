@@ -30,16 +30,18 @@ def merge_jsons_as_array(json_paths: List[str], output_path: str) -> None:
 def merge_image_info(
     image_info_path: str, image_desc_path: str, ocr_path: str, output_path: str
 ) -> None:
-    if (
-        os.path.exists(image_info_path) is False
-        or os.path.exists(image_desc_path) is False
-    ):
+    if os.path.exists(image_info_path) is False:
         return
 
     with open(image_info_path, "r", encoding="utf-8") as f:
         image_info_data = json.load(f)
-    with open(image_desc_path, "r", encoding="utf-8") as f:
-        image_desc_data = json.load(f)
+
+    if os.path.exists(image_desc_path):
+        with open(image_desc_path, "r", encoding="utf-8") as f:
+            image_desc_data = json.load(f)
+    else:
+        image_desc_data = []
+
     if os.path.exists(ocr_path):
         with open(ocr_path, "r", encoding="utf-8") as f:
             ocr_data = json.load(f)

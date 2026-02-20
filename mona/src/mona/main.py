@@ -11,14 +11,10 @@ from typing import List
 
 from libefiling import generate_sha256
 
-from mona.config import TARGET_DOCUMENT_CODES, image_params
+from mona.config import TARGET_DOCUMENT_CODES
 from mona.find_archives import find_archives
 from mona.logger import setup_child_logging, setup_logger
 from mona.parse import parse
-
-
-def main():
-    multi_processes_parent(**get_args())
 
 
 def get_args() -> dict:
@@ -146,7 +142,7 @@ def multi_processes_child(
             break
 
         archive_path, procedure_path = item
-        main_process(
+        main(
             archive_path,
             procedure_path,
             output_dir_root,
@@ -155,7 +151,7 @@ def multi_processes_child(
         )
 
 
-def main_process(
+def main(
     archive_path: Path,
     procedure_path: Path,
     output_dir_root: Path,
@@ -194,7 +190,7 @@ def main_process(
                 "traceback": traceback.format_exc(),
             },
         )
-        #shutil.rmtree(output_dir)
+        shutil.rmtree(output_dir)
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:
@@ -203,4 +199,4 @@ def get_output_dir(doc_id: str, base_dir: Path) -> Path:
 
 
 if __name__ == "__main__":
-    main()
+    multi_processes_parent(**get_args())
