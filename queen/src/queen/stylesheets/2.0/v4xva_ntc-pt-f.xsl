@@ -749,7 +749,7 @@
                 <schema:ref name="ntc-pt-f-terminal-items-type" />
                 <schema:ref file="ntc-ninsyo.json" name="certification-column-article" />
                 <schema:ref file="ntc-ninsyo.json" name="inquiry-article" />
-                <schema:ref file="ntc-ninsyo.json" name="other-images" />
+                <schema:ref file="ntc-ninsyo.json" name="image-container" />
                 <schema:ref file="ntc-paragraph.json" name="paragraph" />
                 <schema:ref file="ntc-paragraph.json" name="inline-text" />
                 <!-- empty element 

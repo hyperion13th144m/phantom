@@ -38,7 +38,7 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="certification-column-group" />
-                <schema:ref name="other-images" />
+                <schema:ref name="image-container" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -398,68 +398,38 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
-    <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
-    
+   
     <!--  イメージ   -->
     <xsl:template match="img">
-        <!-- 次の「有意ノード」を見る -->
-        <xsl:variable name="nextNode"
-            select="following-sibling::node()[not(self::text()[normalize-space(.)=''])][1]" />
-        
-        <!-- 次が br か、次が存在しない（p末尾）なら true -->
-        <xsl:variable name="isLastSentence"
-            select="if (empty($nextNode) or $nextNode/self::br) then 'true' else 'false'" />
-        
         <xf:map>
             <xf:string key="tag">
+                <xsl:value-of select="'image-container'" />
+            </xf:string>
+            <xf:string key="imageKind">
                 <xsl:value-of select="'other-images'" />
             </xf:string>
-            <xf:boolean key="isLastSentence">
-                <xsl:value-of select="$isLastSentence" />
-            </xf:boolean>
-            <xsl:for-each select="key('images-table-key', @file)">
-                <xf:map>
-                    <xf:string key="src">
-                        <xsl:value-of select="@new" />
-                    </xf:string>
-                    <xf:number key="width">
-                        <xsl:value-of select="@width" />
-                    </xf:number>
-                    <xf:number key="height">
-                        <xsl:value-of select="@height" />
-                    </xf:number>
-                    <xf:string key="kind">
-                        <xsl:value-of select="@kind" />
-                    </xf:string>
-                    <xf:string key="size-tag">
-                        <xsl:value-of select="@sizeTag" />
-                    </xf:string>
-                </xf:map>
-            </xsl:for-each>
-        </xf:map>
+            <xf:string key="indentLevel">
+                <xsl:value-of select="'0'" />
+            </xf:string>
+            <xf:string key="file">
+                <xsl:value-of select="@file" />
+            </xf:string>
+            <xf:string key="alt">
+                <xsl:value-of select="'Image ' ||  @file" />
+            </xf:string>
+       </xf:map>
     </xsl:template>
     <schema:object
-        name="other-images">
+        name="image-container">
         <schema:property name="tag" type="string"
-                         const="other-images" />
+                         const="image-container" />
         <schema:property name="indentLevel" type="string" />
-        <schema:property name="images" type="array">
-            <schema:ref name="image" />
-        </schema:property>
+        <schema:property name="imageKind" type="string"
+                         const="other-images" />
+        <schema:property name="file" type="string"/>
+        <schema:property name="alt" type="string"/>
     </schema:object>
-    <schema:object
-        name="image">
-        <schema:property name="tag" type="string"
-                         const="image" />
-        <schema:property name="src" type="string" />
-        <schema:property name="width" type="string" />
-        <schema:property name="height" type="string" />
-        <schema:property name="kind" type="string" />
-        <schema:property name="sizeTag" type="string" />
-    </schema:object>
-    
+   
     <!-- ====================================================================
          未サポートタグ（jp:guidance）
          ====================================================================-->

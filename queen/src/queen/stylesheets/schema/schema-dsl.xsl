@@ -5,12 +5,12 @@
     exclude-result-prefixes="schema"
     xmlns:f="http://www.w3.org/2005/xpath-functions"
     version="1.0">
-
+    
     <xsl:output method="text" encoding="UTF-8" />
-
+    
     <!-- 
-      <schema:title> をタイトルにしてルートオブジェクトを生成
-      <schema:object> はすべて properties にまとめる
+         <schema:title> をタイトルにしてルートオブジェクトを生成
+         <schema:object> はすべて properties にまとめる
     -->
     <xsl:template match="/">
         <xsl:variable name="data">
@@ -20,7 +20,7 @@
                 <f:string key="title">
                     <xsl:value-of select="//schema:title" />
                 </f:string>
-
+                
                 <!-- put schema:property of schema:object with is-root='true' into properties -->
                 <xsl:if test="count(//schema:object[@is-root='true']) &gt; 0">
                     <f:map key="properties">
@@ -29,7 +29,7 @@
                         </xsl:for-each>
                     </f:map>
                 </xsl:if>
-
+                
                 <!-- put schema:object with is-root != true into $defs -->
                 <xsl:if test="count(//schema:object[not(@is-root='true')]) &gt; 0">
                     <f:map key="$defs">
@@ -43,7 +43,7 @@
         <xsl:value-of
             select="xml-to-json($data)" />
     </xsl:template>
-
+    
     <xsl:template match="schema:object">
         <f:map key="{@name}">
             <f:string key="type">object</f:string>
@@ -59,20 +59,20 @@
             </f:array>
         </f:map>
     </xsl:template>
-
+    
     <xsl:template match="schema:anyOf">
         <f:array key="anyOf">
             <xsl:apply-templates select="schema:property" />
             <xsl:apply-templates select="schema:ref" mode="with-map" />
         </f:array>
     </xsl:template>
-
+    
     <xsl:template match="schema:ref" mode="with-map">
         <f:map>
             <xsl:apply-templates select="." mode="no-map" />
         </f:map>
     </xsl:template>
-
+    
     <xsl:template match="schema:ref" mode="no-map">
         <f:string key="$ref">
             <xsl:if test="@file">
@@ -82,13 +82,11 @@
             <xsl:value-of select="@name" />
         </f:string>
     </xsl:template>
-
+    
     <xsl:template match="schema:property[@type='object']">
-        <f:map key="{@name}">
-            <xsl:apply-templates select="schema:object" />
-        </f:map>
+        <xsl:apply-templates select="schema:object" />
     </xsl:template>
-
+    
     <xsl:template match="schema:property[@type='array']">
         <f:map key="{@name}">
             <f:string key="type">array</f:string>
@@ -114,7 +112,7 @@
             </f:map>
         </f:map>
     </xsl:template>
-
+    
     <xsl:template match="schema:property[@type='string']">
         <f:map key="{@name}">
             <f:string key="type">string</f:string>
@@ -136,19 +134,19 @@
             </xsl:if>
         </f:map>
     </xsl:template>
-
+    
     <xsl:template match="schema:property[@type='number']">
         <f:map key="{@name}">
             <f:string key="type">number</f:string>
         </f:map>
     </xsl:template>
-
+    
     <xsl:template match="schema:property[@type='integer']">
         <f:map key="{@name}">
             <f:string key="type">integer</f:string>
         </f:map>
     </xsl:template>
-
+    
     <xsl:template match="schema:property[@type='boolean']">
         <f:map key="{@name}">
             <f:string key="type">boolean</f:string>

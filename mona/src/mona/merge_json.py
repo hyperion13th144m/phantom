@@ -71,4 +71,3 @@ def merge_image_info(
         merged_data.append({**info, **desc, **ocr})
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, ensure_ascii=False, indent=2)
-        json.dump(merged_data, f, ensure_ascii=False, indent=2)

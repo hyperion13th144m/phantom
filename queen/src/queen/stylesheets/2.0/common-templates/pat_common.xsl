@@ -4829,7 +4829,7 @@
         <schema:property name="jpTag" type="string" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
-            <schema:ref name="figure" />
+            <schema:ref name="image-container" />
         </schema:property>
     </schema:object>
     <!-- ======================= End of drawings ======================== -->
@@ -4877,69 +4877,7 @@
     </schema:object>
     <!-- ======================= End of abstract ======================== -->
     
-    
-    <!-- ====================================================================
-         figure 図
-         ====================================================================-->
-    <xsl:template match="figure">
-        <!-- figref[@num=@num] だと集合値の比較なので失敗する 
-             変数にすると単一値の比較になるので意図通りになる
-             figref[@num=current()/@num] でも可 -->
-        <xsl:variable name="num" select="@num" />
-        <xsl:variable name="image-file" select="img/@file" />
-        
-        <xf:map>
-            <xf:string key="tag">
-                <xsl:value-of select="'figures'" />
-            </xf:string>
-            <xf:string key="number">
-                <xsl:value-of select="@num" />
-            </xf:string>
-            <xf:string key="jpTag">
-                <xsl:value-of select="'【図'" />
-                <xsl:apply-templates select="@num" />
-                <xsl:value-of select="'】'" />
-            </xf:string>
-            <xf:string key="indentLevel">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:contents-of-amendment">
-                        <xsl:value-of select="'2'" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="'0'" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xf:string>
-            <xf:string key="alt">
-                <xsl:value-of select="name() || ' No. ' || @num || ' '" />
-                <xsl:value-of
-                    select="//description-of-drawings//figref[@num=$num]" />
-            </xf:string>
-            <xf:boolean key="representative">
-                <xsl:choose>
-                    <xsl:when
-                        test="//jp:procedure//jp:representation-image/jp:file-name = $image-file">
-                        true</xsl:when>
-                    <xsl:otherwise>false</xsl:otherwise>
-                </xsl:choose>
-            </xf:boolean>
-            <xf:array key="blocks">
-                <xsl:apply-templates select="img" />
-            </xf:array>
-        </xf:map>
-    </xsl:template>
-    <schema:object name="figure">
-        <schema:property name="tag" type="string" const="figures" />
-        <schema:property name="number" type="string" />
-        <schema:property name="jpTag" type="string" optional="true" />
-        <schema:property name="indentLevel" type="string" />
-        <schema:property name="alt" type="string" />
-        <schema:property name="representative" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="image" />
-        </schema:property>
-    </schema:object>
-    
+
     <!-- ====================================================================
          p 段落 ,段落内テキスト
          ====================================================================-->
@@ -4979,7 +4917,6 @@
                 <schema:ref name="inline-text" />
                 <schema:ref name="inline-text-with-header" />
                 <schema:ref name="image-container" />
-                <schema:ref name="other-images" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -5078,12 +5015,13 @@
          ====================================================================-->
     <xsl:template match="application-body//tables | jp:contents-of-amendment//tables |
         application-body//maths | jp:contents-of-amendment//maths |
-        application-body//chemistry | jp:contents-of-amendment//chemistry">
+        application-body//chemistry | jp:contents-of-amendment//chemistry |
+        application-body//figure | jp:contents-of-amendment//figure">
         <xsl:variable name="params"
             select="key('image-container-key', name(), $image-container-parameters)" />
         <xf:map>
             <xf:string key="tag">
-                <xsl:value-of select="$params/@tag2" />
+                <xsl:value-of select="'image-container'" />
             </xf:string>
             <xf:string key="number">
                 <xsl:value-of select="@num" />
@@ -5093,109 +5031,91 @@
                 <xsl:apply-templates select="@num" />
                 <xsl:value-of select="'】'" />
             </xf:string>
-            <xf:string key="indentLevel">2</xf:string>
-            <xf:array key="blocks">
-                <xsl:apply-templates select="img" />
-            </xf:array>
+            <xf:string key="indentLevel">
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:contents-of-amendment">
+                        <xsl:value-of select="$params/@indentLevel-amendment" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$params/@indentLevel" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:string>
+            <xf:string key="imageKind">
+                <xsl:value-of select="$params/@kind" />
+            </xf:string>
+            <xf:string key="file">
+                <xsl:value-of select="img/@file" />
+            </xf:string>
+            <xf:string key="alt">
+                <xsl:choose>
+                    <xsl:when test="name() = 'figure'">
+                        <xsl:value-of select="'Figure No. ' || @num || ' '" />
+                        <xsl:value-of
+                            select="//description-of-drawings//figref[@num=@num]" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@params/@kind || ' No. ' || @num" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:string>
         </xf:map>
     </xsl:template>
-    
-    <xsl:key name="image-container-key" match="parameter" use="@tag" />
-    <xsl:variable name="image-container-parameters">
-        <parameter tag="tables" tag2="tables" jpTag="【表" />
-        <parameter tag="maths" tag2="equations" jpTag="【数" />
-        <parameter tag="chemistry" tag2="chemical-formulas" jpTag="【化" />
-    </xsl:variable>
-    <schema:object name="image-container">
-        <schema:property name="tag" type="string"
-                         enum="tables equations chemical-formulas" />
-        <schema:property name="jpTag" type="string" />
-        <schema:property name="number" type="string" />
-        <schema:property name="indentLevel" type="string" />
-        <schema:property name="blocks" type="array">
-            <schema:ref name="image" />
-        </schema:property>
-    </schema:object>
-    <!-- ============= End of image-container ============================= -->
-    
-    
-    <!-- 変換元XMLにある images/image のlookup -->
-    <xsl:key name="images-table-key" match="/root/images/image" use="@orig-filename" />
-    
-    <!-- maths, tables, figure, chemistry 下の img -->
-    <xsl:template match="maths/img | tables/img | figure/img | chemistry/img">
-        <xsl:for-each select="key('images-table-key', @file)">
-            <xf:map>
-                <xf:string key="src">
-                    <xsl:value-of select="@new" />
-                </xf:string>
-                <xf:number key="width">
-                    <xsl:value-of select="@width" />
-                </xf:number>
-                <xf:number key="height">
-                    <xsl:value-of select="@height" />
-                </xf:number>
-                <xf:string key="kind">
-                    <xsl:value-of select="@kind" />
-                </xf:string>
-                <xf:string key="size-tag">
-                    <xsl:value-of select="@sizeTag" />
-                </xf:string>
-            </xf:map>
-        </xsl:for-each>
-    </xsl:template>
-    <schema:object name="image">
-        <schema:property name="tag" type="string"
-                         const="image" />
-        <schema:property name="src" type="string" />
-        <schema:property name="width" type="string" />
-        <schema:property name="height" type="string" />
-        <schema:property name="kind" type="string" />
-        <schema:property name="size-tag" type="string" />
-    </schema:object>
     
     <!-- paragraph 下の img -->
     <xsl:template match="p/img">
         <xf:map>
             <xf:string key="tag">
+                <xsl:value-of select="'image-container'" />
+            </xf:string>
+            <xf:string key="imageKind">
                 <xsl:value-of select="'other-images'" />
             </xf:string>
             <xf:string key="indentLevel">
                 <xsl:value-of select="'0'" />
             </xf:string>
-            
-            <xf:array key="images">
-                <xsl:for-each select="key('images-table-key', @file)">
-                    <xf:map>
-                        <xf:string key="src">
-                            <xsl:value-of select="@new" />
-                        </xf:string>
-                        <xf:number key="width">
-                            <xsl:value-of select="@width" />
-                        </xf:number>
-                        <xf:number key="height">
-                            <xsl:value-of select="@height" />
-                        </xf:number>
-                        <xf:string key="kind">
-                            <xsl:value-of select="@kind" />
-                        </xf:string>
-                        <xf:string key="size-tag">
-                            <xsl:value-of select="@sizeTag" />
-                        </xf:string>
-                    </xf:map>
-                </xsl:for-each>
-            </xf:array>
+            <xf:string key="file">
+                <xsl:value-of select="@file" />
+            </xf:string>
+            <xf:string key="alt">
+                <xsl:value-of select="'Image No. ' || @num" />
+            </xf:string>
         </xf:map>
     </xsl:template>
-    <schema:object
-        name="other-images">
+    
+    <!-- 
+         paragraph/tables/img
+         paragraph/maths/img
+         paragraph/chemistry/img
+         paragraph/img
+         rendered to
+         {
+         "tag": "image-container",
+         "imageKind": "tables" | "equations" | "chemical-formulas" | "other-images",
+         "indentLevel": "0",
+         "file": "img/@file"
+         }
+    -->
+    <xsl:key name="image-container-key" match="parameter" use="@tag" />
+    <xsl:variable name="image-container-parameters">
+        <parameter tag="figure" kind="figures" jpTag="【図" indentLevel="0" indentLevel-amendment="2" />
+        <parameter tag="tables" kind="tables" jpTag="【表"  indentLevel="2" indentLevel-amendment="2"/>
+        <parameter tag="maths" kind="equations" jpTag="【数"  indentLevel="2" indentLevel-amendment="2"/>
+        <parameter tag="chemistry" kind="chemical-formulas" jpTag="【化"  indentLevel="2" indentLevel-amendment="2"/>
+    </xsl:variable>
+    <schema:object name="image-container">
         <schema:property name="tag" type="string"
-                         const="other-images" />
+                         const="image-container" />
+        <schema:property name="jpTag" type="string" optional="true" />
+        <schema:property name="number" type="string" optional="true" />
         <schema:property name="indentLevel" type="string" />
-        <schema:property name="images" type="array">
-            <schema:ref name="image" />
-        </schema:property>
+        <schema:property name="imageKind" type="string"
+                         enum="figures tables equations chemical-formulas other-images" />
+        <schema:property name="file" type="string"/>
+        <schema:property name="alt" type="string" />
     </schema:object>
+    <!-- ============= End of image-container ============================= -->
+    
     
     <!-- ====================================================================
          数字系属性の全角変換

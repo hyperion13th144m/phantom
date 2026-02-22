@@ -36,21 +36,7 @@ services:
       TZ: Asia/Tokyo
     networks:
       - dev-net
-  
-  schema-builder:
-    image: schema-builder
-    container_name: schema-builder
-    build:
-      context: shared/schema
-      dockerfile: Dockerfile
-    volumes:
-      - ./shared/schema:/src:cached
-      - ./mona/src/mona/stylesheets/1.0:/xsl:ro
-    tty: true
-    environment:
-      LANG: ja_JP.UTF-8
-      TZ: Asia/Tokyo
-
+ 
   fox-dev:
     container_name: fox-dev
     image: node:24-bookworm

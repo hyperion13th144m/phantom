@@ -45,7 +45,7 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="inline-text" />
-                <schema:ref file="ntc-ninsyo.json" name="other-images" />
+                <schema:ref file="ntc-ninsyo.json" name="image-container" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
