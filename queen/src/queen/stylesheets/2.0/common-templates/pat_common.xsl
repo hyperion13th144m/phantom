@@ -18,6 +18,7 @@
         select="normalize-space(/descendant::jp:document-code[1])" />
     
     <xsl:include href="v4xva_prm.xsl" />
+    <xsl:include href="create-table.xsl" />
     <xsl:include href="applicants.xsl" />
     <xsl:include href="agents.xsl" />
     <xsl:include href="string-utils.xsl" />

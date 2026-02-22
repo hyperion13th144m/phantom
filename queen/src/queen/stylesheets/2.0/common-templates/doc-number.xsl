@@ -51,7 +51,7 @@
                 and ancestor::jp:application-reference [@appl-type = 'application']">
                 <xsl:choose>
                     <xsl:when test="$number-length != 10">
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:choose>
@@ -142,7 +142,7 @@
                             select="'PCT/' || substring($number,1,4) || '/' || substring($number,5,5)" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -159,17 +159,17 @@
                     <xsl:when
                         test="($law = 'patent' and $number-length != 7)
                      or ($law = 'utility' and $number-length != 7)">
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:when>
                     <xsl:when
                         test="($law != 'patent' and $law != 'utility')
                     and ($number-length &lt; 7)">
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:when>
                     <xsl:when
                         test="(($law != 'patent' and $law != 'utility') and ($number-length &gt; 8))
                       and not((substring($number,8,1) = '/') or (substring($number,8,1) = '-')) ">
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:choose>
@@ -220,7 +220,7 @@
                 and ancestor::jp:application-reference [@appl-type = 'examined-pub']">
                 <xsl:choose>
                     <xsl:when test="$number-length != 10">
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:call-template name="和暦変換" />
@@ -235,7 +235,7 @@
                                 <xsl:value-of select="'商標'" />
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="書誌編集エラー" />
+                                <xsl:value-of select="'Unknown doc-number'" />
                             </xsl:otherwise>
                         </xsl:choose>
                         <xsl:value-of select="'出願公告第' || substring($number, 5, 6) || '号'" />
@@ -253,7 +253,7 @@
                 and ancestor::jp:application-reference [@appl-type = 'un-examined-pub']">
                 <xsl:choose>
                     <xsl:when test="$number-length != 10">
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:choose>
@@ -266,7 +266,7 @@
                                         <xsl:value-of select="'実開'" />
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:value-of select="書誌編集エラー" />
+                                        <xsl:value-of select="'Unknown doc-number'" />
                                     </xsl:otherwise>
                                 </xsl:choose>
                                 <xsl:value-of
@@ -282,7 +282,7 @@
                                         <xsl:value-of select="'実用新案'" />
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:value-of select="書誌編集エラー" />
+                                        <xsl:value-of select="'Unknown doc-number'" />
                                     </xsl:otherwise>
                                 </xsl:choose>
                                 <xsl:value-of select="'出願公開第' || substring($number, 5, 6) || '号'" />
@@ -304,7 +304,7 @@
                             select="xs:integer(substring($number,5,5))" as="xs:integer" />
                         <xsl:choose>
                             <xsl:when test="$number-as-int &gt;= 200700000">
-                                <xsl:value-of select="書誌編集エラー" />
+                                <xsl:value-of select="'Unknown doc-number'" />
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:choose>
@@ -525,12 +525,12 @@
                                     select="substring($number,1,4) || '-' || substring($number, 5, 6)" />
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="書誌編集エラー" />
+                                <xsl:value-of select="'Unknown doc-number'" />
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="書誌編集エラー" />
+                        <xsl:value-of select="'Unknown doc-number'" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>

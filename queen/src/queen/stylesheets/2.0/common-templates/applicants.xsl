@@ -10,7 +10,8 @@
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:f="urn:phantom-mona:string-utils"
-    xmlns:xf="http://www.w3.org/2005/xpath-functions">
+    xmlns:xf="http://www.w3.org/2005/xpath-functions"
+    xmlns:map="http://www.w3.org/2005/xpath-functions/map">
     
     <xsl:output method="text" encoding="UTF-8" />
     
@@ -32,7 +33,7 @@
             </xsl:choose>
         </xf:string>
         
-        <xf:string key="jpTag">
+        <xsl:variable name="jpTag">
             <xsl:choose>
                 <xsl:when test="./@jp:kind-of-application = 'appeal'">
                     <xsl:value-of select="'【審判請求人】'" />
@@ -40,234 +41,116 @@
                 <xsl:otherwise>
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:applicants">
+                            <xsl:variable name="tmp" select="map:get($applicant-1-table, @code)" />
                             <xsl:choose>
-                                <xsl:when
-                                    test="$code = 'A151' or $code = 'A251'
-                                        or $code = 'A1523' or $code = 'A2523'">
-                                    <xsl:value-of select="'【補正をする者】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A263' or $code = 'A2632'
-                                        or $code = 'A2633' or $code = 'A2634' or $code = 'A2635'
-                                        or $code = 'A2761' or $code = 'A2762' or $code = 'A2764'
-                                        or $code = 'A2765' or $code = 'A253' or $code = 'A2801'
-                                        or $code = 'A2626' or $code = 'A25210' or $code = 'A25211'
-                                        or $code = 'A25212' or $code = 'A2525' or $code = 'A2526'
-                                        or $code = 'A2527' or $code = 'A2528' or $code = 'A2529'
-                                        or $code = 'A2IB3491'
-                                        or $code = 'A2917'">
-                                    <xsl:value-of select="'【実用新案登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A155' or $code = 'A255'">
-                                    <xsl:value-of select="'【受継申立人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A1681' or $code = 'A2681'">
-                                    <xsl:value-of select="'【代表者】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A1711' or $code = 'A2711'
-                                        or $code = 'A1712' or $code = 'A2712'">
-                                    <xsl:value-of select="'【承継人】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A17421' or $code = 'A27421'
-                                        or $code = 'A17422' or $code = 'A27422'
-                                        or $code = 'A17423' or $code = 'A27423'
-                                        or $code = 'A17424' or $code = 'A27424'
-                                        or $code = 'A17425' or $code = 'A27425'
-                                        or $code = 'A17426' or $code = 'A27426'
-                                        or $code = 'A17427' or $code = 'A27427'
-                                        or $code = 'A17428' or $code = 'A27428'
-                                        or $code = 'A17431' or $code = 'A27431'
-                                        or $code = 'A17432' or $code = 'A27432'
-                                        or $code = 'A17433' or $code = 'A27433'
-                                        or $code = 'A17434' or $code = 'A27434'
-                                        or $code = 'A17435' or $code = 'A27435'
-                                        or $code = 'A17436' or $code = 'A27436'
-                                        or $code = 'A17437' or $code = 'A27437'
-                                        or $code = 'A167'
-                                        or $code = 'A1916' or $code = 'A2916'">
-                                    <xsl:value-of select="'【手続をした者】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A159' or $code = 'A259'">
-                                    <xsl:value-of select="'【弁明をする者】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A179' or $code = 'A279'
-                                        or $code = 'A180' or $code = 'A280'
-                                        or $code = 'A181' or $code = 'A281'
-                                        or $code = 'A182' or $code = 'A282'
-                                        or $code = 'A1822' or $code = 'A2822'
-                                        or $code = 'A1691' or $code = 'A2691'
-                                        or $code = 'A1831' or $code = 'A2831'
-                                        or $code = 'A187' or $code = 'A287'
-                                        or $code = 'A1871' or $code = 'A2871'
-                                        or $code = 'A1872' or $code = 'A2872'">
-                                    <xsl:value-of select="'【提出者】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A1601' or $code = 'A2601'
-                                        or $code = 'A1621' or $code = 'A2621'
-                                        or $code = 'A2623'
-                                        or $code = 'A2624'
-                                        or $code = 'A1625' or $code = 'A2625'
-                                        or $code = 'E1841' or $code = 'E2841'
-                                        or $code = 'E1842' or $code = 'E2842'
-                                        or $code = 'E1851' or $code = 'E2851'
-                                        or $code = 'E1852' or $code = 'E2852'
-                                        or $code = 'E1853' or $code = 'E2853'
-                                        or $code = 'E3853' or $code = 'E4853'
-                                        or $code = 'E1854' or $code = 'E2854'
-                                        or $code = 'E3854' or $code = 'E4854'
-                                        or $code = 'E1861' or $code = 'E2861'
-                                        or $code = 'E1862' or $code = 'E2862'
-                                        or $code = 'E3862' or $code = 'E4862'
-                                        or $code = 'A1603' or $code = 'A2603'">
-                                    <xsl:value-of select="'【請求人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A1781' or $code = 'A2781'">
-                                    <xsl:value-of select="'【上申をする者】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A1821' or $code = 'A2821'
-                                        or $code = 'R4220'">
-                                    <xsl:value-of select="'【補足をする者】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R4201' or $code = 'R4211'">
-                                    <xsl:value-of select="'【更新登録申請人】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'R1100' or $code = 'R2100'
-                                        or $code = 'R3100' or $code = 'R4100'
-                                        or $code = 'R1101' or $code = 'R3102'
-                                        or $code = 'R4103' or $code = 'R4104'
-                                        or $code = 'R4105'
-                                        or $code = 'R1110' or $code = 'R2110'
-                                        or $code = 'R3110' or $code = 'R4110'
-                                        or $code = 'R1111' or $code = 'R3112'
-                                        or $code = 'R4113' or $code = 'R4114'
-                                        or $code = 'R4115'
-                                        or $code = 'R120' or $code = 'R220'
-                                        or $code = 'R320'
-                                        or $code = 'R4200'
-                                        or $code = 'R121' or $code = 'R221'
-                                        or $code = 'R321'
-                                        or $code = 'R4210'">
-                                    <xsl:value-of select="'【納付者】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A163' or $code = 'A1631'
-                                        or $code = 'A1632' or $code = 'A1634' or $code = 'A1635'
-                                        or $code = 'A1761' or $code = 'A1762' or $code = 'A1764'
-                                        or $code = 'A1765' or $code = 'A153' or $code = 'A1801'
-                                        or $code = 'A1627' or $code = 'A15210' or $code = 'A15211'
-                                        or $code = 'A15212' or $code = 'A1524' or $code = 'A1525'
-                                        or $code = 'A1526' or $code = 'A1527' or $code = 'A1528'
-                                        or $code = 'A1529' or $code = 'A1IB3491'
-                                        or $code = 'A1917'">
-                                    <xsl:value-of select="'【特許出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="substring($code,1,1) = 'C' ">
-                                    <xsl:choose>
-                                        <xsl:when
-                                            test="$code = 'C16543' or $code = 'C26543'
-                                                or $code = 'C36543' or $code = 'C46543'">
-                                            <xsl:value-of select="'【回答者】'" />
-                                        </xsl:when>
-                                        <xsl:when
-                                            test="$code = 'C16573' or $code = 'C26573'
-                                                or $code = 'C36573' or $code = 'C46573'">
-                                            <xsl:value-of select="'【鑑定人】'" />
-                                        </xsl:when>
-                                        <xsl:when
-                                            test="$code = 'C16592' or $code = 'C26592'
-                                                or $code = 'C36592' or $code = 'C46592'">
-                                            <xsl:value-of select="'【証人】'" />
-                                        </xsl:when>
-                                        <xsl:when test="$code = 'C1875' or $code = 'C2875'">
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:value-of select="'【審判請求人】'" />
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A1914' or $code = 'A1915' or $code = 'A2915'">
-                                    <xsl:value-of select="'【返還請求人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A1918' or $code = 'A1919'">
-                                    <xsl:value-of select="'【申出人】'" />
+                                <xsl:when test="$tmp">
+                                    <xsl:value-of select="$tmp" />
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:call-template name="書誌編集エラー処理" />
+                                    <xsl:if test="substring($code,1,1) = 'C' ">
+                                        <xsl:value-of select="'【審判請求人】'" />
+                                    </xsl:if>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:choose>
-                                <xsl:when
-                                    test="$code = 'R1100' or $code = 'R1101'
-                                        or $code = 'R1110' or $code = 'R1111'">
-                                    <xsl:value-of select="'【特許出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R2100' or $code = 'R2110'">
-                                    <xsl:value-of select="'【実用新案登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'R3100' or $code = 'R3102'
-                                        or $code = 'R3110' or $code = 'R3112'">
-                                    <xsl:value-of select="'【意匠登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R4100' or $code = 'R4110'">
-                                    <xsl:value-of select="'【商標登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R4103' or $code = 'R4113'">
-                                    <xsl:value-of select="'【防護標章登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R4104' or $code = 'R4114'">
-                                    <xsl:value-of select="'【更新登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R4105' or $code = 'R4115'">
-                                    <xsl:value-of select="'【防護標章更新登録出願人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R120' or $code = 'R121'">
-                                    <xsl:value-of select="'【特許権者】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R220' or $code = 'R221'">
-                                    <xsl:value-of select="'【実用新案権者】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R320' or $code = 'R321'">
-                                    <xsl:value-of select="'【意匠権者】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'R4200' or $code = 'R4210'">
-                                    <xsl:value-of select="'【商標権者】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A1711' or $code = 'A2711'">
-                                    <xsl:value-of select="'【譲渡人】'" />
-                                </xsl:when>
-                                <xsl:when test="$code = 'A1712' or $code = 'A2712'">
-                                    <xsl:value-of select="'【被承継人】'" />
-                                </xsl:when>
-                                <xsl:when
-                                    test="$code = 'A17422' or $code = 'A27422'
-                                        or $code = 'A17424' or $code = 'A27424'
-                                        or $code = 'A17431' or $code = 'A27431'
-                                        or $code = 'A17432' or $code = 'A27432'
-                                        or $code = 'A17433' or $code = 'A27433'
-                                        or $code = 'A17434' or $code = 'A27434'
-                                        or $code = 'A17435' or $code = 'A27435'
-                                        or $code = 'A17436' or $code = 'A27436'
-                                        or $code = 'A17437' or $code = 'A27437'">
-                                    <xsl:value-of select="'【手続をした者】'" />
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:call-template name="書誌編集エラー処理" />
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <xsl:value-of select="map:get($applicant-2-table, @code)" />
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:otherwise>
             </xsl:choose>
+        </xsl:variable>
+        
+        <xf:string key="jpTag">
+            <xsl:choose>
+                <xsl:when test="$jpTag">
+                    <xsl:value-of select="$jpTag" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'unknown'" />
+                </xsl:otherwise>
+            </xsl:choose>
         </xf:string>
     </xsl:template>
+    
+    <xsl:variable name="applicant-1-code" select="(
+            map{ 'code': ('A151', 'A251', 'A1523', 'A2523'), 'value': '【補正をする者】'},
+            map{ 'code': ('A263', 'A2632',
+                    'A2633', 'A2634', 'A2635', 'A2761', 'A2762', 'A2764',
+                    'A2765', 'A253', 'A2801', 'A2626', 'A25210', 'A25211',
+                    'A25212', 'A2525', 'A2526', 'A2527', 'A2528', 'A2529',
+                    'A2IB3491', 'A2917'), 'value': '【実用新案登録出願人】'},
+            map{ 'code': ('A155', 'A255'), 'value': '【受継申立人】'},
+            map{ 'code': ('A1681', 'A2681'), 'value': '【代表者】'},
+            map{ 'code': ('A1711', 'A2711', 'A1712', 'A2712'), 'value': '【承継人】'},
+            map{ 'code': ('A17421', 'A27421',
+                    'A17422', 'A27422', 'A17423', 'A27423', 'A17424', 'A27424',
+                    'A17425', 'A27425', 'A17426', 'A27426', 'A17427', 'A27427',
+                    'A17428', 'A27428', 'A17431', 'A27431', 'A17432', 'A27432',
+                    'A17433', 'A27433', 'A17434', 'A27434', 'A17435', 'A27435',
+                    'A17436', 'A27436', 'A17437', 'A27437', 'A167', 'A1916', 'A2916'),
+                'value':'【手続をした者】'},
+            map{ 'code': ('A159', 'A259'), 'value': '【弁明をする者】'},
+            map{ 'code': ('A179', 'A279',
+                    'A180', 'A280', 'A181', 'A281', 'A182', 'A282',
+                    'A1822', 'A2822', 'A1691', 'A2691', 'A1831', 'A2831',
+                    'A187', 'A287', 'A1871', 'A2871', 'A1872', 'A2872'),
+                'value': '【提出者】'},
+            map{ 'code': ('A1601', 'A2601',
+                    'A1621', 'A2621', 'A2623', 'A2624', 'A1625', 'A2625',
+                    'E1841', 'E2841', 'E1842', 'E2842', 'E1851', 'E2851',
+                    'E1852', 'E2852', 'E1853', 'E2853', 'E3853', 'E4853',
+                    'E1854', 'E2854', 'E3854', 'E4854', 'E1861', 'E2861',
+                    'E1862', 'E2862', 'E3862', 'E4862', 'A1603', 'A2603'),
+                'value': '【請求人】'},
+            map{ 'code': ('A1781', 'A2781'), 'value': '【上申をする者】'},
+            map{ 'code': ('A1821', 'A2821', 'R4220'), 'value': '【補足をする者】'},
+            map{ 'code': ('R4201', 'R4211'), 'value': '【更新登録申請人】'},
+            map{ 'code': ('R1100', 'R2100',
+                    'R3100', 'R4100', 'R1101', 'R3102', 'R4103', 'R4104',
+                    'R4105', 'R1110', 'R2110', 'R3110', 'R4110', 'R1111',
+                    'R3112', 'R4113', 'R4114', 'R4115', 'R120', 'R220',
+                    'R320', 'R4200', 'R121', 'R221', 'R321', 'R4210'), 'value': '【納付者】'},
+            map{ 'code': ('A163', 'A1631',
+                    'A1632', 'A1634', 'A1635', 'A1761', 'A1762', 'A1764',
+                    'A1765', 'A153', 'A1801', 'A1627', 'A15210', 'A15211',
+                    'A15212', 'A1524', 'A1525', 'A1526', 'A1527', 'A1528',
+                    'A1529', 'A1IB3491', 'A1917'), 'value': '【特許出願人】'},
+            map{ 'code': ('C16543', 'C26543', 'C36543', 'C46543'), 'value': '【回答者】'},
+            map{ 'code': ('C16573', 'C26573', 'C36573', 'C46573'), 'value': '【鑑定人】'},
+            map{ 'code': ('C16592', 'C26592', 'C36592', 'C46592'), 'value': '【証人】'},
+            map{ 'code': ('C1875', 'C2875'), 'value': '【返還請求人】'},
+            map{'code': ('A1914', 'A1915', 'A2915'), 'value': '【申出人】'}
+        )"/>
+    <xsl:variable name="applicant-1-table" as="map(xs:string, xs:string)">
+        <xsl:call-template name="create-table">
+            <xsl:with-param name="code" select="$applicant-1-code" />
+        </xsl:call-template>
+   </xsl:variable>
+    
+    <xsl:variable name="applicant-2-code" select="(
+            map{ 'code': ('R1100', 'R1101', 'R1110', 'R1111'),'value': '【特許出願人】'},
+            map{ 'code': ('R2100', 'R2110'),'value': '【実用新案登録出願人】'},
+            map{ 'code': ('R3100', 'R3102', 'R3110', 'R3112'),'value': '【意匠登録出願人】'},
+            map{ 'code': ('R4100', 'R4110'),'value': '【商標登録出願人】'},
+            map{ 'code': ('R4103', 'R4113'),'value': '【防護標章登録出願人】'},
+            map{ 'code': ('R4104', 'R4114'),'value': '【更新登録出願人】'},
+            map{ 'code': ('R4105', 'R4115'),'value': '【防護標章更新登録出願人】'},
+            map{ 'code': ('R120', 'R121'),'value': '【特許権者】'},
+            map{ 'code': ('R220', 'R221'),'value': '【実用新案権者】'},
+            map{ 'code': ('R320', 'R321'),'value': '【意匠権者】'},
+            map{ 'code': ('R4200', 'R4210'),'value': '【商標権者】'},
+            map{ 'code': ('A1711', 'A2711'),'value': '【譲渡人】'},
+            map{ 'code': ('A1712', 'A2712'),'value': '【被承継人】'},
+            map{ 'code': ('A17422', 'A27422',
+                    'A17424', 'A27424', 'A17431', 'A27431',
+                    'A17432', 'A27432', 'A17433', 'A27433',
+                    'A17434', 'A27434', 'A17435', 'A27435',
+                    'A17436', 'A27436', 'A17437', 'A27437'), 'value': '【手続をした者】'}
+        )"/>
+    <xsl:variable name="applicant-2-table" as="map(xs:string, xs:string)">
+        <xsl:call-template name="create-table">
+            <xsl:with-param name="code" select="$applicant-2-code" />
+        </xsl:call-template>
+   </xsl:variable>
 </xsl:stylesheet>
