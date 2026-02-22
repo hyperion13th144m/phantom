@@ -59,7 +59,7 @@ fi
 JSON_SCHEMA_DIR="$WORK_DIR/json-schema"
 
 JSON_SCHEMA_ARRAY=(
-    "fields.json"
+    "full-text.json"
     "images.json"
     "procedure.json"
     "pat-appd.json"

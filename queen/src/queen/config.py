@@ -124,7 +124,7 @@ translator_config: TranslatorConfig = {
     ),
     "full-text": TranslatorConfigItems(
         ### 全文検索用フィールド
-        xsl_path=xsl_path("fields.xsl"),
+        xsl_path=xsl_path("full-text.xsl"),
         namespace="",
         doctype="*",
         default_filename="full-text.json",

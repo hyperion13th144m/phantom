@@ -8,7 +8,7 @@ cd "$SCRIPT_DIR/.." || exit 1
 OUTPUT_DIR="./out/generated-schema"
 XSL_ROOT="./stylesheets/2.0"
 SRC_XML_ARRAY=(
-    "fields.xsl"
+    "full-text.xsl"
     "images.xsl"
     "procedure.xsl"
     "pat-appd.xsl"

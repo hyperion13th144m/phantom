@@ -25,7 +25,7 @@
     <xsl:include href="debug.xsl"/>
     
     <!-- schema:title is set to the name of this stylesheet -->
-    <schema:title>fields</schema:title>
+    <schema:title>full-text</schema:title>
     
     <xsl:template match="/">
         <xsl:variable name="root">
@@ -33,6 +33,7 @@
                 <xsl:apply-templates select="root/application-body/description" />
                 <xsl:apply-templates select="root/application-body/claims" />
                 <xsl:apply-templates select="root/application-body/abstract" />
+                <xsl:apply-templates select="root/jp:foreign-language-body" />
                 <xsl:apply-templates select="root/jp:pat-app-doc" />
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam-rn" />
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam" />
@@ -227,6 +228,23 @@
         </xf:array>
     </xsl:template>
     
+    <!-- 外国語書面出願系 -->
+    <xsl:template match="jp:foreign-language-description">
+        <xf:string key="descriptionOfEmbodiments">
+            <xsl:value-of select="normalize-space(.)" />
+        </xf:string>
+    </xsl:template>
+    <xsl:template match="jp:foreign-language-claims">
+        <xf:string key="foreignLanguageClaims">
+            <xsl:value-of select="normalize-space(.)" />
+        </xf:string>
+    </xsl:template>
+    <xsl:template match="jp:foreign-language-abstract">
+        <xf:string key="abstract">
+            <xsl:value-of select="normalize-space(.)" />
+        </xf:string>
+    </xsl:template>
+     
     <xsl:template match="text()" />
     
     <xsl:key name="field-mapping-key" match="item" use="@key" />
@@ -248,9 +266,7 @@
         <item key="opinion-contents-article" camel="opinionContentsArticle"/>
     </xsl:variable>
     
-    <schema:object name="fields" is-root="true">
-        <schema:property name="tag" type="string"
-                         const="fields" />
+    <schema:object name="full-text" is-root="true">
         <schema:property name="inventionTitle" type="string" optional="true" />
         <schema:property name="technicalField" type="string" optional="true" />
         <schema:property name="backgroundArt" type="string" optional="true" />
@@ -277,5 +293,7 @@
                          optional="true" />
         <schema:property name="contentsOfAmendment" type="array" item-type="string"
                          optional="true" />
+
+        <schema:property name="foreignLanguageClaims" type="string" item-type="string" optional="true" />
     </schema:object>
 </xsl:stylesheet>
