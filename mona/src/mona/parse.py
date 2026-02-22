@@ -11,7 +11,7 @@ from mona.manifest_processor.metadata import metadata
 from mona.manifest_processor.ocr import ocr
 
 # from mona.manifest_processor.xslt import XSLTProcessor
-from mona.merge_json import merge_image_info, merge_json, merge_jsons_as_array
+from mona.merge_json import copy_items, merge_image_info, merge_jsons_as_array
 
 
 def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
@@ -49,7 +49,7 @@ def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
         image_desc_path = str(work_dir / "image-description.json")
         doctype_path_map: DoctypePathMap = {
             "images-description": image_desc_path,
-            "bibliography": bibliography_path,
+            "bibliographic-items": bibliography_path,
             "full-text": full_text_path,
             "application-body": str(doc_dir / "application-body.json"),
             "foreign-language-body": str(doc_dir / "foreign-language-body.json"),
@@ -76,12 +76,19 @@ def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
         image_info(manifest, image_info_path)
 
         # 3. merge json
-        merge_json(
-            [metadata_path, bibliography_path],
+        copy_items(
+            bibliography_path,
+            {
+                metadata_path: ["docId"],
+                full_text_path: ["inventors", "applicants", "agents"],
+            },
             str(json_dir / "bibliography.json"),
         )
-        merge_json(
-            [metadata_path, full_text_path],
+        copy_items(
+            full_text_path,
+            {
+                metadata_path: ["docId", "task", "kind"],
+            },
             str(json_dir / "full-text.json"),
         )
         merge_jsons_as_array(

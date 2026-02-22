@@ -267,6 +267,10 @@
     </xsl:variable>
     
     <schema:object name="full-text" is-root="true">
+        <!-- full-text.json は metadata.json の一部が追加される。
+             docIdは metadata.json の項目 -->
+        <schema:property name="docId" type="string" />
+
         <schema:property name="inventionTitle" type="string" optional="true" />
         <schema:property name="technicalField" type="string" optional="true" />
         <schema:property name="backgroundArt" type="string" optional="true" />

@@ -3,16 +3,21 @@ import os
 from typing import List
 
 
-def merge_json(json_paths: List[str], output_path: str) -> None:
-    merged_data = {}
-    for path in json_paths:
-        if os.path.exists(path) is False:
-            continue
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            merged_data = {**merged_data, **data}
+def copy_items(
+    json_a_paths: str, json_b: dict[str, list[str]], output_path: str
+) -> None:
+    with open(json_a_paths, "r", encoding="utf-8") as f:
+        data_a = json.load(f)
+
+    for json_b_path, json_b_keys in json_b.items():
+        with open(json_b_path, "r", encoding="utf-8") as f:
+            data_b = json.load(f)
+        for key in json_b_keys:
+            if key in data_b:
+                data_a[key] = data_b[key]
+
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(merged_data, f, ensure_ascii=False, indent=2)
+        json.dump(data_a, f, ensure_ascii=False, indent=2)
 
 
 def merge_jsons_as_array(json_paths: List[str], output_path: str) -> None:
@@ -65,4 +70,5 @@ def merge_image_info(
             del ocr["file"]
         merged_data.append({**info, **desc, **ocr})
     with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(merged_data, f, ensure_ascii=False, indent=2)
         json.dump(merged_data, f, ensure_ascii=False, indent=2)

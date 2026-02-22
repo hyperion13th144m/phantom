@@ -18,7 +18,7 @@ def xsl_path(xsl_name: str) -> str:
 
 
 TranslatorKey = Literal[
-    "bibliography",
+    "bibliographic-items",
     "pat-app-doc",
     "application-body",
     "foreign-language-body",
@@ -44,12 +44,12 @@ TranslatorConfig = dict[TranslatorKey, TranslatorConfigItems]
 
 
 translator_config: TranslatorConfig = {
-    "bibliography": TranslatorConfigItems(
+    "bibliographic-items": TranslatorConfigItems(
         ### procedure.xml テキスト
-        xsl_path=xsl_path("procedure.xsl"),
+        xsl_path=xsl_path("bibliographic-items.xsl"),
         namespace="http://www.jpo.go.jp",
         doctype="procedure",
-        default_filename="bibliography.json",
+        default_filename="bibliographic-items.json",
     ),
     "pat-app-doc": TranslatorConfigItems(
         ### A163 日本語特許出願関連

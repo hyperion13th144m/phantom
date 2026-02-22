@@ -10,7 +10,7 @@ XSL_ROOT="./stylesheets/2.0"
 SRC_XML_ARRAY=(
     "full-text.xsl"
     "images.xsl"
-    "procedure.xsl"
+    "bibliographic-items.xsl"
     "pat-appd.xsl"
     "pat-amnd.xsl"
     "pat-rspn.xsl"

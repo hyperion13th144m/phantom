@@ -125,6 +125,14 @@
     
     <schema:title>bibliographic-items</schema:title>
     <schema:object name="bibliographic-items" is-root="true">
+        <!-- bibliographic-items.json は metadata.json, full-text.json の一部が追加される。
+             docIdは metadata.json の項目,
+             inventors, applicants, agents は full-text.json の項目。 -->
+        <schema:property name="docId" type="string" />
+        <schema:property name="inventors" type="array" item-type="string" optional="true" />
+        <schema:property name="applicants" type="array" item-type="string" />
+        <schema:property name="agents" type="array" item-type="string" optional="true" />
+
         <schema:property name="law" type="string" enum="patent,utilityModel,design,trademark" />
         <schema:property name="documentName" type="string"/>
         <schema:property name="applicationNumber" type="string" optional="true"/>
