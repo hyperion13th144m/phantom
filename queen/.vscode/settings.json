@@ -2,5 +2,18 @@
     "workbench.colorCustomizations": {
         "titleBar.activeBackground": "#3C3C3C",
         "titleBar.inactiveBackground": "#242424"
+    },
+    "[xslt]": {
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": false,
+        "editor.formatOnSaveMode": "modifications",
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "deltaxml.xslt-xpath",
+        "editor.detectIndentation": true,
+        "editor.tabSize": 1,
+        "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
+        "outline.showArrays": true,
+        "breadcrumbs.showArrays": true,
+        "editor.semanticHighlighting.enabled": true
     }
 }

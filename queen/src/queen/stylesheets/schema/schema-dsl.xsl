@@ -28,6 +28,13 @@
                             <xsl:apply-templates select="." />
                         </xsl:for-each>
                     </f:map>
+                    <f:array key="required">
+                        <xsl:for-each select="//schema:object[@is-root='true']/schema:property[not(@optional='true')]">
+                            <f:string>
+                                <xsl:value-of select="@name" />
+                            </f:string>
+                        </xsl:for-each>
+                    </f:array>
                 </xsl:if>
                 
                 <!-- put schema:object with is-root != true into $defs -->

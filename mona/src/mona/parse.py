@@ -1,4 +1,3 @@
-import logging
 import tempfile
 from pathlib import Path
 
@@ -99,5 +98,5 @@ def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
             image_info_path,
             image_desc_path,
             ocr_path,
-            str(json_dir / "images.json"),
+            str(json_dir / "images-information.json"),
         )

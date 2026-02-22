@@ -2,7 +2,7 @@ import json
 import re
 from pathlib import Path
 
-from libefiling import Manifest, generate_sha256, parse_archive
+from libefiling import Manifest
 
 
 def ocr(manifest: Manifest, output_path: str) -> None:

@@ -1,8 +1,6 @@
 import json
-import re
-from pathlib import Path
 
-from libefiling import Manifest, generate_sha256, parse_archive
+from libefiling import Manifest
 
 
 def image_info(manifest: Manifest, output_path: str) -> None:
@@ -12,7 +10,6 @@ def image_info(manifest: Manifest, output_path: str) -> None:
         # Pydanticモデルを辞書に変換
         image_dict = image.model_dump()
 
-        # ocrキーを削除
         if "ocr" in image_dict:
             del image_dict["ocr"]
 

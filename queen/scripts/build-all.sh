@@ -60,7 +60,7 @@ JSON_SCHEMA_DIR="$WORK_DIR/json-schema"
 
 JSON_SCHEMA_ARRAY=(
     "full-text.json"
-    "images.json"
+    "images-information.json"
     "procedure.json"
     "pat-appd.json"
     "pat-amnd.json"
@@ -75,7 +75,7 @@ JSON_SCHEMA_ARRAY=(
 BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
 BUILD_TS_SCHEMA="$PROJECT_ROOT/scripts/build-ts-schema.sh"
 BUILD_TS_GUARD="$PROJECT_ROOT/scripts/build-ts-guard.sh"
-XSL_ROOT="$PROJECT_ROOT/stylesheets/2.0"
+XSL_ROOT="$PROJECT_ROOT/src/queen/stylesheets/2.0"
 
 # ============================
 # Step 0: Prepare directories

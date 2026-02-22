@@ -10,7 +10,10 @@
             "request": "launch",
             "program": "src/mona/main.py",
             "console": "integratedTerminal",
-            "args": "-m 1 -l info reference/src_dir reference/A163 A163"
+            "args": "-m 1 -l info reference/src_dir reference/A163 A163",
+            "env": {
+                "OMP_THREAD_LIMIT": "1"
+            }
         },
         {
             "name": "multi",
@@ -24,40 +27,6 @@
             "env": {
                 "OMP_THREAD_LIMIT": "1"
             }
-        },
-        {
-            "name": "xslt",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "scripts/translate_xml.py",
-            "console": "integratedTerminal",
-            "args": [
-                "${input:src_xml}",
-                "${input:src_xsl}",
-                "${input:out_name}"
-            ]
-        }
-    ],
-    "inputs": [
-        {
-            "id": "src_xml",
-            "type": "promptString",
-            "description": "input xml"
-        },
-        {
-            "id": "src_xsl",
-            "type": "promptString",
-            "description": "src xsl",
-            "default": "src/mona/stylesheets/2.0/application-body.xsl"
-        },
-        {
-            "id": "out_name",
-            "type": "pickString",
-            "description": "output json",
-            "default": "reference/0xsl-out/output.json",
-            "options": [
-                "reference/0xsl-out/output.json"
-            ]
         }
     ]
 }

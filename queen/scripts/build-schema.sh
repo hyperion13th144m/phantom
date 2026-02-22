@@ -6,10 +6,10 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/.." || exit 1
 OUTPUT_DIR="./out/generated-schema"
-XSL_ROOT="./stylesheets/2.0"
+XSL_ROOT="./src/queen/stylesheets/2.0"
 SRC_XML_ARRAY=(
     "full-text.xsl"
-    "images.xsl"
+    "images-information.xsl"
     "bibliographic-items.xsl"
     "pat-appd.xsl"
     "pat-amnd.xsl"
@@ -29,7 +29,7 @@ SRC_XML_ARRAY=(
     "common-templates/dispatch-control-article.xsl"
     "common-templates/unsupported-tags.xsl"
 )
-DSL="./stylesheets/schema/schema-dsl.xsl"
+DSL="./src/queen/stylesheets/schema/schema-dsl.xsl"
 
 usage() {
   echo "Usage: $0 [ -o output_dir ] [ -x xsl_root ] [ -s schema_xsl ]"

@@ -2484,7 +2484,7 @@
                 <schema:ref name="claims" />
                 <schema:ref name="description" />
                 <schema:ref name="drawings" />
-                <schema:ref name="figure" />
+                <schema:ref name="image-container" />
                 <schema:ref name="invention-title" />
                 <schema:ref name="opinion-contents-article" />
                 <schema:ref name="paragraph" />
@@ -4867,7 +4867,6 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    
     <schema:object
         name="abstract">
         <schema:property name="tag" type="string" const="abstract" />
