@@ -41,7 +41,7 @@
                 <xsl:otherwise>
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:applicants">
-                            <xsl:variable name="tmp" select="map:get($applicant-1-table, @code)" />
+                            <xsl:variable name="tmp" select="map:get($applicant-1-table, $code)" />
                             <xsl:choose>
                                 <xsl:when test="$tmp">
                                     <xsl:value-of select="$tmp" />

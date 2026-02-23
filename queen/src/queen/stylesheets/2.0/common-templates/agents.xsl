@@ -26,7 +26,7 @@
                 <xsl:when test="./@jp:kind-of-agent">
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:proceeded-attorney-article">
-                            <xsl:value-of select="map:get($prefix-1-table, @code)" />
+                            <xsl:value-of select="map:get($prefix-1-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:agents">
                             <xsl:choose>
@@ -34,18 +34,18 @@
                                     <xsl:value-of select="'【'" />
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:value-of select="map:get($prefix-2-table, @code)" />
+                                    <xsl:value-of select="map:get($prefix-2-table, $code)" />
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                         <xsl:when test="ancestor::jp:attorney-of-case-article">
-                            <xsl:value-of select="map:get($prefix-3-table, @code)" />
+                            <xsl:value-of select="map:get($prefix-3-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:attorney-change-article">
-                            <xsl:value-of select="map:get($prefix-4-table, @code)" />
+                            <xsl:value-of select="map:get($prefix-4-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:attorney-disappear-article">
-                            <xsl:value-of select="map:get($prefix-5-table, @code)" />
+                            <xsl:value-of select="map:get($prefix-5-table, $code)" />
                         </xsl:when>
                     </xsl:choose>
                     <xsl:choose>
@@ -70,19 +70,19 @@
                 <xsl:otherwise>
                     <xsl:choose>
                         <xsl:when test="ancestor::jp:proceeded-attorney-article">
-                            <xsl:value-of select="map:get($agent-1-table, @code)" />
+                            <xsl:value-of select="map:get($agent-1-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:agents">
-                            <xsl:value-of select="map:get($agent-2-table, @code)" />
+                            <xsl:value-of select="map:get($agent-2-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:attorney-of-case-article">
-                            <xsl:value-of select="map:get($agent-3-table, @code)" />
+                            <xsl:value-of select="map:get($agent-3-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:attorney-change-article">
-                            <xsl:value-of select="map:get($agent-4-table, @code)" />
+                            <xsl:value-of select="map:get($agent-4-table, $code)" />
                         </xsl:when>
                         <xsl:when test="ancestor::jp:attorney-disappear-article">
-                            <xsl:value-of select="map:get($agent-5-table, @code)" />
+                            <xsl:value-of select="map:get($agent-5-table, $code)" />
                         </xsl:when>
                     </xsl:choose>
                 </xsl:otherwise>
@@ -240,7 +240,7 @@
                     'A179', 'A279', 'A180', 'A280', 'A1801', 'A2801',
                     'A181', 'A281', 'A182', 'A282', 'A1822', 'A2822',
                     'A1601', 'A2601', 'A1621', 'A2621', 'A2623',
-                    'A1625', 'A2625', 'A1625', 'A2625', 'A2626',
+                    'A1625', 'A2625', 'A2626',
                     'A1627', 'A167', 'A1691', 'A2691', 'A1781', 'A2781',
                     'A1821', 'A2821', 'A1831', 'A2831', 'A187', 'A287',
                     'A1871', 'A2871', 'A1872', 'A2872', 'A151', 'A251',
@@ -331,7 +331,7 @@
                     'A159', 'A259', 'A179', 'A279', 'A180', 'A280',
                     'A1801', 'A2801', 'A181', 'A281', 'A182', 'A282',
                     'A1822', 'A2822', 'A1601', 'A2601', 'A1621', 'A2621',
-                    'A2623', 'A1625', 'A2625', 'A1625', 'A2625', 'A2626',
+                    'A2623', 'A1625', 'A2625', 'A2626',
                     'A1627', 'A167', 'A1691', 'A2691', 'A1781', 'A2781',
                     'A1821', 'A2821', 'A1831', 'A2831', 'A187', 'A287',
                     'A1871', 'A2871', 'A1872', 'A2872', 'A151', 'A251',

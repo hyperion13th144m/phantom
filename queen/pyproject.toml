@@ -1,14 +1,16 @@
 [project]
 name = "queen"
-version = "0.1.14"
+version = "0.1.2"
 description = "Add your description here"
 readme = "README.md"
+authors = [
+    { name = "hyperion13th144m", email = "hyperion13th144m@gmail.com" }
+]
 requires-python = ">=3.12"
 dependencies = [
     "datamodel-code-generator[ruff]>=0.54.0",
     "pydantic>=2.12.5",
-    "pyprojroot>=0.3.0",
-    "ruff>=0.15.1",
+    "ruff>=0.15.2",
     "saxonche>=12.9.0",
 ]
 

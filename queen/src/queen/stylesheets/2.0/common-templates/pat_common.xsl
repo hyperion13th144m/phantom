@@ -5055,7 +5055,7 @@
                             select="//description-of-drawings//figref[@num=@num]" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:value-of select="@params/@kind || ' No. ' || @num" />
+                        <xsl:value-of select="$params/@kind || ' No. ' || @num" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xf:string>

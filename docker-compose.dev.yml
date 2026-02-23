@@ -18,24 +18,6 @@ services:
     networks:
       - dev-net
   
-  panther-dev:
-    container_name: panther-dev
-    image: python:3.14-bookworm
-    volumes:
-      - ${DATA_DIR}:/data_dir
-      - ${EXTRA_DATA_DIR}:/extra_dir
-      - ${LOG_DIR_PANTHER}:/var/log/panther
-      - .:/workspaces:cached
-    tty: true
-    environment:
-      DATA_DIR: /data_dir
-      ES_URL: http://es01-dev:9200
-      ES_USER: ${ELASTIC_USER}
-      ES_PASSWORD: ${ELASTIC_PASSWORD}
-      LANG: ja_JP.UTF-8
-      TZ: Asia/Tokyo
-    networks:
-      - dev-net
  
   fox-dev:
     container_name: fox-dev
@@ -87,6 +69,8 @@ services:
       - es-data-dev:/usr/share/elasticsearch/data
     networks:
       - dev-net
+    ports:
+      - 9200:9200
     restart: always
 
 
