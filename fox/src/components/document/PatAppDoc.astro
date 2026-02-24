@@ -1,0 +1,54 @@
+---
+/* This renderer for pat-app-doc handles following document types:
+     A163,A263    特許願,実用新案登録願
+     A1631   翻訳文提出書
+     A1632   国内書面
+     A2633   図面の提出書（実案）
+     A1634   国際出願翻訳文提出書
+     A1635 国際出願翻訳文提出書（職権）
+*/
+
+import Card from "~/components/ui/Card.astro";
+import type { ApplicationBody } from "~/interfaces/generated/application-body";
+import {
+    isAbstract,
+    isClaims,
+    isDescription,
+    isDrawings,
+} from "~/interfaces/generated/application-body.guard";
+const { document } = Astro.props as {
+    document: ApplicationBody;
+};
+---
+
+{
+    document.blocks.map((block) => {
+        if (isDescription(block)) {
+            return (
+                <Card title="明細書">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isClaims(block)) {
+            return (
+                <Card title="請求の範囲">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isAbstract(block)) {
+            return (
+                <Card title="要約書">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isDrawings(block)) {
+            return (
+                <Card title="図面">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else {
+            return <div>unknown blocks</div>;
+        }
+    })
+}

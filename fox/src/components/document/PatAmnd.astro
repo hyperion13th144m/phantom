@@ -1,0 +1,58 @@
+---
+/* This renderer for pat-rspn handles following document types:
+    A151, A1523 手続補正書（方式）| 手続補正書
+    A1524       誤訳訂正書
+    A1525       特許協力条約第１９条補正の翻訳文提出書 
+    A1529       特許協力条約第３４条補正の翻訳文提出書
+    A1526       特許協力条約第１９条補正の翻訳文提出書（職権）
+    A15210      特許協力条約第３４条補正の翻訳文提出書（職権）
+    A1527       特許協力条約第１９条補正の写し提出書
+    A15211      特許協力条約第３４条補正の写し提出書
+    A1528       特許協力条約第１９条補正の写し提出書（職権）
+    A15212      特許協力条約第３４条補正の写し提出書（職権）
+*/
+
+import Card from "~/components/ui/Card.astro";
+import type { ApplicationBody } from "~/interfaces/generated/application-body";
+import {
+    isAbstract,
+    isClaims,
+    isDescription,
+    isDrawings,
+} from "~/interfaces/generated/application-body.guard";
+const { document } = Astro.props as {
+    document: ApplicationBody;
+};
+---
+
+{
+    document.blocks.map((block) => {
+        if (isDescription(block)) {
+            return (
+                <Card title="明細書">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isClaims(block)) {
+            return (
+                <Card title="請求の範囲">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isAbstract(block)) {
+            return (
+                <Card title="要約書">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isDrawings(block)) {
+            return (
+                <Card title="図面">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else {
+            return <div>unknown blocks</div>;
+        }
+    })
+}

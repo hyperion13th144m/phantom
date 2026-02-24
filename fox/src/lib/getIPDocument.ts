@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { getContentRoot } from "~/constant";
+import { getContentRoot } from "~/constants";
 import type { IPatentDocument } from "~/interfaces/document";
 import type { PatentDocument } from "~/interfaces/patent-document-schema";
 import { DocumentDate } from "~/lib/doc-date";

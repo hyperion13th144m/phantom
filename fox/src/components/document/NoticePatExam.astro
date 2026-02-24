@@ -1,0 +1,54 @@
+---
+/* This renderer for notice-pat-exam, notice-pat-exam-rn handles following document types:
+    A101  特許査定
+    A102  拒絶査定
+    A1131 拒絶理由通知書
+    A1191 補正却下の決定
+    A1192 補正却下の決定
+    A130  引用非特許文献
+*/
+
+import Card from "~/components/ui/Card.astro";
+import type { ApplicationBody } from "~/interfaces/generated/application-body";
+import {
+    isAbstract,
+    isClaims,
+    isDescription,
+    isDrawings,
+} from "~/interfaces/generated/application-body.guard";
+const { document } = Astro.props as {
+    document: ApplicationBody;
+};
+---
+
+{
+    document.blocks.map((block) => {
+        if (isDescription(block)) {
+            return (
+                <Card title="明細書">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isClaims(block)) {
+            return (
+                <Card title="請求の範囲">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isAbstract(block)) {
+            return (
+                <Card title="要約書">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else if (isDrawings(block)) {
+            return (
+                <Card title="図面">
+                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                </Card>
+            );
+        } else {
+            return <div>unknown blocks</div>;
+        }
+    })
+}

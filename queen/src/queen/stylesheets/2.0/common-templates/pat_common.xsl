@@ -4452,10 +4452,10 @@
     
     <!-- ===================================================================
          tech-problem 発明が解決しようとする課題
-         tech-solutions 課題を解決するための手段
+         tech-solution 課題を解決するための手段
          advantageous-effects 発明の効果
          =================================================================== -->
-    <xsl:template match="tech-problem | tech-solutions | advantageous-effects">
+    <xsl:template match="tech-problem | tech-solution | advantageous-effects">
         <xf:map>
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
@@ -4542,7 +4542,7 @@
     </xsl:template>
     <schema:object name="summary-of-invention-items">
         <schema:property name="tag" type="string"
-                         enum="tech-problem tech-solutions advantageous-effects heading paragraph" />
+                         enum="tech-problem tech-solution advantageous-effects heading paragraph" />
         <schema:property name="jpTag" type="string" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
@@ -4551,7 +4551,7 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    <!-- ==== End of tech-problem | tech-solutions | advantageous-effects == -->
+    <!-- ==== End of tech-problem | tech-solution | advantageous-effects == -->
     
     <!-- ====================================================================
          citation-list 先行技術文献

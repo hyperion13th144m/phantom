@@ -11,6 +11,9 @@ export interface Props {
 }
 
 const { ipDocument } = Astro.props;
+const docId = Astro.params.docId;
+const currentPath = `/docs/${docId}`;
+const printPath = `/docs/${docId}/print`;
 ---
 
 <nav class="sticky top-0 mb-4 bg-gray-100 z-10 p-4 rounded-md shadow-md">
@@ -25,7 +28,7 @@ const { ipDocument } = Astro.props;
                 },
                 {
                     title: ipDocument.documentName,
-                    href: Astro.url.pathname,
+                    href: currentPath,
                 },
             ]}
         />
@@ -44,7 +47,7 @@ const { ipDocument } = Astro.props;
                     -->
                     <!-- 出願人 -->
                     <Applicants ipDocument={ipDocument} />
-                    <Print href={Astro.url.pathname + "/print"} size="3em" />
+                    <Print href={printPath} size="3em" />
                 </div>
             </div>
         </Drawer>
@@ -65,7 +68,7 @@ const { ipDocument } = Astro.props;
                 <!-- 出願人 -->
                 <Applicants ipDocument={ipDocument} />
             </div>
-            <Print href={Astro.url.pathname + "/print"} size="3em" />
+            <Print href={printPath} size="3em" />
         </div>
     </div>
 </nav>

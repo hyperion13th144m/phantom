@@ -1,45 +1,23 @@
 ---
-import DocumentMain from "~/components/document/DocumentMainPrint.astro";
+import ApplicationBody from "~/components/document/ApplicationBody.astro";
+import { getDocument } from "~/constants";
+import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
-import { getIPDocument } from "~/lib/getIPDocument";
+export { getStaticPaths } from "~/lib/getStaticPaths";
 
-// export const getStaticPaths = getDocIds;
-export const prerender = false;
 const { docId } = Astro.params as { docId: string };
-const ipDocument = await getIPDocument(docId);
-const title = `${ipDocument.applicationNumber.toString()} | ${ipDocument.documentName}`;
+const json = await getDocument(docId);
+const title = "doc";
 ---
 
 <PrintingLayout title={title}>
-    {
-        [
-            // notice-pat-exam, notice-pat-exam-rn
-            "A101", // 特許査定
-            "A102", // 拒絶査定
-            "A1131", // 拒絶理由通知書
-            "A1191", // 補正却下の決定
-            "A1192", // 補正却下の決定
-            "A130", // 引用非特許文献
-
-            // pat-app-doc
-            "A163", // 特許願
-            "A1631", // 翻訳文提出書
-            "A1632", // 国内書面
-            "A1634", // 国際出願翻訳文提出書
-
-            // pat-rspns
-            "A153", // 意見書
-            "A159", // 弁明書
-
-            // pat-amnd
-            "A1523", // 手続補正書
-
-            // pat-etc
-            "A1781", // 上申書
-            "A1871", // 早期審査に関する事情説明書
-            "A1872", // 早期審査に関する事情説明補充書
-        ].includes(ipDocument.documentCode) && (
-            <DocumentMain ipDocument={ipDocument} />
-        )
-    }
+    <main class="w-full my-2">
+        {
+            json.map((doc) => {
+                if (isApplicationBody(doc)) {
+                    return <ApplicationBody document={doc} />;
+                }
+            })
+        }
+    </main>
 </PrintingLayout>

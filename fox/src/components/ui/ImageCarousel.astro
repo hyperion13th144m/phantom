@@ -1,6 +1,7 @@
 ---
+import { randomUUID } from "node:crypto";
 import type { ImagesOfIPDocument } from "~/interfaces/document";
-import { getBaseUrl } from "~/constant";
+import { getBaseUrl } from "~/constants";
 
 const {
     images,
@@ -19,7 +20,7 @@ const {
 };
 
 // uid を確実にユニーク化（Node 18+ / Astro なら crypto.randomUUID() が普通に使えます）
-const uid = crypto.randomUUID();
+const uid = randomUUID();
 const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
 ---
 

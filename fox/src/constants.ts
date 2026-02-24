@@ -1,25 +1,23 @@
+import fs from "node:fs/promises";
 import path from "node:path";
 
 //
 // /data_dir
-// +-- _indexes/
-//     +-- applicant-index.json ,etc..
 // |
 // +-- id2dir/docId/
-//            +--document.json
-//            +--images/
-//               +-- *.webp
+// |           +--json/
+// |           |    +--document.json
+// |           +--images/
+//                  +-- *.webp
 
 // astro reads each document.json from /data_dir
 // nginx serves static contents from /data_dir as /static/*
 
 // document.json などのコンテンツが置かれているディレクトリ
-const DATA_DIR = "/data_dir";
+export const DATA_DIR = "/data_dir";
 
 // 静的コンテンツのベースURLパス.
 const BASE_URL = "/static";
-
-export const INDEX_DB = path.join(DATA_DIR, "_indexes", "index.db");
 
 // docId で特定されるコンテンツが保存されたディレクトリのパスを取得
 export const getContentRoot = (docId: string) => {
@@ -36,3 +34,12 @@ function id2dir(docId: string) {
 export const getBaseUrl = (docId: string) => {
     return path.join(BASE_URL, id2dir(docId));
 };
+
+export const getDocument = async (docId: string): Promise<Array<any>> => {
+    const txt = await fs.readFile(
+        path.join(getContentRoot(docId), "json/document.json"),
+        "utf-8",
+    );
+    const json: Array<any> = JSON.parse(txt);
+    return json;
+}
