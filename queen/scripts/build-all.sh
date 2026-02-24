@@ -19,11 +19,11 @@ log() {
 }
 
 usage() {
-  echo "Usage: $0 [ -o output_dir ] [ -w work_dir ] python|typescript"
+  echo "Usage: $0 [ -o output_dir ] [ -w work_dir ] [ -d ] python|typescript"
   echo "This script builds the patent document schema by translating XML to JSON files and merging them."
 }
 
-while getopts "hw:o:" opt; do
+while getopts "hdw:o:" opt; do
   case $opt in
     h)
       usage
@@ -36,6 +36,10 @@ while getopts "hw:o:" opt; do
     w)
       echo "Option -w with argument: $OPTARG"
       WORK_DIR="$OPTARG"
+      ;;
+    d)
+      echo "Option -d (debug mode) enabled"
+      DEBUG="--debug"
       ;;
     *)
       echo "Invalid option: -$OPTARG" >&2
@@ -128,7 +132,7 @@ if [ "$TARGET" = "typescript" ]; then
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.guard.ts"
-    $BUILD_TS_GUARD "$OUTPUT_DIR/$base_name.ts" "$dst_file"
+    $BUILD_TS_GUARD "$OUTPUT_DIR/$base_name.ts" "$dst_file" ${DEBUG:-}
     sed -i -e 's/import/import type/g' "$dst_file"
 
     if [ ! -f "$dst_file" ]; then

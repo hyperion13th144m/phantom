@@ -9,9 +9,10 @@ SRC_FILE=$(basename "$SRC")
 DST_FILE=$(basename "$DST")
 SRC_DIR=$(dirname "$SRC")
 DST_DIR=$(dirname "$DST")
+DEBUG=${3:-}
 
 if [ -z "$SRC" ] || [ -z "$DST" ]; then
-    echo "Usage: $0 <source_json_file> <destination_ts_file>"
+    echo "Usage: $0 <source_json_file> <destination_ts_file> [debug]"
     exit 1
 fi
 if [ ! -f "$SRC" ]; then
@@ -26,4 +27,4 @@ fi
 docker run --rm -it \
   -v "$SRC_DIR":/src \
   -v "$DST_DIR":/dst \
-  schema-builder-ts ts-auto-guard --export-all /src/"$SRC_FILE" /dst/"$DST_FILE"
+  schema-builder-ts ts-auto-guard ${DEBUG:-} --export-all /src/"$SRC_FILE" /dst/"$DST_FILE"
