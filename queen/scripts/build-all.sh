@@ -65,7 +65,7 @@ JSON_SCHEMA_DIR="$WORK_DIR/json-schema"
 JSON_SCHEMA_ARRAY=(
     "full-text.json"
     "images-information.json"
-    "procedure.json"
+    "bibliographic-items.json"
     "pat-appd.json"
     "pat-amnd.json"
     "pat-rspn.json"
@@ -75,6 +75,7 @@ JSON_SCHEMA_ARRAY=(
     "cpy-ntc-pt-e.json"
     "cpy-ntc-pt-e-rn.json"
     "cpy-ntc-pt-f.json"
+    "pat_common.json"
 )
 BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
 BUILD_TS_SCHEMA="$PROJECT_ROOT/scripts/build-ts-schema.sh"
@@ -117,7 +118,7 @@ if [ "$TARGET" = "typescript" ]; then
     base_name=$(basename "$file" .json)
     dst_file="$OUTPUT_DIR/${base_name}.ts"
     echo "Generating TypeScript type for $file -> $dst_file"
-    $BUILD_TS_SCHEMA "$JSON_SCHEMA_DIR/$file" "$dst_file"
+    $BUILD_TS_SCHEMA "$JSON_SCHEMA_DIR/$file" "$dst_file" --unreachableDefinitions
     if [ ! -f "$dst_file" ]; then
       echo "ERROR: Expected JSON schema file not found for TypeScript generation: $dst_file"
       exit 1

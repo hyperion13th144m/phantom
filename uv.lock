@@ -662,7 +662,7 @@ wheels = [
 
 [[package]]
 name = "queen"
-version = "0.1.6"
+version = "0.1.8"
 source = { editable = "queen" }
 dependencies = [
     { name = "datamodel-code-generator", extra = ["ruff"] },

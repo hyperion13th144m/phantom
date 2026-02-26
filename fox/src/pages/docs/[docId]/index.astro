@@ -2,8 +2,12 @@
 // 全体レイアウトの定義、文書タイプを is*で判断し、対応するコンポーネントを呼ぶ
 // components/document/*.astro は 文書タイプの表示用/印刷用レイアウトを定義する。
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
+import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
+import PatAppDoc from "~/components/document/PatAppDoc.astro";
+import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import { getDocument } from "~/constants";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
 import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
 import Layout from "~/layouts/Layout.astro";
 export { getStaticPaths } from "~/lib/getStaticPaths";
@@ -11,23 +15,45 @@ export { getStaticPaths } from "~/lib/getStaticPaths";
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
 const title = "doc";
-const order = [isPatAppDoc, isApplicationBody];
+const order = [isPatAppDoc, isApplicationBody, isForeignLanguageBody];
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
+const hasCarouselImages = true;
 ---
 
 <Layout title={title}>
     <main class="w-full my-2">
-        {
-            sortedJson.map((block) => {
-                if (isPatAppDoc(block)) {
-                    return <pre>{JSON.stringify(block, null, 2)}</pre>;
-                } else if (isApplicationBody(block)) {
-                    return <ApplicationBody document={block} />;
+        <header>
+            <h1 class="text-2xl font-bold">書誌事項などヘッダー領域</h1>
+        </header>
+        <KeywordHighlighter urlParamKey="q">
+            <div
+                class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}
+            >
+                <div data-search-root>
+                    {
+                        sortedJson.map((block) => {
+                            if (isPatAppDoc(block)) {
+                                return <PatAppDoc document={block} />;
+                            } else if (isApplicationBody(block)) {
+                                return <ApplicationBody document={block} />;
+                            } else if (isForeignLanguageBody(block)) {
+                                return <ForeignLanguageBody document={block} />;
+                            }
+                        })
+                    }
+                </div>
+                {
+                    hasCarouselImages && (
+                        <div class="hidden lg:block">
+                            <div class="sticky top-32 bg-white">
+                                <div>図面一覧</div>
+                            </div>
+                        </div>
+                    )
                 }
-            })
-        }
-        <!-- ImageCarousel -->
+            </div>
+        </KeywordHighlighter>
     </main>
 </Layout>

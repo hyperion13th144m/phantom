@@ -2,29 +2,33 @@
 // ApplicationBody の文書の表示用/印刷用レイアウトを定義、
 // 子要素は items/ApplicationBodyItems.astro で定義する。
 import Card from "~/components/ui/Card.astro";
-import type { ApplicationBody } from "~/interfaces/generated/application-body";
-
-/* interfaces の生成の都合で、interfaces/generated/application-body.ts,application-body.guards.ts にも
-   pat_common.ts,pat_common.guards.ts の内容と同じ定義が含まれている。
-   application-body.ts, application-body.guards.ts の参照はせず、
-   interfaces/generated/pat_common.ts, pat_common.guards.ts の定義、ガード関数を使用する。 */
-import {
-    isAbstract,
-    isClaims,
-    isDescription,
-    isDrawings,
-} from "~/interfaces/generated/pat_common.guard";
+import type { ForeignLanguageBody } from "~/interfaces/generated/foreign-language-body";
+import { isForeignLanguageDocuments } from "~/interfaces/generated/foreign-language-body.guard";
 import PatCommon from "./items/PatCommon.astro";
 
 const { document, forPrinting = false } = Astro.props as {
-    document: ApplicationBody;
+    document: ForeignLanguageBody;
     forPrinting: boolean;
 };
-const displayOrder = [isAbstract, isClaims, isDescription, isDrawings];
-const printingOrder = [isDescription, isClaims, isAbstract, isDrawings];
+const displayOrder = [
+    "jp:foreign-language-abstract",
+    "jp:foreign-language-claims",
+    "jp:foreign-language-description",
+    "jp:foreign-language-drawings",
+];
+const printingOrder = [
+    "jp:foreign-language-description",
+    "jp:foreign-language-claims",
+    "jp:foreign-language-abstract",
+    "jp:foreign-language-drawings",
+];
 const order = forPrinting ? printingOrder : displayOrder;
 const sortedDocs = order
-    .map((guard) => document.blocks.find((b) => guard(b)))
+    .map((tag) =>
+        document.blocks.find(
+            (b) => isForeignLanguageDocuments(b) && b.tag === tag,
+        ),
+    )
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
 ---
 
@@ -32,10 +36,6 @@ const sortedDocs = order
     forPrinting === false &&
         sortedDocs.map((block) => (
             <Card title={block.text}>
-                <div>
-                    {block.jpTag}
-                    {block.text}
-                </div>
                 {block.blocks.map((b) => (
                     <PatCommon block={b} />
                 ))}

@@ -1995,7 +1995,7 @@
                                jp:document-name,
                                jp:return-request,
                                jp:article,
-                               jp:ipc-article,
+                               jp:ipc,
                                jp:number-of-claim,
                                jp:num-claim-decrease-amendment,
                                jp:num-claim-increase-amendment,

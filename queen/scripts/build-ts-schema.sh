@@ -9,6 +9,7 @@ SRC_FILE=$(basename "$SRC")
 DST_FILE=$(basename "$DST")
 SRC_DIR=$(dirname "$SRC")
 DST_DIR=$(dirname "$DST")
+OPT=${3:-}
 
 if [ -z "$SRC" ] || [ -z "$DST" ]; then
     echo "Usage: $0 <source_json_file> <destination_ts_file>"
@@ -22,9 +23,8 @@ if [ ! -d "$DST_DIR" ]; then
     echo "Destination directory does not exist. Creating it."
     mkdir -p "$DST_DIR"
 fi
-echo   schema-builder-ts json2ts /src/"$SRC_FILE" /dst/"$DST_FILE" --cwd /src
 
 docker run --rm -it \
   -v "$SRC_DIR":/src \
   -v "$DST_DIR":/dst \
-  schema-builder-ts json2ts /src/"$SRC_FILE" /dst/"$DST_FILE" --cwd /src
+  schema-builder-ts json2ts ${OPT} /src/"$SRC_FILE" /dst/"$DST_FILE" --cwd /src

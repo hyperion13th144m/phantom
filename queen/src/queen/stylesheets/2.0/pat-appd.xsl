@@ -26,6 +26,9 @@
         <xsl:variable name="root">
             <xf:map>
                 <xf:string key="tag">pat-app-doc</xf:string>
+                <xf:string key="text">
+                    <xsl:call-template name="書類名変換" />
+                </xf:string>
                 <xf:array key="blocks">
                     <xsl:apply-templates select="root/jp:pat-app-doc" />
                 </xf:array>
@@ -44,6 +47,7 @@
     <schema:title>pat-app-doc</schema:title>
     <schema:object name="pat-app-doc" is-root="true">
         <schema:property name="tag" type="string" const="pat-app-doc" />
+        <schema:property name="text" type="string"/>
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="application-a63"/>

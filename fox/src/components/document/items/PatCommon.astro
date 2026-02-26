@@ -2,6 +2,7 @@
 // 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
 import { getImageUrl } from "~/constants";
 import type {
+    Attorney,
     CitationList,
     Claim,
     ClaimText,
@@ -12,12 +13,17 @@ import type {
     InlineText,
     InlineTextWithHeader,
     InventionTitle,
+    Lawyer,
     Literature,
     Paragraph,
+    PatCommonContainerTypeA,
+    PatCommonContainerTypeB,
+    PatCommonTerminalTypeA,
     SummaryOfInvention,
     SummaryOfInventionItems,
-} from "~/interfaces/generated/application-body";
+} from "~/interfaces/generated/pat_common";
 import {
+    isAttorney,
     isCitationList,
     isClaim,
     isClaimText,
@@ -28,11 +34,15 @@ import {
     isInlineText,
     isInlineTextWithHeader,
     isInventionTitle,
+    isLawyer,
     isLiterature,
     isParagraph,
+    isPatCommonContainerTypeA,
+    isPatCommonContainerTypeB,
+    isPatCommonTerminalTypeA,
     isSummaryOfInvention,
     isSummaryOfInventionItems,
-} from "~/interfaces/generated/application-body.guard";
+} from "~/interfaces/generated/pat_common.guard";
 
 const { block } = Astro.props as {
     block:
@@ -49,7 +59,12 @@ const { block } = Astro.props as {
         | InlineTextWithHeader
         | Claim
         | ClaimText
-        | ImageContainer;
+        | ImageContainer
+        | PatCommonTerminalTypeA
+        | PatCommonContainerTypeA
+        | PatCommonContainerTypeB
+        | Lawyer
+        | Attorney;
 };
 
 const concatBlocks = (
@@ -116,7 +131,6 @@ const imageInfo = isImageContainer(block)
     )
 }
 {
-    // 段落
     (isParagraph(block) || isClaimText(block)) && (
         <>
             <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
@@ -139,14 +153,14 @@ const imageInfo = isImageContainer(block)
 {
     isInlineTextWithHeader(block) && (
         <div class={block.tag} style="display: flex;">
-            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            <div class={`min-w-[7em] indent-level-${block.indentLevel}`}>
+                {block.jpTag}
+            </div>
             <div>{block.text}</div>
         </div>
     )
 }
 {
-    // 画像
-    // あとで URLをrewrite する。
     isImageContainer(block) && imageInfo && (
         <div class="image-container">
             <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
@@ -158,6 +172,38 @@ const imageInfo = isImageContainer(block)
                 style="max-width: 100%; height: auto;"
             />
         </div>
+    )
+}
+{
+    isPatCommonTerminalTypeA(block) && (
+        <div class="flex">
+            <span
+                class={`indent-level-${block.indentLevel}`}
+                style="min-width: 11em;"
+            >
+                {block.jpTag}
+            </span>
+            <span class="convertedText">
+                {block.convertedText ?? block.text}
+            </span>
+        </div>
+    )
+}
+{
+    isPatCommonContainerTypeA(block) &&
+        block.blocks?.map((block) => <Astro.self block={block} />)
+}
+{
+    isPatCommonContainerTypeB(block) && (
+        <div>
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            {block.blocks && block.blocks.map((b) => <Astro.self block={b} />)}
+        </div>
+    )
+}
+{
+    (isLawyer(block) || isAttorney(block)) && (
+        <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
     )
 }
 <style>

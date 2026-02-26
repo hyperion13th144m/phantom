@@ -73,6 +73,28 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
+            <xf:string key="jpTag">
+                <xsl:value-of select="'【書類名】'" />
+            </xf:string>
+            <xf:string key="text">
+                <xsl:choose>
+                    <xsl:when test="self::jp:foreign-language-description">
+                        <xsl:value-of select="'外国語明細書'" />
+                    </xsl:when>
+                    <xsl:when test="self::jp:foreign-language-claims">
+                        <xsl:value-of select="'外国語特許請求の範囲'" />
+                    </xsl:when>
+                    <xsl:when test="self::jp:foreign-language-abstract">
+                        <xsl:value-of select="'外国語要約書'" />
+                    </xsl:when>
+                    <xsl:when test="self::jp:foreign-language-drawings">
+                        <xsl:value-of select="'外国語図面'" />
+                    </xsl:when>
+                </xsl:choose>
+            </xf:string>
+            <xf:string key="indentLevel">
+                <xsl:value-of select="'0'" />
+            </xf:string>
             <xf:array key="blocks">
                 <xsl:apply-templates select="p" />
             </xf:array>
@@ -85,6 +107,9 @@
                          jp:foreign-language-claims,
                          jp:foreign-language-abstract,
                          jp:foreign-language-drawings" />
+        <schema:property name="jpTag" type="string" />
+        <schema:property name="text" type="string" />
+        <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
             <schema:ref file="pat_common.json" name="paragraph" />
         </schema:property>
