@@ -1,23 +1,33 @@
 ---
+// 全体レイアウトの定義、文書タイプを is*で判断し、対応するコンポーネントを呼ぶ
+// components/document/*.astro は 文書タイプの表示用/印刷用レイアウトを定義する。
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
 import { getDocument } from "~/constants";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
 import Layout from "~/layouts/Layout.astro";
 export { getStaticPaths } from "~/lib/getStaticPaths";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
 const title = "doc";
+const order = [isPatAppDoc, isApplicationBody];
+const sortedJson = order
+    .map((guard) => json.find((b) => guard(b)))
+    .filter((b): b is NonNullable<typeof b> => b !== undefined);
 ---
 
 <Layout title={title}>
     <main class="w-full my-2">
         {
-            json.map((doc) => {
-                if (isApplicationBody(doc)) {
-                    return <ApplicationBody document={doc} />;
+            sortedJson.map((block) => {
+                if (isPatAppDoc(block)) {
+                    return <pre>{JSON.stringify(block, null, 2)}</pre>;
+                } else if (isApplicationBody(block)) {
+                    return <ApplicationBody document={block} />;
                 }
             })
         }
+        <!-- ImageCarousel -->
     </main>
 </Layout>

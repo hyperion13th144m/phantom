@@ -1,0 +1,172 @@
+---
+// 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
+import type {
+    CitationList,
+    Claim,
+    ClaimText,
+    DescriptionItems,
+    DescriptionOfEmbodiments,
+    EmbodimentsExample,
+    ImageContainer,
+    InlineText,
+    InlineTextWithHeader,
+    InventionTitle,
+    Literature,
+    Paragraph,
+    SummaryOfInvention,
+    SummaryOfInventionItems,
+} from "~/interfaces/generated/application-body";
+import {
+    isCitationList,
+    isClaim,
+    isClaimText,
+    isDescriptionItems,
+    isDescriptionOfEmbodiments,
+    isEmbodimentsExample,
+    isImageContainer,
+    isInlineText,
+    isInlineTextWithHeader,
+    isInventionTitle,
+    isLiterature,
+    isParagraph,
+    isSummaryOfInvention,
+    isSummaryOfInventionItems,
+} from "~/interfaces/generated/application-body.guard";
+
+const { block } = Astro.props as {
+    block:
+        | InventionTitle
+        | SummaryOfInvention
+        | SummaryOfInventionItems
+        | CitationList
+        | Literature
+        | DescriptionItems
+        | DescriptionOfEmbodiments
+        | EmbodimentsExample
+        | Paragraph
+        | InlineText
+        | InlineTextWithHeader
+        | Claim
+        | ClaimText
+        | ImageContainer;
+};
+
+const concatBlocks = (
+    blocks: any[],
+    condition: (block: any) => boolean,
+): any[][] => {
+    const result: any[][] = [];
+    let currentGroup: any[] = [];
+    blocks.forEach((block) => {
+        if (condition(block)) {
+            if (currentGroup.length > 0) {
+                result.push(currentGroup);
+                currentGroup = [];
+            }
+            result.push([block]);
+        } else {
+            currentGroup.push(block);
+        }
+    });
+    if (currentGroup.length > 0) {
+        result.push(currentGroup);
+    }
+    return result;
+};
+
+const { docId } = Astro.params as { docId: string };
+---
+
+{
+    // 発明の名称
+    isInventionTitle(block) && (
+        <div class={block.tag} style="display: flex;">
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            {block.blocks.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </div>
+    )
+}
+{
+    // 発明の概要/発明の開示
+    // 先行技術文献、特許文献,非特許文献
+    // 発明が解決しようとする課題, 課題を解決する手段, 発明の効果
+    // 技術分野、背景技術、図面の簡単な説明, 産業上の利用可能性, 配列表, 符号の説明, 受託番号
+    // 発明を実施するための形態, 発明を実施するための最良の形態 実施例
+    // 請求項
+    (isSummaryOfInvention(block) ||
+        isSummaryOfInventionItems(block) ||
+        isDescriptionItems(block) ||
+        isDescriptionOfEmbodiments(block) ||
+        isEmbodimentsExample(block) ||
+        isCitationList(block) ||
+        isClaim(block) ||
+        isLiterature(block)) && (
+        <div class={block.tag}>
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            {block.blocks.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </div>
+    )
+}
+{
+    // 段落
+    (isParagraph(block) || isClaimText(block)) && (
+        <>
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            {concatBlocks(block.blocks, (b) => b.isLastSentence === true).map(
+                (group) => (
+                    <div>
+                        {group.map((b) => (
+                            <Astro.self block={b} />
+                        ))}
+                    </div>
+                ),
+            )}
+        </>
+    )
+}
+{isInlineText(block) && block.tag === "text" && <span>{block.text}</span>}
+{isInlineText(block) && block.tag === "sup" && <sup>{block.text}</sup>}
+{isInlineText(block) && block.tag === "sub" && <sub>{block.text}</sub>}
+{isInlineText(block) && block.tag === "underline" && <u>{block.text}</u>}
+{
+    isInlineTextWithHeader(block) && (
+        <div class={block.tag} style="display: flex;">
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            <div>{block.text}</div>
+        </div>
+    )
+}
+{
+    // 画像
+    // あとで URLをrewrite する。
+    isImageContainer(block) && (
+        <div class="image-container">
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            <div>{docId}</div>
+            <div>{block.file}</div>
+            <img
+                src={block.file}
+                alt={block.alt}
+                style="max-width: 100%; height: auto;"
+            />
+        </div>
+    )
+}
+<style>
+    .image-container:not(:last-child) {
+        break-after: page;
+    }
+    .indent-level-0 {
+        text-indent: 0;
+    }
+    .indent-level-1 {
+        text-indent: 1em;
+    }
+    .indent-level-2 {
+        text-indent: 2em;
+    }
+</style>

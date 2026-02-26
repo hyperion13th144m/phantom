@@ -44,7 +44,7 @@
         <xsl:for-each select="figure">
             <xsl:variable name="num" select="@num" />
             <xsl:variable name="file" select="img/@file" />
-            <xsl:variable name="desc" select="//description/description-of-drawings/p/figref[@num=$num]"/>
+            <xsl:variable name="desc" select="//description-of-drawings//figref[@num=$num]"/>
             <xsl:variable name="repr-image" select="//jp:representation-image/jp:file-name"/>
             <xf:map>
                 <xf:string key="number">

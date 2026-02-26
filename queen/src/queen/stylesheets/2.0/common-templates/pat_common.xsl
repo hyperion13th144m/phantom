@@ -4021,38 +4021,39 @@
     <xsl:template match="claims">
         <xf:map>
             <xf:string key="tag">claims</xf:string>
-            <xf:string key="jpTag">
+            <xf:string key="jpTag"><xsl:value-of select="'【書類名】'"/></xf:string>
+            <xf:string key="text">
                 <xsl:choose>
                     <xsl:when test="ancestor::jp:contents-of-amendment">
                         <xsl:choose>
                             <xsl:when
                                 test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【書類名】特許請求の範囲'" />
+                                <xsl:value-of select="'特許請求の範囲'" />
                             </xsl:when>
                             <xsl:when
                                 test="ancestor::jp:contents-of-amendment//jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【書類名】実用新案登録請求の範囲'" />
+                                <xsl:value-of select="'実用新案登録請求の範囲'" />
                             </xsl:when>
                             <xsl:when
                                 test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'patent'">
-                                <xsl:value-of select="'【書類名】特許請求の範囲'" />
+                                <xsl:value-of select="'特許請求の範囲'" />
                             </xsl:when>
                             <xsl:when
                                 test="ancestor::jp:contents-of-amendment/@jp:kind-of-law = 'utility'">
-                                <xsl:value-of select="'【書類名】実用新案登録請求の範囲'" />
+                                <xsl:value-of select="'実用新案登録請求の範囲'" />
                             </xsl:when>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:choose>
                             <xsl:when test="$kind-of-law = 'patent'">
-                                <xsl:value-of select="'【書類名】特許請求の範囲'" />
+                                <xsl:value-of select="'特許請求の範囲'" />
                             </xsl:when>
                             <xsl:when test="$kind-of-law = 'utility'">
-                                <xsl:value-of select="'【書類名】実用新案登録請求の範囲'" />
+                                <xsl:value-of select="'実用新案登録請求の範囲'" />
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="'【書類名】請求の範囲'" />
+                                <xsl:value-of select="'請求の範囲'" />
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:otherwise>
@@ -4077,6 +4078,7 @@
     <schema:object name="claims">
         <schema:property name="tag" type="string" const="claims" />
         <schema:property name="jpTag" type="string" />
+        <schema:property name="text" type="string" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
             <schema:ref name="claim" />
@@ -4164,7 +4166,10 @@
         <xf:map>
             <xf:string key="tag">description</xf:string>
             <xf:string key="jpTag">
-                <xsl:value-of select="'【書類名】明細書'" />
+                <xsl:value-of select="'【書類名】'" />
+            </xf:string>
+             <xf:string key="text">
+                <xsl:value-of select="'明細書'" />
             </xf:string>
             <xf:string key="indentLevel">
                 <xsl:choose>
@@ -4195,6 +4200,7 @@
         name="description">
         <schema:property name="tag" type="string" const="description" />
         <schema:property name="jpTag" type="string" />
+        <schema:property name="text" type="string" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
@@ -4807,7 +4813,10 @@
         <xf:map>
             <xf:string key="tag">drawings</xf:string>
             <xf:string key="jpTag">
-                <xsl:value-of select="'【書類名】図面'" />
+                <xsl:value-of select="'【書類名】'" />
+            </xf:string>
+             <xf:string key="text">
+                <xsl:value-of select="'図面'" />
             </xf:string>
             <xf:string key="indentLevel">
                 <xsl:choose>
@@ -4828,6 +4837,7 @@
     <schema:object name="drawings">
         <schema:property name="tag" type="string" const="drawings" />
         <schema:property name="jpTag" type="string" />
+        <schema:property name="text" type="string" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
             <schema:ref name="image-container" />
@@ -4842,12 +4852,10 @@
         <xf:map>
             <xf:string key="tag">abstract</xf:string>
             <xf:string key="jpTag">
-                <xsl:value-of select="'【書類名】要約書'" />
+                <xsl:value-of select="'【書類名】'" />
             </xf:string>
             <xf:string key="text">
-                <xsl:call-template name="trim">
-                    <xsl:with-param name="text" select="." />
-                </xsl:call-template>
+                <xsl:value-of select="'要約書'" />
             </xf:string>
             <xf:string key="indentLevel">
                 <xsl:choose>
@@ -4861,6 +4869,24 @@
                 </xsl:choose>
             </xf:string>
             <xf:array key="blocks">
+                <xf:map>
+                    <xf:string key="tag">paragraph</xf:string>
+                    <xf:string key="indentLevel">0</xf:string>
+                    <xf:array key="blocks">
+                        <xsl:for-each select="tokenize(., '\n')">
+                            <xsl:if test="normalize-space() != ''">
+                                <xf:map>
+                                    <xf:string key="tag">text</xf:string>
+                                    <xf:string key="text">
+                                        <xsl:value-of select="." />
+                                    </xf:string>
+                                    <xf:boolean key="isLastSentence">true</xf:boolean>
+                                </xf:map>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xf:array>
+                </xf:map>
+                
                 <!-- 未サポート -->
                 <xsl:if test="doc-page or abst-problem or abst-solution">
                     <xsl:apply-templates select="doc-page | abst-problem | abst-solution" />
@@ -4872,12 +4898,15 @@
         name="abstract">
         <schema:property name="tag" type="string" const="abstract" />
         <schema:property name="jpTag" type="string" />
-        <schema:property name="indentLevel" type="string" />
         <schema:property name="text" type="string" />
+        <schema:property name="indentLevel" type="string" />
+        <schema:property name="blocks" type="array">
+            <schema:ref name="paragraph" />
+        </schema:property>
     </schema:object>
     <!-- ======================= End of abstract ======================== -->
     
-
+    
     <!-- ====================================================================
          p 段落 ,段落内テキスト
          ====================================================================-->
@@ -4909,7 +4938,7 @@
     </xsl:template>
     <schema:object name="paragraph">
         <schema:property name="tag" type="string" const="paragraph" />
-        <schema:property name="number" type="string" />
+        <schema:property name="number" type="string" optional="true" />
         <schema:property name="jpTag" type="string" optional="true" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">
@@ -5017,6 +5046,8 @@
         application-body//maths | jp:contents-of-amendment//maths |
         application-body//chemistry | jp:contents-of-amendment//chemistry |
         application-body//figure | jp:contents-of-amendment//figure">
+        <xsl:variable name="num" select="@num" />
+        <xsl:variable name="alt" select="//description-of-drawings//figref[@num=$num]" />
         <xsl:variable name="params"
             select="key('image-container-key', name(), $image-container-parameters)" />
         <xf:map>
@@ -5051,8 +5082,7 @@
                 <xsl:choose>
                     <xsl:when test="name() = 'figure'">
                         <xsl:value-of select="'Figure No. ' || @num || ' '" />
-                        <xsl:value-of
-                            select="//description-of-drawings//figref[@num=@num]" />
+                        <xsl:value-of select="$alt" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="$params/@kind || ' No. ' || @num" />

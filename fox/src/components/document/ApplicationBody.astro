@@ -1,4 +1,6 @@
 ---
+// ApplicationBody の文書の表示用/印刷用レイアウトを定義、
+// 子要素は items/ApplicationBodyItems.astro で定義する。
 import Card from "~/components/ui/Card.astro";
 import type { ApplicationBody } from "~/interfaces/generated/application-body";
 import {
@@ -7,44 +9,61 @@ import {
     isDescription,
     isDrawings,
 } from "~/interfaces/generated/application-body.guard";
-const { document } = Astro.props as {
+import ApplicationBodyItems from "./items/ApplicationBodyItems.astro";
+const { document, forPrinting = false } = Astro.props as {
     document: ApplicationBody;
+    forPrinting: boolean;
 };
+const displayOrder = [isAbstract, isClaims, isDescription, isDrawings];
+const printingOrder = [isDescription, isClaims, isAbstract, isDrawings];
+const order = forPrinting ? printingOrder : displayOrder;
+const sortedDocs = order
+    .map((guard) => document.blocks.find((b) => guard(b)))
+    .filter((b): b is NonNullable<typeof b> => b !== undefined);
 ---
 
 {
-    document.blocks.map((block) => {
-        if (isDescription(block)) {
-            return (
-                <Card title="明細書">
-                    <pre>{JSON.stringify(block, null, 2)}</pre>
-                </Card>
-            );
-        } else if (isClaims(block)) {
-            return (
-                <Card title="請求の範囲">
-                    <pre>{JSON.stringify(block, null, 2)}</pre>
-                </Card>
-            );
-        } else if (isAbstract(block)) {
-            return (
-                <Card title="要約書">
-                    <pre>{JSON.stringify(block, null, 2)}</pre>
-                </Card>
-            );
-        } else if (isDrawings(block)) {
-            return (
-                <Card title="図面">
-                    <pre>{JSON.stringify(block, null, 2)}</pre>
-                </Card>
-            );
-        } else {
-            return (
+    forPrinting === false &&
+        sortedDocs.map((block) => (
+            <Card title={block.text}>
                 <div>
-                    <h1>unknown blocks</h1>
-                    <pre>{JSON.stringify(block, null, 2)}</pre>
+                    {block.jpTag}
+                    {block.text}
                 </div>
-            );
-        }
-    })
+                {block.blocks.map((b) => (
+                    <ApplicationBodyItems block={b} />
+                ))}
+            </Card>
+        ))
 }
+
+{
+    forPrinting === true &&
+        sortedDocs.map((block) => (
+            <div class={block.tag}>
+                <div>
+                    {block.jpTag}
+                    {block.text}
+                </div>
+                {block.blocks.map((b) => (
+                    <ApplicationBodyItems block={b} />
+                ))}
+            </div>
+        ))
+}
+
+<!-- for printing -->
+<style>
+    .claims {
+        break-before: page;
+    }
+    .description {
+        break-before: page;
+    }
+    .abstract {
+        break-before: page;
+    }
+    .drawings {
+        break-before: page;
+    }
+</style>
