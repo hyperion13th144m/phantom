@@ -1,23 +1,33 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import type { ImagesInformation } from "./interfaces/generated/images-information";
 
-//
+// astro
+// public/images (sym link to /data_dir)
+//  開発時に画像をみるために public/images にシンボリックリンクを張る。
+//  ビルド時には public/images はコピーされないように astro.config.mjs に設定されている。
+// source で /images/* とすると、開発時は
+//   public/images の実体 /data_dir/*/*.webp が参照されレンダリングされる。
+
 // /data_dir
 // |
 // +-- id2dir/docId/
 // |           +--json/
 // |           |    +--document.json
 // |           +--images/
-//                  +-- *.webp
+// |                +-- *.webp
+// /wwwroot (astro build の出力先。nginx で配信される htmlが置かれる)
 
-// astro reads each document.json from /data_dir
-// nginx serves static contents from /data_dir as /static/*
+// nginx 
+//   /images/* -> /data_dir/*/images/*
+//   /docs/*   -> /wwwroot/docs/* (astro がビルドして出力するコンテンツ)
+
 
 // document.json などのコンテンツが置かれているディレクトリ
 export const DATA_DIR = "/data_dir";
 
 // 静的コンテンツのベースURLパス.
-const BASE_URL = "/static";
+const BASE_URL = "/images";
 
 // docId で特定されるコンテンツが保存されたディレクトリのパスを取得
 export const getContentRoot = (docId: string) => {
@@ -43,3 +53,22 @@ export const getDocument = async (docId: string): Promise<Array<any>> => {
     const json: Array<any> = JSON.parse(txt);
     return json;
 }
+
+export const getImageUrl = async (docId: string, imageName: string, sizeTag: string) => {
+    const txt = await fs.readFile(
+        path.join(getContentRoot(docId), "json/images-information.json"),
+        "utf-8",
+    );
+    const json: ImagesInformation[] = JSON.parse(txt);
+    const derived = json
+        .filter((info) => info.filename === imageName)
+        .flatMap((info) => info.derived)
+        .filter((derived) => derived.attributes?.some(
+            (attr) => (attr.key === "sizeTag" && attr.value === sizeTag)))
+        .at(0);
+    return {
+        url: path.join(getBaseUrl(docId), "images", derived ? derived.filename : ""),
+        width: derived?.width || 0,
+        height: derived?.height || 0,
+    };
+};

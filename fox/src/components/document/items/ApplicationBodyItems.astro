@@ -1,5 +1,6 @@
 ---
 // 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
+import { getImageUrl } from "~/constants";
 import type {
     CitationList,
     Claim,
@@ -75,6 +76,9 @@ const concatBlocks = (
 };
 
 const { docId } = Astro.params as { docId: string };
+const imageInfo = isImageContainer(block)
+    ? await getImageUrl(docId, block.file, "large")
+    : null;
 ---
 
 {
@@ -143,14 +147,14 @@ const { docId } = Astro.params as { docId: string };
 {
     // 画像
     // あとで URLをrewrite する。
-    isImageContainer(block) && (
+    isImageContainer(block) && imageInfo && (
         <div class="image-container">
             <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
-            <div>{docId}</div>
-            <div>{block.file}</div>
             <img
-                src={block.file}
+                src={imageInfo.url}
                 alt={block.alt}
+                width={imageInfo.width}
+                height={imageInfo.height}
                 style="max-width: 100%; height: auto;"
             />
         </div>

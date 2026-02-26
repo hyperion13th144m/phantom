@@ -1,24 +1,4 @@
 services:
-  mona-dev:
-    container_name: mona-dev
-    image: mona-dev
-    build:
-      context: mona
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ${SRC_DIR}:/src_dir
-      - ${DATA_DIR}:/data_dir
-      - ${LOG_DIR_MONA}:/var/log/mona
-      - .:/workspaces:cached
-    tty: true
-    environment:
-      SRC_DIR: /src_dir
-      DATA_DIR: /data_dir
-      OMP_THREAD_LIMIT: 1
-    networks:
-      - dev-net
-  
- 
   fox-dev:
     container_name: fox-dev
     image: node:24-bookworm
@@ -30,6 +10,7 @@ services:
     volumes:
       - .:/workspaces:cached
       - ${DATA_DIR}:/data_dir
+      - ${WWWROOT_DIR}:/wwwroot
       - ${LOG_DIR_FOX}:/var/log/fox
     networks:
       - dev-net
@@ -81,7 +62,8 @@ services:
       context: nginx
       dockerfile: Dockerfile.dev
     volumes:
-      - ${DATA_DIR}:/usr/share/nginx/html
+      - ${DATA_DIR}:/images
+      - ${WWWROOT_DIR}:/usr/share/nginx/html
     ports:
       - ${DEV_NGINX_PORT}:38080
     networks:

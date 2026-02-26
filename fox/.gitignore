@@ -24,6 +24,6 @@ pnpm-debug.log*
 .idea/
 .vercel
 
-public/content
+public/images
 document*.json
 reference/

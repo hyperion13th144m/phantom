@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "scripts": {
         "dev": "astro dev --host 0.0.0.0",
-        "build": "astro build",
+        "build": "env NODE_ENV=production astro build",
         "preview": "astro preview --host 0.0.0.0",
         "start": "node ./dist/server/entry.mjs",
         "astro": "astro"
