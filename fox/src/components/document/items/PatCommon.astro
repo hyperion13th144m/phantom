@@ -86,10 +86,12 @@ const concatBlocks = (
     blocks.forEach((block) => {
         if (condition(block)) {
             if (currentGroup.length > 0) {
+                currentGroup.push(block);
                 result.push(currentGroup);
                 currentGroup = [];
+            } else {
+                result.push([block]);
             }
-            result.push([block]);
         } else {
             currentGroup.push(block);
         }
