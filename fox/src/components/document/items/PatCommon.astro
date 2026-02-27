@@ -2,6 +2,7 @@
 // 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
 import { getImageUrl } from "~/constants";
 import type {
+    AppealArticle,
     Attorney,
     CitationList,
     Claim,
@@ -15,6 +16,7 @@ import type {
     InventionTitle,
     Lawyer,
     Literature,
+    OpinionContentsArticle,
     Paragraph,
     PatCommonContainerTypeA,
     PatCommonContainerTypeB,
@@ -23,10 +25,15 @@ import type {
     SummaryOfInventionItems,
 } from "~/interfaces/generated/pat_common";
 import {
+    isAmendmentArticle,
+    isAmendmentGroup,
+    isAmendmentTerminalItems,
+    isAppealArticle,
     isAttorney,
     isCitationList,
     isClaim,
     isClaimText,
+    isContentsOfAmendment,
     isDescriptionItems,
     isDescriptionOfEmbodiments,
     isEmbodimentsExample,
@@ -36,6 +43,7 @@ import {
     isInventionTitle,
     isLawyer,
     isLiterature,
+    isOpinionContentsArticle,
     isParagraph,
     isPatCommonContainerTypeA,
     isPatCommonContainerTypeB,
@@ -64,7 +72,9 @@ const { block } = Astro.props as {
         | PatCommonContainerTypeA
         | PatCommonContainerTypeB
         | Lawyer
-        | Attorney;
+        | Attorney
+        | OpinionContentsArticle
+        | AppealArticle;
 };
 
 const concatBlocks = (
@@ -121,7 +131,10 @@ const imageInfo = isImageContainer(block)
         isEmbodimentsExample(block) ||
         isCitationList(block) ||
         isClaim(block) ||
-        isLiterature(block)) && (
+        isLiterature(block) ||
+        isOpinionContentsArticle(block) ||
+        isAppealArticle(block) ||
+        isContentsOfAmendment(block)) && (
         <div class={block.tag}>
             <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
             {block.blocks.map((b) => (
@@ -175,7 +188,7 @@ const imageInfo = isImageContainer(block)
     )
 }
 {
-    isPatCommonTerminalTypeA(block) && (
+    (isPatCommonTerminalTypeA(block) || isAmendmentTerminalItems(block)) && (
         <div class="flex">
             <span
                 class={`indent-level-${block.indentLevel}`}
@@ -190,7 +203,9 @@ const imageInfo = isImageContainer(block)
     )
 }
 {
-    isPatCommonContainerTypeA(block) &&
+    (isPatCommonContainerTypeA(block) ||
+        isAmendmentArticle(block) ||
+        isAmendmentGroup(block)) &&
         block.blocks?.map((block) => <Astro.self block={block} />)
 }
 {

@@ -30,11 +30,15 @@
         <xsl:variable name="root">
             <xf:map>
                 <xf:string key="tag">pat-amnd</xf:string>
+                <xf:string key="text">
+                    <xsl:call-template name="書類名変換" />
+                </xf:string>
                 <xf:array key="blocks">
                     <xsl:apply-templates select="root/jp:pat-amnd" />
                 </xf:array>
             </xf:map>
         </xsl:variable>
+
         <xsl:choose>
             <xsl:when test="$debug = 'true'">
                 <xsl:apply-templates select="$root/xf:map"/>
@@ -47,6 +51,7 @@
     <schema:title>pat-amnd</schema:title>
     <schema:object name="pat-amnd" is-root="true">
         <schema:property name="tag" type="string" const="pat-amnd" />
+        <schema:property name="text" type="string"/>
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="amendment-a51-a523" />

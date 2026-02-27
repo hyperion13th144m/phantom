@@ -30,6 +30,9 @@
         <xsl:variable name="root">
             <xf:map>
                 <xf:string key="tag">pat-etc</xf:string>
+                <xf:string key="text">
+                    <xsl:call-template name="書類名変換" />
+                </xf:string>
                 <xf:array key="blocks">
                     <!-- 上申書 -->
                     <xsl:apply-templates select="root/jp:pat-etc/jp:etcetera-a781" />
@@ -42,6 +45,7 @@
                 </xf:array>
             </xf:map>
         </xsl:variable>
+
         <xsl:choose>
             <xsl:when test="$debug = 'true'">
                 <xsl:apply-templates select="$root/xf:map"/>
@@ -54,6 +58,7 @@
     <schema:title>pat-etc</schema:title>
     <schema:object name="pat-etc" is-root="true">
         <schema:property name="tag" type="string" const="pat-etc" />
+        <schema:property name="text" type="string"/>
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="etcetera-a781" />
@@ -236,6 +241,7 @@
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
                 <schema:ref file="pat_common.json" name="pat-common-container-type-a"/>
                 <schema:ref file="pat_common.json" name="pat-common-container-type-b"/>
+                <schema:ref file="pat_common.json" name="opinion-contents-article" />
                 <schema:ref file="pat_common.json" name="rule-outside-item-article" />
             </schema:anyOf>
         </schema:property>

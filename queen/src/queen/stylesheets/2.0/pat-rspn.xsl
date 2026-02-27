@@ -28,11 +28,15 @@
         <xsl:variable name="root">
             <xf:map>
                 <xf:string key="tag">pat-rspn</xf:string>
+                <xf:string key="text">
+                    <xsl:call-template name="書類名変換" />
+                </xf:string>
                 <xf:array key="blocks">
                     <xsl:apply-templates select="root/jp:pat-rspns" />
                 </xf:array>
             </xf:map>
         </xsl:variable>
+
         <xsl:choose>
             <xsl:when test="$debug = 'true'">
                 <xsl:apply-templates select="$root/xf:map"/>
@@ -46,6 +50,7 @@
     <schema:object
         name="pat-rspn" is-root="true">
         <schema:property name="tag" type="string" const="pat-rspn" />
+        <schema:property name="text" type="string"/>
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="pat-rspn-a53-a59" />
