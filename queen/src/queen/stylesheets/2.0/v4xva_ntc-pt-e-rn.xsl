@@ -99,18 +99,18 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-                        <xf:array key="blocks">
-            <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:kind-of-application" />
-            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
-            <xsl:apply-templates select="jp:reconsideration-before-appeal" />
-            <xsl:apply-templates select="jp:conclusion-part-article" />
-            <xsl:apply-templates select="jp:drafting-body" />
-            <xsl:apply-templates select="jp:footer-article" />
-            <xsl:apply-templates select="jp:final-decision-group-rn" />
-            <xsl:apply-templates select="jp:final-decision-memo-rn" />
-             </xf:array>
-       </xf:map>
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:kind-of-application" />
+                <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
+                <xsl:apply-templates select="jp:reconsideration-before-appeal" />
+                <xsl:apply-templates select="jp:conclusion-part-article" />
+                <xsl:apply-templates select="jp:drafting-body" />
+                <xsl:apply-templates select="jp:footer-article" />
+                <xsl:apply-templates select="jp:final-decision-group-rn" />
+                <xsl:apply-templates select="jp:final-decision-memo-rn" />
+            </xf:array>
+        </xf:map>
     </xsl:template>
     <schema:object name="decision-of-registration-a01-rn">
         <schema:property
@@ -120,7 +120,6 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
-                <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -134,11 +133,11 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-            <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
-            <xsl:apply-templates select="jp:conclusion-part-article" />
-            <xsl:apply-templates select="jp:drafting-body" />
-            <xsl:apply-templates select="jp:footer-article" />
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
+                <xsl:apply-templates select="jp:conclusion-part-article" />
+                <xsl:apply-templates select="jp:drafting-body" />
+                <xsl:apply-templates select="jp:footer-article" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -150,7 +149,6 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
-                <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -163,10 +161,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-                       <xf:array key="blocks">
-  <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
-            <xsl:apply-templates select="jp:image-group" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
+                <xsl:apply-templates select="jp:image-group" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -178,7 +176,6 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
-                <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -191,12 +188,12 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-             <xf:array key="blocks">
-            <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
-            <xsl:apply-templates select="jp:conclusion-part-article" />
-            <xsl:apply-templates select="jp:footer-article" />
-            <xsl:apply-templates select="jp:image-group" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
+                <xsl:apply-templates select="jp:conclusion-part-article" />
+                <xsl:apply-templates select="jp:footer-article" />
+                <xsl:apply-templates select="jp:image-group" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -208,7 +205,6 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
-                <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -221,12 +217,12 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-                        <xf:array key="blocks">
- <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
-            <xsl:apply-templates select="jp:conclusion-part-article" />
-            <xsl:apply-templates select="jp:drafting-body" />
-            <xsl:apply-templates select="jp:footer-article" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
+                <xsl:apply-templates select="jp:conclusion-part-article" />
+                <xsl:apply-templates select="jp:drafting-body" />
+                <xsl:apply-templates select="jp:footer-article" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -239,7 +235,6 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
-                <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -257,13 +252,13 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-             <xf:array key="blocks">
-            <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
-            <xsl:apply-templates select="jp:reconsideration-before-appeal" />
-            <xsl:apply-templates select="jp:conclusion-part-article" />
-            <xsl:apply-templates select="jp:drafting-body" />
-            <xsl:apply-templates select="jp:footer-article" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:bibliog-in-ntc-pat-exam-rn" />
+                <xsl:apply-templates select="jp:reconsideration-before-appeal" />
+                <xsl:apply-templates select="jp:conclusion-part-article" />
+                <xsl:apply-templates select="jp:drafting-body" />
+                <xsl:apply-templates select="jp:footer-article" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -284,7 +279,6 @@
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-b" />
                 <schema:ref name="ntc-pt-e-rn-container-items-type-a" />
-                <schema:ref name="ntc-pt-e-rn-container-items-type-b" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -923,7 +917,7 @@
                          jp:application-section,
                          jp:exceptions-to-lack-of-novelty" />
         <schema:property name="jpTag" type="string" />
-        <schema:property name="indentLevel" type="integer" />
+        <schema:property name="indentLevel" type="string" />
         <schema:property name="text" type="string" />
         <schema:property name="convertedText" type="string" optional="true" />
     </schema:object>
@@ -1181,35 +1175,35 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-                      <xf:array key="blocks">
-            <xsl:choose>
-                <xsl:when test="$node = 'jp:examiner-notification-a242623-rn'">
-                    <xsl:apply-templates select="jp:drafting-date" />
-                    <xsl:apply-templates select="jp:draft-person-group" />
-                    <xsl:apply-templates select="jp:addressed-to-person-group" />
-                    <xsl:apply-templates select="jp:application-reference" />
-                </xsl:when>
-                <xsl:when
-                    test="$node = 'jp:examiner-notification-a2541-rn' or 
-                        $node = 'jp:examiner-notification-a2542-rn'">
-                    <xsl:apply-templates select="jp:drafting-date" />
-                    <xsl:apply-templates select="jp:draft-person-group" />
-                    <xsl:apply-templates select="jp:addressed-to-person-group" />
-                    <xsl:apply-templates select="jp:application-reference" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="jp:application-reference" />
-                    <xsl:apply-templates select="jp:drafting-date" />
-                    <xsl:apply-templates select="jp:draft-person-group" />
-                    <xsl:apply-templates select="invention-title" />
-                    <xsl:apply-templates select="jp:number-of-claim" />
-                    <xsl:apply-templates select="jp:addressed-to-person-group" />
-                    <xsl:apply-templates select="jp:article-group" />
-                    <xsl:apply-templates select="jp:remark" />
-                </xsl:otherwise>
-            </xsl:choose>
-             </xf:array>
-       </xf:map>
+            <xf:array key="blocks">
+                <xsl:choose>
+                    <xsl:when test="$node = 'jp:examiner-notification-a242623-rn'">
+                        <xsl:apply-templates select="jp:drafting-date" />
+                        <xsl:apply-templates select="jp:draft-person-group" />
+                        <xsl:apply-templates select="jp:addressed-to-person-group" />
+                        <xsl:apply-templates select="jp:application-reference" />
+                    </xsl:when>
+                    <xsl:when
+                        test="$node = 'jp:examiner-notification-a2541-rn' or 
+                            $node = 'jp:examiner-notification-a2542-rn'">
+                        <xsl:apply-templates select="jp:drafting-date" />
+                        <xsl:apply-templates select="jp:draft-person-group" />
+                        <xsl:apply-templates select="jp:addressed-to-person-group" />
+                        <xsl:apply-templates select="jp:application-reference" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="jp:application-reference" />
+                        <xsl:apply-templates select="jp:drafting-date" />
+                        <xsl:apply-templates select="jp:draft-person-group" />
+                        <xsl:apply-templates select="invention-title" />
+                        <xsl:apply-templates select="jp:number-of-claim" />
+                        <xsl:apply-templates select="jp:addressed-to-person-group" />
+                        <xsl:apply-templates select="jp:article-group" />
+                        <xsl:apply-templates select="jp:remark" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:array>
+        </xf:map>
     </xsl:template>
     
     <!-- ====================================================================
@@ -1221,9 +1215,9 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:for-each select="p">
-                <xsl:apply-templates select="." />
-            </xsl:for-each>
+                <xsl:for-each select="p">
+                    <xsl:apply-templates select="." />
+                </xsl:for-each>
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1253,10 +1247,10 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="jp:approval-column-article" />
-            <xsl:apply-templates select="jp:certification-column-article" />
-            <xsl:apply-templates select="jp:inquiry-article" />
-            <xsl:apply-templates select="jp:approval-without-contents" />
+                <xsl:apply-templates select="jp:approval-column-article" />
+                <xsl:apply-templates select="jp:certification-column-article" />
+                <xsl:apply-templates select="jp:inquiry-article" />
+                <xsl:apply-templates select="jp:approval-without-contents" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1270,12 +1264,12 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="jp:kind-of-application" />
-            <xsl:apply-templates select="jp:exist-of-reference-doc" />
-            <xsl:apply-templates select="jp:patent-law-section30" />
-            <xsl:apply-templates select="jp:change-flag-invention-title" />
-            <xsl:apply-templates select="jp:deposit-article" />
-            <xsl:apply-templates select="jp:parent-application-article" />
+                <xsl:apply-templates select="jp:kind-of-application" />
+                <xsl:apply-templates select="jp:exist-of-reference-doc" />
+                <xsl:apply-templates select="jp:patent-law-section30" />
+                <xsl:apply-templates select="jp:change-flag-invention-title" />
+                <xsl:apply-templates select="jp:deposit-article" />
+                <xsl:apply-templates select="jp:parent-application-article" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1288,10 +1282,10 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-                        <xf:array key="blocks">
- <xsl:apply-templates select="jp:document-name" />
-            <xsl:apply-templates select="jp:final-decision-bibliog-rn" />
-            <xsl:apply-templates select="jp:final-decision-body-rn" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:document-name" />
+                <xsl:apply-templates select="jp:final-decision-bibliog-rn" />
+                <xsl:apply-templates select="jp:final-decision-body-rn" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1319,7 +1313,7 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates />
+                <xsl:apply-templates />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1347,11 +1341,11 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-            <xsl:apply-templates select="jp:fi-article" />
-            <xsl:apply-templates select="jp:field-of-search-article" />
-            <xsl:apply-templates select="jp:patent-reference-article" />
-            <xsl:apply-templates select="jp:reference-books-article" />
-            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-art" />
+                <xsl:apply-templates select="jp:fi-article" />
+                <xsl:apply-templates select="jp:field-of-search-article" />
+                <xsl:apply-templates select="jp:patent-reference-article" />
+                <xsl:apply-templates select="jp:reference-books-article" />
+                <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-art" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1365,16 +1359,16 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:choose>
-                <xsl:when test="ancestor::jp:parent-application-article">
-                    <xsl:apply-templates select="jp:doc-number | jp:date" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="jp:doc-number" />
-                </xsl:otherwise>
-            </xsl:choose>
-             </xf:array>
-       </xf:map>
+                <xsl:choose>
+                    <xsl:when test="ancestor::jp:parent-application-article">
+                        <xsl:apply-templates select="jp:doc-number | jp:date" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="jp:doc-number" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:array>
+        </xf:map>
     </xsl:template>
     
     <!-- ====================================================================
@@ -1389,46 +1383,46 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:choose>
-                <xsl:when test="$node = 'jp:decision-of-registration-a01-rn'">
-                    <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:apply-templates
-                            select="following-sibling::jp:devider/jp:official-title" />
-                    </xsl:if>
-                    
-                    <xsl:apply-templates select="jp:staff2-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:name" />
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:apply-templates select="following-sibling::jp:devider/jp:name" />
-                    </xsl:if>
-                    
-                    <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
-                    <xsl:if test="following-sibling::jp:devider">
-                        <xsl:apply-templates select="following-sibling::jp:devider/jp:staff-code" />
-                    </xsl:if>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
-                    
-                    <xsl:apply-templates select="jp:staff2-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:name" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:name" />
-                    
-                    <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
-                    <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
-                </xsl:otherwise>
-            </xsl:choose>
-             </xf:array>
-       </xf:map>
+                <xsl:choose>
+                    <xsl:when test="$node = 'jp:decision-of-registration-a01-rn'">
+                        <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
+                        <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
+                        <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
+                        <xsl:if test="following-sibling::jp:devider">
+                            <xsl:apply-templates
+                                select="following-sibling::jp:devider/jp:official-title" />
+                        </xsl:if>
+                        
+                        <xsl:apply-templates select="jp:staff2-group/jp:name" />
+                        <xsl:apply-templates select="jp:staff3-group/jp:name" />
+                        <xsl:apply-templates select="jp:staff4-group/jp:name" />
+                        <xsl:if test="following-sibling::jp:devider">
+                            <xsl:apply-templates select="following-sibling::jp:devider/jp:name" />
+                        </xsl:if>
+                        
+                        <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
+                        <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
+                        <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
+                        <xsl:if test="following-sibling::jp:devider">
+                            <xsl:apply-templates select="following-sibling::jp:devider/jp:staff-code" />
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="jp:staff2-group/jp:official-title" />
+                        <xsl:apply-templates select="jp:staff3-group/jp:official-title" />
+                        <xsl:apply-templates select="jp:staff4-group/jp:official-title" />
+                        
+                        <xsl:apply-templates select="jp:staff2-group/jp:name" />
+                        <xsl:apply-templates select="jp:staff3-group/jp:name" />
+                        <xsl:apply-templates select="jp:staff4-group/jp:name" />
+                        
+                        <xsl:apply-templates select="jp:staff2-group/jp:staff-code" />
+                        <xsl:apply-templates select="jp:staff3-group/jp:staff-code" />
+                        <xsl:apply-templates select="jp:staff4-group/jp:staff-code" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:array>
+        </xf:map>
     </xsl:template>
     
     <!-- ====================================================================
@@ -1440,7 +1434,7 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="img" />
+                <xsl:apply-templates select="img" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1454,22 +1448,21 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-            <xsl:if test="ancestor::jp:parent-application-article">
-                <xsl:if test="position() = 1">
-                    <xf:map>
-                        <xf:string key="tag">
-                            <xsl:value-of select="'text'" />
-                        </xf:string>
-                        <xf:string key="text">
-                            <xsl:value-of select="'　遡及を認める原出願の出願番号、原出願の出願日'" />
-                        </xf:string>
-                    </xf:map>
+                <xsl:if test="ancestor::jp:parent-application-article">
+                    <xsl:if test="position() = 1">
+                        <xf:map>
+                            <xf:string key="tag">
+                                <xsl:value-of select="'text'" />
+                            </xf:string>
+                            <xf:string key="text">
+                                <xsl:value-of select="'　遡及を認める原出願の出願番号、原出願の出願日'" />
+                            </xf:string>
+                        </xf:map>
+                    </xsl:if>
                 </xsl:if>
-            </xsl:if>
-            
-            <xsl:apply-templates select="jp:document-id" />
-             </xf:array>
-       </xf:map>
+                <xsl:apply-templates select="jp:document-id" />
+            </xf:array>
+        </xf:map>
     </xsl:template>
     
     <schema:object name="ntc-pt-e-rn-container-items-type-a">
@@ -1537,21 +1530,21 @@
                 </xsl:choose>
             </xf:string>
             <xf:array key="blocks">
-             <xsl:choose>
-                <xsl:when
-                    test="$node = 'jp:examiner-notification-a242623-rn' or
-                        $node = 'jp:examiner-notification-a2541-rn'  or
-                        $node = 'jp:examiner-notification-a2542-rn'">
-                    <xsl:apply-templates select="jp:name" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="jp:name" />
-                    <xsl:apply-templates select="jp:staff-code" />
-                    <xsl:apply-templates select="jp:office-code" />
-                </xsl:otherwise>
-            </xsl:choose>
-             </xf:array>
-       </xf:map>
+                <xsl:choose>
+                    <xsl:when
+                        test="$node = 'jp:examiner-notification-a242623-rn' or
+                            $node = 'jp:examiner-notification-a2541-rn'  or
+                            $node = 'jp:examiner-notification-a2542-rn'">
+                        <xsl:apply-templates select="jp:name" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="jp:name" />
+                        <xsl:apply-templates select="jp:staff-code" />
+                        <xsl:apply-templates select="jp:office-code" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:array>
+        </xf:map>
     </xsl:template>
     
     <!-- ====================================================================
@@ -1566,7 +1559,7 @@
                 <xsl:value-of select="'適用条文'" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="jp:article" />
+                <xsl:apply-templates select="jp:article" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1583,7 +1576,7 @@
                 <xsl:value-of select="'備考'" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="p" />
+                <xsl:apply-templates select="p" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1599,8 +1592,8 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'・ＦＩ'" />
             </xf:string>
-                       <xf:array key="blocks">
-  <xsl:apply-templates select="jp:fi" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:fi" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1617,8 +1610,8 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'・菌寄託'" />
             </xf:string>
-              <xf:array key="blocks">
-           <xsl:apply-templates select="jp:deposit" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:deposit" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1636,9 +1629,9 @@
                 <xsl:value-of select="f:to-fullwidth-digit(string(position()))" />
             </xf:string>
             <xf:string key="indentLevel">1</xf:string>
-                       <xf:array key="blocks">
-            <xsl:apply-templates select="jp:depository-ins-code" />
-            <xsl:apply-templates select="jp:depository-number" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:depository-ins-code" />
+                <xsl:apply-templates select="jp:depository-number" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1665,7 +1658,7 @@
                 </xsl:choose>
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="jp:application-reference" />
+                <xsl:apply-templates select="jp:application-reference" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1682,7 +1675,7 @@
                 <xsl:value-of select="'・調査した分野（ＩＰＣ，ＤＢ名）'" />
             </xf:string>
             <xf:array key="blocks">
-             <xsl:apply-templates select="jp:field-of-search" />
+                <xsl:apply-templates select="jp:field-of-search" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1698,8 +1691,8 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'・参考特許文献'" />
             </xf:string>
-               <xf:array key="blocks">
-          <xsl:apply-templates select="jp:patent-reference-group" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:patent-reference-group" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1715,8 +1708,8 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'・参考図書雑誌'" />
             </xf:string>
-                     <xf:array key="blocks">
-    <xsl:apply-templates select="jp:reference-books" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:reference-books" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1732,8 +1725,8 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'・新規性喪失例外規定の適用の事実'" />
             </xf:string>
-                <xf:array key="blocks">
-         <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-grp" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty-grp" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1751,9 +1744,9 @@
                 <xsl:value-of select="f:to-fullwidth-digit(normalize-space(./@jp:serial-number))" />
             </xf:string>
             <xf:string key="indentLevel">1</xf:string>
-               <xf:array key="blocks">
-          <xsl:apply-templates select="jp:application-section" />
-            <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
+            <xf:array key="blocks">
+                <xsl:apply-templates select="jp:application-section" />
+                <xsl:apply-templates select="jp:exceptions-to-lack-of-novelty" />
             </xf:array>
         </xf:map>
     </xsl:template>
@@ -1774,7 +1767,7 @@
                          jp:exceptions-to-lack-of-novelty-art,
                          jp:exceptions-to-lack-of-novelty-grp" />
         <schema:property name="jpTag" type="string" />
-        <schema:property name="indentLevel" type="integer" optional="true" />
+        <schema:property name="indentLevel" type="string" optional="true" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-rn-terminal-items-type-a" />

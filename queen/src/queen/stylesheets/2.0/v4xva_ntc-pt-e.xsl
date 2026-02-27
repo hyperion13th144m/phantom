@@ -76,10 +76,10 @@
         <schema:property name="tag" type="string" const="jp:notice-pat-exam" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="jp:decision-of-registration-a01"/>
-                <schema:ref name="jp:decision-of-rejection-a02"/>
-                <schema:ref name="jp:examiner-notification-a30"/>
-                <schema:ref name="jp:notice-others"/>
+                <schema:ref name="decision-of-registration-a01"/>
+                <schema:ref name="decision-of-rejection-a02"/>
+                <schema:ref name="examiner-notification-a30"/>
+                <schema:ref name="notice-others"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -110,15 +110,9 @@
             name="tag" type="string" const="jp:decision-of-registration-a01" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="document-name" />
-                <schema:ref name="kind-of-application" />
-                <schema:ref name="bibliog-in-ntc-pat-exam" />
-                <schema:ref name="reconsideration-before-appeal" />
-                <schema:ref name="conclusion-part-article" />
-                <schema:ref name="drafting-body" />
-                <schema:ref name="footer-article" />
-                <schema:ref name="final-decision-group" />
-                <schema:ref name="final-decision-memo" />
+                <schema:ref name="ntc-pt-e-terminal-items-type-a"/>
+                <schema:ref name="ntc-pt-e-terminal-items-type-b"/>
+                <schema:ref name="ntc-pt-e-container-items-type-a"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -145,11 +139,8 @@
             name="tag" type="string" const="jp:decision-of-rejection-a02" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="document-name" />
-                <schema:ref name="bibliog-in-ntc-pat-exam" />
-                <schema:ref name="reconsideration-before-appeal" />
-                <schema:ref name="drafting-body" />
-                <schema:ref name="footer-article" />
+                <schema:ref name="ntc-pt-e-terminal-items-type-b"/>
+                <schema:ref name="ntc-pt-e-container-items-type-a"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -201,12 +192,8 @@
                          jp:examiner-notification-a25111" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="document-name" />
-                <schema:ref name="bibliog-in-ntc-pat-exam" />
-                <schema:ref name="reconsideration-before-appeal" />
-                <schema:ref name="conclusion-part-article" />
-                <schema:ref name="drafting-body" />
-                <schema:ref name="footer-article" />
+                <schema:ref name="ntc-pt-e-terminal-items-type-b"/>
+                <schema:ref name="ntc-pt-e-container-items-type-a"/>
             </schema:anyOf>
         </schema:property>
     </schema:object> 
@@ -233,10 +220,8 @@
                          const="jp:examiner-notification-a30" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
-                <schema:ref name="document-name" />
-                <schema:ref name="bibliog-in-ntc-pat-exam" />
-                <schema:ref name="reconsideration-before-appeal" />
-                <schema:ref name="image-group" />
+                <schema:ref name="ntc-pt-e-terminal-items-type-b"/>
+                <schema:ref name="ntc-pt-e-container-items-type-a"/>
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -800,7 +785,7 @@
                          jp:application-section,
                          jp:exceptions-to-lack-of-novelty" />
         <schema:property name="jpTag" type="string" />
-        <schema:property name="indentLevel" type="integer" />
+        <schema:property name="indentLevel" type="string" />
         <schema:property name="text" type="string" />
         <schema:property name="convertedText" type="string" optional="true" />
     </schema:object>
@@ -819,7 +804,7 @@
     <xsl:template match="jp:document-name">
         <xf:map>
             <xf:string key="tag">
-                <xsl:value-of select="notice-document-name" />
+                <xsl:value-of select="name()" />
             </xf:string>
             <xf:string key="text">
                 <xsl:value-of select="." />
@@ -1133,8 +1118,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:footer-article フッタ部 -->
-     ====================================================================-->
+         jp:footer-article フッタ部
+         ====================================================================-->
     <xsl:template match="jp:footer-article">
         <xf:map>
             <xf:string key="tag">
@@ -1154,8 +1139,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:final-decision-group 査定固有部 -->
-     ====================================================================-->
+         jp:final-decision-group 査定固有部
+         ====================================================================-->
     <xsl:template match="jp:final-decision-group">
         <xf:map>
             <xf:string key="tag">
@@ -1175,8 +1160,8 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:final-decision-memo 査定メモ -->
-     ====================================================================-->
+         jp:final-decision-memo 査定メモ
+         ====================================================================-->
     <xsl:template match="jp:final-decision-memo">
         <xf:map>
             <xf:string key="tag">
@@ -1342,21 +1327,18 @@
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-                <xsl:choose>
-                    <xsl:when test="ancestor::jp:parent-application-article">
-                        <xsl:if test="position() = 1">
+                <xsl:if test="ancestor::jp:parent-application-article">
+                    <xsl:if test="position() = 1">
+                        <xf:map>
+                            <xf:string key="tag">
+                                <xsl:value-of select="'text'" />
+                            </xf:string>
                             <xf:string key="text">
                                 <xsl:value-of select="'　対応する原出願の出願番号、原出願の出願日'" />
                             </xf:string>
-                        </xsl:if>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xf:string key="text">
-                            <xsl:value-of select="''" />
-                        </xf:string>
-                    </xsl:otherwise>
-                </xsl:choose>
-                
+                        </xf:map>
+                    </xsl:if>
+                </xsl:if>
                 <xsl:apply-templates select="jp:document-id" />
             </xf:array>
         </xf:map>
@@ -1731,7 +1713,7 @@
                          jp:exceptions-to-lack-of-novelty-art,
                          jp:exceptions-to-lack-of-novelty-grp" />
         <schema:property name="jpTag" type="string" />
-        <schema:property name="indentLevel" type="integer" optional="true" />
+        <schema:property name="indentLevel" type="string" optional="true" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="ntc-pt-e-terminal-items-type-a" />

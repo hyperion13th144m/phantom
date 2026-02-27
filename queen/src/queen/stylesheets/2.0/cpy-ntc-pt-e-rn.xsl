@@ -29,6 +29,9 @@
         <xsl:variable name="root">
             <xf:map>
                 <xf:string key="tag">cpy-ntc-pt-e-rn</xf:string>
+                <xf:string key="text">
+                    <xsl:value-of select="root/jp:cpy-notice-pat-exam-rn//jp:document-name" />
+                </xf:string>
                 <xf:array key="blocks">
                     <xsl:apply-templates select="root/jp:cpy-notice-pat-exam-rn" />
                 </xf:array>
@@ -46,6 +49,7 @@
     <schema:title>cpy-ntc-pt-e-rn</schema:title>
     <schema:object name="cpy-ntc-pt-e-rn" is-root="true">
         <schema:property name="tag" type="string" const="cpy-ntc-pt-e-rn" />
+        <schema:property name="text" type="string" />
         <schema:property name="blocks" type="array">
             <schema:ref name="cpy-notice-pat-exam-rn" />
         </schema:property>

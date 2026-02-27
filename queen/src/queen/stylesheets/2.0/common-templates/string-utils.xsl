@@ -46,8 +46,7 @@
     </xsl:function>
 
     <!-- 先頭と最後の空白/改行の除去 -->
-    <xsl:template
-        name="trim">
+    <xsl:template name="trim">
         <xsl:param name="text" />
         <xsl:value-of select="replace($text, '^[\s]+|[\s]+$', '')" />
     </xsl:template>

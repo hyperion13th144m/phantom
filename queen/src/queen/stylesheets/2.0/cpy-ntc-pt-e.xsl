@@ -30,6 +30,9 @@
         <xsl:variable name="root">
             <xf:map>
                 <xf:string key="tag">cpy-ntc-pt-e</xf:string>
+                <xf:string key="text">
+                    <xsl:value-of select="root/jp:cpy-notice-pat-exam//jp:document-name" />
+                </xf:string>
                 <xf:array key="blocks">
                     <xsl:apply-templates select="root/jp:cpy-notice-pat-exam" />
                 </xf:array>
@@ -46,7 +49,8 @@
     </xsl:template>
     <schema:title>cpy-ntc-pt-e</schema:title>
     <schema:object name="cpy-ntc-pt-e" is-root="true">
-        <schema:property name="tag" type="string" const="jp:cpy-ntc-pt-e" />
+        <schema:property name="tag" type="string" const="cpy-ntc-pt-e" />
+        <schema:property name="text" type="string" />
         <schema:property name="blocks" type="array">
             <schema:ref name="cpy-notice-pat-exam" />
         </schema:property>
@@ -71,7 +75,7 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="dispatch-control-article.json" name="dispatch-control-article" />
-                <schema:ref file="v4xva_ntc-pt-e-rn.json" name="notice-pat-exam-rn" />
+                <schema:ref file="v4xva_ntc-pt-e.json" name="notice-pat-exam" />
             </schema:anyOf>
         </schema:property>
     </schema:object>

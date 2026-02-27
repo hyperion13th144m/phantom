@@ -1,0 +1,10 @@
+---
+import {} from "~/interfaces/generated/cpy-ntc-pt-e";
+import {} from "~/interfaces/generated/cpy-ntc-pt-e.guard";
+
+const { block } = Astro.props as {
+    block: any;
+};
+---
+
+{(<pre>{JSON.stringify(block, null, 2)}</pre>)}

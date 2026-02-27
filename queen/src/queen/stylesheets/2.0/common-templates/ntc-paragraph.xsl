@@ -17,14 +17,6 @@
 
     <xsl:output method="text" encoding="UTF-8" />
 
-    <xsl:variable name="node" select="name(//jp:notice-pat-exam/*)" />
-    <xsl:variable name="kind-of-law">
-        <xsl:value-of select="/root/jp:cpy-notice-pat-exam/jp:notice-pat-exam/*/@jp:kind-of-law[1]" />
-    </xsl:variable>
-
-    <xsl:include href="ntc-ninsyo.xsl" />
-    <xsl:include href="string-utils.xsl" />
-
     <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>ntc-paragraph</schema:title>
 

@@ -2,6 +2,7 @@
 // 全体レイアウトの定義、文書タイプを is*で判断し、対応するコンポーネントを呼ぶ
 // components/document/*.astro は 文書タイプの表示用/印刷用レイアウトを定義する。
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
+import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
 import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
 import PatAmnd from "~/components/document/PatAmnd.astro";
 import PatAppDoc from "~/components/document/PatAppDoc.astro";
@@ -10,6 +11,7 @@ import PatRspn from "~/components/document/PatRspn.astro";
 import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import { getDocument } from "~/constants";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isCpyNtcPtE } from "~/interfaces/generated/cpy-ntc-pt-e.guard";
 import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
 import { isPatAmnd } from "~/interfaces/generated/pat-amnd.guard";
 import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
@@ -28,6 +30,7 @@ const order = [
     isPatRspn,
     isPatEtc,
     isPatAmnd,
+    isCpyNtcPtE,
 ];
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
@@ -59,6 +62,8 @@ const hasCarouselImages = true;
                                 return <PatEtc document={block} />;
                             } else if (isPatAmnd(block)) {
                                 return <PatAmnd document={block} />;
+                            } else if (isCpyNtcPtE(block)) {
+                                return <CpyNtcPtE document={block} />;
                             } else {
                                 return null;
                             }

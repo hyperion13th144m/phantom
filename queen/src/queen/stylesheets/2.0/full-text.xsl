@@ -173,6 +173,30 @@
         <xsl:apply-templates select="jp:file-reference-id" />
     </xsl:template>
     
+    <xsl:template match="jp:m-mi-notice-doc" >
+        <!-- 出願人 -->
+        <xf:array key="applicants">
+            <xsl:for-each select=".//jp:m-applicant-and-attorneys/jp:m-dispatch-applicant-group">
+                <xsl:for-each select="jp:m-name">
+                    <xf:string>
+                        <xsl:value-of select="." />
+                    </xf:string>
+                </xsl:for-each>
+            </xsl:for-each>
+        </xf:array>
+        
+        <!-- 代理人 -->
+        <xf:array key="agents">
+            <xsl:for-each select=".//jp:m-applicant-and-attorneys/jp:m-dispatch-attorney-group">
+                <xsl:for-each select="jp:m-name">
+                    <xf:string>
+                        <xsl:value-of select="." />
+                    </xf:string>
+                </xsl:for-each>
+            </xsl:for-each>
+        </xf:array>
+    </xsl:template>
+    
     <!-- 出願人 -->
     <xsl:template match="jp:applicants">
         <xf:array key="applicants">
@@ -206,28 +230,6 @@
         </xf:array>
     </xsl:template>
     
-    <!-- 出願人 -->
-    <xsl:template match="jp:m-applicant-and-attorneys/jp:m-dispatch-applicant-group">
-        <xf:array key="applicants">
-            <xsl:for-each select="jp:m-name">
-                <xf:string>
-                    <xsl:value-of select="." />
-                </xf:string>
-            </xsl:for-each>
-        </xf:array>
-    </xsl:template>
-    
-    <!-- 代理人 -->
-    <xsl:template match="jp:m-applicant-and-attorneys/jp:m-dispatch-attorney-group">
-        <xf:array key="agents">
-            <xsl:for-each select="jp:m-name">
-                <xf:string>
-                    <xsl:value-of select="." />
-                </xf:string>
-            </xsl:for-each>
-        </xf:array>
-    </xsl:template>
-    
     <!-- 外国語書面出願系 -->
     <xsl:template match="jp:foreign-language-description">
         <xf:string key="descriptionOfEmbodiments">
@@ -244,7 +246,7 @@
             <xsl:value-of select="normalize-space(.)" />
         </xf:string>
     </xsl:template>
-     
+    
     <xsl:template match="text()" />
     
     <xsl:key name="field-mapping-key" match="item" use="@key" />
@@ -270,7 +272,7 @@
         <!-- full-text.json は metadata.json の一部が追加される。
              docIdは metadata.json の項目 -->
         <schema:property name="docId" type="string" />
-
+        
         <schema:property name="inventionTitle" type="string" optional="true" />
         <schema:property name="technicalField" type="string" optional="true" />
         <schema:property name="backgroundArt" type="string" optional="true" />
@@ -297,7 +299,7 @@
                          optional="true" />
         <schema:property name="contentsOfAmendment" type="array" item-type="string"
                          optional="true" />
-
+        
         <schema:property name="foreignLanguageClaims" type="string" item-type="string" optional="true" />
     </schema:object>
 </xsl:stylesheet>

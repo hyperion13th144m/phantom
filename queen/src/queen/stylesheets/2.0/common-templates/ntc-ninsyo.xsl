@@ -51,7 +51,7 @@
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
-            <xf:map>
+            <xf:array key="blocks">
                 <xf:map>
                     <xf:string key="tag">
                         <xsl:value-of select="'underline'" />
@@ -80,7 +80,7 @@
                         <xsl:apply-templates select="jp:fax" />
                     </xf:string>
                 </xf:map>
-            </xf:map>
+            </xf:array>
         </xf:map>
     </xsl:template>
     <schema:object name="inquiry-article">
@@ -106,6 +106,9 @@
                     <xf:string key="text">
                         <xsl:value-of select="p[1]" />
                     </xf:string>
+                    <xf:boolean key="isLastSentence">
+                        <xsl:value-of select="'true'" />
+                    </xf:boolean>
                 </xf:map>
                 
                 <xsl:apply-templates select="jp:certification-group" />
@@ -119,6 +122,9 @@
                             <xf:string key="text">
                                 <xsl:value-of select="p[2]" />
                             </xf:string>
+                            <xf:boolean key="isLastSentence">
+                                <xsl:value-of select="'true'" />
+                            </xf:boolean>
                         </xf:map>
                         <xsl:if test="jp:phone" >
                             <xf:map>
@@ -128,6 +134,9 @@
                                 <xf:string key="text">
                                     <xsl:apply-templates select="jp:phone" />
                                 </xf:string>
+                                <xf:boolean key="isLastSentence">
+                                    <xsl:value-of select="'true'" />
+                                </xf:boolean>
                             </xf:map>
                             <xf:map>
                                 <xf:string key="tag">
@@ -136,6 +145,9 @@
                                 <xf:string key="text">
                                     <xsl:apply-templates select="jp:fax" />
                                 </xf:string>
+                                <xf:boolean key="isLastSentence">
+                                    <xsl:value-of select="'true'" />
+                                </xf:boolean>
                             </xf:map>
                         </xsl:if>
                     </xsl:when>
@@ -169,6 +181,9 @@
                 <xsl:value-of select="'　'" />
                 <xsl:apply-templates select="jp:name" />
             </xf:string>
+            <xf:boolean key="isLastSentence">
+                <xsl:value-of select="'true'" />
+            </xf:boolean>
         </xf:map>
     </xsl:template>
     
@@ -188,6 +203,9 @@
                 <xsl:value-of select="'　'" />
                 <xsl:apply-templates select="jp:name" />
             </xf:string>
+            <xf:boolean key="isLastSentence">
+                <xsl:value-of select="'true'" />
+            </xf:boolean>
         </xf:map>
     </xsl:template>
     
@@ -228,13 +246,12 @@
                 <xsl:value-of select="." />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="substring(normalize-space(.),1,$tel1) ||
-                    '(' ||
-                    substring(normalize-space(.),($tel1 + 2),$tel2),')' ||
+                <xsl:value-of select="substring(normalize-space(.),1,$tel1) || '(' ||
+                    substring(normalize-space(.),($tel1 + 2),$tel2) || ')' ||
                     substring(normalize-space(.),($tel1 + $tel2 + 3),$tel3) ||
                     '　内線' || 
-                    substring(normalize-space(.),($tel1 + $tel2 + $tel3 + 4) ||
-                        $tel4)" />
+                    substring(normalize-space(.),($tel1 + $tel2 + $tel3 + 4)) ||
+                    $tel4" />
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -264,8 +281,7 @@
                 <xsl:value-of select="." />
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="substring(normalize-space(.),1,$fax1) ||
-                    '(' ||
+                <xsl:value-of select="substring(normalize-space(.),1,$fax1) || '(' ||
                     substring(normalize-space(.),($fax1 + 2),$fax2) || ')' ||
                     substring(normalize-space(.),($fax1 + $fax2 + 3),$fax3)" />
             </xsl:otherwise>
@@ -304,6 +320,9 @@
                 </xsl:choose>
                 <xsl:value-of select="f:to-fullwidth-digit(./@number)" />
             </xf:string>
+            <xf:boolean key="isLastSentence">
+                <xsl:value-of select="'true'" />
+            </xf:boolean>
         </xf:map>
     </xsl:template>
     
@@ -359,6 +378,9 @@
                 <xsl:apply-templates select="jp:year-from" />
                 <xsl:apply-templates select="jp:year-to" />
             </xf:string>
+            <xf:boolean key="isLastSentence">
+                <xsl:value-of select="'true'" />
+            </xf:boolean>
         </xf:map>
     </xsl:template>
     
@@ -398,7 +420,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-   
+    
     <!--  イメージ   -->
     <xsl:template match="img">
         <xf:map>
@@ -417,7 +439,7 @@
             <xf:string key="alt">
                 <xsl:value-of select="'Image ' ||  @file" />
             </xf:string>
-       </xf:map>
+        </xf:map>
     </xsl:template>
     <schema:object
         name="image-container">
@@ -429,7 +451,7 @@
         <schema:property name="file" type="string"/>
         <schema:property name="alt" type="string"/>
     </schema:object>
-   
+    
     <!-- ====================================================================
          未サポートタグ（jp:guidance）
          ====================================================================-->
