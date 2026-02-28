@@ -10,7 +10,6 @@ services:
     volumes:
       - .:/workspaces:cached
       - ${DATA_DIR}:/data_dir
-      - ${WWWROOT_DIR}:/wwwroot
       - ${LOG_DIR_FOX}:/var/log/fox
     networks:
       - dev-net

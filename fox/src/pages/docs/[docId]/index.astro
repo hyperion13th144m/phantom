@@ -28,7 +28,6 @@ import { getDocument } from "~/lib/path-funcs";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
-const title = "doc";
 const order = [
     isPatAppDoc,
     isApplicationBody,
@@ -43,6 +42,7 @@ const bibliography = await getBibliography(docId);
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
+const title = `${bibliography.applicationNumber} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
 const thumbnails = await getCarouselImage(docId, "figures", "thumbnail");
 const images = await getCarouselImage(docId, "figures", "middle");
 const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
