@@ -1,19 +1,9 @@
 ---
-import type { IPDocument } from "~/interfaces/document";
-
-export interface Props {
-    ipDocument: IPDocument;
-}
-
-const { ipDocument } = Astro.props;
+const { appNumber } = Astro.props as {
+    appNumber: string;
+};
 ---
 
 <div class="bg-orange-200 rounded-md shadow-md px-2">
-    <!-- 出願番号 -->
-    <a
-        href={`/docs/applicationNumbers/${ipDocument.applicationNumber.slug}`}
-        class="hover:text-blue-600"
-    >
-        {ipDocument.applicationNumber.toString()}
-    </a>
+    {appNumber}
 </div>

@@ -1,7 +1,7 @@
 ---
 import { randomUUID } from "node:crypto";
-import type { ImagesOfIPDocument } from "~/interfaces/document";
 import { getBaseUrl } from "~/constants";
+import type { CarouselImage } from "~/interfaces/carousel-images";
 
 const {
     images,
@@ -11,8 +11,8 @@ const {
     showRotate = true,
     heightClass = "h-[420px]",
 } = Astro.props as {
-    images: ImagesOfIPDocument[];
-    thumbnails: ImagesOfIPDocument[];
+    images: CarouselImage[];
+    thumbnails: CarouselImage[];
     initialIndex?: number;
     loop?: boolean;
     showRotate?: boolean;

@@ -1,24 +1,13 @@
 ---
-import type { IPDocument } from "~/interfaces/document";
-import { Inventor } from "~/lib/inventor";
-export interface Props {
-    ipDocument: IPDocument;
-}
-
-const { ipDocument } = Astro.props;
+const { inventors } = Astro.props as {
+    inventors?: string[];
+};
 ---
 
 {
-    ipDocument.inventors &&
-        ipDocument.inventors.length > 0 &&
-        ipDocument.inventors.map((inv) => (
-            <div class="bg-cyan-100 rounded-md shadow-md px-2">
-                <a
-                    href={`./inventors/${new Inventor(inv).slug}`}
-                    class="hover:text-blue-600"
-                >
-                    {inv}
-                </a>
-            </div>
+    inventors &&
+        inventors.length > 0 &&
+        inventors.map((inv) => (
+            <div class="bg-cyan-100 rounded-md shadow-md px-2">{inv}</div>
         ))
 }

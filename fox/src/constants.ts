@@ -42,7 +42,7 @@ function id2dir(docId: string) {
 
 // docId で特定されるコンテンツのベースURLパスを取得
 export const getBaseUrl = (docId: string) => {
-    return path.join(BASE_URL, id2dir(docId));
+    return path.join(BASE_URL, id2dir(docId), "images");
 };
 
 export const getDocument = async (docId: string): Promise<Array<any>> => {
@@ -67,7 +67,7 @@ export const getImageUrl = async (docId: string, imageName: string, sizeTag: str
             (attr) => (attr.key === "sizeTag" && attr.value === sizeTag)))
         .at(0);
     return {
-        url: path.join(getBaseUrl(docId), "images", derived ? derived.filename : ""),
+        url: path.join(getBaseUrl(docId), derived ? derived.filename : ""),
         width: derived?.width || 0,
         height: derived?.height || 0,
     };

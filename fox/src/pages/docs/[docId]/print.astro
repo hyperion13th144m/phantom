@@ -54,15 +54,15 @@ const sortedJson = order
                         />
                     );
                 } else if (isPatRspn(block)) {
-                    return <PatRspn document={block} />;
+                    return <PatRspn document={block} forPrinting={true} />;
                 } else if (isPatEtc(block)) {
-                    return <PatEtc document={block} />;
+                    return <PatEtc document={block} forPrinting={true} />;
                 } else if (isPatAmnd(block)) {
-                    return <PatAmnd document={block} />;
+                    return <PatAmnd document={block} forPrinting={true} />;
                 } else if (isCpyNtcPtE(block)) {
-                    return <CpyNtcPtE document={block} />;
+                    return <CpyNtcPtE document={block} forPrinting={true} />;
                 } else if (isCpyNtcPtERn(block)) {
-                    return <CpyNtcPtERn document={block} />;
+                    return <CpyNtcPtERn document={block} forPrinting={true} />;
                 } else {
                     return null;
                 }

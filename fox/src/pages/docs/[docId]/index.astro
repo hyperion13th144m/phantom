@@ -1,6 +1,7 @@
 ---
 // 全体レイアウトの定義、文書タイプを is*で判断し、対応するコンポーネントを呼ぶ
 // components/document/*.astro は 文書タイプの表示用/印刷用レイアウトを定義する。
+import Bibliography from "~/components/bibliographic-items/Bibliography.astro";
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
 import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
 import CpyNtcPtERn from "~/components/document/CpyNtcPtERn.astro";
@@ -9,6 +10,8 @@ import PatAmnd from "~/components/document/PatAmnd.astro";
 import PatAppDoc from "~/components/document/PatAppDoc.astro";
 import PatEtc from "~/components/document/PatEtc.astro";
 import PatRspn from "~/components/document/PatRspn.astro";
+import Card from "~/components/ui/Card.astro";
+import ImageCarousel from "~/components/ui/ImageCarousel.astro";
 import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import { getDocument } from "~/constants";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
@@ -20,6 +23,8 @@ import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
 import { isPatEtc } from "~/interfaces/generated/pat-etc.guard";
 import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import Layout from "~/layouts/Layout.astro";
+import { getBibliography } from "~/lib/getBibliography";
+import { getCarouselImage } from "~/lib/getCarouselImages";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
@@ -34,17 +39,18 @@ const order = [
     isCpyNtcPtE,
     isCpyNtcPtERn,
 ];
+const bibliography = await getBibliography(docId);
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
-const hasCarouselImages = true;
+const thumbnails = await getCarouselImage(docId, "figures", "thumbnail");
+const images = await getCarouselImage(docId, "figures", "middle");
+const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
 ---
 
 <Layout title={title}>
     <main class="w-full my-2">
-        <header>
-            <h1 class="text-2xl font-bold">書誌事項などヘッダー領域</h1>
-        </header>
+        <Bibliography bibliography={bibliography} />
         <KeywordHighlighter urlParamKey="q">
             <div
                 class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}
@@ -78,7 +84,12 @@ const hasCarouselImages = true;
                     hasCarouselImages && (
                         <div class="hidden lg:block">
                             <div class="sticky top-32 bg-white">
-                                <div>図面一覧</div>
+                                <Card title="図面一覧">
+                                    <ImageCarousel
+                                        images={images}
+                                        thumbnails={thumbnails}
+                                    />
+                                </Card>
                             </div>
                         </div>
                     )
