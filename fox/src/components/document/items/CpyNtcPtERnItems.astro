@@ -1,5 +1,4 @@
 ---
-import { getImageUrl } from "~/constants";
 import {
     type DispatchControlArticleItems,
     type NtcPtERnTerminalItemsTypeB,
@@ -23,6 +22,7 @@ import {
     isParagraph,
 } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { concatBlocks } from "~/lib/concat-blocks";
+import { getImageUrl } from "~/lib/path-funcs";
 
 const { block } = Astro.props as {
     block: any;

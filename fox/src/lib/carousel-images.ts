@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { getContentRoot } from "~/constants";
 import type { CarouselImage } from "~/interfaces/carousel-images";
 import type { ImagesInformation } from "~/interfaces/generated/images-information";
+import { getContentRoot } from "~/lib/path-funcs";
 
 
 export const getCarouselImage = async (docId: string, kind: string, sizeTag: string): Promise<CarouselImage[]> => {

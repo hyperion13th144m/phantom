@@ -1,6 +1,5 @@
 ---
 // 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
-import { getImageUrl } from "~/constants";
 import type {
     AppealArticle,
     Attorney,
@@ -51,6 +50,7 @@ import {
     isSummaryOfInvention,
     isSummaryOfInventionItems,
 } from "~/interfaces/generated/pat_common.guard";
+import { getImageUrl } from "~/lib/path-funcs";
 
 const { block } = Astro.props as {
     block:

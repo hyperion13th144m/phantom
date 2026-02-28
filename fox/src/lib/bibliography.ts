@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { getContentRoot } from "~/constants";
 import type { BibliographicItems } from "~/interfaces/generated/bibliographic-items";
+import { getContentRoot } from "~/lib/path-funcs";
 
 // 国内出願番号形式（例：2023001234）
 const domestic_number_re = /^[0-9]{10}$/;
