@@ -1,0 +1,54 @@
+---
+import Applicants from "~/components/bibliographic-items/Applicants.astro";
+import ApplicationNumber from "~/components/bibliographic-items/ApplicationNumber.astro";
+import FileReferenceId from "~/components/bibliographic-items/FileReferenceId.astro";
+import Inventors from "~/components/bibliographic-items/Inventors.astro";
+import Print from "~/components/bibliographic-items/Print.astro";
+import Drawer from "~/components/ui/Drawer.astro";
+import type { BibliographicItems } from "~/interfaces/generated/bibliographic-items";
+
+export interface Props {
+    bibliography: BibliographicItems;
+}
+
+const { bibliography } = Astro.props as Props;
+const printPath = `${Astro.url.pathname}/print`;
+---
+
+<nav class="sticky top-0 mb-4 bg-gray-100 z-10 p-4 rounded-md shadow-md">
+    <!-- 1段目 PC/smartphone 双方で表示される -->
+    <div class="flex items-center justify-between gap-2">
+        <!-- ハンバーガー：スマホだけ表示 -->
+        <Drawer>
+            <span slot="button" class="text-xl leading-none">☰</span>
+            <div slot="content" class="space-y-4">
+                <div class="flex flex-wrap gap-2">
+                    <ApplicationNumber
+                        appNumber={bibliography.applicationNumber}
+                    />
+                    <FileReferenceId
+                        fileReferenceId={bibliography.fileReferenceId}
+                    />
+                    <Applicants applicants={bibliography.applicants} />
+                    <Inventors inventors={bibliography.inventors} />
+                    <Print href={printPath} size="3em" />
+                </div>
+            </div>
+        </Drawer>
+    </div>
+
+    <!-- 2段目 PCで表示, スマホではドロワー -->
+    <div class="hidden md:block">
+        <div class="flex items-center justify-between">
+            <div class="flex gap-4">
+                <ApplicationNumber appNumber={bibliography.applicationNumber} />
+                <FileReferenceId
+                    fileReferenceId={bibliography.fileReferenceId}
+                />
+                <Applicants applicants={bibliography.applicants} />
+                <Inventors inventors={bibliography.inventors} />
+            </div>
+            <Print href={printPath} size="3em" />
+        </div>
+    </div>
+</nav>

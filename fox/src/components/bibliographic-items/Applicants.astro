@@ -1,23 +1,13 @@
 ---
-import type { IPDocument } from "~/interfaces/document";
-import { Applicant } from "~/lib/applicant";
-export interface Props {
-    ipDocument: IPDocument;
-}
-
-const { ipDocument } = Astro.props;
+const { applicants } = Astro.props as {
+    applicants?: string[];
+};
 ---
 
 {
-    ipDocument.applicants.length > 0 &&
-        ipDocument.applicants.map((app) => (
-            <div class="bg-green-100 rounded-md shadow-md px-2">
-                <a
-                    href={`./applicants/${new Applicant(app).slug}`}
-                    class="hover:text-blue-600"
-                >
-                    {app}
-                </a>
-            </div>
+    applicants &&
+        applicants.length > 0 &&
+        applicants.map((app) => (
+            <div class="bg-green-100 rounded-md shadow-md px-2">{app}</div>
         ))
 }
