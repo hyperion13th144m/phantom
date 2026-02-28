@@ -1,18 +1,36 @@
 ---
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
+import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
+import CpyNtcPtERn from "~/components/document/CpyNtcPtERn.astro";
 import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
+import PatAmnd from "~/components/document/PatAmnd.astro";
 import PatAppDoc from "~/components/document/PatAppDoc.astro";
+import PatEtc from "~/components/document/PatEtc.astro";
+import PatRspn from "~/components/document/PatRspn.astro";
 import { getDocument } from "~/constants";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isCpyNtcPtERn } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
+import { isCpyNtcPtE } from "~/interfaces/generated/cpy-ntc-pt-e.guard";
 import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
+import { isPatAmnd } from "~/interfaces/generated/pat-amnd.guard";
 import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
+import { isPatEtc } from "~/interfaces/generated/pat-etc.guard";
+import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
-export { getStaticPaths } from "~/lib/getStaticPaths";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
 const title = "doc";
-const order = [isPatAppDoc, isApplicationBody, isForeignLanguageBody];
+const order = [
+    isPatAppDoc,
+    isApplicationBody,
+    isForeignLanguageBody,
+    isPatRspn,
+    isPatEtc,
+    isPatAmnd,
+    isCpyNtcPtE,
+    isCpyNtcPtERn,
+];
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
@@ -35,6 +53,18 @@ const sortedJson = order
                             forPrinting={true}
                         />
                     );
+                } else if (isPatRspn(block)) {
+                    return <PatRspn document={block} />;
+                } else if (isPatEtc(block)) {
+                    return <PatEtc document={block} />;
+                } else if (isPatAmnd(block)) {
+                    return <PatAmnd document={block} />;
+                } else if (isCpyNtcPtE(block)) {
+                    return <CpyNtcPtE document={block} />;
+                } else if (isCpyNtcPtERn(block)) {
+                    return <CpyNtcPtERn document={block} />;
+                } else {
+                    return null;
                 }
             })
         }

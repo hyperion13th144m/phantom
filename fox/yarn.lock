@@ -39,7 +39,7 @@
     unist-util-visit-parents "^6.0.2"
     vfile "^6.0.3"
 
-"@astrojs/node@9.5.4":
+"@astrojs/node@^9.5.4":
   version "9.5.4"
   resolved "https://registry.yarnpkg.com/@astrojs/node/-/node-9.5.4.tgz#0db5a71c8c0d47921f5af8176db218f059632d59"
   integrity sha512-AbPSZsMGu8hXPR2XxV79RaKy8h6wijhtoqZGeUf4OXg2w1mxXlx4VnIc1D+QvtsgauSz7P5PLhmvf6w/J41GJg==

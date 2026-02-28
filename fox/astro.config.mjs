@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import node from '@astrojs/node';
 
 /* public/images は dist(/wwwroot) にコピーしない。
    pulibc/images は nginx で直接配信するため、Vite の publicDir から除外する。
@@ -8,7 +9,10 @@ import tailwindcss from '@tailwindcss/vite';
 */
 // https://astro.build/config
 export default defineConfig({
-    outDir: "/wwwroot",
+    output: 'server',
+    adapter: node({
+        mode: 'standalone',
+    }),
     vite: {
         plugins: [tailwindcss()],
         resolve: {

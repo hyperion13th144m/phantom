@@ -1,0 +1,39 @@
+---
+/* This renderer for notice-pat-exam, notice-pat-exam-rn handles following document types:
+    A101  特許査定
+    A102  拒絶査定
+    A1131 拒絶理由通知書
+    A1191 補正却下の決定
+    A1192 補正却下の決定
+    A130  引用非特許文献
+*/
+
+import Card from "~/components/ui/Card.astro";
+import type { CpyNtcPtERn } from "~/interfaces/generated/cpy-ntc-pt-e-rn";
+import CpyNtcPtERnItems from "./items/CpyNtcPtERnItems.astro";
+
+const { document, forPrinting = false } = Astro.props as {
+    document: CpyNtcPtERn;
+    forPrinting?: boolean;
+};
+---
+
+{
+    forPrinting === false && (
+        <Card title={document.text}>
+            {document.blocks.map((b) =>
+                b.blocks.map((b) => <CpyNtcPtERnItems block={b} />),
+            )}
+        </Card>
+    )
+}
+
+{
+    forPrinting === true && (
+        <div class={document.tag}>
+            {document.blocks.map((b) =>
+                b.blocks.map((b) => <CpyNtcPtERnItems block={b} />),
+            )}
+        </div>
+    )
+}

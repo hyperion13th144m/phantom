@@ -2,26 +2,26 @@
 import { getImageUrl } from "~/constants";
 import {
     type DispatchControlArticleItems,
-    type NtcPtETerminalItemsTypeB,
-} from "~/interfaces/generated/cpy-ntc-pt-e";
+    type NtcPtERnTerminalItemsTypeB,
+} from "~/interfaces/generated/cpy-ntc-pt-e-rn";
 import {
     isCertificationColumnArticle,
     isCertificationColumnGroup,
-    isDecisionOfRegistrationA01,
-    isDecisionOfRejectionA02,
+    isDecisionOfRegistrationA01Rn,
+    isDecisionOfRejectionA02Rn,
     isDispatchControlArticle,
-    isExaminerNotificationA30,
+    isExaminerNotificationA30Rn,
     isImageContainer,
     isInlineText,
     isInquiryArticle,
-    isNoticeOthers,
-    isNoticePatExam,
-    isNtcPtEContainerItemsTypeA,
-    isNtcPtEContainerItemsTypeB,
-    isNtcPtETerminalItemsTypeA,
-    isNtcPtETerminalItemsTypeB,
+    isNoticeOthersRn,
+    isNoticePatExamRn,
+    isNtcPtERnContainerItemsTypeA,
+    isNtcPtERnContainerItemsTypeB,
+    isNtcPtERnTerminalItemsTypeA,
+    isNtcPtERnTerminalItemsTypeB,
     isParagraph,
-} from "~/interfaces/generated/cpy-ntc-pt-e.guard";
+} from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { concatBlocks } from "~/lib/concat-blocks";
 
 const { block } = Astro.props as {
@@ -36,14 +36,17 @@ const imageInfo = isImageContainer(block)
    レンダリング内容を変えたい場合、変えたい要素を
    判定するガードを作成する. isDefaultNtcPtETerminalItemsTypeB から
    変えたい要素を除外する */
-const isDocumentName = (block: unknown): block is NtcPtETerminalItemsTypeB =>
-    isNtcPtETerminalItemsTypeB(block) && block.tag === "jp:document-name";
-const isDefaultNtcPtETerminalItemsTypeB = (
+const isDocumentName = (block: unknown): block is NtcPtERnTerminalItemsTypeB =>
+    isNtcPtERnTerminalItemsTypeB(block) && block.tag === "jp:document-name";
+const isDefaultNtcPtERnTerminalItemsTypeB = (
     block: unknown,
-): block is NtcPtETerminalItemsTypeB => {
-    if (isNtcPtETerminalItemsTypeB(block) && block.tag === "jp:document-name") {
+): block is NtcPtERnTerminalItemsTypeB => {
+    if (
+        isNtcPtERnTerminalItemsTypeB(block) &&
+        block.tag === "jp:document-name"
+    ) {
         return false;
-    } else if (isNtcPtETerminalItemsTypeB(block)) {
+    } else if (isNtcPtERnTerminalItemsTypeB(block)) {
         return true;
     } else {
         return false;
@@ -52,15 +55,15 @@ const isDefaultNtcPtETerminalItemsTypeB = (
 ---
 
 {
-    (isNoticePatExam(block) ||
-        isDecisionOfRejectionA02(block) ||
-        isDecisionOfRegistrationA01(block) ||
-        isNtcPtEContainerItemsTypeA(block) ||
+    (isNoticePatExamRn(block) ||
+        isDecisionOfRejectionA02Rn(block) ||
+        isDecisionOfRegistrationA01Rn(block) ||
+        isNtcPtERnContainerItemsTypeA(block) ||
         isCertificationColumnArticle(block) ||
         isCertificationColumnGroup(block) ||
-        isExaminerNotificationA30(block) ||
+        isExaminerNotificationA30Rn(block) ||
         isInquiryArticle(block) ||
-        isNoticeOthers(block)) &&
+        isNoticeOthersRn(block)) &&
         block.blocks &&
         block.blocks.map((block) => <Astro.self block={block} />)
 }
@@ -80,7 +83,7 @@ const isDefaultNtcPtETerminalItemsTypeB = (
 }
 
 {
-    isNtcPtEContainerItemsTypeB(block) && (
+    isNtcPtERnContainerItemsTypeB(block) && (
         <>
             <div class="flex">
                 <div
@@ -104,8 +107,8 @@ const isDefaultNtcPtETerminalItemsTypeB = (
 }
 
 {
-    (isDefaultNtcPtETerminalItemsTypeB(block) ||
-        isNtcPtETerminalItemsTypeA(block)) && (
+    (isDefaultNtcPtERnTerminalItemsTypeB(block) ||
+        isNtcPtERnTerminalItemsTypeA(block)) && (
         <div class="flex gap-2">
             <div
                 class={`indentLevel-${block.indentLevel}`}

@@ -3,6 +3,7 @@
 // components/document/*.astro は 文書タイプの表示用/印刷用レイアウトを定義する。
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
 import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
+import CpyNtcPtERn from "~/components/document/CpyNtcPtERn.astro";
 import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
 import PatAmnd from "~/components/document/PatAmnd.astro";
 import PatAppDoc from "~/components/document/PatAppDoc.astro";
@@ -11,6 +12,7 @@ import PatRspn from "~/components/document/PatRspn.astro";
 import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import { getDocument } from "~/constants";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isCpyNtcPtERn } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { isCpyNtcPtE } from "~/interfaces/generated/cpy-ntc-pt-e.guard";
 import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
 import { isPatAmnd } from "~/interfaces/generated/pat-amnd.guard";
@@ -18,7 +20,6 @@ import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
 import { isPatEtc } from "~/interfaces/generated/pat-etc.guard";
 import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import Layout from "~/layouts/Layout.astro";
-export { getStaticPaths } from "~/lib/getStaticPaths";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
@@ -31,6 +32,7 @@ const order = [
     isPatEtc,
     isPatAmnd,
     isCpyNtcPtE,
+    isCpyNtcPtERn,
 ];
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
@@ -64,6 +66,8 @@ const hasCarouselImages = true;
                                 return <PatAmnd document={block} />;
                             } else if (isCpyNtcPtE(block)) {
                                 return <CpyNtcPtE document={block} />;
+                            } else if (isCpyNtcPtERn(block)) {
+                                return <CpyNtcPtERn document={block} />;
                             } else {
                                 return null;
                             }
