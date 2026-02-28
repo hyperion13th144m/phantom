@@ -137,7 +137,3 @@ def cmd_upload_extra_data(args):
 
     logger.info("Done.")
     return 0
-
-
-if __name__ == "__main__":
-    cmd_upload_extra_data()

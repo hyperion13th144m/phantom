@@ -34,7 +34,7 @@ $ python src/panther/main.py create-index \
   --index patent-documents \
   --mapping elasticsearch/document-mapping.json
 
-$ python src/panther/main.py upload \
+$ python src/panther/main.py upload-documents \
   --index patent-documents \
   --data-root data
 
@@ -44,7 +44,7 @@ $ python src/panther/main.py create-index \
   --mapping elasticsearch/document-mapping.json \
   --recreate
 
-$ python src/panther/main.py upload \
+$ python src/panther/main.py upload-documents \
   --index patent-documents \
   --data-root data \
   --use-hash-guard \

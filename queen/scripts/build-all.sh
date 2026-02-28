@@ -154,7 +154,7 @@ if [ "$TARGET" = "python" ]; then
   
   for file in "${JSON_SCHEMA_ARRAY[@]}"; do
     base_name=$(basename "$file" .json)
-    dst_file="$OUTPUT_DIR/${base_name}.py"
+    dst_file="$OUTPUT_DIR/$(echo "$base_name" | sed -e 's/-/_/g').py"
     uv run datamodel-codegen \
       --input "$JSON_SCHEMA_DIR/$file" \
       --input-file-type jsonschema \

@@ -12,15 +12,16 @@ Bulk upsert documents into Elasticsearch from:
 import hashlib
 import json
 import logging
-import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
-from panther.document_json import DocumentJson
 from panther.es_client import create_es_client
+from panther.models.generated.bibliographic_items import BibliographicItems
+from panther.models.generated.full_text import FullText
+from panther.models.generated.images_information import ImagesInformation
 from panther.patent_doc_editor import PatentDocEditor
 
 logger = logging.getLogger(__name__)
@@ -53,18 +54,29 @@ def strip_preserve_fields(doc: Dict) -> Dict:
 
 def iter_documents(root: Path) -> Iterator[Path]:
     """
-    Yield json_path from root/data/<docid>/document.json
+    Yield json_path from root/data/<docid>, bibliography.json exists in the path.
     """
-    # Expect structure: root/docid/document.json, where root is data/
+    # Expect structure: root/docid/bibliography.json, where root is data/
     # We'll find all document-sections.json under data/**/document-sections.json
-    for p in root.rglob("document.json"):
-        yield p
+    for p in root.rglob("bibliography.json"):
+        yield p.parent
 
 
-def load_document_json(path: Path) -> DocumentJson:
-    data = json.loads(path.read_text(encoding="utf-8"))
+def load_document_json(
+    path: Path,
+) -> tuple[BibliographicItems, FullText, List[ImagesInformation]]:
+    bib = json.loads((path / "bibliography.json").read_text(encoding="utf-8"))
+    full_text = json.loads((path / "full-text.json").read_text(encoding="utf-8"))
+    images_info = json.loads(
+        (path / "images-information.json").read_text(encoding="utf-8")
+    )
+
     # pydantic v2: model_validate
-    return DocumentJson.model_validate(data)
+    return (
+        BibliographicItems(**bib),
+        FullText(**full_text),
+        [ImagesInformation(**img) for img in images_info],
+    )
 
 
 def build_actions(
@@ -79,8 +91,8 @@ def build_actions(
     """
     for path in iter_documents(data_root):
         try:
-            raw = load_document_json(path)
-            _doc = PatentDocEditor(raw).to_es_model()
+            jsons = load_document_json(path)
+            _doc = PatentDocEditor(*jsons).to_es_model()
             edited = _doc.model_dump(exclude_none=True)  # ←ここが「dump_model」相当
             doc = strip_preserve_fields(edited)
 
@@ -256,8 +268,8 @@ def cmd_upload(args) -> int:
 
     # Connect to Elasticsearch
     logger.info(f"Connecting to Elasticsearch: {args.es}")
+    es = create_es_client(args)
     try:
-        es = create_es_client(args)
 
         # Check connection
         if not es.ping():
@@ -297,5 +309,4 @@ def cmd_upload(args) -> int:
         logger.error(f"Error: {e}")
         return 1
     finally:
-        if "es" in locals():
-            es.close()
+        es.close()

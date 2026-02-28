@@ -135,6 +135,7 @@
 
         <schema:property name="law" type="string" enum="patent,utilityModel,design,trademark" />
         <schema:property name="documentName" type="string"/>
+        <schema:property name="documentCode" type="string"/>
         <schema:property name="applicationNumber" type="string" optional="true"/>
         <schema:property name="registrationNumber" type="string" optional="true"/>
         <schema:property name="internationalApplicationNumber" type="string" optional="true"/>

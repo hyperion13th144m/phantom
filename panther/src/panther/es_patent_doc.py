@@ -7,7 +7,16 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from .document_json import ImageInfo
+
+class ImageInfo(BaseModel):
+    filename: str
+    width: int
+    height: int
+    number: str
+    kind: str
+    representative: bool
+    description: Optional[str] = None
+    sizeTag: str
 
 
 # -----------------------------

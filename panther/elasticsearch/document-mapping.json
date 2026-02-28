@@ -123,16 +123,7 @@
             "images": {
                 "type": "nested",
                 "properties": {
-                    "number": {
-                        "type": "keyword"
-                    },
                     "filename": {
-                        "type": "keyword"
-                    },
-                    "kind": {
-                        "type": "keyword"
-                    },
-                    "sizeTag": {
                         "type": "keyword"
                     },
                     "width": {
@@ -141,11 +132,20 @@
                     "height": {
                         "type": "integer"
                     },
+                    "number": {
+                        "type": "keyword"
+                    },
+                    "kind": {
+                        "type": "keyword"
+                    },
                     "representative": {
                         "type": "boolean"
                     },
                     "description": {
                         "type": "text"
+                    },
+                    "sizeTag": {
+                        "type": "keyword"
                     }
                 }
             },

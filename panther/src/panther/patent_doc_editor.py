@@ -12,8 +12,10 @@ from zoneinfo import ZoneInfo
 
 from pydantic import ValidationError
 
-from panther.document_json import DocumentJson, SourceFileInfo, TextBlock
-from panther.es_patent_doc import EsPatentDoc
+from panther.es_patent_doc import EsPatentDoc, ImageInfo
+from panther.models.generated.bibliographic_items import BibliographicItems
+from panther.models.generated.full_text import FullText
+from panther.models.generated.images_information import ImagesInformation
 
 
 # -----------------------------
@@ -21,50 +23,50 @@ from panther.es_patent_doc import EsPatentDoc
 # -----------------------------
 @dataclass(frozen=True)
 class PatentDocEditor:
-    src: DocumentJson
+    bib: BibliographicItems
+    full_text: FullText
+    images_info: list[ImagesInformation]
 
     def to_es_model(self) -> EsPatentDoc:
-        task, kind = extract_from_sources(self.src.sources)
         return EsPatentDoc(
-            docId=self.src.docId,
-            task=task,
-            kind=kind,
-            law=self.src.law,
-            documentName=self.src.documentName,
-            documentCode=self.src.documentCode,
-            fileReferenceId=self.src.fileReferenceId,
-            applicationNumber=self._none_if_blank(self.src.applicationNumber),
-            internationalApplicationNumber=self._none_if_blank(
-                self.src.internationalApplicationNumber
-            ),
-            registrationNumber=self._none_if_blank(self.src.registrationNumber),
-            appealReferenceNumber=self._none_if_blank(self.src.appealReferenceNumber),
-            submissionDate=get_date(self.src.submissionDate, self.src.submissionTime),
-            dispatchDate=get_date(self.src.dispatchDate, self.src.dispatchTime),
-            images=self.src.images,
-            ocrText=self._none_if_blank(self.src.ocrText),
-            inventors=self.src.fields.inventors,
-            applicants=self.src.fields.applicants,
-            agents=self.src.fields.agents,
-            specialMentionMatterArticle=self.src.fields.specialMentionMatterArticle,
-            inventionTitle=self.src.fields.inventionTitle,
-            technicalField=self.src.fields.technicalField,
-            backgroundArt=self.src.fields.backgroundArt,
-            techProblem=self.src.fields.techProblem,
-            techSolution=self.src.fields.techSolution,
-            advantageousEffects=self.src.fields.advantageousEffects,
-            embodiments=self.src.fields.embodiments,
-            industrialApplicability=self.src.fields.industrialApplicability,
-            referenceToDepositedBiologicalMaterial=self.src.fields.referenceToDepositedBiologicalMaterial,
-            lawOfIndustrialRegenerate=self.src.fields.lawOfIndustrialRegenerate,
-            independentClaims=self.src.fields.independentClaims,
-            dependentClaims=self.src.fields.dependentClaims,
-            abstract=self.src.fields.abstract,
-            conclusionPartArticle=self.src.fields.conclusionPartArticle,
-            draftingBody=self.src.fields.draftingBody,
-            rejectionReasonArticle=self.src.fields.rejectionReasonArticle,
-            opinionContentsArticle=self.src.fields.opinionContentsArticle,
-            contentsOfAmendment=self.src.fields.contentsOfAmendment,
+            docId=self.bib.docId,
+            task=self.full_text.task,
+            kind=self.full_text.kind,
+            law=self.bib.law.value,
+            documentName=self.bib.documentName,
+            documentCode=self.bib.documentCode,
+            fileReferenceId=self.bib.fileReferenceId,
+            applicationNumber=self.bib.applicationNumber,
+            internationalApplicationNumber=self.bib.internationalApplicationNumber,
+            registrationNumber=self.bib.registrationNumber,
+            appealReferenceNumber=self.bib.appealReferenceNumber,
+            submissionDate=get_date(self.bib.submissionDate, self.bib.submissionTime),
+            dispatchDate=get_date(self.bib.dispatchDate, self.bib.dispatchTime),
+            images=get_images(self.images_info),
+            ocrText=get_image_text(self.images_info),
+            inventors=self.full_text.inventors,
+            applicants=self.full_text.applicants,
+            agents=self.full_text.agents,
+            specialMentionMatterArticle=self.full_text.specialMentionMatterArticle,
+            inventionTitle=self.full_text.inventionTitle,
+            technicalField=self.full_text.technicalField,
+            backgroundArt=self.full_text.backgroundArt,
+            techProblem=self.full_text.techProblem,
+            techSolution=self.full_text.techSolution,
+            advantageousEffects=self.full_text.advantageousEffects,
+            embodiments=self.full_text.descriptionOfEmbodiments
+            or self.full_text.bestMode,
+            industrialApplicability=self.full_text.industrialApplicability,
+            referenceToDepositedBiologicalMaterial=self.full_text.referenceToDepositedBiologicalMaterial,
+            lawOfIndustrialRegenerate=self.full_text.lawOfIndustrialRegenerate,
+            independentClaims=self.full_text.independentClaims,
+            dependentClaims=self.full_text.dependentClaims,
+            abstract=self.full_text.abstract,
+            conclusionPartArticle=self.full_text.conclusionPartArticle,
+            draftingBody=self.full_text.draftingBody,
+            rejectionReasonArticle=self.full_text.rejectionReasonArticle,
+            opinionContentsArticle=self.full_text.opinionContentsArticle,
+            contentsOfAmendment=self.full_text.contentsOfAmendment,
         )
 
     @staticmethod
@@ -75,16 +77,7 @@ class PatentDocEditor:
         return s2 if s2 else None
 
 
-def extract_from_sources(sources: List[SourceFileInfo]) -> tuple[str, str]:
-    for s in sources:
-        if s.extension == "XML":
-            continue  # XMLは除外
-        return (s.task, s.kind)
-    else:
-        return (None, None)
-
-
-def get_date(date_str: str, time_str: str) -> str | None:
+def get_date(date_str: str | None, time_str: str | None) -> str | None:
     if not date_str or not time_str:
         return None
     if re.match(r"^\d{8}$", date_str) is None:
@@ -97,17 +90,62 @@ def get_date(date_str: str, time_str: str) -> str | None:
     return str(epoch_millis)
 
 
+def get_image_text(images: List[ImagesInformation]) -> Optional[str]:
+    texts = []
+    for img in images:
+        if img.text:
+            texts.append(img.text)
+    if not texts:
+        return None
+    return "\n".join(texts)
+
+
+def get_images(images_info: list[ImagesInformation]) -> list[ImageInfo]:
+    images = []
+    for img in images_info:
+        for derived in img.derived:
+            attrs = {
+                attr.key: attr.value
+                for attr in derived.attributes or []
+                if attr.key == "sizeTag"
+            }
+            images.append(
+                ImageInfo(
+                    **attrs,
+                    filename=derived.filename,
+                    width=derived.width,
+                    height=derived.height,
+                    number=img.number or "",
+                    kind=img.kind or "",
+                    representative=img.representative or False,
+                    description=img.description or None,
+                )
+            )
+    return images
+
+
 if __name__ == "__main__":
     import json
     import sys
 
     # Example usage
+    # bibliography.json
     with open(sys.argv[1], "r", encoding="utf-8") as f:
-        data = json.load(f)
+        bib = json.load(f)
+
+    # full-text.json
+    with open(sys.argv[2], "r", encoding="utf-8") as f:
+        full_text = json.load(f)
+
+    # images-information.json
+    with open(sys.argv[3], "r", encoding="utf-8") as f:
+        images_info = json.load(f)
 
     try:
-        doc = DocumentJson(**data)
-        editor = PatentDocEditor(src=doc)
+        bib = BibliographicItems(**bib)
+        full_text = FullText(**full_text)
+        images_info = [ImagesInformation(**img) for img in images_info]
+        editor = PatentDocEditor(bib=bib, full_text=full_text, images_info=images_info)
         es_doc = editor.to_es_model()
         print(es_doc.model_dump_json(indent=2, ensure_ascii=False))
     except ValidationError as e:

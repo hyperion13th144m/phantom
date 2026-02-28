@@ -270,8 +270,10 @@
     
     <schema:object name="full-text" is-root="true">
         <!-- full-text.json は metadata.json の一部が追加される。
-             docIdは metadata.json の項目 -->
+             docId, task, kind は metadata.json の項目 -->
         <schema:property name="docId" type="string" />
+        <schema:property name="task" type="string" />
+        <schema:property name="kind" type="string" />
         
         <schema:property name="inventionTitle" type="string" optional="true" />
         <schema:property name="technicalField" type="string" optional="true" />
@@ -298,6 +300,8 @@
         <schema:property name="rejectionReasonArticle" type="array" item-type="string"
                          optional="true" />
         <schema:property name="contentsOfAmendment" type="array" item-type="string"
+                         optional="true" />
+        <schema:property name="specialMentionMatterArticle" type="array" item-type="string"
                          optional="true" />
         
         <schema:property name="foreignLanguageClaims" type="string" item-type="string" optional="true" />
