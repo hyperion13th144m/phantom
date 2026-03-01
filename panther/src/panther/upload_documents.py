@@ -26,7 +26,7 @@ from panther.patent_doc_editor import PatentDocEditor
 
 logger = logging.getLogger(__name__)
 
-PRESERVE_FIELDS = {"assignees", "tags"}  # user-managed fields in ES
+PRESERVE_FIELDS = {"assignees", "tags", "extraNumbers"}  # user-managed fields in ES
 
 
 def utc_now_iso() -> str:

@@ -211,6 +211,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse>> 
                 "specialMentionMatterArticle",
                 "rejectionReasonArticle",
                 "images",
+                "extraNumbers"
             ],
         });
 

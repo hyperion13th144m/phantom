@@ -16,6 +16,7 @@ from panther.es_patent_doc import EsPatentDoc, ImageInfo
 from panther.models.generated.bibliographic_items import BibliographicItems
 from panther.models.generated.full_text import FullText
 from panther.models.generated.images_information import ImagesInformation
+from panther.normalize import zenkaku_to_hankaku_all
 
 
 # -----------------------------
@@ -28,8 +29,10 @@ class PatentDocEditor:
     images_info: list[ImagesInformation]
 
     def to_es_model(self) -> EsPatentDoc:
-        submissionDate=get_date(self.bib.submissionDate, self.bib.submissionTime)
-        dispatchDate=get_date(self.bib.dispatchDate, self.bib.dispatchTime)
+        submissionDate = get_date(self.bib.submissionDate, self.bib.submissionTime)
+        dispatchDate = get_date(self.bib.dispatchDate, self.bib.dispatchTime)
+        ### 発送系の jp:file-reference-id は全角になっていることがあるので、半角に変換してからESに入れる。
+        fileReferenceId = zenkaku_to_hankaku_all(self.bib.fileReferenceId or "")
         return EsPatentDoc(
             docId=self.bib.docId,
             task=self.full_text.task,
@@ -37,7 +40,7 @@ class PatentDocEditor:
             law=self.bib.law.value,
             documentName=self.bib.documentName,
             documentCode=self.bib.documentCode,
-            fileReferenceId=self.bib.fileReferenceId,
+            fileReferenceId=fileReferenceId,
             applicationNumber=self.bib.applicationNumber,
             internationalApplicationNumber=self.bib.internationalApplicationNumber,
             registrationNumber=self.bib.registrationNumber,
@@ -152,4 +155,5 @@ if __name__ == "__main__":
         print(es_doc.model_dump_json(indent=2, ensure_ascii=False))
     except ValidationError as e:
         print("Validation error:", e)
+        sys.exit(1)
         sys.exit(1)

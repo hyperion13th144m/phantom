@@ -45,9 +45,11 @@ def parse_list_field(value: Optional[str]) -> Optional[List[str]]:
 
 def iter_sqlite_records(
     db_path: str,
-) -> Iterable[Tuple[str, Optional[List[str]], Optional[List[str]]]]:
+) -> Iterable[
+    Tuple[str, Optional[List[str]], Optional[List[str]], Optional[List[str]]]
+]:
     """
-    patentDocument から (docId, assignees, tags) を返す
+    patentDocument から (docId, assignees, tags, extraNumbers) を返す
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -55,7 +57,7 @@ def iter_sqlite_records(
 
     cur.execute(
         """
-        SELECT docId, assignees, tags
+        SELECT docId, assignees, tags, extraNumbers
         FROM patentDocument
     """
     )
@@ -64,7 +66,8 @@ def iter_sqlite_records(
         doc_id = row["docId"]
         assignees = parse_list_field(row["assignees"])
         tags = parse_list_field(row["tags"])
-        yield doc_id, assignees, tags
+        extra_numbers = parse_list_field(row["extraNumbers"])
+        yield doc_id, assignees, tags, extra_numbers
 
     conn.close()
 
@@ -74,12 +77,14 @@ def iter_sqlite_records(
 
 def build_actions(
     index: str,
-    records: Iterable[Tuple[str, Optional[List[str]], Optional[List[str]]]],
+    records: Iterable[
+        Tuple[str, Optional[List[str]], Optional[List[str]], Optional[List[str]]]
+    ],
 ) -> Iterable[Dict[str, Any]]:
     """
     bulk update actions
     """
-    for doc_id, assignees, tags in records:
+    for doc_id, assignees, tags, extra_numbers in records:
         doc: Dict[str, Any] = {}
 
         if assignees is not None:
@@ -87,6 +92,9 @@ def build_actions(
 
         if tags is not None:
             doc["tags"] = tags
+
+        if extra_numbers is not None:
+            doc["extraNumbers"] = extra_numbers
 
         # 更新するものが無い場合はスキップ
         if not doc:

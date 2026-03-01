@@ -15,6 +15,7 @@
         <xsl:variable name="root">
             <xf:map>
                 <xsl:apply-templates select="root/jp:procedure" />
+                <xsl:apply-templates select="root//jp:dispatch-control-article/jp:file-reference-id" />
             </xf:map>
         </xsl:variable>
         <xsl:choose>

@@ -23,6 +23,7 @@ def load_mapping_file(path: Path) -> Dict:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
+
 def cmd_create_index(args) -> int:
     """Create or update Elasticsearch index with mappings."""
     # Validate mapping file exists
@@ -40,8 +41,8 @@ def cmd_create_index(args) -> int:
 
     # Connect to Elasticsearch
     logger.info(f"Connecting to Elasticsearch: {args.es}")
+    es = create_es_client(args)
     try:
-        es = create_es_client(args)
 
         # Check connection
         if not es.ping():
@@ -66,8 +67,8 @@ def cmd_create_index(args) -> int:
         logger.error(f"Error: {e}")
         return 1
     finally:
-        if "es" in locals():
-            es.close()
+        es.close()
+
 
 def create_or_update_index(
     es: Elasticsearch, index_name: str, mapping_config: Dict, recreate: bool = False
@@ -110,4 +111,3 @@ def create_or_update_index(
             logger.warning(
                 "   Use --recreate flag to delete and recreate the index with new settings."
             )
-

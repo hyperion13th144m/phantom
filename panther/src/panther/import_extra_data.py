@@ -9,6 +9,8 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Dict
 
+from panther.models.generated.bibliographic_items import BibliographicItems
+
 # from panther.document_json import DocumentJson
 from panther.patent_doc_editor import PatentDocEditor
 
@@ -30,26 +32,31 @@ def check_doc_exists(cursor: sqlite3.Cursor, doc_id: str) -> bool:
     return cursor.fetchone() is not None
 
 
-def insert_document(cursor: sqlite3.Cursor, doc_data: Dict[str, Any]) -> bool:
+def insert_document(
+    cursor: sqlite3.Cursor,
+    docId: str,
+    applicants: list[str],
+    inventors: list[str],
+    law: str,
+    appNumber: str,
+    fileReferenceId: str,
+) -> bool:
     """
-    document.jsonのデータをテーブルに挿入
+    jsonのデータをテーブルに挿入
 
     Args:
         cursor: データベースカーソル
-        doc_data: JSONから読み取ったドキュメントデータ
+        docId: ドキュメントID
+        applicants: 出願人リスト
+        inventors: 発明者リスト
+        law: 法律情報
+        appNumber: 出願番号
+        fileReferenceId: ファイル参照ID
 
     Returns:
         挿入成功の場合True、失敗の場合False
     """
     try:
-        applicants = doc_data.get("applicants") or []
-        inventors = doc_data.get("inventors") or []
-        appNumber = (
-            doc_data.get("applicationNumber")
-            or doc_data.get("internationalApplicationNumber")
-            or doc_data.get("receiptNumber")
-            or ""
-        )
         cursor.execute(
             """
             INSERT INTO patentDocument (
@@ -58,10 +65,10 @@ def insert_document(cursor: sqlite3.Cursor, doc_data: Dict[str, Any]) -> bool:
             ) VALUES (?, ?, ?, ?, ?, ?)
         """,
             (
-                doc_data.get("docId"),
-                doc_data.get("law"),
+                docId,
+                law,
                 appNumber,
-                doc_data.get("fileReferenceId") or "",
+                fileReferenceId,
                 ",".join(applicants),
                 ",".join(inventors),
             ),
@@ -74,7 +81,7 @@ def insert_document(cursor: sqlite3.Cursor, doc_data: Dict[str, Any]) -> bool:
 
 def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db"):
     """
-    指定ディレクトリから再帰的にdocument.jsonを検索し、
+    指定ディレクトリから再帰的にbibliography.jsonを検索し、
     データベースにインポートする
 
     Args:
@@ -88,13 +95,13 @@ def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db
         return
 
     # document.jsonファイルを再帰的に検索
-    json_files = list(data_path.rglob("document.json"))
+    json_files = list(data_path.rglob("bibliography.json"))
 
     if not json_files:
-        logger.error(f"✗ document.jsonが見つかりませんでした: {data_dir}")
+        logger.error(f"✗ bibliography.jsonが見つかりませんでした: {data_dir}")
         return
 
-    logger.info(f"✓ {len(json_files)}個のdocument.jsonを見つけました")
+    logger.info(f"✓ {len(json_files)}個のbibliography.jsonを見つけました")
 
     # データベースに接続
     conn = sqlite3.connect(db_path)
@@ -111,10 +118,7 @@ def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db
                 with open(json_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                # _doc_data = DocumentJson(**data)
-                # editor = PatentDocEditor(src=_doc_data)
-                doc_data = {}  # editor.to_es_model()
-
+                doc_data = BibliographicItems(**data)
                 doc_id = doc_data.docId
 
                 if not doc_id:
@@ -128,7 +132,23 @@ def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db
                     skipped_count += 1
                 else:
                     # データを挿入
-                    if insert_document(cursor, doc_data.model_dump()):
+                    applicants = doc_data.applicants or []
+                    inventors = doc_data.inventors or []
+                    appNumber = (
+                        doc_data.applicationNumber
+                        or doc_data.internationalApplicationNumber
+                        or doc_data.receiptNumber
+                        or ""
+                    )
+                    if insert_document(
+                        cursor,
+                        doc_id,
+                        applicants,
+                        inventors,
+                        doc_data.law.value,
+                        appNumber,
+                        doc_data.fileReferenceId or "",
+                    ):
                         logger.info(f"  ✓ 挿入成功: {doc_id} ({json_file})")
                         inserted_count += 1
                     else:

@@ -92,7 +92,7 @@ class EsPatentDoc(BaseModel):
     contentsOfAmendment: Optional[List[str]] = Field(default_factory=list)
 
     # document.json ではアップロードしない。sqliteから取ってくる。
-    assignee: Optional[List[str]] = Field(default_factory=list)
+    assignees: Optional[List[str]] = Field(default_factory=list)
     tags: Optional[List[str]] = Field(default_factory=list)
     extraNumbers: Optional[List[str]] = Field(default_factory=list)
 

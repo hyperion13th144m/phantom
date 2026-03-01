@@ -37,14 +37,16 @@ export default function HitResults({ hitResult, keywords }: Props) {
                 </div>
 
                 <div className="flex flex-wrap justify-start text-gray-800 text-sm mt-2 gap-4">
-                    <div>{formatApplicationNumber(hitResult.source.law ?? "-", hitResult.source.applicationNumber ?? "-")}</div>
+                    <div>{formatApplicationNumber(hitResult.source.law ?? "-", hitResult.source.applicationNumber ?? "")}</div>
                     {
                         hitResult.source.date && (
                             <div>{dateTag(hitResult.source.documentCode)}: {formatDate(hitResult.source.date)}</div>
                         )
                     }
                     <div>{hitResult.source.fileReferenceId ?? "-"}</div>
-                    <div>{(hitResult.source.applicants ?? []).join(", ") || "-"}</div>
+                    <div>{(hitResult.source.extraNumbers ?? []).join(", ") || ""}</div>
+                    <div>{(hitResult.source.applicants ?? []).join(", ") || ""}</div>
+                    <div>{(hitResult.source.tags ?? []).join(", ") || ""}</div>
                 </div>
             </div>
 

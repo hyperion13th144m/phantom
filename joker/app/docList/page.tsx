@@ -13,6 +13,7 @@ type DocResult = {
     date: string;
     documentName: string;
     documentCode: string;
+    extraNumbers?: string[];
 };
 
 type GroupResult = {
@@ -23,8 +24,21 @@ type GroupResult = {
 
 type ApiResponse = GroupResult[];
 
-const getFileReferenceId = (docs: GroupResult): string => {
-    return docs.docs.filter(doc => doc.fileReferenceId).map(doc => doc.fileReferenceId)[0] ?? "";
+const getFileReferenceId = (docs: GroupResult): string[] => {
+    const set = new Set<string>();
+    docs.docs.forEach(doc => {
+        if (doc.fileReferenceId.trim()) {
+            set.add(doc.fileReferenceId.trim());
+        }
+        if (doc.extraNumbers) {
+            doc.extraNumbers.forEach(num => {
+                if (num.trim()) {
+                    set.add(num.trim());
+                }
+            });
+        }
+    });
+    return Array.from(set);
 }
 
 const getApplicants = (docs: GroupResult): string[] => {
@@ -254,7 +268,7 @@ function DocListPageContent() {
                                         {formatApplicationNumber(group.law, group.applicationNumber) || "（未設定）"}
                                     </h2>
                                     <div className="text-sm text-gray-600">
-                                        <span className="text-gray-600">整理番号:{getFileReferenceId(group)}</span>
+                                        <span className="text-gray-600">整理番号:{getFileReferenceId(group).join(", ")}</span>
                                     </div>
                                     <div className="flex flex-wrap gap-2 mt-1 items-center">
                                         <div className="text-gray-600 text-sm">出願人</div>

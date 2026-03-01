@@ -49,4 +49,30 @@ $ python src/panther/main.py upload-documents \
   --data-root data \
   --use-hash-guard \
   --refresh
+
+### 付加データのインポートとアップロード
+#### 付加データ用データベースの初期化
+```bash
+$ python src/panther/main.py create-db \
+  --sqlite-db path/to/patent_documents.db
+```
+#### データベースへのインポート
+sqlite データベースに、データインポート。付加データを作成する前に必要なステップ。
+```bash
+$ python src/panther/main.py import-extra-data \
+  --sqlite-db path/to/patent_documents.db \
+  --data-root data
+```
+
+### 付加データの追加
+sqlite db を直接編集して、担当者、タグ、付加番号を追加することが可能。
+
+docId, 出願番号、出願人、発明者は参考用。assignees（担当者）、tags(タグ)、extraNumbers(付加番号)の列に、データを記入する。複数の場合は、カンマで区切る。
+
+### 付加データアップロード
+sqlite db をアップロードする。
+```bash
+$ python src/panther/main.py upload-extra-data \
+  --sqlite-db path/to/patent_documents.db \
+  --index patent-documents
 ```

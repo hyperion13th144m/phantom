@@ -13,6 +13,7 @@ interface DocResult {
     date: string;
     documentName: string;
     documentCode: string;
+    extraNumbers?: string[];
 }
 
 interface GroupResult {
@@ -184,6 +185,7 @@ export async function GET(req: NextRequest) {
                 "date",
                 "documentName",
                 "documentCode",
+                "extraNumbers"
             ],
         });
 
@@ -210,6 +212,11 @@ export async function GET(req: NextRequest) {
                 date: source.date || "",
                 documentName: source.documentName || "",
                 documentCode: source.documentCode || "",
+                extraNumbers: Array.isArray(source.extraNumbers)
+                    ? source.extraNumbers
+                    : source.extraNumbers
+                        ? [source.extraNumbers]
+                        : [],
             };
 
             if (!groupMap.has(groupKey)) {

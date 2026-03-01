@@ -117,7 +117,7 @@ def main():
         help="Import document.json files into extra data database.",
     )
     import_extra_data_parser.add_argument(
-        "--data-dir",
+        "--data-root",
         required=True,
         help="Directory containing docid/document.json files to import",
     )
@@ -214,7 +214,7 @@ def main():
     elif args.command == "create-db":
         return cmd_create_db(args.sqlite_db)
     elif args.command == "import-extra-data":
-        return cmd_import_extra_data(args.data_dir, args.sqlite_db)
+        return cmd_import_extra_data(args.data_root, args.sqlite_db)
     elif args.command == "upload-extra-data":
         return cmd_upload_extra_data(args)
     else:

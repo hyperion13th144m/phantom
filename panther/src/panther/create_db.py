@@ -30,7 +30,8 @@ def cmd_create_db(db_path: str = "patent.db"):
         applicants TEXT,
         inventors TEXT,
         assignees TEXT,
-        tags TEXT
+        tags TEXT,
+        extraNumbers TEXT
     )
     """
 
@@ -38,7 +39,9 @@ def cmd_create_db(db_path: str = "patent.db"):
         # テーブルを作成
         cursor.execute(create_table_sql)
         conn.commit()
-        logger.info(f"✓ テーブル 'patentDocument' を作成しました（データベース: {db_path}）")
+        logger.info(
+            f"✓ テーブル 'patentDocument' を作成しました（データベース: {db_path}）"
+        )
 
         # テーブル情報を表示
         cursor.execute("PRAGMA table_info(patentDocument)")
