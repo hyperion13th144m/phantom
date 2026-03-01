@@ -8,6 +8,10 @@ const { inventors } = Astro.props as {
     inventors &&
         inventors.length > 0 &&
         inventors.map((inv) => (
-            <div class="bg-cyan-100 rounded-md shadow-md px-2">{inv}</div>
+            <div class="bg-cyan-100 rounded-md shadow-md px-2">
+                <a href={`/docList?inventor=${encodeURIComponent(inv)}`}>
+                    {inv}
+                </a>
+            </div>
         ))
 }

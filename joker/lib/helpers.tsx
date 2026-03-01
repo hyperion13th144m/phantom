@@ -12,20 +12,30 @@ export function formatApplicationNumber(law: string, appNum: string): string {
     // ここでは単純に law と appNum を結合する例を示します
     if (law === "patent" && appNum.match(/^\d{10}$/)) {
         return `特願${appNum.substring(0, 4)}-${appNum.substring(5)}号`;
-    } else if (law === "utility" && appNum.match(/^\d{10}$/)) {
-        return `実用新案登録願${appNum.substring(0, 4)}-${appNum.substring(5)}号`;
+    } else if (law === "utilityModel" && appNum.match(/^\d{10}$/)) {
+        return `実願${appNum.substring(0, 4)}-${appNum.substring(5)}号`;
     } else {
         return appNum;
     }
 }
 
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string | number): string {
     // dateStr は UTC ミリ秒 の epoch time 形式
-
-    const timestamp = Number(dateStr);
-    if (isNaN(timestamp)) return dateStr;
-    const date = new Date(timestamp);
-
-    if (isNaN(date.getTime())) return dateStr; // 無効な日付の場合は元の文字列を返す
-    return date.toLocaleDateString("ja-JP");
+    if (typeof dateStr === "number") {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return String(dateStr); // 無効な日付の場合は元の文字列を返す
+        return date.toLocaleDateString("ja-JP");
+    } else if (typeof dateStr === "string") {
+        const timestamp = Number(dateStr);
+        if (!isNaN(timestamp)) {
+            const date = new Date(timestamp);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString("ja-JP");
+            }
+        }
+        // 文字列が日付形式であればそのまま返す
+        return dateStr;
+    } else {
+        return String(dateStr);
+    }
 }

@@ -1,9 +1,12 @@
 ---
-const { appNumber } = Astro.props as {
+const { law, appNumber } = Astro.props as {
+    law: string;
     appNumber: string;
 };
 ---
 
 <div class="bg-orange-200 rounded-md shadow-md px-2">
-    {appNumber}
+    <a href={`/docList?law=${law}&appNumber=${encodeURIComponent(appNumber)}`}>
+        {appNumber}
+    </a>
 </div>

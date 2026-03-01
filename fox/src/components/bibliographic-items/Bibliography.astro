@@ -24,6 +24,7 @@ const printPath = `${Astro.url.pathname}/print`;
             <div slot="content" class="space-y-4">
                 <div class="flex flex-wrap gap-2">
                     <ApplicationNumber
+                        law={bibliography.law}
                         appNumber={bibliography.applicationNumber}
                     />
                     <FileReferenceId
@@ -41,7 +42,10 @@ const printPath = `${Astro.url.pathname}/print`;
     <div class="hidden md:block">
         <div class="flex items-center justify-between">
             <div class="flex gap-4">
-                <ApplicationNumber appNumber={bibliography.applicationNumber} />
+                <ApplicationNumber
+                    law={bibliography.law}
+                    appNumber={bibliography.applicationNumber}
+                />
                 <FileReferenceId
                     fileReferenceId={bibliography.fileReferenceId}
                 />

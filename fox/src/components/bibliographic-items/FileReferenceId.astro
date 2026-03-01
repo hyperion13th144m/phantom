@@ -7,7 +7,9 @@ const { fileReferenceId } = Astro.props as {
 {
     fileReferenceId && (
         <div class="bg-violet-200 rounded-md shadow-md px-2">
-            {fileReferenceId}
+            <a href={`/docList?fileReferenceId=${fileReferenceId}`}>
+                {fileReferenceId}
+            </a>
         </div>
     )
 }

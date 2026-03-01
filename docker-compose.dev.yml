@@ -27,8 +27,8 @@ services:
       ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
-      IMAGE_BASE_URL: http://192.168.11.250:38080/content
-      DOCUMENT_BASE_URL: http://192.168.11.250:38080/docs
+      IMAGE_BASE_URL: /images
+      DOCUMENT_BASE_URL: /docs
     tty: true
     networks:
       - dev-net

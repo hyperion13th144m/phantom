@@ -8,6 +8,10 @@ const { applicants } = Astro.props as {
     applicants &&
         applicants.length > 0 &&
         applicants.map((app) => (
-            <div class="bg-green-100 rounded-md shadow-md px-2">{app}</div>
+            <div class="bg-green-100 rounded-md shadow-md px-2">
+                <a href={`/docList?applicant=${encodeURIComponent(app)}`}>
+                    {app}
+                </a>
+            </div>
         ))
 }
