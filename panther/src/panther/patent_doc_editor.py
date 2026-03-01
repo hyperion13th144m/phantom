@@ -28,6 +28,8 @@ class PatentDocEditor:
     images_info: list[ImagesInformation]
 
     def to_es_model(self) -> EsPatentDoc:
+        submissionDate=get_date(self.bib.submissionDate, self.bib.submissionTime)
+        dispatchDate=get_date(self.bib.dispatchDate, self.bib.dispatchTime)
         return EsPatentDoc(
             docId=self.bib.docId,
             task=self.full_text.task,
@@ -40,8 +42,7 @@ class PatentDocEditor:
             internationalApplicationNumber=self.bib.internationalApplicationNumber,
             registrationNumber=self.bib.registrationNumber,
             appealReferenceNumber=self.bib.appealReferenceNumber,
-            submissionDate=get_date(self.bib.submissionDate, self.bib.submissionTime),
-            dispatchDate=get_date(self.bib.dispatchDate, self.bib.dispatchTime),
+            date=submissionDate or dispatchDate,
             images=get_images(self.images_info),
             ocrText=get_image_text(self.images_info),
             inventors=self.full_text.inventors,

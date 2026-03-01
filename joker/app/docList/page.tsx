@@ -4,14 +4,13 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ErrorMessage from "@/app/components/error-message";
 import SimpleInput from "@/app/components/simple-input";
-import { formatApplicationNumber, formatDate } from "@/lib/helpers";
+import { buildDocUrl, dateTag, formatApplicationNumber, formatDate } from "@/lib/helpers";
 
 type DocResult = {
     docId: string;
     applicants: string[];
     fileReferenceId: string;
-    submissionDate: string | number;
-    dispatchDate: string | number;
+    date: string;
     documentName: string;
     documentCode: string;
 };
@@ -23,6 +22,34 @@ type GroupResult = {
 };
 
 type ApiResponse = GroupResult[];
+
+const getFileReferenceId = (docs: GroupResult): string => {
+    return docs.docs.filter(doc => doc.fileReferenceId).map(doc => doc.fileReferenceId)[0] ?? "";
+}
+
+const getApplicants = (docs: GroupResult): string[] => {
+    const applicantsSet = new Set<string>();
+    docs.docs.forEach(doc => {
+        doc.applicants.forEach(applicant => {
+            if (applicant.trim()) {
+                applicantsSet.add(applicant.trim());
+            }
+        });
+    });
+    return Array.from(applicantsSet);
+}
+
+const sortDocs = (docs: DocResult[]): DocResult[] => {
+    return docs.sort((a, b) => {
+        const dateA = a.date
+            ? Number(a.date)
+            : 0;
+        const dateB = b.date
+            ? Number(b.date)
+            : 0;
+        return dateA - dateB; // 昇順
+    });
+}
 
 function DocListPageContent() {
     const router = useRouter();
@@ -209,87 +236,60 @@ function DocListPageContent() {
             {/* 検索結果 */}
             {data && (
                 <div className="space-y-6">
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 text-center">
                         {data.length === 0 ? (
                             <p>検索結果がありません</p>
                         ) : (
                             <p>
-                                {data.length}件の法律種別・出願番号の組み合わせが見つかりました（合計{totalDocs}件の文書）
+                                {data.length}件の特許出願、{totalDocs}件の文書が見つかりました
                             </p>
                         )}
                     </div>
 
-                    {data.map((group, groupIdx) => (
-                        <div key={groupIdx} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-                            <div className="mb-4">
-                                <h2 className="text-xl font-semibold text-gray-800">
-                                    {group.law || "（法律種別未設定）"}
-                                </h2>
-                                <p className="text-sm text-gray-600">
-                                    出願番号: {formatApplicationNumber(group.law, group.applicationNumber) || "（未設定）"}
-                                </p>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    {group.docs.length}件の文書
-                                </p>
-                            </div>
-
-                            <div className="space-y-3">
-                                {group.docs.map((doc, docIdx) => (
-                                    <div
-                                        key={docIdx}
-                                        className="bg-gray-50 p-4 rounded border border-gray-200 hover:shadow-md transition"
-                                    >
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                            <div>
-                                                <span className="text-gray-600">文書ID</span>
-                                                <p className="font-mono text-gray-800">{doc.docId}</p>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">文書名</span>
-                                                <p className="text-gray-800">{doc.documentName}</p>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">整理番号</span>
-                                                <p className="text-gray-800">{doc.fileReferenceId}</p>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">文書コード</span>
-                                                <p className="text-gray-800">{doc.documentCode}</p>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">出願日</span>
-                                                <p className="text-gray-800">
-                                                    {formatDate(doc.submissionDate)}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">発送日</span>
-                                                <p className="text-gray-800">
-                                                    {formatDate(doc.dispatchDate)}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {doc.applicants && doc.applicants.length > 0 && (
-                                            <div className="mt-3 pt-3 border-t border-gray-200">
-                                                <span className="text-gray-600 text-sm">出願人</span>
-                                                <div className="flex flex-wrap gap-2 mt-1">
-                                                    {doc.applicants.map((applicant, appIdx) => (
-                                                        <span
-                                                            key={appIdx}
-                                                            className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
-                                                        >
-                                                            {applicant}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
+                    <div className="flex flex-wrap justify-center gap-6">
+                        {data.map((group, groupIdx) => (
+                            <div key={groupIdx} className="w-[450px] bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-semibold text-gray-800">
+                                        {formatApplicationNumber(group.law, group.applicationNumber) || "（未設定）"}
+                                    </h2>
+                                    <div className="text-sm text-gray-600">
+                                        <span className="text-gray-600">整理番号:{getFileReferenceId(group)}</span>
                                     </div>
-                                ))}
+                                    <div className="flex flex-wrap gap-2 mt-1 items-center">
+                                        <div className="text-gray-600 text-sm">出願人</div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {getApplicants(group).map((applicant, appIdx) => (
+                                                <span
+                                                    key={appIdx}
+                                                    className="mr-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
+                                                >
+                                                    {applicant}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <ol className="list-decimal list-inside">
+                                        {sortDocs(group.docs).map((doc, docIdx) => (
+                                            <li key={docIdx}>
+                                                {
+                                                    doc.date && (
+                                                        <span className="text-gray-600">{dateTag(doc.documentCode)}:
+                                                            {formatDate(doc.date)}
+                                                        </span>
+                                                    )
+                                                }
+                                                <span className="px-5 text-gray-800"><a className="text-blue-600 hover:underline" href={buildDocUrl(doc.docId)}>{doc.documentName}</a></span>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             )}
 

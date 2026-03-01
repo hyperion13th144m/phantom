@@ -10,8 +10,7 @@ interface DocResult {
     docId: string;
     applicants: string[];
     fileReferenceId: string;
-    submissionDate: string | number;
-    dispatchDate: string | number;
+    date: string;
     documentName: string;
     documentCode: string;
 }
@@ -126,22 +125,25 @@ export async function GET(req: NextRequest) {
                 bool: {
                     should: [
                         {
-                            match: {
-                                "fileReferenceId.ngram": {
-                                    query: fileReferenceIdKeyword,
-                                    operator: "or",
-                                },
+                            match_phrase: {
+                                "fileReferenceId.ngram": fileReferenceIdKeyword,
                             },
                         },
                         {
                             match: {
-                                fileReferenceId: {
-                                    query: fileReferenceIdKeyword,
-                                    fuzziness: "AUTO",
-                                    operator: "or",
-                                },
+                                fileReferenceId: fileReferenceIdKeyword,
                             },
                         },
+                        {
+                            match_phrase: {
+                                "extraNumbers.ngram": fileReferenceIdKeyword,
+                            },
+                        },
+                        {
+                            match: {
+                                extraNumbers: fileReferenceIdKeyword,
+                            }
+                        }
                     ],
                     minimum_should_match: 1,
                 },
@@ -170,14 +172,16 @@ export async function GET(req: NextRequest) {
                     must: mustQueries.length > 0 ? mustQueries : [{ match_all: {} }],
                 },
             },
+            sort: [
+                { applicationNumber: "desc" },
+            ],
             _source: [
                 "docId",
                 "law",
                 "applicationNumber",
                 "applicants",
                 "fileReferenceId",
-                "submissionDate",
-                "dispatchDate",
+                "date",
                 "documentName",
                 "documentCode",
             ],
@@ -203,8 +207,7 @@ export async function GET(req: NextRequest) {
                         ? [source.applicants]
                         : [],
                 fileReferenceId: source.fileReferenceId || "",
-                submissionDate: source.submissionDate || "",
-                dispatchDate: source.dispatchDate || "",
+                date: source.date || "",
                 documentName: source.documentName || "",
                 documentCode: source.documentCode || "",
             };

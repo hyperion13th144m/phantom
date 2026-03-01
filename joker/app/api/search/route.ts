@@ -80,7 +80,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse>> 
 
     const sort = q.length > 0
         ? [{ _score: { order: "desc" as const } }]
-        : [{ submissionDate: { order: "desc" as const } }];
+        : [{ date: { order: "desc" as const } }];
 
     // フィルタ（mapping次第：keywordがあるなら `.keyword` を推奨）
     // ここでは “とりあえず text でも動く” ように match を使います。
@@ -196,9 +196,9 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse>> 
                 "docId",
                 "law",
                 "applicationNumber",
+                "documentCode",
                 "documentName",
-                "submissionDate",
-                "dispatchDate",
+                "date",
                 "fileReferenceId",
                 "inventionTitle",
                 "independentClaims",

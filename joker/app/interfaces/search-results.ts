@@ -11,8 +11,7 @@ export interface PatentDocumentSource {
     applicationNumber: string;
     internationalApplicationNumber?: string;
     appealReferenceNumber?: string;
-    submissionDate?: string;
-    dispatchDate?: string;
+    date: string;
     ocrText?: string;
     inventors?: string[];
     applicants?: string[];
@@ -48,6 +47,7 @@ export interface PatentDocumentSource {
         description: string;
         sizeTag: string;
     }[];
+    extraNumbers?: string[];
 }
 export interface ImageInformation {
     number: string;

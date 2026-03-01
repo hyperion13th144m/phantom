@@ -27,7 +27,7 @@ const ImagesArray: React.FC<Props> = ({ docId, images, thumbnailTag = "thumbnail
                     <div key={img.filename}
                         className="border border-gray-300 rounded p-1">
                         <button
-                            onClick={() => { setSelectedImage(idx); console.log("Selected image:", img); }}
+                            onClick={() => setSelectedImage(idx)}
                             className="cursor-pointer hover:opacity-80 transition-opacity"
                         >
                             <img

@@ -112,11 +112,7 @@
                     }
                 }
             },
-            "submissionDate": {
-                "type": "date",
-                "format": "epoch_millis"
-            },
-            "dispatchDate": {
+            "date": {
                 "type": "date",
                 "format": "epoch_millis"
             },
@@ -364,6 +360,15 @@
             "contentsOfAmendment": {
                 "type": "text",
                 "analyzer": "my_kuromoji_analyzer",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
+            "extraNumbers": {
+                "type": "keyword",
                 "fields": {
                     "ngram": {
                         "type": "text",

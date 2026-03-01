@@ -25,7 +25,7 @@ const Header: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <div className="header-search">
                             {pathname === "/search" ? (
-                                <h1>簡易検索</h1>
+                                <h1 className="border-b-2">簡易検索</h1>
                             ) : (
                                 <h1>
                                     <Link className="hover:underline hover:text-blue-600" href="/search">簡易検索</Link>
@@ -34,7 +34,7 @@ const Header: React.FC = () => {
                         </div>
                         <div className="header-doclist">
                             {pathname === "/docList" ? (
-                                <h1>書誌検索</h1>
+                                <h1 className="border-b-2">書誌検索</h1>
                             ) : (
                                 <h1>
                                     <Link className="hover:underline hover:text-blue-600" href="/docList">書誌検索</Link>

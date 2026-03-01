@@ -117,7 +117,7 @@ function SearchPageContent() {
     return (
         <div className="max-w-[980px] mx-auto my-6"
             style={{}}>
-            <div className="bg-white/90 sticky top-12 z-40 px-2 py-4">
+            <div className="bg-white sticky top-12 z-40 px-2 py-4">
                 <SimpleInput
                     value={q}
                     onChange={setQ}
@@ -144,56 +144,56 @@ function SearchPageContent() {
                     {[
                         {
                             key: "applicants" as const,
-                            label: "出願人で絞り込み",
+                            label: "出願人",
                             param: "applicant",
                             value: selectedApplicant,
                             setValue: setSelectedApplicant
                         },
                         {
                             key: "inventors" as const,
-                            label: "発明者で絞り込み",
+                            label: "発明者",
                             param: "inventor",
                             value: selectedInventor,
                             setValue: setSelectedInventor
                         },
                         {
                             key: "assignees" as const,
-                            label: "担当者で絞り込み",
+                            label: "担当者",
                             param: "assignee",
                             value: selectedAssignee,
                             setValue: setSelectedAssignee
                         },
                         {
                             key: "tags" as const,
-                            label: "タグで絞り込み",
+                            label: "タグ",
                             param: "tag",
                             value: selectedTag,
                             setValue: setSelectedTag
                         },
                         {
                             key: "documentNames" as const,
-                            label: "文書名で絞り込み",
+                            label: "文書名",
                             param: "documentName",
                             value: selectedDocumentName,
                             setValue: setSelectedDocumentName
                         },
                         {
                             key: "specialMentionMatterArticle" as const,
-                            label: "特記事項で絞り込み",
+                            label: "特記事項",
                             param: "specialMentionMatterArticle",
                             value: selectedSpecialMentionMatterArticle,
                             setValue: setSelectedSpecialMentionMatterArticle
                         },
                         {
                             key: "rejectionReasonArticle" as const,
-                            label: "拒絶理由で絞り込み",
+                            label: "拒絶理由",
                             param: "rejectionReasonArticle",
                             value: selectedRejectionReasonArticle,
                             setValue: setSelectedRejectionReasonArticle
                         },
                         {
                             key: "priorityClaims" as const,
-                            label: "優先権有無で絞り込み",
+                            label: "優先権",
                             param: "priorityClaims",
                             value: selectedPriorityClaims,
                             setValue: setSelectedPriorityClaims

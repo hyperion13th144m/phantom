@@ -46,8 +46,10 @@ class EsPatentDoc(BaseModel):
     appealReferenceNumber: Optional[str] = None
 
     # 日付
-    submissionDate: Optional[str] = None
-    dispatchDate: Optional[str] = None
+    date: Optional[str] = None
+    # submissionDate: Optional[str] = None
+    # dispatchDate: Optional[str] = None
+    # 上二つのどちらか。date = submissionDate or dispatchDate として使う。両方ない場合は None。
 
     # 画像
     images: List[ImageInfo] = Field(default_factory=list)
@@ -92,6 +94,7 @@ class EsPatentDoc(BaseModel):
     # document.json ではアップロードしない。sqliteから取ってくる。
     assignee: Optional[List[str]] = Field(default_factory=list)
     tags: Optional[List[str]] = Field(default_factory=list)
+    extraNumbers: Optional[List[str]] = Field(default_factory=list)
 
 
 if __name__ == "__main__":
