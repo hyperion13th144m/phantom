@@ -1,39 +1,37 @@
 "use client";
 
 import { useState } from "react";
+import { ImageInformation } from "../interfaces/search-results";
+import { buildImageUrl } from "@/lib/helpers";
 
 interface Props {
+    docId: string;
     images: ImageInformation[];
+    thumbnailTag?: string;
+    largeTag?: string;
 }
 
-interface ImageInformation {
-    number: string;
-    filename: string;
-    largeFilename?: string;
-    kind: string;
-    sizeTag: string;
-    width: number;
-    height: number;
-    description: string;
-    representative: boolean;
-}
-
-
-const ImagesArray: React.FC<Props> = ({ images }) => {
-    const [selectedImage, setSelectedImage] = useState<ImageInformation | null>(null);
-
+const ImagesArray: React.FC<Props> = ({ docId, images, thumbnailTag = "thumbnail", largeTag = "middle" }) => {
+    const [selectedImage, setSelectedImage] = useState<number | null>(null);
+    const figures = images.filter(img => img.kind === "figures");
+    const thumbnails = figures
+        .filter(img => img.sizeTag === thumbnailTag)
+        .sort((a, b) => a.filename.localeCompare(b.filename));
+    const largeImages = figures
+        .filter(img => img.sizeTag === largeTag)
+        .sort((a, b) => a.filename.localeCompare(b.filename));
     return (
         <>
             <div className="flex flex-wrap gap-2">
-                {images.map((img, idx) => (
-                    <div key={idx}
+                {thumbnails.map((img, idx) => (
+                    <div key={img.filename}
                         className="border border-gray-300 rounded p-1">
                         <button
-                            onClick={() => setSelectedImage(img)}
+                            onClick={() => { setSelectedImage(idx); console.log("Selected image:", img); }}
                             className="cursor-pointer hover:opacity-80 transition-opacity"
                         >
                             <img
-                                src={img.filename}
+                                src={buildImageUrl(docId, img.filename)}
                                 alt={img.description || `Image ${img.number}`}
                                 className="max-w-[120px] max-h-[120px] object-contain"
                                 width={img.width}
@@ -53,7 +51,7 @@ const ImagesArray: React.FC<Props> = ({ images }) => {
             </div>
 
             {/* ドロワー */}
-            {selectedImage && (
+            {selectedImage !== null && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
                     onClick={() => setSelectedImage(null)}
@@ -71,18 +69,18 @@ const ImagesArray: React.FC<Props> = ({ images }) => {
                         </button>
                         <div className="p-4">
                             <img
-                                src={selectedImage.largeFilename || selectedImage.filename}
-                                alt={selectedImage.description || `Image ${selectedImage.number}`}
+                                src={buildImageUrl(docId, largeImages[selectedImage].filename)}
+                                alt={largeImages[selectedImage].description || `Image ${largeImages[selectedImage].number}`}
                                 className="max-w-full h-auto"
                             />
                             <div className="mt-4 text-center">
-                                <div className="font-semibold">図{selectedImage.number}</div>
-                                {selectedImage.description && (
+                                <div className="font-semibold">図{largeImages[selectedImage].number}</div>
+                                {largeImages[selectedImage].description && (
                                     <div className="text-sm text-gray-600 mt-1">
-                                        {selectedImage.description}
+                                        {largeImages[selectedImage].description}
                                     </div>
                                 )}
-                                {selectedImage.representative && (
+                                {largeImages[selectedImage].representative && (
                                     <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                                         代表図
                                     </span>

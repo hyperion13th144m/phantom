@@ -62,6 +62,7 @@ class EsPatentDoc(BaseModel):
     agents: Optional[List[str]] = Field(default_factory=list)
     specialMentionMatterArticle: Optional[List[str]] = Field(default_factory=list)
     lawOfIndustrialRegenerate: Optional[str] = None
+    priorityClaims: Optional[List[str]] = Field(default_factory=list)
 
     ### 明細書関連フィールド
     inventionTitle: Optional[str] = None

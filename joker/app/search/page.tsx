@@ -5,58 +5,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import ErrorMessage from "@/app/components/error-message";
 import SimpleInput from "@/app/components/simple-input";
 import Pagination from "@/app/components/pagination";
-import Highlight from "@/app/components/highlight";
-import ImagesArray from "@/app/components/images-array";
-import { clamp, formatApplicationNumber, formatDate } from "@/lib/helpers";
+import HitResults from "../components/hit-results";
+import { clamp } from "@/lib/helpers";
 import nextConfig from "../../next.config";
-
-
-type Hit = {
-    id: string;
-    score: number | null;
-    source: {
-        law: string;
-        applicationNumber: string;
-        submissionDate: string;
-        fileReferenceId: string;
-        inventionTitle?: string;
-        independentClaims?: string;
-        dependentClaims?: string;
-        abstract?: string;
-        applicants?: string[];
-        inventors?: string[];
-        assignee?: string;
-        tags?: string[];
-        images: {
-            number: string;
-            filename: string;
-            kind: string;
-            sizeTag: string;
-            width: number;
-            height: number;
-            description: string;
-            representative: boolean;
-        }[];
-        documentUrl: string;
-    };
-    highlight: Record<string, string[]>;
-};
-
-type ApiResponse = {
-    page: number;
-    size: number;
-    total: number;
-    hits: Hit[];
-    aggregations: {
-        applicants: { key: string; doc_count: number }[];
-        inventors: { key: string; doc_count: number }[];
-        assignees: { key: string; doc_count: number }[];
-        tags: { key: string; doc_count: number }[];
-    }
-    error?: string;
-    message?: string;
-};
-
+import { ApiResponse, ApiResponseSuccess, ApiResponseError, Hit } from "@/app/interfaces/search-results";
 
 function SearchPageContent() {
     const router = useRouter();
@@ -69,6 +21,10 @@ function SearchPageContent() {
     const inventor0 = sp.get("inventor") ?? "";
     const assignee0 = sp.get("assignee") ?? "";
     const tag0 = sp.get("tag") ?? "";
+    const documentName0 = sp.get("documentName") ?? "";
+    const specialMentionMatterArticle0 = sp.get("specialMentionMatterArticle") ?? "";
+    const rejectionReasonArticle0 = sp.get("rejectionReasonArticle") ?? "";
+    const priorityClaims0 = sp.get("priorityClaims") ?? "";
 
     const [q, setQ] = useState(q0);
     const [page, setPage] = useState(clamp(page0, 1, 100000));
@@ -77,10 +33,13 @@ function SearchPageContent() {
     const [selectedInventor, setSelectedInventor] = useState(inventor0);
     const [selectedAssignee, setSelectedAssignee] = useState(assignee0);
     const [selectedTag, setSelectedTag] = useState(tag0);
+    const [selectedDocumentName, setSelectedDocumentName] = useState(documentName0);
+    const [selectedSpecialMentionMatterArticle, setSelectedSpecialMentionMatterArticle] = useState(specialMentionMatterArticle0);
+    const [selectedRejectionReasonArticle, setSelectedRejectionReasonArticle] = useState(rejectionReasonArticle0);
+    const [selectedPriorityClaims, setSelectedPriorityClaims] = useState(priorityClaims0);
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<ApiResponse | null>(null);
+    const [data, setData] = useState<ApiResponseSuccess | null>(null);
     const [err, setErr] = useState<string | null>(null);
-    const [images, setImages] = useState<Record<string, (Hit["source"]["images"][number] & { largeFilename: string })[]>>({});
 
     useEffect(() => {
         // 初期値がURL由来なので、URLが変わったら入力も追随させる
@@ -89,7 +48,12 @@ function SearchPageContent() {
         setSize(clamp(size0, 1, 100));
     }, [q0, page0, size0]);
 
-    async function fetchSearch(params: { q: string; page: number; size: number; applicant?: string; inventor?: string, assignee?: string; tag?: string }) {
+    async function fetchSearch(params: {
+        q: string; page: number; size: number;
+        applicant?: string; inventor?: string, assignee?: string; tag?: string,
+        documentName?: string, specialMentionMatterArticle?: string,
+        rejectionReasonArticle?: string, priorityClaims?: string
+    }) {
         const usp = new URLSearchParams();
         if (params.q.trim()) usp.set("q", params.q.trim());
         usp.set("page", String(params.page));
@@ -98,6 +62,10 @@ function SearchPageContent() {
         if (params.inventor) usp.set("inventor", params.inventor);
         if (params.assignee) usp.set("assignee", params.assignee);
         if (params.tag) usp.set("tag", params.tag);
+        if (params.documentName) usp.set("documentName", params.documentName);
+        if (params.specialMentionMatterArticle) usp.set("specialMentionMatterArticle", params.specialMentionMatterArticle);
+        if (params.rejectionReasonArticle) usp.set("rejectionReasonArticle", params.rejectionReasonArticle);
+        if (params.priorityClaims) usp.set("priorityClaims", params.priorityClaims);
 
         setLoading(true);
         setErr(null);
@@ -108,9 +76,11 @@ function SearchPageContent() {
             });
             const json: ApiResponse = await res.json();
             if (!res.ok) {
-                throw new Error(json?.message || json?.error || `HTTP ${res.status}`);
+                const e = json as ApiResponseError;
+                throw new Error(e?.message || e?.error || `HTTP ${res.status}`);
             }
-            setData(json);
+
+            setData(json as ApiResponseSuccess);
         } catch (e: unknown) {
             setErr((e as Error)?.message ?? String(e));
             setData(null);
@@ -121,9 +91,9 @@ function SearchPageContent() {
 
     // URLクエリが変わったら検索実行
     useEffect(() => {
-        fetchSearch({ q: q0, page: clamp(page0, 1, 100000), size: clamp(size0, 1, 100), applicant: applicant0, inventor: inventor0, assignee: assignee0, tag: tag0 });
+        fetchSearch({ q: q0, page: clamp(page0, 1, 100000), size: clamp(size0, 1, 100), applicant: applicant0, inventor: inventor0, assignee: assignee0, tag: tag0, documentName: documentName0, specialMentionMatterArticle: specialMentionMatterArticle0, rejectionReasonArticle: rejectionReasonArticle0, priorityClaims: priorityClaims0 });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [q0, page0, size0, applicant0, inventor0, assignee0, tag0]);
+    }, [q0, page0, size0, applicant0, inventor0, assignee0, tag0, documentName0, specialMentionMatterArticle0, rejectionReasonArticle0, priorityClaims0]);
 
     function submit() {
         // 新しい検索は1ページ目から
@@ -135,36 +105,12 @@ function SearchPageContent() {
         if (selectedInventor) p.set("inventor", selectedInventor);
         if (selectedAssignee) p.set("assignee", selectedAssignee);
         if (selectedTag) p.set("tag", selectedTag);
+        if (selectedDocumentName) p.set("documentName", selectedDocumentName);
+        if (selectedSpecialMentionMatterArticle) p.set("specialMentionMatterArticle", selectedSpecialMentionMatterArticle);
+        if (selectedRejectionReasonArticle) p.set("rejectionReasonArticle", selectedRejectionReasonArticle);
+        if (selectedPriorityClaims) p.set("priorityClaims", selectedPriorityClaims);
         router.push(`/search?${p.toString()}`);
     }
-
-    useEffect(() => {
-        if (data?.hits) {
-            const newImages: Record<string, (Hit["source"]["images"][number] & { largeFilename: string })[]> = {};
-            data.hits.forEach((hit) => {
-                if (hit.source.images) {
-                    const images = hit.source.images
-                        .filter((img) => img.kind === "figure")
-                    const thumbnails = images
-                        .filter((img) => img.sizeTag === "thumbnail")
-                        .sort((a, b) => a.filename.localeCompare(b.filename))
-                    //.slice(0, 5);
-                    const largeImages = images
-                        .filter((img) => img.sizeTag === "large")
-                        .sort((a, b) => a.filename.localeCompare(b.filename))
-                    //.slice(0, 5);
-                    newImages[hit.id] = thumbnails.map((thumb, idx) => (
-                        {
-                            ...thumb,
-                            largeFilename: largeImages[idx]?.filename || "",
-                        }
-                    ));
-                }
-            });
-            setImages(newImages);
-        }
-    }, [data]);
-
 
     const totalPages = data ? Math.max(1, Math.ceil(data.total / data.size)) : 1;
 
@@ -224,6 +170,34 @@ function SearchPageContent() {
                             value: selectedTag,
                             setValue: setSelectedTag
                         },
+                        {
+                            key: "documentNames" as const,
+                            label: "文書名で絞り込み",
+                            param: "documentName",
+                            value: selectedDocumentName,
+                            setValue: setSelectedDocumentName
+                        },
+                        {
+                            key: "specialMentionMatterArticle" as const,
+                            label: "特記事項で絞り込み",
+                            param: "specialMentionMatterArticle",
+                            value: selectedSpecialMentionMatterArticle,
+                            setValue: setSelectedSpecialMentionMatterArticle
+                        },
+                        {
+                            key: "rejectionReasonArticle" as const,
+                            label: "拒絶理由で絞り込み",
+                            param: "rejectionReasonArticle",
+                            value: selectedRejectionReasonArticle,
+                            setValue: setSelectedRejectionReasonArticle
+                        },
+                        {
+                            key: "priorityClaims" as const,
+                            label: "優先権有無で絞り込み",
+                            param: "priorityClaims",
+                            value: selectedPriorityClaims,
+                            setValue: setSelectedPriorityClaims
+                        },
                     ].map((filter) => {
                         const aggregation = data?.aggregations?.[filter.key];
                         if (!aggregation || aggregation.length === 0) return null;
@@ -246,12 +220,18 @@ function SearchPageContent() {
                                         const currentInventor = filter.param === "inventor" ? newValue : selectedInventor;
                                         const currentAssignee = filter.param === "assignee" ? newValue : selectedAssignee;
                                         const currentTag = filter.param === "tag" ? newValue : selectedTag;
-
+                                        const currentDocumentName = filter.param === "documentName" ? newValue : selectedDocumentName;
+                                        const currentSpecialMentionMatterArticle = filter.param === "specialMentionMatterArticle" ? newValue : selectedSpecialMentionMatterArticle;
+                                        const currentRejectionReasonArticle = filter.param === "rejectionReasonArticle" ? newValue : selectedRejectionReasonArticle;
+                                        const currentPriorityClaims = filter.param === "priorityClaims" ? newValue : selectedPriorityClaims;
                                         if (currentApplicant) p.set("applicant", currentApplicant);
                                         if (currentInventor) p.set("inventor", currentInventor);
                                         if (currentAssignee) p.set("assignee", currentAssignee);
                                         if (currentTag) p.set("tag", currentTag);
-
+                                        if (currentDocumentName) p.set("documentName", currentDocumentName);
+                                        if (currentSpecialMentionMatterArticle) p.set("specialMentionMatterArticle", currentSpecialMentionMatterArticle);
+                                        if (currentRejectionReasonArticle) p.set("rejectionReasonArticle", currentRejectionReasonArticle);
+                                        if (currentPriorityClaims) p.set("priorityClaims", currentPriorityClaims);
                                         router.push(`/search?${p.toString()}`);
                                     }}
                                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
@@ -277,49 +257,9 @@ function SearchPageContent() {
                 <div className="flex flex-col gap-2 mt-3">
                     {data.hits.map((h) => (
                         <div key={h.id} className="border border-gray-300 rounded-xl p-3">
-                            <div>
-                                <div className="flex justify-between items-center font-extrabold text-lg mb-1.5">
-                                    <div>
-                                        {h.source.inventionTitle ?? "(no title)"}{" "}
-                                    </div>
-                                    <div>
-                                        <a href={`${h.source.documentUrl}?q=${q0.split(/ /).join(',')}`}
-                                            target="_blank" rel="noopener noreferrer" className="ml-2 text-xs">
-                                            詳細
-                                        </a>
-                                        <span className="font-normal text-xs text-gray-600">
-                                            {h.score != null ? ` スコア=${h.score.toFixed(2)}` : ""}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-wrap justify-start text-gray-800 text-sm mt-2 gap-4">
-                                    <div>{formatApplicationNumber(h.source.law ?? "-", h.source.applicationNumber ?? "-")}</div>
-                                    <div>出願日: {formatDate(h.source.submissionDate ?? "-")}</div>
-                                    <div>{h.source.fileReferenceId ?? "-"}</div>
-                                    <div>{(h.source.applicants ?? []).join(", ") || "-"}</div>
-                                </div>
-                            </div>
-
-                            <hr className="my-3 border-gray-300" />
-
-                            {/* ハイライトがあれば表示 */}
-                            {Object.keys(h.highlight || {}).length > 0 && (
-                                <div className="text-13/1.6">
-                                    <Highlight highlight={h.highlight} />
-                                </div>
-                            )}
-
-                            {/* 画像表示 */}
-                            {images[h.id] !== undefined && images[h.id].length > 0 && (
-                                <div className="mt-3">
-                                    <ImagesArray images={images[h.id]} />
-                                </div>
-                            )}
+                            <HitResults hitResult={h} keywords={q0} />
                         </div>
                     ))}
-
-
                     {data.hits.length === 0 && (
                         <div className="text-gray-600 p-3 border border-gray-300 rounded-xl text-center">
                             ヒットがありませんでした。

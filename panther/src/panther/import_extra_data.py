@@ -9,7 +9,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Dict
 
-from panther.document_json import DocumentJson
+# from panther.document_json import DocumentJson
 from panther.patent_doc_editor import PatentDocEditor
 
 logger = logging.getLogger(__name__)
@@ -111,9 +111,9 @@ def cmd_import_extra_data(data_dir: str = "/data_dir", db_path: str = "patent.db
                 with open(json_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                _doc_data = DocumentJson(**data)
-                editor = PatentDocEditor(src=_doc_data)
-                doc_data = editor.to_es_model()
+                # _doc_data = DocumentJson(**data)
+                # editor = PatentDocEditor(src=_doc_data)
+                doc_data = {}  # editor.to_es_model()
 
                 doc_id = doc_data.docId
 

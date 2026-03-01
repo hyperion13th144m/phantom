@@ -208,6 +208,9 @@
                     }
                 }
             },
+            "priorityClaims": {
+                "type": "keyword"
+            },
             "inventionTitle": {
                 "type": "text",
                 "analyzer": "my_kuromoji_analyzer",

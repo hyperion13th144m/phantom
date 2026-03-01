@@ -67,6 +67,7 @@ class PatentDocEditor:
             rejectionReasonArticle=self.full_text.rejectionReasonArticle,
             opinionContentsArticle=self.full_text.opinionContentsArticle,
             contentsOfAmendment=self.full_text.contentsOfAmendment,
+            priorityClaims=self.full_text.priorityClaims,
         )
 
     @staticmethod

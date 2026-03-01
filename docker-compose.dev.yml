@@ -20,6 +20,7 @@ services:
     volumes:
       - .:/workspaces:cached
       - ${LOG_DIR_JOKER}:/var/log/joker
+      - ${DATA_DIR}:/data_dir
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8

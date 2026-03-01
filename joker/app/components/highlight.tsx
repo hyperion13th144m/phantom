@@ -5,15 +5,12 @@ interface Props {
 }
 
 const fieldDisplayNames: Record<string, string> = {
-    inventionTitle: "【発明の名称】",
     independentClaims: "【独立請求項】",
     dependentClaims: "【従属請求項】",
-    descriptionOfEmbodiments: "【実施形態】",
     abstract: "【要約】",
-    applicants: "【出願人】",
-    inventors: "【発明者】",
-    assignee: "【譲受人】",
-    tags: "【タグ】",
+    draftingBody: "【拒絶理由】",
+    opinionContentsArticle: "【意見内容】",
+    ocrText: "【OCRテキスト】",
 };
 
 const Highlight: React.FC<Props> = ({ highlight }) => {

@@ -140,6 +140,22 @@
             jp:application-a634 | jp:application-a635">
         <xsl:apply-templates select="jp:inventors" />
         <xsl:apply-templates select="jp:applicants" />
+        <xsl:apply-templates select="jp:special-mention-matter-article" />
+        <xsl:apply-templates select="jp:law-of-industrial-regenerate" />
+        
+        <xf:array key="priorityClaims">
+            <xsl:if test="jp:priority-claims">
+                <xf:string>
+                    <xsl:value-of select="'パリ条約による優先権等の主張'" />
+                </xf:string>
+            </xsl:if>
+            <xsl:if test="jp:declaration-priority-ear-app">
+                <xf:string>
+                    <xsl:value-of select="'先の出願に基づく優先権主張'" />
+                </xf:string>
+            </xsl:if>
+        </xf:array>
+        
         <!--jp:agents/jp:agent, jp:change-attorney-article/jp:agent
              をまとめるため、ここに記載 -->
         <xf:array key="agents">
@@ -303,7 +319,7 @@
                          optional="true" />
         <schema:property name="specialMentionMatterArticle" type="array" item-type="string"
                          optional="true" />
-        
         <schema:property name="foreignLanguageClaims" type="string" item-type="string" optional="true" />
+        <schema:property name="priorityClaims" type="array" item-type="string" optional="true" />
     </schema:object>
 </xsl:stylesheet>
