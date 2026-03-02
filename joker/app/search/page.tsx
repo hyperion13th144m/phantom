@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ErrorMessage from "@/app/components/error-message";
 import HitResults from "@/app/components/hit-results";
@@ -131,7 +131,7 @@ function SearchPageContent() {
         queryFromUrl.priorityClaims,
     ]);
 
-    async function fetchSearch(query: SearchQuery) {
+    const fetchSearch = useCallback(async (query: SearchQuery) => {
         const params = buildSearchParams(query);
 
         setLoading(true);
@@ -153,12 +153,12 @@ function SearchPageContent() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
 
     useEffect(() => {
         fetchSearch(queryFromUrl);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
+        fetchSearch,
         queryFromUrl.q,
         queryFromUrl.page,
         queryFromUrl.size,
