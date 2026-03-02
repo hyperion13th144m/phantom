@@ -201,7 +201,13 @@ function SearchPageContent() {
                         totalItems={data?.total}
                         onPageChange={(newPage) => {
                             const clampedPage = clamp(newPage, MIN_PAGE, Math.min(totalPages, MAX_PAGE));
-                            pushQuery({ ...queryFromUrl, ...filters, q, size, page: clampedPage });
+                            pushQuery({
+                                ...queryFromUrl,
+                                ...filters,
+                                q: queryFromUrl.q,
+                                size: queryFromUrl.size,
+                                page: clampedPage,
+                            });
                         }}
                     />
                 </div>
