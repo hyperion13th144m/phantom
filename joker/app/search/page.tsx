@@ -200,7 +200,7 @@ function SearchPageContent() {
                         loading={loading}
                         totalItems={data?.total}
                         onPageChange={(newPage) => {
-                            const clampedPage = clamp(newPage, MIN_PAGE, totalPages);
+                            const clampedPage = clamp(newPage, MIN_PAGE, Math.min(totalPages, MAX_PAGE));
                             pushQuery({ ...queryFromUrl, ...filters, q, size, page: clampedPage });
                         }}
                     />
