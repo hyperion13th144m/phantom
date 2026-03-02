@@ -5,9 +5,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import ErrorMessage from "@/app/components/error-message";
 import SimpleInput from "@/app/components/simple-input";
 import Pagination from "@/app/components/pagination";
-import HitResults from "../components/hit-results";
+import HitResults from "@/app/components/hit-results";
 import { clamp } from "@/lib/helpers";
-import nextConfig from "../../next.config";
+import nextConfig from "@/next.config";
 import { ApiResponse, ApiResponseSuccess, ApiResponseError, Hit } from "@/app/interfaces/search-results";
 
 function SearchPageContent() {

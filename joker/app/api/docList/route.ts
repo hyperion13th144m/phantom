@@ -111,12 +111,8 @@ export async function GET(req: NextRequest) {
 
         if (applicationNumberKeyword) {
             mustQueries.push({
-                match: {
-                    applicationNumber: {
-                        query: applicationNumberKeyword,
-                        fuzziness: "AUTO",
-                        operator: "and",
-                    },
+                match_phrase: {
+                    "applicationNumber.ngram": applicationNumberKeyword,
                 },
             });
         }
@@ -131,19 +127,9 @@ export async function GET(req: NextRequest) {
                             },
                         },
                         {
-                            match: {
-                                fileReferenceId: fileReferenceIdKeyword,
-                            },
-                        },
-                        {
                             match_phrase: {
                                 "extraNumbers.ngram": fileReferenceIdKeyword,
                             },
-                        },
-                        {
-                            match: {
-                                extraNumbers: fileReferenceIdKeyword,
-                            }
                         }
                     ],
                     minimum_should_match: 1,

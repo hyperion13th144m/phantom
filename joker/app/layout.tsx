@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Phantom | 特許文書検索システム",
+    title: "特許文書検索システム",
     description: "Search system for patent documents used in Internet Application Software.",
 };
 
@@ -33,7 +33,9 @@ export default function RootLayout({
                 <main>
                     {children}
                 </main>
+                {/*
                 <Footer />
+                */}
             </body>
         </html>
     );

@@ -1,14 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import ErrorMessage from "@/app/components/error-message";
-import SimpleInput from "@/app/components/simple-input";
-import Pagination from "@/app/components/pagination";
 import Highlight from "@/app/components/highlight";
 import ImagesArray from "@/app/components/images-array";
 import { dateTag, buildDocUrl, formatApplicationNumber, formatDate } from "@/lib/helpers";
-import { Hit } from "../interfaces/search-results";
+import { Hit } from "@/app/interfaces/search-results";
 
 interface Props {
     hitResult: Hit;

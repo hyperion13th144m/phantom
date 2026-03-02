@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ErrorMessage from "@/app/components/error-message";
-import SimpleInput from "@/app/components/simple-input";
 import { buildDocUrl, dateTag, formatApplicationNumber, formatDate } from "@/lib/helpers";
 
 type DocResult = {

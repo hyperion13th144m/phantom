@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ImageInformation } from "../interfaces/search-results";
+import { ImageInformation } from "@/app/interfaces/search-results";
 import { buildImageUrl } from "@/lib/helpers";
 
 interface Props {
