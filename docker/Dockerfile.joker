@@ -13,11 +13,7 @@ FROM node:24-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ARG IMAGE_BASE_URL
-ARG DOC_BASE_URL
 ENV NODE_ENV=production
-ENV IMAGE_BASE_URL=$IMAGE_BASE_URL
-ENV DOC_BASE_URL=$DOC_BASE_URL
 RUN yarn build
 
 

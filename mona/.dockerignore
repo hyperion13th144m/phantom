@@ -1,8 +1,0 @@
-.gitignore
-.dockerignore
-.vscode
-Dockerfile*
-README.md
-tests
-.venv
-__pycache__

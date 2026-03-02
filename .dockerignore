@@ -1,0 +1,13 @@
+*/.gitignore
+*/.dockerignore
+*/.vscode
+*/tests
+*/.venv
+*/__pycache__
+*/reference
+*/out
+
+queen/ts/
+queen/scripts
+**/__pycache__
+queen/.envrc

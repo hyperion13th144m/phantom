@@ -14,14 +14,14 @@ RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/sh -u $UID -g $GID $USERNA
 RUN apt-get update && \
     apt-get install -y bash tesseract-ocr tesseract-ocr-jpn && \
     rm -rf /var/lib/apt/lists/*
-RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir poetry
+RUN pip install uv
+RUN mkdir /var/log/mona && chown $USERNAME:$GROUPNAME /var/log/mona
 
 USER $USERNAME
 WORKDIR /app
-COPY --chown=$USERNAME:$GROUPNAME pyproject.toml poetry.lock ./
-RUN poetry config virtualenvs.in-project true
-RUN poetry install --no-root
-COPY --chown=$USERNAME:$GROUPNAME . .
+COPY pyproject.toml ./
+COPY mona /app/mona
+COPY queen /app/queen
+RUN uv sync
 
-ENTRYPOINT [ "poetry", "run", "python", "src/mona/main.py" ]
+ENTRYPOINT [ "uv", "run", "mona/src/mona/main.py" ]
