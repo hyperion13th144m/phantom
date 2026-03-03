@@ -4388,6 +4388,7 @@
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref name="summary-of-invention-items" />
+                <schema:ref name="paragraph" />
             </schema:anyOf>
         </schema:property>
     </schema:object>
@@ -4548,7 +4549,7 @@
     </xsl:template>
     <schema:object name="summary-of-invention-items">
         <schema:property name="tag" type="string"
-                         enum="tech-problem tech-solution advantageous-effects heading paragraph" />
+                         enum="tech-problem tech-solution advantageous-effects" />
         <schema:property name="jpTag" type="string" />
         <schema:property name="indentLevel" type="string" />
         <schema:property name="blocks" type="array">

@@ -17,13 +17,10 @@ export const getBibliography = async (docId: string) => {
     const submissionDate = bibliography.submissionDate ? formatDate(bibliography.submissionDate) : null;
     const dispatchDate = bibliography.dispatchDate ? formatDate(bibliography.dispatchDate) : null;
 
-    const applicationNumber = formatApplicationNumber(bibliography.law, bibliography.applicationNumber ?? bibliography.internationalApplicationNumber ?? bibliography.receiptNumber ?? "");
-
     return {
         ...bibliography,
         submissionDate,
         dispatchDate,
-        applicationNumber,
     } as BibliographicItems
 }
 
@@ -38,7 +35,7 @@ const formatDate = (dateStr: string): string => {
     }
 };
 
-const formatApplicationNumber = (law: string, docNumber: string): string => {
+export const formatApplicationNumber = (law: string, docNumber: string): string => {
     if (docNumber.match(domestic_number_re)) {
         const prefix = law === "patent" ? "特願" : "実願";
         const year = docNumber.substring(0, 4);

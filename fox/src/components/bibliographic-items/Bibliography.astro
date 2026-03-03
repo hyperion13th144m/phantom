@@ -13,6 +13,10 @@ export interface Props {
 
 const { bibliography } = Astro.props as Props;
 const printPath = `${Astro.url.pathname}print`;
+const an =
+    bibliography.applicationNumber ||
+    bibliography.internationalApplicationNumber ||
+    "";
 ---
 
 <nav class="sticky top-0 mb-4 bg-gray-100 z-10 p-4 rounded-md shadow-md">
@@ -23,10 +27,7 @@ const printPath = `${Astro.url.pathname}print`;
             <span slot="button" class="text-xl leading-none">☰</span>
             <div slot="content" class="space-y-4">
                 <div class="flex flex-wrap gap-2">
-                    <ApplicationNumber
-                        law={bibliography.law}
-                        appNumber={bibliography.applicationNumber}
-                    />
+                    <ApplicationNumber law={bibliography.law} appNumber={an} />
                     <FileReferenceId
                         fileReferenceId={bibliography.fileReferenceId}
                     />
@@ -42,10 +43,7 @@ const printPath = `${Astro.url.pathname}print`;
     <div class="hidden md:block">
         <div class="flex items-center justify-between">
             <div class="flex gap-4">
-                <ApplicationNumber
-                    law={bibliography.law}
-                    appNumber={bibliography.applicationNumber}
-                />
+                <ApplicationNumber law={bibliography.law} appNumber={an} />
                 <FileReferenceId
                     fileReferenceId={bibliography.fileReferenceId}
                 />

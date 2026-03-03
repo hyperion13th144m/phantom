@@ -22,7 +22,7 @@ import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
 import { isPatEtc } from "~/interfaces/generated/pat-etc.guard";
 import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import Layout from "~/layouts/Layout.astro";
-import { getBibliography } from "~/lib/bibliography";
+import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
 import { getCarouselImage } from "~/lib/carousel-images";
 import { getDocument } from "~/lib/path-funcs";
 
@@ -42,7 +42,7 @@ const bibliography = await getBibliography(docId);
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
-const title = `${bibliography.applicationNumber} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
+const title = `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
 const thumbnails = await getCarouselImage(docId, "figures", "thumbnail");
 const images = await getCarouselImage(docId, "figures", "middle");
 const hasCarouselImages = images.length > 0 && thumbnails.length > 0;

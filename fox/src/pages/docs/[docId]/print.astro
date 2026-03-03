@@ -16,7 +16,7 @@ import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
 import { isPatEtc } from "~/interfaces/generated/pat-etc.guard";
 import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
-import { getBibliography } from "~/lib/bibliography";
+import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
 import { getDocument } from "~/lib/path-funcs";
 
 const { docId } = Astro.params as { docId: string };
@@ -35,7 +35,7 @@ const bibliography = await getBibliography(docId);
 const sortedJson = order
     .map((guard) => json.find((b) => guard(b)))
     .filter((b): b is NonNullable<typeof b> => b !== undefined);
-const title = `${bibliography.applicationNumber} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
+const title = `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
 ---
 
 <PrintingLayout title={title}>

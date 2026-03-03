@@ -1,13 +1,17 @@
 ---
 // 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
 import type {
+    AmendmentChargeArticle,
     AppealArticle,
     Attorney,
     CitationList,
     Claim,
+    Claims,
     ClaimText,
+    Description,
     DescriptionItems,
     DescriptionOfEmbodiments,
+    Drawings,
     EmbodimentsExample,
     ImageContainer,
     InlineText,
@@ -25,16 +29,20 @@ import type {
 } from "~/interfaces/generated/pat_common";
 import {
     isAmendmentArticle,
+    isAmendmentChargeArticle,
     isAmendmentGroup,
     isAmendmentTerminalItems,
     isAppealArticle,
     isAttorney,
     isCitationList,
     isClaim,
+    isClaims,
     isClaimText,
     isContentsOfAmendment,
+    isDescription,
     isDescriptionItems,
     isDescriptionOfEmbodiments,
+    isDrawings,
     isEmbodimentsExample,
     isImageContainer,
     isInlineText,
@@ -59,13 +67,16 @@ const { block } = Astro.props as {
         | SummaryOfInventionItems
         | CitationList
         | Literature
+        | Description
         | DescriptionItems
         | DescriptionOfEmbodiments
+        | Drawings
         | EmbodimentsExample
         | Paragraph
         | InlineText
         | InlineTextWithHeader
         | Claim
+        | Claims
         | ClaimText
         | ImageContainer
         | PatCommonTerminalTypeA
@@ -74,7 +85,8 @@ const { block } = Astro.props as {
         | Lawyer
         | Attorney
         | OpinionContentsArticle
-        | AppealArticle;
+        | AppealArticle
+        | AmendmentChargeArticle;
 };
 
 const concatBlocks = (
@@ -109,6 +121,19 @@ const imageInfo = isImageContainer(block)
 ---
 
 {
+    // 補正対象としての請求の範囲,明細書,図面
+    (isClaims(block) || isDescription(block) || isDrawings(block)) && (
+        <div class={block.tag}>
+            <div class={`indent-level-${block.indentLevel}`}>
+                {block.jpTag} {block.text}
+            </div>
+            {block.blocks.map((b) => (
+                <Astro.self block={b} />
+            ))}
+        </div>
+    )
+}
+{
     // 発明の名称
     isInventionTitle(block) && (
         <div class={block.tag} style="display: flex;">
@@ -136,6 +161,8 @@ const imageInfo = isImageContainer(block)
         isLiterature(block) ||
         isOpinionContentsArticle(block) ||
         isAppealArticle(block) ||
+        isAmendmentGroup(block) ||
+        isAmendmentChargeArticle(block) ||
         isContentsOfAmendment(block)) && (
         <div class={block.tag}>
             <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
@@ -205,9 +232,7 @@ const imageInfo = isImageContainer(block)
     )
 }
 {
-    (isPatCommonContainerTypeA(block) ||
-        isAmendmentArticle(block) ||
-        isAmendmentGroup(block)) &&
+    (isPatCommonContainerTypeA(block) || isAmendmentArticle(block)) &&
         block.blocks?.map((block) => <Astro.self block={block} />)
 }
 {

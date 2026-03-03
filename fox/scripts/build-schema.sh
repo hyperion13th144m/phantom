@@ -22,6 +22,7 @@ JSON_SCHEMA_ARRAY=(
     "cpy-ntc-pt-e-rn.json"
     "cpy-ntc-pt-f.json"
     "pat_common.json"
+    "dispatch-control-article.json"
 )
 OUTPUT_DIR="$PROJECT_ROOT/src/interfaces/generated"
 # ============================
