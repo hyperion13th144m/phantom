@@ -23,5 +23,4 @@ COPY pyproject.toml ./
 COPY mona /app/mona
 COPY queen /app/queen
 RUN uv sync
-RUN uv build
 ENTRYPOINT [ "uv", "run", "mona/src/mona/main.py" ]
