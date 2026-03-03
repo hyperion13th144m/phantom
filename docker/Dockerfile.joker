@@ -1,4 +1,4 @@
-FROM node:24-slim AS deps
+FROM node:24-alpine AS deps
 
 ENV NODE_ENV=production
 WORKDIR /app
@@ -6,7 +6,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 
-FROM node:24-slim AS builder
+FROM node:24-alpine AS builder
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -14,7 +14,7 @@ COPY . .
 RUN yarn build
 
 
-FROM node:24-slim AS runner
+FROM node:24-alpine AS runner
 ENV NODE_ENV=production
 ENV LANG=ja_JP.UTF-8
 ENV TZ=Asia/Tokyo
