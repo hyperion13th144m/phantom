@@ -21,7 +21,7 @@ log() {
 }
 
 usage() {
-  echo "Usage: $0 [ -o output_dir ] [ -w work_dir ] [ -d ] python|typescript"
+  echo "Usage: $0 [ -o output_dir ] [ -w work_dir ] [ -d ]"
   echo "This script builds the patent document schema by translating XML to JSON files and merging them."
 }
 
@@ -51,19 +51,10 @@ while getopts "hdw:o:" opt; do
   esac
 done
 
-shift $((OPTIND -1))
-TARGET="$1"
-#if [ "$TARGET" != "python" ] && [ "$TARGET" != "typescript" ]; then
-#  echo "Invalid target: $TARGET"
-#  usage
-#  exit 1
-#fi
-
 # ============================
 # Paths and files.
 # ============================
 JSON_SCHEMA_DIR="$WORK_DIR/json-schema"
-
 JSON_SCHEMA_ARRAY=(
     "full-text.json"
     "images-information.json"
