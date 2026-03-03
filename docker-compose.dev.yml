@@ -38,8 +38,7 @@ services:
     image: phantom-lasticsearch
     container_name: phantom-elasticsearch-dev
     build:
-      context: elasticsearch
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile.es
     environment:
       discovery.type: single-node
       xpack.security.enabled: false

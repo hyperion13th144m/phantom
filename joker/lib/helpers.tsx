@@ -10,7 +10,7 @@ export function buildImageUrl(docId: string, filename: string): string {
 
 export function buildDocUrl(docId: string): string {
     const baseUrl = process.env.NEXT_PUBLIC_DOCUMENT_BASE_URL || "/docs";
-    return `${baseUrl}/${docId.substring(0, 2)}/${docId.substring(2, 4)}/${docId}`;
+    return `${baseUrl}/${docId}`;
 }
 
 export function formatApplicationNumber(law: string, appNum: string): string {

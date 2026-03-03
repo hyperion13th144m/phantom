@@ -137,7 +137,7 @@ function SearchPageContent() {
         setLoading(true);
         setErr(null);
         try {
-            const res = await fetch(`${nextConfig.basePath}/api/search?${params.toString()}`, {
+            const res = await fetch(`/api/search?${params.toString()}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });

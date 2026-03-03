@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
     /* config options here */
     output: "standalone",
     reactStrictMode: true,
-    basePath: isProd ? "/phantom" : "",
 };
 
 export default nextConfig;

@@ -1,10 +1,7 @@
 services:
   mona:
     container_name: mona
-    image: mona
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.mona
+    image: ghcr.io/hyperion13th144m/phantom-mona:develop
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir
@@ -17,10 +14,7 @@ services:
   
   panther:
     container_name: panther
-    image: panther
-    build:
-      context: panther
-      dockerfile: docker/Dockerfile.panther
+    image: ghcr.io/hyperion13th144m/phantom-panther:develop
     volumes:
       - ${DATA_DIR}:/data_dir
       - ${EXTRA_DATA_DIR}:/extra_dir
@@ -36,21 +30,14 @@ services:
 
   fox:
     container_name: fox
-    image: fox
-    build:
-      context: fox
-      dockerfile: docker/Dockerfile.fox
+    image: ghcr.io/hyperion13th144m/phantom-fox:develop
     volumes:
       - ${DATA_DIR}:/data_dir
       - ${LOG_DIR_FOX}:/var/log/fox
-    command: sh -c "cd /app && yarn run build && node dist/server/entry.mjs"
 
   joker:
     container_name: joker
-    image: joker
-    build:
-      context: joker
-      dockerfile: docker/Dockerfile.joker
+    image: ghcr.io/hyperion13th144m/phantom-joker:develop
     volumes:
       - ${LOG_DIR_JOKER}:/var/log/joker
     environment:
@@ -60,15 +47,12 @@ services:
       ES_URL: http://es01:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
-      IMAGE_BASE_URL: /content
+      IMAGE_BASE_URL: /images
       DOCUMENT_BASE_URL: /docs
 
   es01:
-    image: phantom-elasticsearch
+    image: ghcr.io/hyperion13th144m/phantom-elasticsearch:develop
     container_name: phantom-elasticsearch
-    build:
-      context: elasticsearch
-      dockerfile: Dockerfile
     environment:
       xpack.security.enabled: false
       discovery.type: single-node
@@ -84,11 +68,8 @@ services:
     restart: always
 
   nginx:
-    container_name: nginx
-    image: nginx
-    build:
-      context: nginx
-      dockerfile: Dockerfile
+    image: ghcr.io/hyperion13th144m/phantom-nginx:develop
+    container_name: phantom-nginx
     volumes:
       - ${DATA_DIR}:/usr/share/nginx/html
     ports:
