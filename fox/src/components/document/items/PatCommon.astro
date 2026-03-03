@@ -13,6 +13,7 @@ import type {
     DescriptionOfEmbodiments,
     Drawings,
     EmbodimentsExample,
+    Heading,
     ImageContainer,
     InlineText,
     InlineTextWithHeader,
@@ -44,6 +45,7 @@ import {
     isDescriptionOfEmbodiments,
     isDrawings,
     isEmbodimentsExample,
+    isHeading,
     isImageContainer,
     isInlineText,
     isInlineTextWithHeader,
@@ -79,6 +81,7 @@ const { block } = Astro.props as {
         | Claims
         | ClaimText
         | ImageContainer
+        | Heading
         | PatCommonTerminalTypeA
         | PatCommonContainerTypeA
         | PatCommonContainerTypeB
@@ -186,6 +189,13 @@ const imageInfo = isImageContainer(block)
                 ),
             )}
         </>
+    )
+}
+{
+    isHeading(block) && (
+        <div class={block.tag}>
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+        </div>
     )
 }
 {isInlineText(block) && block.tag === "text" && <span>{block.text}</span>}

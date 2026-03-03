@@ -1368,22 +1368,22 @@
                     <xf:string key="jpTag">
                         <xsl:value-of select="'【特記事項】'" />
                     </xf:string>
-                    <xsl:choose>
-                        <xsl:when test="ancestor::jp:contents-of-amendment">
-                            <xf:string key="indentLevel">
-                                <xsl:value-of select="'2'" />
-                            </xf:string>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xf:string key="indentLevel">
-                                <xsl:value-of select="'0'" />
-                            </xf:string>
-                        </xsl:otherwise>
-                    </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
                     <xf:string key="jpTag">
                         <xsl:value-of select="'　　　　　　　　　　　'" />
+                    </xf:string>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="ancestor::jp:contents-of-amendment">
+                    <xf:string key="indentLevel">
+                        <xsl:value-of select="'2'" />
+                    </xf:string>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xf:string key="indentLevel">
+                        <xsl:value-of select="'0'" />
                     </xf:string>
                 </xsl:otherwise>
             </xsl:choose>
@@ -4168,7 +4168,7 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'【書類名】'" />
             </xf:string>
-             <xf:string key="text">
+            <xf:string key="text">
                 <xsl:value-of select="'明細書'" />
             </xf:string>
             <xf:string key="indentLevel">
@@ -4209,6 +4209,8 @@
                 <schema:ref name="description-items" />
                 <schema:ref name="citation-list" />
                 <schema:ref name="description-of-embodiments" />
+                <schema:ref name="heading" />
+                <schema:ref name="paragraph" />
                 
                 <!-- xsl では mode-for-invention だが、
                      schema では embodiments-example に纏めている -->
@@ -4816,7 +4818,7 @@
             <xf:string key="jpTag">
                 <xsl:value-of select="'【書類名】'" />
             </xf:string>
-             <xf:string key="text">
+            <xf:string key="text">
                 <xsl:value-of select="'図面'" />
             </xf:string>
             <xf:string key="indentLevel">
@@ -5161,30 +5163,35 @@
          
          xsl, xsd に定義あるけど、実データで確認できていない。
          当面はずす。
-         ====================================================================
-         <xsl:template
-         match="heading">
-         <xf:map>
-         <xf:string key="tag">
-         <xsl:value-of select="name()" />
-         </xf:string>
-         <xf:string key="jpTag">
-         <xsl:value-of select="'【' || . || '】'" />
-         </xf:string>
-         <xf:string key="indentLevel">
-         <xsl:choose>
-         <xsl:when
-         test="ancestor::jp:contents-of-amendment">
-         <xsl:value-of select="'2'" />
-         </xsl:when>
-         <xsl:otherwise>
-         <xsl:value-of select="'0'" />
-         </xsl:otherwise>
-         </xsl:choose>
-         </xf:string>
-         </xf:string>
-         </xsl:template>
-    --> 
+         → <heading>符号の説明</heading>のように使われてた。
+         ====================================================================-->
+    <xsl:template match="heading">
+        <xf:map>
+            <xf:string key="tag">
+                <xsl:value-of select="name()" />
+            </xf:string>
+            <xf:string key="jpTag">
+                <xsl:value-of select="'【' || . || '】'" />
+            </xf:string>
+            <xf:string key="indentLevel">
+                <xsl:choose>
+                    <xsl:when
+                        test="ancestor::jp:contents-of-amendment">
+                        <xsl:value-of select="'2'" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'0'" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xf:string>
+        </xf:map>
+    </xsl:template>
+    <schema:object name="heading">
+        <schema:property name="tag" type="string"
+                         const="heading" />
+        <schema:property name="jpTag" type="string"/>
+        <schema:property name="indentLevel" type="string" />
+    </schema:object>
     
     <!-- Begin: template-name =============================================-->
     <!-- ====================================================================
