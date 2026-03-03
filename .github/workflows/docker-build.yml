@@ -26,7 +26,6 @@ env:
 jobs:
   # Foxイメージのビルド
   build-fox:
-    if: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -50,10 +49,10 @@ jobs:
           cd queen
           uv sync
 
-      - name: Build schema-builder-ts Docker image
+      - name: Run build-all script to generate json schema for fox directory.
         run: |
-          cd queen/ts
-          docker build -t schema-builder-ts .
+          chmod +x ./queen/scripts/build-all.sh
+          ./queen/scripts/build-all.sh
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -62,8 +61,13 @@ jobs:
 
       - name: Install TypeScript build dependencies
         run: |
-          cd queen/ts
+          cd fox
           npm install
+
+      - name: Run build-schema script to generate ts schema from json schema.
+        run: |
+          chmod +x ./fox/scripts/build-schema.sh
+          ./fox/scripts/build-schema.sh
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -85,11 +89,6 @@ jobs:
             type=ref,event=pr
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Run build-fox script
-        run: |
-          chmod +x ./queen/scripts/build-fox.sh
-          ./queen/scripts/build-fox.sh
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -190,6 +189,7 @@ jobs:
 
   # Pantherイメージのビルド
   build-panther:
+    if: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
