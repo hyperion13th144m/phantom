@@ -1,7 +1,7 @@
 services:
   mona:
     container_name: mona
-    image: ghcr.io/hyperion13th144m/phantom-mona:develop
+    image: ghcr.io/hyperion13th144m/phantom-mona:main
     volumes:
       - ${SRC_DIR}:/src_dir
       - ${DATA_DIR}:/data_dir
@@ -14,7 +14,7 @@ services:
   
   panther:
     container_name: panther
-    image: ghcr.io/hyperion13th144m/phantom-panther:develop
+    image: ghcr.io/hyperion13th144m/phantom-panther:main
     volumes:
       - ${DATA_DIR}:/data_dir
       - ${EXTRA_DATA_DIR}:/extra_dir
@@ -30,14 +30,14 @@ services:
 
   fox:
     container_name: fox
-    image: ghcr.io/hyperion13th144m/phantom-fox:develop
+    image: ghcr.io/hyperion13th144m/phantom-fox:main
     volumes:
       - ${DATA_DIR}:/data_dir
       - ${LOG_DIR_FOX}:/var/log/fox
 
   joker:
     container_name: joker
-    image: ghcr.io/hyperion13th144m/phantom-joker:develop
+    image: ghcr.io/hyperion13th144m/phantom-joker:main
     volumes:
       - ${LOG_DIR_JOKER}:/var/log/joker
     environment:
@@ -51,7 +51,7 @@ services:
       DOCUMENT_BASE_URL: /docs
 
   es01:
-    image: ghcr.io/hyperion13th144m/phantom-elasticsearch:develop
+    image: ghcr.io/hyperion13th144m/phantom-elasticsearch:main
     container_name: phantom-elasticsearch
     environment:
       xpack.security.enabled: false
@@ -68,7 +68,7 @@ services:
     restart: always
 
   nginx:
-    image: ghcr.io/hyperion13th144m/phantom-nginx:develop
+    image: ghcr.io/hyperion13th144m/phantom-nginx:main
     container_name: phantom-nginx
     volumes:
       - ${DATA_DIR}:/usr/share/nginx/html
@@ -77,4 +77,3 @@ services:
 
 volumes:
   es-data:
-

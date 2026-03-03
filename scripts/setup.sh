@@ -1,8 +1,9 @@
 #!/bin/sh
 
 SCRIPT_DIR=$(dirname $0)
-PROJECT_DIR="$(dirname $SCRIPT_DIR)/.."
-CMD="docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i panther"
+PROJECT_DIR="$SCRIPT_DIR/.."
+cd $PROJECT_DIR || exit 1
+CMD="docker compose -f docker-compose.yml run --rm -i panther"
 INDEX=patent-documents
 MAPPING=elasticsearch/document-mapping.json
 

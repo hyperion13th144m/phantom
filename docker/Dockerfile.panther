@@ -14,5 +14,6 @@ USER $USERNAME
 WORKDIR /app
 COPY . ./
 RUN uv sync
+RUN uv build
 
 ENTRYPOINT [ "uv", "run", "src/panther/main.py" ]

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SCRIPT_DIR=$(dirname $0)
-PROJECT_DIR="$(dirname $SCRIPT_DIR)/.."
+PROJECT_DIR="$SCRIPT_DIR/.."
 CMD="docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i mona"
 
 while getopts "om:t:" opt; do
@@ -25,7 +25,7 @@ while getopts "om:t:" opt; do
   esac
 done
 
-PAT_APP_DOC_CODES="A163 A263 A1631 A1632 A2633 A1634 A1635"
+PAT_APP_DOC_CODES="A163 A263 A1631 A1632 A1634"
 PAT_AMND="A151 A1523 A1524 A1525 A1529 A1526 A15210 A1527 A15211 A1528 A15212 A2523"
 PAT_RSPN="A153 A159"
 PAT_ETC="A1781 A1871 A1872"

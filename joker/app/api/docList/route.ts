@@ -60,22 +60,10 @@ export async function GET(req: NextRequest) {
                 bool: {
                     should: [
                         {
-                            match: {
-                                "inventors.ngram": {
-                                    query: inventorKeyword,
-                                    operator: "or",
-                                },
+                            match_phrase: {
+                                "inventors.ngram": inventorKeyword,
                             },
-                        },
-                        {
-                            match: {
-                                inventors: {
-                                    query: inventorKeyword,
-                                    fuzziness: "AUTO",
-                                    operator: "or",
-                                },
-                            },
-                        },
+                        }
                     ],
                     minimum_should_match: 1,
                 },
@@ -87,22 +75,10 @@ export async function GET(req: NextRequest) {
                 bool: {
                     should: [
                         {
-                            match: {
-                                "applicants.ngram": {
-                                    query: applicantKeyword,
-                                    operator: "or",
-                                },
+                            match_phrase: {
+                                "applicants.ngram": applicantKeyword,
                             },
-                        },
-                        {
-                            match: {
-                                applicants: {
-                                    query: applicantKeyword,
-                                    fuzziness: "AUTO",
-                                    operator: "or",
-                                },
-                            },
-                        },
+                        }
                     ],
                     minimum_should_match: 1,
                 },

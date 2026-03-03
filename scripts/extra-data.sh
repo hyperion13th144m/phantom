@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SCRIPT_DIR=$(dirname $0)
-PROJECT_DIR="$(dirname $SCRIPT_DIR)/.."
+PROJECT_DIR="$SCRIPT_DIR/.."
 CMD="docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i panther"
 INDEX=patent-documents
 MAPPING=elasticsearch/document-mapping.json
@@ -19,12 +19,12 @@ usage () {
 case $1 in
   "import")
     $CMD import-extra-data \
-    --sqlite-db /extra_data/extra_data.sqlite3 \
+    --sqlite-db /extra_dir/extra_data.sqlite3 \
     --data-root /data_dir
     ;;
   "upload")
     $CMD upload-extra-data \
-    --sqlite-db /extra_data/extra_data.sqlite3 \
+    --sqlite-db /extra_dir/extra_data.sqlite3 \
     --index patent-documents
    ;;
   *)
