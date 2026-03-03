@@ -359,14 +359,18 @@ name = "panther"
 version = "0.1.0"
 source = { editable = "panther" }
 dependencies = [
+    { name = "datamodel-code-generator", extra = ["ruff"] },
     { name = "elasticsearch" },
     { name = "pydantic" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "datamodel-code-generator", extras = ["ruff"], specifier = ">=0.54.0" },
     { name = "elasticsearch", specifier = ">=9.3.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "ruff", specifier = ">=0.15.4" },
 ]
 
 [[package]]
@@ -665,17 +669,13 @@ name = "queen"
 version = "0.1.18"
 source = { editable = "queen" }
 dependencies = [
-    { name = "datamodel-code-generator", extra = ["ruff"] },
     { name = "pydantic" },
-    { name = "ruff" },
     { name = "saxonche" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "datamodel-code-generator", extras = ["ruff"], specifier = ">=0.54.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
-    { name = "ruff", specifier = ">=0.15.2" },
     { name = "saxonche", specifier = ">=12.9.0" },
 ]
 
