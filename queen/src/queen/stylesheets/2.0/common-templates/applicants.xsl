@@ -54,7 +54,7 @@
                             </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="map:get($applicant-2-table, @code)" />
+                            <xsl:value-of select="map:get($applicant-2-table, $code)" />
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:otherwise>
