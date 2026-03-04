@@ -17,10 +17,10 @@ RUN apt-get update && \
 RUN pip install uv
 RUN mkdir /var/log/mona && chown $USERNAME:$GROUPNAME /var/log/mona
 
-WORKDIR /app
-COPY pyproject.toml ./
-COPY mona /app/mona
-COPY queen /app/queen
-RUN uv sync
 USER $USERNAME
+WORKDIR /app
+COPY --chown=$USERNAME:$GROUPNAME pyproject.toml ./
+COPY --chown=$USERNAME:$GROUPNAME mona /app/mona
+COPY --chown=$USERNAME:$GROUPNAME queen /app/queen
+RUN uv sync
 ENTRYPOINT [ "uv", "run", "mona/src/mona/main.py" ]
