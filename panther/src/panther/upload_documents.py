@@ -93,7 +93,7 @@ def build_actions(
         try:
             jsons = load_document_json(path)
             _doc = PatentDocEditor(*jsons).to_es_model()
-            edited = _doc.model_dump(exclude_none=True)  # ←ここが「dump_model」相当
+            edited = _doc.model_dump(exclude_none=True)
             doc = strip_preserve_fields(edited)
 
             # Put docid inside source too (optional but handy)

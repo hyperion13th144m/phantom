@@ -11,10 +11,9 @@ CREATE_INDEX_ARGS="create-index --index $INDEX --mapping $MAPPING --recreate"
 UPLOAD_ARGS=" --index $INDEX --use-hash-guard --data-root /data_dir"
 
 usage () {
-  echo "Usage: $0 {init|reindex|upload}"
-  echo "  init: Create the Elasticsearch index if it does not exist."
-  echo "  reindex: Recreate the Elasticsearch index. WARNING: This will delete all existing data in the index."
-  echo "  upload: Upload documents to the Elasticsearch index. This should be run after 'init' or 'reindex'."
+  echo "Usage: $0"
+  echo "  create the Elasticsearch index. WARNING: This will delete all existing data in the index."
+  echo "  create initial extra database"
   exit 1
 }
 
