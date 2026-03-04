@@ -22,6 +22,24 @@ type GroupResult = {
 };
 
 type ApiResponse = GroupResult[];
+const MAX_RESULTS = 100;
+
+const capResults = (groups: GroupResult[], maxResults: number): GroupResult[] => {
+    let remaining = maxResults;
+
+    return groups
+        .map((group) => {
+            if (remaining <= 0) {
+                return { ...group, docs: [] };
+            }
+
+            const docs = group.docs.slice(0, remaining);
+            remaining -= docs.length;
+
+            return { ...group, docs };
+        })
+        .filter((group) => group.docs.length > 0);
+};
 
 const getFileReferenceId = (docs: GroupResult): string[] => {
     const set = new Set<string>();
@@ -83,6 +101,7 @@ function DocListPageContent() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ApiResponse | null>(null);
     const [err, setErr] = useState<string | null>(null);
+    const [isResultsCapped, setIsResultsCapped] = useState(false);
 
     useEffect(() => {
         setInventors(inventors0);
@@ -116,10 +135,12 @@ function DocListPageContent() {
                 throw new Error(errData.message || "Failed to fetch documents");
             }
             const result = (await res.json()) as ApiResponse;
-            setData(result);
+            setData(capResults(result, MAX_RESULTS));
+            setIsResultsCapped(res.headers.get("x-results-capped") === "1");
         } catch (e: unknown) {
             setErr((e as Error)?.message ?? String(e));
             setData(null);
+            setIsResultsCapped(false);
         } finally {
             setLoading(false);
         }
@@ -256,6 +277,9 @@ function DocListPageContent() {
                             <p>
                                 {data.length}件の特許出願、{totalDocs}件の文書が見つかりました
                             </p>
+                        )}
+                        {isResultsCapped && (
+                            <p>検索結果は最大{MAX_RESULTS}件まで表示しています。条件を絞って再検索してください。</p>
                         )}
                     </div>
 

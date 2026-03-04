@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const INDEX = "patent-documents";
+const MAX_RESULTS = 100;
 
 interface DocResult {
     docId: string;
@@ -125,10 +126,10 @@ export async function GET(req: NextRequest) {
             });
         }
 
-        // 全ドキュメントを取得するための大きなサイズを設定
+        // 検索結果の上限
         const result = await es.search({
             index: INDEX,
-            size: 10000,
+            size: MAX_RESULTS,
             track_total_hits: true,
             query: {
                 bool: {
@@ -152,6 +153,11 @@ export async function GET(req: NextRequest) {
         });
 
         const hits = result.hits.hits ?? [];
+        const totalHits =
+            typeof result.hits.total === "number"
+                ? result.hits.total
+                : (result.hits.total?.value ?? hits.length);
+        const isResultsCapped = totalHits > MAX_RESULTS;
 
         // law と applicationNumber でグループ化
         const groupMap = new Map<string, GroupResult>();
@@ -204,11 +210,19 @@ export async function GET(req: NextRequest) {
             applicationNumber: applicationNumberKeyword,
             fileReferenceId: fileReferenceIdKeyword,
             law,
-            totalHits: hits.length,
+            totalHits,
+            returnedHits: hits.length,
             groupCount: results.length,
+            maxResults: MAX_RESULTS,
+            isResultsCapped,
         });
 
-        return NextResponse.json(results);
+        const response = NextResponse.json(results);
+        response.headers.set("X-Results-Capped", isResultsCapped ? "1" : "0");
+        response.headers.set("X-Results-Limit", String(MAX_RESULTS));
+        response.headers.set("X-Total-Hits", String(totalHits));
+
+        return response;
     } catch (e: unknown) {
         logger.error("Elasticsearch docList search failed", {
             applicants: applicantKeyword,
