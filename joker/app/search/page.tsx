@@ -102,6 +102,7 @@ function SearchPageContent() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ApiResponseSuccess | null>(null);
     const [err, setErr] = useState<string | null>(null);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     useEffect(() => {
         setQ(queryFromUrl.q);
@@ -178,64 +179,101 @@ function SearchPageContent() {
 
     function submit() {
         pushQuery({ ...queryFromUrl, ...filters, q, size, page: 1 });
+        setIsDrawerOpen(false);
     }
 
     function onFilterChange(param: FilterParam, value: string) {
         const nextFilters = { ...filters, [param]: value };
         setFilters(nextFilters);
         pushQuery({ ...queryFromUrl, ...nextFilters, q, size, page: 1 });
+        setIsDrawerOpen(false);
     }
 
     const totalPages = data ? Math.max(1, Math.ceil(data.total / data.size)) : 1;
 
+    const filterForm = (
+        <div className="flex gap-4 flex-wrap">
+            {FILTERS.map((filter) => {
+                const aggregation = data?.aggregations?.[filter.key];
+                if (!aggregation || aggregation.length === 0) return null;
+
+                return (
+                    <div key={filter.key} className="flex-1 min-w-[220px]">
+                        <label className="text-sm font-semibold text-gray-700 mb-1 block">{filter.label}</label>
+                        <select
+                            value={filters[filter.param]}
+                            onChange={(e) => onFilterChange(filter.param, e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                        >
+                            <option value="">すべて</option>
+                            {aggregation.slice(0, 20).map((bucket) => (
+                                <option key={bucket.key} value={bucket.key}>
+                                    {bucket.key} ({bucket.doc_count})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                );
+            })}
+        </div>
+    );
+
     return (
         <div className="max-w-[980px] mx-auto my-6">
-            <div className="bg-white sticky top-12 z-40 px-2 py-4">
+            <div className="md:hidden sticky top-12 z-40 bg-white px-2 py-2 border-b border-gray-200">
+                <button
+                    onClick={() => setIsDrawerOpen(true)}
+                    className="w-full px-4 py-2 rounded border border-gray-800 bg-gray-800 text-white"
+                >
+                    検索条件を開く
+                </button>
+            </div>
+
+            <div className="hidden md:block bg-white sticky top-12 z-40 px-2 py-4">
                 <SimpleInput value={q} onChange={setQ} onSubmit={submit} size={size} onSizeChange={setSize} />
+                {filterForm}
+            </div>
 
-                <div className="flex justify-center">
-                    <Pagination
-                        currentPage={page}
-                        totalPages={totalPages}
-                        loading={loading}
-                        totalItems={data?.total}
-                        onPageChange={(newPage) => {
-                            const clampedPage = clamp(newPage, MIN_PAGE, Math.min(totalPages, MAX_PAGE));
-                            pushQuery({
-                                ...queryFromUrl,
-                                ...filters,
-                                q: queryFromUrl.q,
-                                size: queryFromUrl.size,
-                                page: clampedPage,
-                            });
-                        }}
+            {isDrawerOpen && (
+                <div className="md:hidden fixed inset-0 z-50">
+                    <button
+                        aria-label="ドロワーを閉じる"
+                        className="absolute inset-0 bg-black/40"
+                        onClick={() => setIsDrawerOpen(false)}
                     />
+                    <div className="absolute right-0 top-0 h-full w-[92%] max-w-md bg-white shadow-xl overflow-y-auto p-4">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-semibold text-gray-800">検索条件</h2>
+                            <button
+                                onClick={() => setIsDrawerOpen(false)}
+                                className="px-3 py-1 rounded border border-gray-300 text-sm"
+                            >
+                                閉じる
+                            </button>
+                        </div>
+                        <SimpleInput value={q} onChange={setQ} onSubmit={submit} size={size} onSizeChange={setSize} />
+                        {filterForm}
+                    </div>
                 </div>
+            )}
 
-                <div className="flex gap-4 flex-wrap">
-                    {FILTERS.map((filter) => {
-                        const aggregation = data?.aggregations?.[filter.key];
-                        if (!aggregation || aggregation.length === 0) return null;
-
-                        return (
-                            <div key={filter.key} className="flex-1 min-w-[220px]">
-                                <label className="text-sm font-semibold text-gray-700 mb-1 block">{filter.label}</label>
-                                <select
-                                    value={filters[filter.param]}
-                                    onChange={(e) => onFilterChange(filter.param, e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                                >
-                                    <option value="">すべて</option>
-                                    {aggregation.slice(0, 20).map((bucket) => (
-                                        <option key={bucket.key} value={bucket.key}>
-                                            {bucket.key} ({bucket.doc_count})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        );
-                    })}
-                </div>
+            <div className="flex justify-center mt-2">
+                <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    loading={loading}
+                    totalItems={data?.total}
+                    onPageChange={(newPage) => {
+                        const clampedPage = clamp(newPage, MIN_PAGE, Math.min(totalPages, MAX_PAGE));
+                        pushQuery({
+                            ...queryFromUrl,
+                            ...filters,
+                            q: queryFromUrl.q,
+                            size: queryFromUrl.size,
+                            page: clampedPage,
+                        });
+                    }}
+                />
             </div>
 
             {err && <ErrorMessage err={err} />}
