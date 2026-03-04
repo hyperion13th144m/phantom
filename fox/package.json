@@ -7,12 +7,15 @@
         "build": "env NODE_ENV=production astro build",
         "preview": "astro preview --host 0.0.0.0",
         "start": "node ./dist/server/entry.mjs",
-        "astro": "astro"
+        "astro": "astro",
+        "setup-logging": "bash ./scripts/setup-logging.sh"
     },
     "dependencies": {
         "@astrojs/node": "^9.5.4",
         "@tailwindcss/vite": "^4.1.18",
         "astro": "5.17.3",
+        "pino": "^10.3.1",
+        "pino-rotating-file-stream": "^0.0.2",
         "tailwindcss": "^4.1.18",
         "typescript": "^5.9.3"
     },

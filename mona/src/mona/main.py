@@ -165,7 +165,8 @@ def main(
     output_dir = get_output_dir(doc_id, output_dir_root)
     if overwrite is False and output_dir.exists():
         logger.info(
-            f"  Output directory {output_dir}, {archive_path} already exists. Skipping."
+            f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
+            extra={"archive_path": str(archive_path), "doc_id": doc_id},
         )
         return
     if overwrite is True and output_dir.exists():
@@ -175,15 +176,19 @@ def main(
     try:
         if stop_event.is_set():
             logger.info(
-                "Process interrupted by user.",
+                f"[INTERRUPTED] doc_id={doc_id}, archive_path={archive_path}",
                 extra={"archive_path": str(archive_path), "doc_id": doc_id},
             )
             shutil.rmtree(output_dir)
             sys.exit(0)
         parse(archive_path, procedure_path, output_dir)
+        logger.info(
+            f"[SUCCESS] doc_id={doc_id}, archive_path={archive_path}",
+            extra={"archive_path": str(archive_path), "doc_id": doc_id},
+        )
     except Exception as e:
         logger.info(
-            f"Failed to process: {traceback.format_exc()}",
+            f"[FAIL] doc_id={doc_id}, archive_path={archive_path}, error={traceback.format_exc()}",
             extra={
                 "archive_path": str(archive_path),
                 "doc_id": doc_id,
