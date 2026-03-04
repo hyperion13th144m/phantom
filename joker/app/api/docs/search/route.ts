@@ -27,11 +27,14 @@ export async function GET(req: Request) {
     // ここはあなたの index のフィールドに合わせて調整してOK
     // 例：inventionTitle, applicants, applicationNumber など
     const sourceFields = [
+        "law",
         "inventionTitle",
         "applicants",
         "inventors",
         "applicationNumber",
+        "internationalNumber",
         "fileReferenceId",
+        "documentName",
     ];
 
     const body =
@@ -41,21 +44,72 @@ export async function GET(req: Request) {
                 size,
                 track_total_hits: true,
                 query: {
-                    multi_match: {
-                        query: q.trim(),
-                        // あなたの全文検索対象に合わせる（例）
-                        fields: [
-                            "inventionTitle^3",
-                            "independentClaims",
-                            "dependentClaims",
-                            "embodiments",
-                            "abstract",
-                            "applicants",
-                            "inventors",
-                            "assignees",
-                            "tags",
-                            "extraNumbers",
-                        ],
+                    bool: {
+                        should: [
+                            {
+                                match_phrase: {
+                                    "inventionTitle.ngram^3": q.trim()
+                                }
+                            },
+                            {
+                                match_phrase: {
+                                    "independentClaims.ngram": q.trim()
+                                }
+                            },
+                            {
+                                match_phrase: {
+                                    "dependentClaims.ngram": q.trim()
+                                }
+                            },
+                            {
+                                match_phrase: {
+                                    "abstract.ngram": q.trim()
+                                }
+                            },
+                            {
+                                match_phrase: {
+                                    "applicants.ngram": q.trim()
+                                }
+                            },
+                            {
+                                match_phrase: {
+                                    "inventors.ngram": q.trim()
+                                }
+                            },
+                            {
+                                match: {
+                                    assignees: {
+                                        query: q.trim()
+                                    }
+                                }
+                            },
+                            {
+                                match: {
+                                    tags: {
+                                        query: q.trim()
+                                    }
+                                }
+                            },
+                            {
+                                match: {
+                                    extraNumbers: {
+                                        query: q.trim()
+                                    }
+                                }
+                            }
+                        ]
+                        //query: q.trim(),
+                        //// あなたの全文検索対象に合わせる（例）
+                        //fields: [
+                        //    "dependentClaims.ngram",
+                        //    "embodiments.ngram",
+                        //    "abstract.ngram",
+                        //    "applicants.ngram",
+                        //    "inventors.ngram",
+                        //    "assignees",
+                        //    "tags",
+                        //    "extraNumbers",
+                        //],
                     },
                 },
                 _source: sourceFields,
@@ -87,7 +141,12 @@ export async function GET(req: Request) {
         inventors: h._source?.inventors ?? "",
         applicationNumber: h._source?.applicationNumber ?? "",
         fileReferenceId: h._source?.fileReferenceId ?? "",
+        documentName: h._source?.documentName ?? "",
+        internationalNumber: h._source?.internationalNumber ?? "",
+        law: h._source?.law ?? "",
     }));
+    console.log(`ES search: q=${q} total=${total} returned=${rows.length}`);
+    console.log(`ES search body: ${JSON.stringify(rows)}`);
 
     return NextResponse.json({ page, size, total, rows });
 }

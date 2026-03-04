@@ -7,8 +7,11 @@ type EsRow = {
     inventionTitle: string;
     applicants: string;
     inventors: string;
-    appNumber: string;
+    applicationNumber: string;
     fileReferenceId: string;
+    documentName: string;
+    internationalNumber: string;
+    law: string;
 };
 
 type EsList = {
@@ -289,7 +292,7 @@ export default function MetadataOnSearchGrid() {
                     <div className="flex items-center gap-2">
                         <input
                             className="w-80 rounded border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
-                            placeholder="全文検索（タイトル/請求項/要約など）"
+                            placeholder="全文検索（タイトル/請求項/要約/出願人など）"
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
                             onKeyDown={(e) => {
@@ -343,9 +346,9 @@ export default function MetadataOnSearchGrid() {
                 <table className="min-w-[1400px] w-full text-left text-sm">
                     <thead className="bg-slate-50 text-slate-700">
                         <tr>
-                            <th className="w-[260px] px-3 py-2">docId</th>
-                            <th className="w-[420px] px-3 py-2">発明の名称</th>
+                            <th className="w-[260px] px-3 py-2">書類名</th>
                             <th className="w-[260px] px-3 py-2">出願人</th>
+                            <th className="w-[420px] px-3 py-2">整理番号</th>
                             <th className="px-3 py-2">assignees</th>
                             <th className="px-3 py-2">tags</th>
                             <th className="px-3 py-2">extraNumbers</th>
@@ -374,7 +377,7 @@ export default function MetadataOnSearchGrid() {
                                                 target="_blank"
                                                 rel="noreferrer"
                                             >
-                                                {r.docId}
+                                                {r.documentName || r.inventionTitle || r.docId}
                                             </a>
                                             {isDirty ? (
                                                 <span className="inline-flex w-fit rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
@@ -385,14 +388,13 @@ export default function MetadataOnSearchGrid() {
                                     </td>
 
                                     <td className="border-t border-slate-100 px-3 py-2 align-top">
-                                        <div className="line-clamp-3 text-slate-900">{r.inventionTitle}</div>
-                                        <div className="mt-1 text-xs text-slate-600">
-                                            {r.appNumber ? `出願番号: ${r.appNumber}` : ""}{r.fileReferenceId ? ` / 整理: ${r.fileReferenceId}` : ""}
-                                        </div>
+                                        <div className="line-clamp-3 text-slate-900">{r.applicants}</div>
                                     </td>
 
                                     <td className="border-t border-slate-100 px-3 py-2 align-top">
-                                        <div className="line-clamp-3 text-slate-900">{r.applicants}</div>
+                                        <div className="mt-1 text-xs text-slate-600">
+                                            {r.applicationNumber ? `出願番号: ${r.applicationNumber}` : ""}{r.fileReferenceId ? ` / 整理: ${r.fileReferenceId}` : ""}
+                                        </div>
                                     </td>
 
                                     <td className="border-t border-slate-100 px-3 py-2 align-top">
