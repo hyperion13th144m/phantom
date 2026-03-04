@@ -2,7 +2,7 @@ import { Client } from "@elastic/elasticsearch";
 import { getEnv } from "./env";
 
 let esClient: Client | null = null;
-
+export const ES_INDEX = process.env.ES_INDEX ?? "patent-documents";
 export const getEsClient = () => {
     if (!esClient) {
         const { ES_URL, ELASTICSEARCH_API_KEY, ES_USER, ES_PASSWORD } = getEnv();

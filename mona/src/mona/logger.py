@@ -28,11 +28,11 @@ def setup_logger(
     handlers.append(console_handler)
 
     # ファイルハンドラー（RotatingFileHandler）の設定
-    # maxBytes=128KB、backupCount=5でローテーション
+    # maxBytes=1024*1024(1MB)、backupCount=20でローテーション
     file_handler = logging.handlers.RotatingFileHandler(
         log_path,
-        maxBytes=128 * 1024,  # 128KB
-        backupCount=5,
+        maxBytes=1024 * 1024,  # 1MB
+        backupCount=20,
         encoding="utf-8",
     )
     file_handler.setFormatter(JsonFormatter())

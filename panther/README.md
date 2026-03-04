@@ -76,3 +76,23 @@ $ python src/panther/main.py upload-extra-data \
   --sqlite-db path/to/patent_documents.db \
   --index patent-documents
 ```
+
+### 付加データの復元
+sqlite db を Elasticsearch に復元する。
+```bash
+python restore_metadata_to_es.py \
+  --sqlite /data/metadata.sqlite3 \
+  --table patent_metadata \
+  --es-node http://elasticsearch:9200 \
+  --index patent-documents
+```
+### 重要な運用メモ
+
+通常は --upsert なしが安全です
+（本文が無いdocIdをESに作らないため。404は notFound として数える）
+
+ESを作り直したときの手順は：
+
+特許JSONをESへ再投入
+
+このスクリプトでSQLiteメタを反映

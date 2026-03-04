@@ -21,6 +21,7 @@ services:
       - .:/workspaces:cached
       - ${LOG_DIR_JOKER}:/var/log/joker
       - ${DATA_DIR}:/data_dir
+      - ${EXTRA_DATA_DIR}:/extra_dir
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8
@@ -58,7 +59,7 @@ services:
     container_name: nginx-dev
     image: nginx-dev
     build:
-      context: nginx
+      context: docker/nginx
       dockerfile: Dockerfile.dev
     volumes:
       - ${DATA_DIR}:/images
