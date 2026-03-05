@@ -29,8 +29,9 @@ services:
       ES_URL: http://es01-dev:9200
       ES_USER: ${ELASTIC_USER}
       ES_PASSWORD: ${ELASTIC_PASSWORD}
-      IMAGE_BASE_URL: /images
-      DOCUMENT_BASE_URL: /docs
+      NEXT_PUBLIC_IMAGE_BASE_URL: /images
+      NEXT_PUBLIC_DOCUMENT_BASE_URL: /docs
+      SQLITE_PATH: /extra_dir/extra_data.sqlite3
     tty: true
     networks:
       - dev-net

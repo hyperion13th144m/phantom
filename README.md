@@ -12,18 +12,19 @@ docker pull
 elasticsearch のインデックスを作成する。
 追加データベースも作成する。
 ```
-./scripts/setup.sh 
+./scripts/setup.sh -p
 ```
+開発用なら -d
 
 ## operations
  - 特許文書を収集する
  - 特許文書をElasticsearchにアップロードする
- - (オプション) 特許文書の付加データを追加する
 
 ### 特許文書を収集する
 ```bash
-./scripts/crawl.sh [ -m NUMBER_OF_PROCESSES ] [ -o ] [ -t TARGETS ]
+./scripts/crawl.sh -p [ -m NUMBER_OF_PROCESSES ] [ -o ] [ -t TARGETS ]
 ```
+ - -p: 必須, 開発用なら -d
  - `-m NUMBER_OF_PROCESSES`: 並列処理の数を指定します。デフォルトは1です。1-4 の範囲で指定できます。
  - `-o`: 既存のデータを上書きします。指定しない場合、既存のデータは保持されます。
  - `-t TARGETS`: クロールする特許文書のターゲットを指定します。複数のターゲットをカンマ区切りで指定できます。例: `-t ALL` なにも指定しない場合は全てのターゲットをクロールします。
@@ -36,22 +37,15 @@ elasticsearch のインデックスを作成する。
  
 ### 特許文書をElasticsearchにアップロードする
 ```bash
-./scripts/upload.sh [ -s ]
+./scripts/upload.sh -p [ -s ]
 ```
--s: Elasticsearch に同じデータがあるならば,アップロードしない。
+ - '-p': 必須。開発用なら -d
+ - '-s': Elasticsearch に同じデータがあるならば,アップロードしない。
 
-### (オプション) 特許文書の付加データを追加する
-#### データインポート
-追加データを付す対象となるデータを取得する。
+### データの復旧
 ```bash
-./scripts/extra_data.sh import
+./scripts/setup.sh -p
+./scripts/crawl.sh -p
+./scripts/upload.sh -p
+./scripts/extra-data.sh -p
 ```
-EXTRA_DATA_DIR/extra_data.sqlite3 に SQLite3 データベースが作成される。
-
-#### データエクスポート
-extra_data.sqlite3 を編集する。assignees(担当者), tags(タグ),extraNumbers(その他番号)を追加する。複数有る場合はカンマ区切り。
-
-```bash
-./scripts/extra_data.sh upload
-```
-extra_data.sqlite3 の内容を Elasticsearch にアップロードする。
