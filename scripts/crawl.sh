@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
 SCRIPT_DIR=$(dirname $0)
 PROJECT_DIR="$SCRIPT_DIR/.."
 CMD="docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i mona"
+NUM_MULTI_PROCESSORS="-m 1"
+OVERWRITE=""
 
-while getopts "om:t:" opt; do
+while getopts "om:t:pd" opt; do
   case $opt in
     m)
       NUM_MULTI_PROCESSORS="-m $OPTARG"
@@ -15,11 +17,19 @@ while getopts "om:t:" opt; do
     t)
       TARGET="$OPTARG"
       ;;
+    p)
+      MODE=prod
+      ;;
+    d)
+      MODE=dev
+      ;;
     *)
-      echo "Usage: $0 [-m {num_multi_processors}] [-o] [-t {target}]"
+      echo "Usage: $0 [-m {num_multi_processors}] [-o] [-t {target}] [ -p ] [ -d ]"
       echo "  -m: Number of multi-processors to use for crawling. Default is 1. max is 4"
       echo "  -o: Overwrite existing data in the data_dir. WARNING: This will delete all existing data in the data_dir."
       echo "  -t: Specify the target for crawling."
+      echo "  -p: execute this script for production."
+      echo "  -d: execute this script for debug."
       exit 1
       ;;
   esac
@@ -87,4 +97,14 @@ case $TARGET in
     exit 1
     ;;
 esac
-$CMD $OVERWRITE $NUM_MULTI_PROCESSORS /src_dir /data_dir $TARGET_CODES
+
+if [ "$MODE" = "prod" ]; then
+  $CMD $OVERWRITE $NUM_MULTI_PROCESSORS /src_dir /data_dir $TARGET_CODES
+elif [ "$MODE" = "dev" ]; then
+  source $PROJECT_DIR/.env
+  export SRC_DIR DATA_DIR
+  uv run $PROJECT_DIR/mona/src/mona/main.py \
+    $OVERWRITE $NUM_MULTI_PROCESSORS $SRC_DIR $DATA_DIR $TARGET_CODES
+else
+  usage
+fi

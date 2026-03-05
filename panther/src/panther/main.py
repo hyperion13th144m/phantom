@@ -15,11 +15,9 @@ import os
 import sys
 from pathlib import Path
 
-from panther.create_db import cmd_create_db
-from panther.create_index import cmd_create_index
-from panther.import_extra_data import cmd_import_extra_data
-from panther.upload_documents import cmd_upload
-from panther.upload_extra_data import cmd_upload_extra_data
+from panther.create_index import add_args as add_create_index_args
+from panther.restore_metadata_to_es import add_args as add_restore_metadata_args
+from panther.upload_documents import add_args as add_upload_args
 
 
 def setup_logging():
@@ -83,7 +81,7 @@ def add_common_arguments(parser: argparse.ArgumentParser):
     )
     parser.add_argument(
         "--index",
-        required=True,
+        default=os.getenv("ES_INDEX"),
         help="Elasticsearch index name",
     )
 
@@ -97,108 +95,11 @@ def main():
         description="Panther CLI - Elasticsearch index management and document upload",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-
+    add_common_arguments(parser)
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
-
-    # create-db subcommand
-    create_db_parser = subparsers.add_parser(
-        "create-db",
-        help="Create table for storing extra data.",
-    )
-    create_db_parser.add_argument(
-        "--sqlite-db",
-        default="extra_patent_data.db",
-        help="SQLite database file for storing extra data (default: extra_patent_data.db)",
-    )
-
-    # import-extra-data subcommand
-    import_extra_data_parser = subparsers.add_parser(
-        "import-extra-data",
-        help="Import document.json files into extra data database.",
-    )
-    import_extra_data_parser.add_argument(
-        "--data-root",
-        required=True,
-        help="Directory containing docid/document.json files to import",
-    )
-    import_extra_data_parser.add_argument(
-        "--sqlite-db",
-        default="extra_patent_data.db",
-        help="SQLite database file for storing extra data (default: extra_patent_data.db)",
-    )
-
-    # create-index subcommand
-    create_parser = subparsers.add_parser(
-        "create-index",
-        help="Create or update Elasticsearch index with mappings",
-    )
-    add_common_arguments(create_parser)
-    create_parser.add_argument(
-        "--mapping",
-        required=True,
-        help="Path to mapping JSON file (contains settings and mappings)",
-    )
-    create_parser.add_argument(
-        "--recreate",
-        action="store_true",
-        help="Delete and recreate index if it exists (WARNING: deletes all data)",
-    )
-
-    # upload subcommand
-    upload_parser = subparsers.add_parser(
-        "upload-documents",
-        help="Upload documents to Elasticsearch",
-    )
-    add_common_arguments(upload_parser)
-    upload_parser.add_argument(
-        "--data-root",
-        default="data",
-        help="Root directory containing docid/document.json files (default: data)",
-    )
-    upload_parser.add_argument(
-        "--pipeline",
-        default=os.getenv("ES_PIPELINE"),
-        help="Ingest pipeline name (default: $ES_PIPELINE)",
-    )
-    upload_parser.add_argument(
-        "--chunk-size",
-        type=int,
-        default=500,
-        help="Bulk chunk size (default: 500)",
-    )
-    upload_parser.add_argument(
-        "--max-retries",
-        type=int,
-        default=5,
-        help="Max retry attempts for transient failures (default: 5)",
-    )
-    upload_parser.add_argument(
-        "--use-hash-guard",
-        action="store_true",
-        help="Skip updates if ingest_hash unchanged",
-    )
-    upload_parser.add_argument(
-        "--refresh",
-        action="store_true",
-        help="Refresh index after bulk (slower but makes documents immediately searchable)",
-    )
-
-    # upload extra-data subcommand
-    upload_extra_parser = subparsers.add_parser(
-        "upload-extra-data",
-        help="Upload extra data (assignees, tags) from SQLite to Elasticsearch",
-    )
-    add_common_arguments(upload_extra_parser)
-    upload_extra_parser.add_argument(
-        "--sqlite-db", required=True, help="Path to sqlite db"
-    )
-    upload_extra_parser.add_argument(
-        "--batch", type=int, default=500, help="Bulk batch size"
-    )
-    upload_extra_parser.add_argument(
-        "--dry-run", action="store_true", help="Do not write to ES"
-    )
-
+    add_create_index_args(subparsers)
+    add_upload_args(subparsers)
+    add_restore_metadata_args(subparsers)
     args = parser.parse_args()
 
     # Show help if no command specified
@@ -206,17 +107,8 @@ def main():
         parser.print_help()
         return 1
 
-    # Route to appropriate command handler
-    if args.command == "create-index":
-        return cmd_create_index(args)
-    elif args.command == "upload-documents":
-        return cmd_upload(args)
-    elif args.command == "create-db":
-        return cmd_create_db(args.sqlite_db)
-    elif args.command == "import-extra-data":
-        return cmd_import_extra_data(args.data_root, args.sqlite_db)
-    elif args.command == "upload-extra-data":
-        return cmd_upload_extra_data(args)
+    if hasattr(args, "func"):
+        return args.func(args)
     else:
         parser.print_help()
         return 1

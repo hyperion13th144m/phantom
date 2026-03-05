@@ -1,48 +1,47 @@
-#!/bin/sh
+#!/bin/bash
 
 SCRIPT_DIR=$(dirname $0)
 PROJECT_DIR="$SCRIPT_DIR/.."
 cd $PROJECT_DIR || exit 1
-CMD="docker compose -f docker-compose.yml run --rm -i panther"
-INDEX=patent-documents
-MAPPING=elasticsearch/document-mapping.json
 
-CREATE_INDEX_ARGS="create-index --index $INDEX --mapping $MAPPING --recreate"
-UPLOAD_ARGS=" --index $INDEX --use-hash-guard --data-root /data_dir"
+# ES_USER, ES_PASSWORD, ES_INDEX is defined in .env file, which is used by both upload.sh and setup.sh.
+# these variables are imported in docker-compose.yml,
+
+# for development, define ES_URL in .env.
+
+CMD="docker compose -f docker-compose.yml run --rm -i panther"
+ARGS="create-index --recreate"
 
 usage () {
-  echo "Usage: $0"
+  echo "Usage: $0 [ -p ] [ -d ]"
+  echo "  -p: execute this script for production."
+  echo "  -d: execute this script for debug."
   echo "  create the Elasticsearch index. WARNING: This will delete all existing data in the index."
-  echo "  create initial extra database"
   exit 1
 }
 
-echo "Recreating the Elasticsearch index. WARNING: This will delete all existing data in the index."
-$CMD $CREATE_INDEX_ARGS
-if [ $? -ne 0 ]; then
-  echo "Failed to recreate the Elasticsearch index."
-  exit 1
-else
-  echo "Elasticsearch index recreated successfully."
-fi
+while getopts "pd" opt; do
+  case $opt in
+    p)
+      MODE=prod
+      MAPPING="--mapping elasticsearch/document-mapping.json"
+      ;;
+    d)
+      MODE=dev
+      MAPPING="--mapping $PROJECT_DIR/panther/elasticsearch/document-mapping.json"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
 
-source $PROJECT_DIR/.env
-if [ -z "$EXTRA_DATA_DIR" ]; then
-  echo "EXTRA_DATA_DIR is not set in the .env file. skipped"
+if [ "$MODE" = "prod" ]; then
+  docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i panther $ARGS $MAPPING
+elif [ "$MODE" = "dev" ]; then
+  source $PROJECT_DIR/.env
+  export ES_URL ES_API_KEY ES_USER ES_PASSWORD ES_INDEX
+  uv run $PROJECT_DIR/panther/src/panther/main.py $ARGS $MAPPING
 else
-  EXTRA_DATA="$EXTRA_DATA_DIR/extra_data.sqlite3"
-fi
-
-if [ -f "$EXTRA_DATA" ]; then
-  echo "Extra data file is already exists. Skipping initialization of extra data."
-  exit 1
-else
-  echo "Initializing extra data..."
-  $CMD create-db --sqlite-db /extra_dir/extra_data.sqlite3
-  if [ $? -ne 0 ]; then
-    echo "Failed to initialize extra data."
-    exit 1
-  else
-    echo "Extra data initialized successfully."
-  fi
+  usage
 fi

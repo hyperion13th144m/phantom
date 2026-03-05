@@ -6,11 +6,11 @@ Usage:
     python create_index.py --index <index_name> --mapping <mapping_file> [--es-url <url>] [--recreate]
 """
 
+import argparse
 import json
 import logging
-import sys
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict, Protocol
 
 from elasticsearch import Elasticsearch
 from panther.es_client import create_es_client
@@ -18,13 +18,29 @@ from panther.es_client import create_es_client
 logger = logging.getLogger(__name__)
 
 
-def load_mapping_file(path: Path) -> Dict:
-    """Load mapping and settings from JSON file."""
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+class SupportsAddParser(Protocol):
+    def add_parser(self, name: str, **kwargs: Any) -> argparse.ArgumentParser: ...
 
 
-def cmd_create_index(args) -> int:
+def add_args(parser: SupportsAddParser) -> None:
+    p = parser.add_parser(
+        "create-index",
+        help="Create Elasticsearch index with mappings",
+    )
+    p.add_argument(
+        "--mapping",
+        required=True,
+        help="Path to mapping JSON file (contains settings and mappings)",
+    )
+    p.add_argument(
+        "--recreate",
+        action="store_true",
+        help="Delete and recreate index if it exists (WARNING: deletes all data)",
+    )
+    p.set_defaults(func=main)
+
+
+def main(args: argparse.Namespace) -> int:
     """Create or update Elasticsearch index with mappings."""
     # Validate mapping file exists
     mapping_path = Path(args.mapping)
@@ -68,6 +84,12 @@ def cmd_create_index(args) -> int:
         return 1
     finally:
         es.close()
+
+
+def load_mapping_file(path: Path) -> Dict:
+    """Load mapping and settings from JSON file."""
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def create_or_update_index(

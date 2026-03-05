@@ -6,7 +6,7 @@ import json
 import os
 import sqlite3
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Protocol
 
 from elasticsearch.helpers import bulk
 
@@ -89,10 +89,10 @@ def count_rows(conn: sqlite3.Connection, table: str) -> int:
 
 def make_es_client(args: argparse.Namespace) -> Elasticsearch:
     if args.api_key:
-        return Elasticsearch(args.es_node, api_key=args.api_key)
-    if args.es_user and args.es_password:
-        return Elasticsearch(args.es_node, basic_auth=(args.es_user, args.es_password))
-    return Elasticsearch(args.es_node)
+        return Elasticsearch(args.es, api_key=args.api_key)
+    if args.user and args.password:
+        return Elasticsearch(args.es, basic_auth=(args.user, args.password))
+    return Elasticsearch(args.es)
 
 
 def build_actions(
@@ -119,9 +119,13 @@ def build_actions(
         yield action
 
 
-def main() -> int:
-    p = argparse.ArgumentParser(
-        description="Restore metadata from SQLite into Elasticsearch (bulk update)."
+class SupportsAddParser(Protocol):
+    def add_parser(self, name: str, **kwargs: Any) -> argparse.ArgumentParser: ...
+
+
+def add_args(parser: SupportsAddParser) -> None:
+    p = parser.add_parser(
+        "restore-metadata", help="Restore metadata from SQLite into Elasticsearch"
     )
     p.add_argument("--sqlite", required=True, help="Path to sqlite3 file")
     p.add_argument(
@@ -129,11 +133,6 @@ def main() -> int:
         default="patent_metadata",
         help="SQLite table name (default: patent_metadata)",
     )
-    p.add_argument("--es-node", default=os.getenv("ES_NODE", "http://localhost:9200"))
-    p.add_argument("--index", default=os.getenv("ES_INDEX", "patent-documents"))
-    p.add_argument("--api-key", default=os.getenv("ES_API_KEY"))
-    p.add_argument("--es-user", default=os.getenv("ES_USERNAME"))
-    p.add_argument("--es-password", default=os.getenv("ES_PASSWORD"))
     p.add_argument(
         "--batch-size", type=int, default=int(os.getenv("BATCH_SIZE", "500"))
     )
@@ -145,8 +144,10 @@ def main() -> int:
         action="store_true",
         help="Use doc_as_upsert (creates docs if missing; usually avoid)",
     )
-    args = p.parse_args()
+    p.set_defaults(func=main)
 
+
+def main(args: argparse.Namespace) -> int:
     conn = _connect_sqlite(args.sqlite)
     total = count_rows(conn, args.table)
     print(f"metadata rows: {total}")
@@ -176,6 +177,10 @@ def main() -> int:
         processed += len(batch)
 
         # errors は update action 失敗の詳細リスト
+        if type(errors) is not list:
+            print(f"bulk error: {errors}")
+            failed += len(batch)  # 全部失敗とみなす
+            continue
         for e in errors:
             # e: {"update": {"_index":..., "_id":..., "status":..., "error":...}}
             upd = e.get("update") or {}
@@ -200,7 +205,3 @@ def main() -> int:
         }
     )
     return 0 if failed == 0 else 2
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

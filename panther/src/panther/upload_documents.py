@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Bulk upsert documents into Elasticsearch from:
-  data/<docid>/document.json
+  data/<docid>/bibliography.json,full-text.json,images-information.json
 
 - Use _id = docid
 - Preserve user-added fields in ES (assignee/tags) by NOT sending them in updates
@@ -9,13 +9,15 @@ Bulk upsert documents into Elasticsearch from:
 - Optional: store ingest_hash to skip no-op updates with a painless script
 """
 
+import argparse
 import hashlib
 import json
 import logging
+import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Protocol, Tuple
 
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
 from panther.es_client import create_es_client
@@ -27,6 +29,103 @@ from panther.patent_doc_editor import PatentDocEditor
 logger = logging.getLogger(__name__)
 
 PRESERVE_FIELDS = {"assignees", "tags", "extraNumbers"}  # user-managed fields in ES
+
+
+class SupportsAddParser(Protocol):
+    def add_parser(self, name: str, **kwargs: Any) -> argparse.ArgumentParser: ...
+
+
+def add_args(parser: SupportsAddParser) -> None:
+    p = parser.add_parser(
+        "upload-documents",
+        help="Upload documents to Elasticsearch",
+    )
+    p.add_argument(
+        "--data-root",
+        default="data",
+        help="Root directory containing docid/document.json files (default: data)",
+    )
+    p.add_argument(
+        "--pipeline",
+        default=os.getenv("ES_PIPELINE"),
+        help="Ingest pipeline name (default: $ES_PIPELINE)",
+    )
+    p.add_argument(
+        "--chunk-size",
+        type=int,
+        default=500,
+        help="Bulk chunk size (default: 500)",
+    )
+    p.add_argument(
+        "--max-retries",
+        type=int,
+        default=5,
+        help="Max retry attempts for transient failures (default: 5)",
+    )
+    p.add_argument(
+        "--use-hash-guard",
+        action="store_true",
+        help="Skip updates if ingest_hash unchanged",
+    )
+    p.add_argument(
+        "--refresh",
+        action="store_true",
+        help="Refresh index after bulk (slower but makes documents immediately searchable)",
+    )
+    p.set_defaults(func=main)
+
+
+def main(args: argparse.Namespace) -> int:
+    """Upload documents to Elasticsearch."""
+    data_root = Path(args.data_root)
+    if not data_root.exists():
+        logger.error(f"Error: Data root not found: {data_root}")
+        return 1
+
+    # Connect to Elasticsearch
+    logger.info(f"Connecting to Elasticsearch: {args.es}")
+    es = create_es_client(args)
+    try:
+
+        # Check connection
+        if not es.ping():
+            logger.error("Error: Cannot connect to Elasticsearch")
+            return 1
+
+        logger.info("✓ Connected to Elasticsearch")
+        logger.info(f"Uploading documents from: {data_root}")
+
+        # Build actions
+        actions = build_actions(
+            index=args.index,
+            data_root=data_root,
+            pipeline=args.pipeline,
+            refresh=args.refresh,
+            use_hash_guard=args.use_hash_guard,
+        )
+
+        # Bulk upsert with retries
+        success, failed = bulk_upsert_with_retries(
+            es,
+            actions,
+            chunk_size=args.chunk_size,
+            max_retries=args.max_retries,
+            initial_backoff=1.0,
+            max_backoff=30.0,
+        )
+
+        if args.refresh:
+            logger.info("Refreshing index...")
+            es.indices.refresh(index=args.index)
+
+        logger.info(f"\n[DONE] Success: {success}, Failed: {failed}")
+        return 0 if failed == 0 else 1
+
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return 1
+    finally:
+        es.close()
 
 
 def utc_now_iso() -> str:
@@ -257,56 +356,3 @@ def bulk_upsert_with_retries(
         time.sleep(backoff)
         backoff = min(max_backoff, backoff * 2)
         to_send = failed_items
-
-
-def cmd_upload(args) -> int:
-    """Upload documents to Elasticsearch."""
-    data_root = Path(args.data_root)
-    if not data_root.exists():
-        logger.error(f"Error: Data root not found: {data_root}")
-        return 1
-
-    # Connect to Elasticsearch
-    logger.info(f"Connecting to Elasticsearch: {args.es}")
-    es = create_es_client(args)
-    try:
-
-        # Check connection
-        if not es.ping():
-            logger.error("Error: Cannot connect to Elasticsearch")
-            return 1
-
-        logger.info("✓ Connected to Elasticsearch")
-        logger.info(f"Uploading documents from: {data_root}")
-
-        # Build actions
-        actions = build_actions(
-            index=args.index,
-            data_root=data_root,
-            pipeline=args.pipeline,
-            refresh=args.refresh,
-            use_hash_guard=args.use_hash_guard,
-        )
-
-        # Bulk upsert with retries
-        success, failed = bulk_upsert_with_retries(
-            es,
-            actions,
-            chunk_size=args.chunk_size,
-            max_retries=args.max_retries,
-            initial_backoff=1.0,
-            max_backoff=30.0,
-        )
-
-        if args.refresh:
-            logger.info("Refreshing index...")
-            es.indices.refresh(index=args.index)
-
-        logger.info(f"\n[DONE] Success: {success}, Failed: {failed}")
-        return 0 if failed == 0 else 1
-
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        return 1
-    finally:
-        es.close()

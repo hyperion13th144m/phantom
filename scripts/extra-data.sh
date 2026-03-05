@@ -1,34 +1,45 @@
-#!/bin/sh
+#!/bin/bash
 
 SCRIPT_DIR=$(dirname $0)
 PROJECT_DIR="$SCRIPT_DIR/.."
-CMD="docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i panther"
-INDEX=patent-documents
-MAPPING=elasticsearch/document-mapping.json
+cd $PROJECT_DIR || exit 1
 
-CREATE_INDEX_ARGS=" --index $INDEX --mapping $MAPPING"
-UPLOAD_ARGS=" --index $INDEX --use-hash-guard --data-root /data_dir"
+# ES_USER, ES_PASSWORD, ES_INDEX is defined in .env file, which is used by both upload.sh and setup.sh.
+# these variables are imported in docker-compose.yml,
+
+# for development, define ES_URL in .env.
 
 usage () {
-  echo "Usage: $0 {import|upload}"
-  echo "  import: Import extra data from the SQLite database to the Elasticsearch."
-  echo "  upload: Upload extra data to the Elasticsearch index. This should be run after 'crawl.sh'."
+  echo "Usage: $0 [ -p ] [ -d ]"
+  echo "  -p: execute this script for production."
+  echo "  -d: execute this script for debug."
+  echo "  restore extra data from the SQLite database to the Elasticsearch."
+  echo "  RECOMMENDED: this script should be executed after upload.sh for uploading json data to Elasticsearch."
   exit 1
 }
 
-case $1 in
-  "import")
-    $CMD import-extra-data \
-    --sqlite-db /extra_dir/extra_data.sqlite3 \
-    --data-root /data_dir
-    ;;
-  "upload")
-    $CMD upload-extra-data \
-    --sqlite-db /extra_dir/extra_data.sqlite3 \
-    --index patent-documents
-   ;;
-  *)
-    usage
-    ;;
-esac
+while getopts "pd" opt; do
+  case $opt in
+    p)
+      MODE=prod
+      ;;
+    d)
+      MODE=dev
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
 
+if [ "$MODE" = "prod" ]; then
+  docker compose -f $PROJECT_DIR/docker-compose.yml run --rm -i panther \
+    restore-metadata --sqlite-db /extra_dir/extra_data.sqlite3
+elif [ "$MODE" = "dev" ]; then
+  source $PROJECT_DIR/.env
+  export ES_URL ES_API_KEY ES_USER ES_PASSWORD ES_INDEX
+  uv run $PROJECT_DIR/panther/src/panther/main.py \
+    restore-metadata --sqlite $EXTRA_DATA_DIR/extra_data.sqlite3 
+else
+  usage
+fi
