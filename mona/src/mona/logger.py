@@ -12,7 +12,7 @@ def setup_logger(
     """
     ロガーの設定を行う
     - /var/log/mona にログを出力
-    - ファイルサイズが128KBを超えたらローテーション
+    - ファイルサイズが1MBを超えたらローテーション
     - multiprocessor対応のためにRotatingFileHandlerを使用
     """
     log_queue = Queue(-1)

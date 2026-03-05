@@ -71,6 +71,7 @@ function buildSearchParams(query: SearchQuery): URLSearchParams {
     if (query.q.trim()) params.set("q", query.q.trim());
     params.set("page", String(query.page));
     params.set("size", String(query.size));
+    params.set("withHighlight", "true");
 
     FILTERS.forEach(({ param }) => {
         const value = query[param];

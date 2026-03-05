@@ -12,8 +12,8 @@ if (!fs.existsSync(logDir)) {
 
 const rotatingStream = createStream({
     filename: path.join(logDir, 'fox.log'),
-    size: '512k', // 512kb でローテーション
-    maxFiles: 5, // 5世代保持
+    size: '1M', // 1mb でローテーション
+    maxFiles: 10, // 10世代保持
 });
 
 export const logger = pino(

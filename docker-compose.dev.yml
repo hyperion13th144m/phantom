@@ -54,6 +54,23 @@ services:
       - 9200:9200
     restart: always
 
+  panther-dev:
+    container_name: panther-dev
+    build:
+      context: panther
+      dockerfile: ../docker/Dockerfile.panther
+    tty: true
+    environment:
+      ES_URL: http://es01-dev:9200
+      ES_USER: ${ELASTIC_USER}
+      ES_PASSWORD: ${ELASTIC_PASSWORD}
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ${DATA_DIR}:/data_dir
+      - ${LOG_DIR_PANTHER}:/var/log/panther
+    networks:
+      - dev-net
 
   nginx-dev:
     container_name: nginx-dev

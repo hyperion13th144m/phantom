@@ -13,15 +13,25 @@ export function buildDocUrl(docId: string): string {
     return `${baseUrl}/${docId}`;
 }
 
-export function formatApplicationNumber(law: string, appNum: string): string {
-    // law に基づいて適切にフォーマットする（例: 特許、実用新案、意匠、商標など）
-    // ここでは単純に law と appNum を結合する例を示します
-    if (law === "patent" && appNum.match(/^\d{10}$/)) {
-        return `特願${appNum.substring(0, 4)}-${appNum.substring(4)}号`;
-    } else if (law === "utilityModel" && appNum.match(/^\d{10}$/)) {
-        return `実願${appNum.substring(0, 4)}-${appNum.substring(4)}号`;
+// 国内出願番号形式（例：2023001234）
+const domestic_number_re = /^[0-9]{10}$/;
+
+// pct 出願番号形式（例：PCTJP2023XXXXXX)
+const pct_number_re = /^[A-Za-z]{2}[0-9]{4}[0-9]{6}$/;
+export const formatApplicationNumber = (law: string, docNumber: string): string => {
+    if (docNumber.match(domestic_number_re)) {
+        const prefix = law === "patent" ? "特願" : "実願";
+        const year = docNumber.substring(0, 4);
+        const seq = docNumber.substring(4);
+        return `${prefix}${year}-${seq}`;
+    } else if (docNumber.match(pct_number_re)) {
+        const country = docNumber.substring(0, 2);
+        const year = docNumber.substring(2, 6);
+        const seq = docNumber.substring(6);
+        return `PCT/${country}${year}/${seq}`;
     } else {
-        return appNum;
+        // その他の形式はそのまま返す
+        return docNumber;
     }
 }
 

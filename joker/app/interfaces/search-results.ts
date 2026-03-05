@@ -61,9 +61,9 @@ export interface ImageInformation {
 }
 
 export interface Hit {
-    id?: string;
-    score?: number | null;
-    source?: Partial<PatentDocumentSource> | null;
+    id: string;
+    score: number | null;
+    source: Partial<PatentDocumentSource>;
     highlight?: Record<string, string[]>;
 }
 
