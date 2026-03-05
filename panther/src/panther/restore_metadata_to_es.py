@@ -127,7 +127,12 @@ def add_args(parser: SupportsAddParser) -> None:
     p = parser.add_parser(
         "restore-metadata", help="Restore metadata from SQLite into Elasticsearch"
     )
-    p.add_argument("--sqlite", required=True, help="Path to sqlite3 file")
+    p.add_argument(
+        "--sqlite",
+        required=True,
+        help="Path to sqlite3 file",
+        default=os.getenv("SQLITE_PATH"),
+    )
     p.add_argument(
         "--table",
         default="patent_metadata",

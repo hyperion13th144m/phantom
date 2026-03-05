@@ -32,9 +32,9 @@ def setup_logging():
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
-    # Create rotating file handler (128KB max, keep 5 backup files)
+    # Create rotating file handler (1MB max, keep 10 backup files)
     file_handler = logging.handlers.RotatingFileHandler(
-        log_file, maxBytes=128 * 1024, backupCount=5, encoding="utf-8"  # 128 KB
+        log_file, maxBytes=1024 * 1024, backupCount=10, encoding="utf-8"
     )
     file_handler.setLevel(logging.INFO)
 
