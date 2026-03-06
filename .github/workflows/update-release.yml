@@ -1,0 +1,56 @@
+name: Sync release repo
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
+      - 'env.sample'
+      - 'LICENSE.md'
+      - 'README.md'
+      - '.github/workflows/update-release.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
+      - 'env.sample'
+      - 'LICENSE.md'
+      - 'README.md'
+      - '.github/workflows/update-release.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}
+
+jobs:
+  sync-release-repo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout repository for release
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phantom-release
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: release-repo
+
+      - name: Copy files to release repository
+        run: |
+          cp -R LICENSE.md README.md env.sample scripts/ ./release-repo/
+
+      - name: Commit and push changes to release repository
+        run: |
+          cd release-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Update release repository with latest changes from main branch" || echo "No changes to commit"
+          git push origin main

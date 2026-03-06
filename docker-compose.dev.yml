@@ -37,7 +37,7 @@ services:
       - dev-net
 
   es01-dev:
-    image: phantom-lasticsearch
+    image: phantom-elasticsearch
     container_name: phantom-elasticsearch-dev
     build:
       dockerfile: docker/Dockerfile.es
