@@ -1,0 +1,202 @@
+[
+  {
+    "tag": "pat-amnd",
+    "text": "手続補正書",
+    "blocks": [
+      {
+        "tag": "jp:amendment-a523",
+        "blocks": [
+          {
+            "tag": "jp:document-code",
+            "text": "A1523",
+            "jpTag": "【書類名】",
+            "indentLevel": "0",
+            "convertedText": "手続補正書"
+          },
+          {
+            "tag": "jp:file-reference-id",
+            "jpTag": "【整理番号】",
+            "indentLevel": "0",
+            "text": "P402"
+          },
+          {
+            "tag": "jp:addressed-to-person",
+            "jpTag": "【あて先】",
+            "indentLevel": "0",
+            "text": "特許庁長官殿"
+          },
+          {
+            "tag": "jp:indication-of-case-article",
+            "jpTag": "【事件の表示】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "jp:doc-number",
+                "jpTag": "【国際出願番号】",
+                "indentLevel": "2",
+                "text": "Unknown doc-number"
+              },
+              {
+                "tag": "shutugan-kubun",
+                "jpTag": "【出願の区分】",
+                "text": "特許",
+                "indentLevel": "2"
+              }
+            ]
+          },
+          {
+            "tag": "jp:applicants",
+            "blocks": [
+              {
+                "tag": "jp:applicant",
+                "indentLevel": "0",
+                "jpTag": "【補正をする者】",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814114"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "法人ＸＸ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:agents",
+            "blocks": [
+              {
+                "tag": "jp:agent",
+                "jpTag": "【代理人】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814194"
+                  },
+                  {
+                    "tag": "jp:attorney",
+                    "jpTag": "【弁理士】",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "代理人Ｘ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:amendment-article",
+            "blocks": [
+              {
+                "tag": "jp:amendment-group",
+                "jpTag": "【手続補正1】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:document-code",
+                    "text": "A16330",
+                    "jpTag": "【補正対象書類名】",
+                    "indentLevel": "1",
+                    "convertedText": "明細書"
+                  },
+                  {
+                    "tag": "jp:item-of-amendment",
+                    "text": "００５６",
+                    "jpTag": "【補正対象項目名】",
+                    "indentLevel": "1"
+                  },
+                  {
+                    "tag": "jp:way-of-amendment",
+                    "jpTag": "【補正方法】",
+                    "text": "変更",
+                    "indentLevel": "1"
+                  },
+                  {
+                    "tag": "jp:contents-of-amendment",
+                    "jpTag": "【補正の内容】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "paragraph",
+                        "number": "0056",
+                        "jpTag": "【００５６】",
+                        "indentLevel": "2",
+                        "blocks": [
+                          {
+                            "tag": "text",
+                            "text": "　　１　装置",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　　２　台",
+                            "isLastSentence": true
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "jp:amendment-group",
+                "jpTag": "【手続補正2】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:document-code",
+                    "text": "A16331",
+                    "jpTag": "【補正対象書類名】",
+                    "indentLevel": "1",
+                    "convertedText": "図面"
+                  },
+                  {
+                    "tag": "jp:item-of-amendment",
+                    "text": "図１",
+                    "jpTag": "【補正対象項目名】",
+                    "indentLevel": "1"
+                  },
+                  {
+                    "tag": "jp:way-of-amendment",
+                    "jpTag": "【補正方法】",
+                    "text": "変更",
+                    "indentLevel": "1"
+                  },
+                  {
+                    "tag": "jp:contents-of-amendment",
+                    "jpTag": "【補正の内容】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "image-container",
+                        "number": "1",
+                        "jpTag": "【図１】",
+                        "indentLevel": "2",
+                        "imageKind": "figures",
+                        "file": "JPOXMLDOC01-jpbibl-I000001.tif",
+                        "alt": "Figure No. 1 "
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

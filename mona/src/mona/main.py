@@ -9,9 +9,9 @@ from multiprocessing import Event, Process, Queue
 from pathlib import Path
 from typing import List
 
-from libefiling import generate_sha256
+from libefiling import generate_sha256, parse_archive
 
-from mona.config import TARGET_DOCUMENT_CODES
+from mona.config import TARGET_DOCUMENT_CODES, image_params
 from mona.find_archives import find_archives
 from mona.logger import setup_child_logging, setup_logger
 from mona.parse import parse
@@ -181,7 +181,17 @@ def main(
             )
             shutil.rmtree(output_dir)
             sys.exit(0)
-        parse(archive_path, procedure_path, output_dir)
+
+        ### OCR 対象は other-imagesだけ。
+        ### other-images は 外国語書面出願、被引用文献 で使われる画像
+        parse_archive(
+            str(archive_path),
+            str(procedure_path),
+            str(output_dir),
+            image_params=image_params,
+            ocr_target=["other-images"],
+        )
+        parse(output_dir, output_dir / "json")
         logger.info(
             f"[SUCCESS] doc_id={doc_id}, archive_path={archive_path}",
             extra={"archive_path": str(archive_path), "doc_id": doc_id},

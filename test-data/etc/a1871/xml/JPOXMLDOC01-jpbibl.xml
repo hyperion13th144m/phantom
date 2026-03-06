@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:pat-etc xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:etcetera-a871 jp:kind-of-law="patent">
+<jp:document-code>A1871</jp:document-code>
+<jp:file-reference-id>X83239</jp:file-reference-id>
+<jp:addressed-to-person>特許庁長官　殿</jp:addressed-to-person>
+<jp:indication-of-case-article>
+<jp:application-reference appl-type="application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114410</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+</jp:indication-of-case-article>
+<jp:applicants>
+<jp:applicant>
+<jp:addressbook>
+<jp:name>法人ＸＹ</jp:name>
+<jp:registered-number>4814114</jp:registered-number>
+</jp:addressbook>
+</jp:applicant>
+</jp:applicants>
+<jp:agents>
+<jp:agent jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｘ</jp:name>
+<jp:registered-number>4814194</jp:registered-number>
+</jp:addressbook>
+<jp:attorney />
+</jp:agent>
+</jp:agents>
+<jp:kind-of-accelerated-examination>早期審査</jp:kind-of-accelerated-examination>
+<jp:opinion-contents-article><p num="">
+　１．事情<br />
+　請求項１〜９に記載されている、組成物を２年以内に実施する予定の実施関連出願である。<br />
+　２．先行技術の開示及び対比説明<br />
+　　（１）文献名<br />
+　明細書中の段落【０００８】に記載している。<br />
+　　（２）対比説明<br />
+　明細書の段落【０００２】【０００５】において、十分な対比説明を行っている。 
+</p>
+</jp:opinion-contents-article>
+</jp:etcetera-a871>
+</jp:pat-etc>

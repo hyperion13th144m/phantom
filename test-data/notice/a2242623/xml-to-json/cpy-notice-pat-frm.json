@@ -1,0 +1,165 @@
+{
+    "tag": "cpy-ntc-pt-f",
+    "text": "通知書",
+    "blocks": [
+        {
+            "tag": "jp:cpy-notice-pat-frm",
+            "blocks": [
+                {
+                    "tag": "text",
+                    "text": "X8323",
+                    "isLastSentence": true
+                },
+                {
+                    "tag": "text",
+                    "text": "991234",
+                    "isLastSentence": true
+                },
+                {
+                    "tag": "jp:date",
+                    "jpTag": "",
+                    "text": "平成２８年　７月１８日",
+                    "convertedText": ""
+                },
+                {
+                    "tag": "jp:notice-pat-frm",
+                    "blocks": [
+                        {
+                            "tag": "jp:notification-a242623",
+                            "blocks": [
+                                {
+                                    "tag": "",
+                                    "text": "通知書"
+                                },
+                                {
+                                    "tag": "jp:bibliog-in-ntc-pat-frm",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:drafting-date",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:date",
+                                                    "jpTag": "",
+                                                    "text": "20110622",
+                                                    "convertedText": "平成23年06月22日"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:draft-person-group",
+                                            "blocks": [
+                                                {
+                                                    "tag": "notice-name",
+                                                    "text": "特　許　庁　長　官"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:addressed-to-person-group",
+                                            "jpTag": "",
+                                            "text": "代理人Ｍ　様"
+                                        },
+                                        {
+                                            "tag": "jp:application-reference",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:document-id",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:doc-number",
+                                                            "jpTag": "",
+                                                            "text": "2099114412",
+                                                            "convertedText": "実用新案登録　第２０９９１１４４１２号"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:conclusion-part-article",
+                                    "blocks": [
+                                        {
+                                            "tag": "paragraph",
+                                            "blocks": [
+                                                {
+                                                    "tag": "text",
+                                                    "text": "　上記、実用新案登録出願又は実用新案登録について、実用新案技術評価請求に",
+                                                    "isLastSentence": true
+                                                },
+                                                {
+                                                    "tag": "text",
+                                                    "text": "基づき、実用新案技術評価書を作成したので通知します。",
+                                                    "isLastSentence": true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:footer-article",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:certification-column-article",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:certification-column-group",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "上記の書類は、ファイルに記録されている事項と相違ないことを認証する。",
+                                                            "isLastSentence": true
+                                                        },
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "認証日　平成20年08月12日　経済産業事務官　審査官Ｒ",
+                                                            "isLastSentence": true
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:image-group",
+                                    "blocks": [
+                                        {
+                                            "tag": "image-container",
+                                            "imageKind": "other-images",
+                                            "indentLevel": "0",
+                                            "file": "02212002996-jpntce-I000001.tif",
+                                            "alt": "Image 02212002996-jpntce-I000001.tif"
+                                        },
+                                        {
+                                            "tag": "image-container",
+                                            "imageKind": "other-images",
+                                            "indentLevel": "0",
+                                            "file": "02212002996-jpntce-I000002.tif",
+                                            "alt": "Image 02212002996-jpntce-I000002.tif"
+                                        },
+                                        {
+                                            "tag": "image-container",
+                                            "imageKind": "other-images",
+                                            "indentLevel": "0",
+                                            "file": "02212002996-jpntce-I000003.tif",
+                                            "alt": "Image 02212002996-jpntce-I000003.tif"
+                                        },
+                                        {
+                                            "tag": "image-container",
+                                            "imageKind": "other-images",
+                                            "indentLevel": "0",
+                                            "file": "02212002996-jpntce-I000004.tif",
+                                            "alt": "Image 02212002996-jpntce-I000004.tif"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,303 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:31:19.320289"
+    },
+    "document": {
+        "doc_id": "1588140067a4bf4e7f266e32dbf77ed677cac4e110d5823b13ad38b2b69fd3cf",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "1588140067a4bf4e7f266e32dbf77ed677cac4e110d5823b13ad38b2b69fd3cf",
+                "byte_size": 681556,
+                "task": "N",
+                "kind": "NF",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "3e114d4f5d30d22c0cc2c1fa75176bebb45ad6b710be9fcf44ed50c4ba0489e4",
+                "byte_size": 3084,
+                "task": "N",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "06126096708-jpntce.xml",
+            "original_filename": null,
+            "sha256": "2ab2f405f51fc57cde4fae964370ef14b4d0dfe4a4893fdb1394ae88049a370c",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "06126096708-jpmngt.xml",
+            "original_filename": null,
+            "sha256": "11e1b3f24a049d6747d0c5c01702b5012f8856576c5adb9e49b7b9589d9df88a",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "bd9e47e90fe25ea7d7875af80c0ef75bf16f02feab972ad3be368c8356c20085",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [
+        {
+            "filename": "06126096708-jpntce-I000001.tif",
+            "sha256": "7eb728cae5b80158c8555b6364695d59f17b50de4c092f948c54df7817695b51",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "06126096708-jpntce-I000001-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "5e2ceff79fbcfc06347277fe05d45adf36e1a01cf77faf4f17bbd72e9cc4ac76",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000001-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "4e77c060065ae5a8b5d0b148af6b40a7e99f0b7f303b1d8d346ac2bb06ec1a00",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000001-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1179,
+                    "sha256": "b0fbf9a725ff1f3257d90559070f086096106a9e7417dfce392e5a5dda8767fd",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "06126096708-jpntce-I000001.txt",
+                "format": "text/plain",
+                "sha256": "ef25a15e8fc9c03ef70b694de22def77c9929c4ece20db916bbad2bb7cbe046a",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "06126096708-jpntce-I000003.tif",
+            "sha256": "0cb6a5b719eddc1afce8944b6f57da08507bf0453dc4fddb3763e0a632def9f2",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "06126096708-jpntce-I000003-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "bc95a13f25a16c4995b1a1219395c2097afaed8b12b98d487a641c3c50bddc3d",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000003-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "960aef5964ca33534d76240990b93905a6103f3fe2dc47d1584f2f7e2bd8fc86",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000003-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1179,
+                    "sha256": "503cd90447c8597430a9e190a681a6e59d65317a0b6371187a1a52e41fd72bf1",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "06126096708-jpntce-I000003.txt",
+                "format": "text/plain",
+                "sha256": "06e697141fce3436cd298fa9c7add3000866c0673f7ca685f60403cf559861bd",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "06126096708-jpntce-I000002.tif",
+            "sha256": "db4cacd85cdd01e100f7cf39ae6b7acde3cc180a3f64091bbfc181cbffaed548",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "06126096708-jpntce-I000002-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "386a1a027f883e9cfd7555abafa63a502e38d1aacd89dc82d2611086da8d2e02",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000002-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "407f3acbefc12ee25831a0fc801dd2a792518bbbf4de6d7b89d63f47034b7dc8",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000002-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1179,
+                    "sha256": "e39a7260456d86865288271027e109c23fe0ec8dc26bad68420233cea6eec904",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "06126096708-jpntce-I000002.txt",
+                "format": "text/plain",
+                "sha256": "e0faf452c58828eff9e69d418bfb4450979eed3576dda3ff91cf1f33741512b0",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "06126096708-jpntce-I000004.tif",
+            "sha256": "3b8757050c26bb05d1e7592e2d2ead34ef9ade78d52785339606ae9d3b77f0f0",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "06126096708-jpntce-I000004-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "e95bf8b6c547d7b02ba7b446f860a7c6cf5d8f7397b6d99c5ac3e10290d1b44a",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000004-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "7bbd4efa726383983c683bc1c72a6cf7452be191954b24ea311cb592174555f0",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "06126096708-jpntce-I000004-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1179,
+                    "sha256": "bb1f00ccb1c9e01a537b105b6d0fd2b31a89eb56a2b040cca85f5d7ffa340767",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "06126096708-jpntce-I000004.txt",
+                "format": "text/plain",
+                "sha256": "b208cf57c8ec2ed5dbd3570ba454e3d2071bc5e16444d70c7dfbc52f0a08955a",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        }
+    ],
+    "stats": {
+        "xml_count": 6,
+        "image_original_count": 4,
+        "image_derived_count": 12,
+        "ocr_result_count": 4
+    }
+}

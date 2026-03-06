@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:pat-amnd xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:amendment-a527 jp:kind-of-law="patent">
+<jp:document-code>A1527</jp:document-code>
+<jp:file-reference-id>X83232</jp:file-reference-id>
+<jp:addressed-to-person>特許庁長官殿</jp:addressed-to-person>
+<jp:indication-of-case-article>
+<jp:application-reference appl-type="international-application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114410</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+</jp:indication-of-case-article>
+<jp:applicants>
+<jp:applicant>
+<jp:addressbook>
+<jp:name>法人ＸＡ</jp:name>
+<jp:registered-number>4814114</jp:registered-number>
+</jp:addressbook>
+</jp:applicant>
+</jp:applicants>
+<jp:agents>
+<jp:agent jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｘ</jp:name>
+<jp:registered-number>4814194</jp:registered-number>
+</jp:addressbook>
+<jp:attorney />
+</jp:agent>
+</jp:agents>
+<jp:submit-date-of-amendment><jp:date>20140811</jp:date></jp:submit-date-of-amendment>
+<jp:dtext>請求項１：出願時の請求項１に請求項２の内容を付加して新たな請求項１とした。補正の根拠は、出願時の明細書の段落［００８４］である。</jp:dtext>
+<jp:submission-object-list-article>
+<jp:list-group>
+<jp:document-name>条約第１９条補正の写し</jp:document-name>
+<jp:number-of-object>1</jp:number-of-object>
+</jp:list-group>
+</jp:submission-object-list-article>
+</jp:amendment-a527>
+</jp:pat-amnd>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:pat-amnd xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:amendment-a529 jp:kind-of-law="patent">
+<jp:document-code>A1529</jp:document-code>
+<jp:file-reference-id>X83232</jp:file-reference-id>
+<jp:addressed-to-person>特許庁長官　殿</jp:addressed-to-person>
+<jp:indication-of-case-article>
+<jp:application-reference appl-type="international-application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114410</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+</jp:indication-of-case-article>
+<jp:applicants>
+<jp:applicant>
+<jp:addressbook>
+<jp:name>法人ＸＢ</jp:name>
+<jp:registered-number>4814114</jp:registered-number>
+</jp:addressbook>
+</jp:applicant>
+</jp:applicants>
+<jp:agents>
+<jp:agent jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｘ</jp:name>
+<jp:registered-number>4814194</jp:registered-number>
+</jp:addressbook>
+<jp:attorney />
+</jp:agent>
+</jp:agents>
+<jp:submit-date-of-amendment><jp:date>20220311</jp:date></jp:submit-date-of-amendment>
+<jp:amendment-article>
+<jp:amendment-group jp:serial-number="1">
+<jp:document-code>A16333</jp:document-code>
+<jp:item-of-amendment>全文</jp:item-of-amendment>
+<jp:way-of-amendment>3</jp:way-of-amendment>
+<jp:contents-of-amendment jp:kind-of-law="patent" jp:kind-of-document="claims">
+<claims>
+<claim num="1">
+<claim-text>
+　なんとか装置であって、<br />
+　炭化水素を酸素と反応させて合成ガスを製造する<br />
+</claim-text>
+</claim>
+<claim num="2">
+<claim-text>
+　<u>圧力にする請求項１に記載のプロセス。</u>
+</claim-text>
+</claim>
+<claim num="3">
+<claim-text>
+　９００℃以上の温度、請求項１<u>又は２</u>に記載のプロセス。
+</claim-text>
+</claim>
+</claims>
+</jp:contents-of-amendment>
+</jp:amendment-group>
+</jp:amendment-article>
+<jp:dtext>・請求項２を追加した。</jp:dtext>
+</jp:amendment-a529>
+</jp:pat-amnd>

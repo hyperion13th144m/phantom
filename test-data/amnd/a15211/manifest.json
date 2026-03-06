@@ -1,0 +1,583 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:30:51.429049"
+    },
+    "document": {
+        "doc_id": "347df1f8ab03ba843668c9998b40421b41ec5fdb6648a5eb7fb2ead03372f9ae",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "347df1f8ab03ba843668c9998b40421b41ec5fdb6648a5eb7fb2ead03372f9ae",
+                "byte_size": 390189,
+                "task": "A",
+                "kind": "AA",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "d684342b92c597e6ac4169c28cc3b2fd66741be5b59910c5ce47f7c24ae753f6",
+                "byte_size": 3015,
+                "task": "A",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "JPOXMLDOC01-jpatta.xml",
+            "original_filename": null,
+            "sha256": "50e4946b23597799c5ba14ec259a18b3a94d9e1ff2d8f921f28d79880978fc4b",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "JPOXMLDOC01-jpbibl.xml",
+            "original_filename": null,
+            "sha256": "48546c3602b81308c59dd332ba4fc44872c30b38aa42f99a9623a13cd453fbb9",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "affaf432521bb33b49af2f36934ffd1f924507fec4771fade4bbc03affc8f95a",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000006.tif",
+            "sha256": "560ac061e22a5ef918b5a9e5bcef12c2dd174913f55a1b473f0f52069df5eb8c",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000006-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "082a0a72900cf2a4ff9a8f718ef54e7eaf6718c0edde4185e433c503b3d83031",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000006-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "a941afe1265ea44f876f1264ab53f8dfbfd202a53a48b02882aa816558376712",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000006-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1318,
+                    "sha256": "f5fc99aa0a49a303d3b29882e5deaa2c6240149595d9dbb6c37069bd7ea8e5e6",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000006.txt",
+                "format": "text/plain",
+                "sha256": "92193b39980010888639c6fadd90ba52828de1c92041db78269e9276d924570c",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000002.tif",
+            "sha256": "524eb5d5056c6fa6f39f66dee3f001d0b481c8f4eb6080597102ce9765e33c8c",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000002-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "bc0e397b20dc2748106e9fa424be5dded45c49cd738e55dc1f571a76398d9e5a",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000002-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "82313d4e5995d0d1ccec4d9ba5c45e85d4c1c569088b56ff413da5ffe20d65e2",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000002-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1324,
+                    "sha256": "60104275f67348a461b3c1f7bf2e8f1485bb94a919a2073a0c3c81ed168ae067",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000002.txt",
+                "format": "text/plain",
+                "sha256": "d9d3365e6187dfc46d00025817d4256fdd72512b7186bd1dbfd474217b7ea2e9",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000008.tif",
+            "sha256": "6a89b7db5d6fe30bbacd377c9837f4ac37b1b7d63625ca7a42e52186a287899a",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000008-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "3f77623bb56548c8021393c52457d8191e28ef90cbea84cf7e51b03d765bf96a",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000008-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "49685f51eb87ae13d36695502cecf4654154978a9a7e90d8e858aa59da2ec4da",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000008-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1235,
+                    "sha256": "6d17e7f6ffa628d52d52bce44e150d3dcf09e6a8a4ac99a13cf15695671195c4",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000008.txt",
+                "format": "text/plain",
+                "sha256": "676115272dd650bd943222c5f4e96f10669d51d18a7473fd546034b582b468b2",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000003.tif",
+            "sha256": "1619d53d0cc2b9a04e8047fd339ebe44705482193419d8fdb1cc06215b12c232",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000003-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "be6230f8707c6a7017b6bf2de9a96b1ff865a08520fbcf9ce7ee005a08814ee3",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000003-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "b936c23463b61e6fe995148db3d73a6a5ef08e255750af56beb56909b72a851f",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000003-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1269,
+                    "sha256": "af4f4c17ff1a90ceb9f4666eb89a5d690603ffd15f008412c566be38cbb644bf",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000003.txt",
+                "format": "text/plain",
+                "sha256": "29e34218e60015fe2981d207af6268334dea6e8ea4fef399ccb669ba115b768a",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000007.tif",
+            "sha256": "e54e6771a605051c6e6dab4eb2f80a95008ee99c8842be7945c0b602c3a4e811",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000007-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "e0262c840b7e802f423d42fc736c070c05a1c7e71401888aa3aea1284037bbd8",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000007-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "fe405e8f9c62a43b627415bf002d41b801fc870f12eddeead4cc830017b29b62",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000007-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1279,
+                    "sha256": "3813da9c7f93cd472c52c38d78fb9862d13bb5cf14907ab53525d82d19d62616",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000007.txt",
+                "format": "text/plain",
+                "sha256": "5c2c14261242816e570b9c36f27c045ad5ea5f81dd916d217f624af65fcd56a6",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000004.tif",
+            "sha256": "d496436184d0c427adaf2f7289b799412fa7417376a23be990774d1282a5306a",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000004-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "2422daf3e58987290961667ad4c9ce770294302e0b0cb04889611438f36c91bf",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000004-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "d51fb4b249467bb660faa68c36e4f315f16043865e769f115f457ac42d09c342",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000004-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1483,
+                    "sha256": "e43372040ef2a7f5b899493fc5b92ce624857798e860e81da9b840a05dfbea7d",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000004.txt",
+                "format": "text/plain",
+                "sha256": "971f51e98183042536cfb58856dba24e31564fa8550efb1e98c14128858fbe37",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000009.tif",
+            "sha256": "d0714d62422690de1fb450c5c1f56c3da8fcb626de194dbcb3271b63ab4407d1",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000009-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "fd7dd9f4dcade9e8685a4c9a52c2b088860495b1a4b1d9adffaca886a03c48d4",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000009-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "56f675f3c1f260f46739f41bea45468bc5467598d278365422e18dd93f18b152",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000009-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1335,
+                    "sha256": "b3369ecddc1d2adfe318466d302bda93a3aec64e6082bd848b4827b1e51c2e29",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000009.txt",
+                "format": "text/plain",
+                "sha256": "c8580e424271915d7ca6aeae6d4da26c5e448d4b4226e4d127020219972ef9a5",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000005.tif",
+            "sha256": "50c80931f111c9849e50a22c7cc9e19dd62dfe6f1ab6442a342af059a247d309",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000005-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "9b8f8983be56ed4272cfe5c32462ed861486a1b85da8892e066f25719a841e07",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000005-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "120054523b65e7e5d0b641a1e2183b5bd91709663373484512271916f36e8122",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000005-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1303,
+                    "sha256": "7c942906649b335ddafceecbc096601f2925189e65f7ae1293d12d71c4ee19d8",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000005.txt",
+                "format": "text/plain",
+                "sha256": "9cb6bedc8936da7eaa73571589ccf59f495082f5bf03ba5309634bf90b745046",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        },
+        {
+            "filename": "JPOXMLDOC01-jpatta-I000001.tif",
+            "sha256": "de0a2f73a4ac29e40fd3fa045a01aa7b3e9d2ba9c2541a820ccde46f87c3f7c8",
+            "media_type": "image/tiff",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000001-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "e6f97889bcaa5ffe2ad7bae71b68cc921a828e0d8e305fed2961f4a1ed9d5ff5",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000001-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "fc9f5174f4913c9a4ac314509f80e26b7a849cf6b2849a4185ea2f20d6ae1e9b",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpatta-I000001-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 1286,
+                    "sha256": "d94089d82f1b8c77b099276d6b643ee1c70df84238820447b65e194af1e3710e",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpatta-I000001.txt",
+                "format": "text/plain",
+                "sha256": "a5035eca07d7c1a36c80bafd97efd3f7ee5d6c6cb4b69748c883fd1849cd1c34",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        }
+    ],
+    "stats": {
+        "xml_count": 6,
+        "image_original_count": 9,
+        "image_derived_count": 27,
+        "ocr_result_count": 9
+    }
+}

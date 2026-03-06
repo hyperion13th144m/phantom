@@ -1,0 +1,136 @@
+[
+  {
+    "tag": "cpy-ntc-pt-e",
+    "text": "引用非特許文献",
+    "blocks": [
+      {
+        "tag": "jp:cpy-notice-pat-exam",
+        "blocks": [
+          {
+            "tag": "jp:dispatch-control-article",
+            "blocks": [
+              {
+                "tag": "jp:file-reference-id",
+                "jpTag": "整理番号",
+                "indentLevel": "0",
+                "text": "X8323"
+              },
+              {
+                "tag": "jp:dispatch-number",
+                "jpTag": "発送番号",
+                "indentLevel": "0",
+                "text": "991234"
+              },
+              {
+                "tag": "jp:dispatch-date",
+                "jpTag": "発送日",
+                "indentLevel": "0",
+                "text": "平成２８年　５月１８日"
+              }
+            ]
+          },
+          {
+            "tag": "jp:notice-pat-exam",
+            "blocks": [
+              {
+                "tag": "jp:examiner-notification-a30",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "text": "引用非特許文献"
+                  },
+                  {
+                    "tag": "jp:bibliog-in-ntc-pat-exam",
+                    "blocks": [
+                      {
+                        "tag": "jp:application-reference",
+                        "blocks": [
+                          {
+                            "tag": "jp:document-id",
+                            "blocks": [
+                              {
+                                "tag": "jp:doc-number",
+                                "jpTag": "特許出願の番号",
+                                "indentLevel": "0",
+                                "text": "2099114411",
+                                "convertedText": "特願2099-114411"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:drafting-date",
+                        "blocks": [
+                          {
+                            "tag": "jp:date",
+                            "jpTag": "作成日",
+                            "indentLevel": "0",
+                            "text": "20270410",
+                            "convertedText": "令和9年04月10日"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:draft-person-group",
+                        "jpTag": "作成者",
+                        "blocks": [
+                          {
+                            "tag": "jp:name",
+                            "text": "作成者Ｂ"
+                          },
+                          {
+                            "tag": "jp:staff-code",
+                            "text": "9876",
+                            "convertedText": "９８７６"
+                          },
+                          {
+                            "tag": "jp:office-code",
+                            "text": "XX00",
+                            "convertedText": "ＸＸ００"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "invention-title",
+                        "jpTag": "発明の名称",
+                        "indentLevel": "0",
+                        "text": "装置"
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:image-group",
+                    "blocks": [
+                      {
+                        "tag": "image-container",
+                        "imageKind": "other-images",
+                        "indentLevel": "0",
+                        "file": "06110315890-jpntce-I000001.tif",
+                        "alt": "Image 06110315890-jpntce-I000001.tif"
+                      },
+                      {
+                        "tag": "image-container",
+                        "imageKind": "other-images",
+                        "indentLevel": "0",
+                        "file": "06110315890-jpntce-I000002.tif",
+                        "alt": "Image 06110315890-jpntce-I000002.tif"
+                      },
+                      {
+                        "tag": "image-container",
+                        "imageKind": "other-images",
+                        "indentLevel": "0",
+                        "file": "06110315890-jpntce-I000003.tif",
+                        "alt": "Image 06110315890-jpntce-I000003.tif"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

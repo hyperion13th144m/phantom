@@ -1,0 +1,78 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:30:57.417244"
+    },
+    "document": {
+        "doc_id": "a6efb3b71fc1c393b28f23c1570b8f8eac083214b99d4cd34f7e341bafb11ea5",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "a6efb3b71fc1c393b28f23c1570b8f8eac083214b99d4cd34f7e341bafb11ea5",
+                "byte_size": 16660,
+                "task": "A",
+                "kind": "AA",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "37d7ba3d0f940f290ac8d7a85b095b4c16d2a4e153545f9f42d3dcd94f36a12b",
+                "byte_size": 4105,
+                "task": "A",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "JPOXMLDOC01-jpbibl.xml",
+            "original_filename": null,
+            "sha256": "598e05f11b5b923af130ffc1a0cdae624439ae2cfcbcb6551576434176f290e3",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "JPOXMLDOC01-appb.xml",
+            "original_filename": null,
+            "sha256": "0baa8af9484f513bb80f43ff5328d6c2e3fd847181d289c04e68f37e155b2d5c",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "3272aec1284cf23549b44e61e3676c32f9e3ed5a780be5af1f324406c11b3921",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [],
+    "stats": {
+        "xml_count": 5,
+        "image_original_count": 0,
+        "image_derived_count": 0,
+        "ocr_result_count": 0
+    }
+}

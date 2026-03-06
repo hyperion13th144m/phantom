@@ -1,0 +1,746 @@
+[
+  {
+    "tag": "application-body",
+    "blocks": [
+      {
+        "tag": "description",
+        "jpTag": "【書類名】",
+        "text": "明細書",
+        "indentLevel": "0",
+        "blocks": [
+          {
+            "tag": "invention-title",
+            "jpTag": "【考案の名称】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "text",
+                "text": "装置",
+                "isLastSentence": true
+              }
+            ]
+          },
+          {
+            "tag": "technical-field",
+            "jpTag": "【技術分野】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "0001",
+                "jpTag": "【０００１】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　発明に関する説明",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "background-art",
+            "jpTag": "【背景技術】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "0002",
+                "jpTag": "【０００２】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　発明に関する説明",
+                    "isLastSentence": true
+                  }
+                ]
+              },
+              {
+                "tag": "paragraph",
+                "number": "0003",
+                "jpTag": "【０００３】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　発明に関する説明",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "citation-list",
+            "jpTag": "【先行技術文献】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "patent-literature",
+                "jpTag": "【特許文献】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "paragraph",
+                    "number": "0007",
+                    "jpTag": "【０００７】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "patcit",
+                        "number": "1",
+                        "jpTag": "【特許文献１】",
+                        "text": "登録実用新案第９３０１３６４号公報",
+                        "indentLevel": "2"
+                      },
+                      {
+                        "tag": "patcit",
+                        "number": "2",
+                        "jpTag": "【特許文献２】",
+                        "text": "特開２０９７−１３３３０号公報",
+                        "indentLevel": "2"
+                      },
+                      {
+                        "tag": "patcit",
+                        "number": "3",
+                        "jpTag": "【特許文献３】",
+                        "text": "登録実用新案第９３１５５５５号公報",
+                        "indentLevel": "2"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "summary-of-invention",
+            "jpTag": "【考案の概要】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "tech-problem",
+                "jpTag": "【考案が解決しようとする課題】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "paragraph",
+                    "number": "0008",
+                    "jpTag": "【０００８】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　発明に関する説明",
+                        "isLastSentence": true
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "paragraph",
+                    "number": "0009",
+                    "jpTag": "【０００９】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　発明に関する説明",
+                        "isLastSentence": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "tech-solution",
+                "jpTag": "【課題を解決するための手段】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "paragraph",
+                    "number": "0010",
+                    "jpTag": "【００１０】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　発明に関する説明",
+                        "isLastSentence": true
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "paragraph",
+                    "number": "0011",
+                    "jpTag": "【００１１】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　発明に関する説明",
+                        "isLastSentence": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "tag": "advantageous-effects",
+                "jpTag": "【考案の効果】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "paragraph",
+                    "number": "0018",
+                    "jpTag": "【００１８】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　発明に関する説明",
+                        "isLastSentence": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "description-of-drawings",
+            "jpTag": "【図面の簡単な説明】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "0019",
+                "jpTag": "【００１９】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "figref",
+                    "number": "1",
+                    "jpTag": "【図１】",
+                    "text": "平面図である。",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "figref",
+                    "number": "2",
+                    "jpTag": "【図２】",
+                    "text": "平面図である。",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "figref",
+                    "number": "3",
+                    "jpTag": "【図３】",
+                    "text": "平面図である。",
+                    "indentLevel": "2"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "description-of-embodiments",
+            "jpTag": "【考案を実施するための形態】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "0020",
+                "jpTag": "【００２０】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　発明に関する説明",
+                    "isLastSentence": true
+                  }
+                ]
+              },
+              {
+                "tag": "paragraph",
+                "number": "0039",
+                "jpTag": "【００３９】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　発明に関する説明",
+                    "isLastSentence": true
+                  }
+                ]
+              },
+              {
+                "tag": "embodiments-example",
+                "jpTag": "【実施例】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "paragraph",
+                    "number": "0040",
+                    "jpTag": "【００４０】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　（実施例）",
+                        "isLastSentence": true
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "paragraph",
+                    "number": "0041",
+                    "jpTag": "【００４１】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "text",
+                        "text": "　発明に関する説明",
+                        "isLastSentence": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "industrial-applicability",
+            "jpTag": "【産業上の利用可能性】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "0043",
+                "jpTag": "【００４３】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　発明に関する説明",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "reference-signs-list",
+            "jpTag": "【符号の説明】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "0044",
+                "jpTag": "【００４４】",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "２　シート",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "claims",
+        "jpTag": "【書類名】",
+        "text": "実用新案登録請求の範囲",
+        "indentLevel": "0",
+        "blocks": [
+          {
+            "tag": "claim",
+            "jpTag": "【請求項１】",
+            "number": "1",
+            "indentLevel": "0",
+            "isIndependent": true,
+            "blocks": [
+              {
+                "tag": "claim-text",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　机であって、脚部が延設されていることを特徴とする。",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "claim",
+            "jpTag": "【請求項２】",
+            "number": "2",
+            "indentLevel": "0",
+            "isIndependent": false,
+            "blocks": [
+              {
+                "tag": "claim-text",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　ことを特徴とする請求項１記載の机。",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "claim",
+            "jpTag": "【請求項３】",
+            "number": "3",
+            "indentLevel": "0",
+            "isIndependent": false,
+            "blocks": [
+              {
+                "tag": "claim-text",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　座部に肘掛けが設けられていることを特徴とする請求項２記載の椅子。",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "abstract",
+        "jpTag": "【書類名】",
+        "text": "要約書",
+        "indentLevel": "0",
+        "blocks": [
+          {
+            "tag": "paragraph",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "text",
+                "text": "【要約】",
+                "isLastSentence": true
+              },
+              {
+                "tag": "text",
+                "text": "【課題】　頑丈な机を提供する。",
+                "isLastSentence": true
+              },
+              {
+                "tag": "text",
+                "text": "【解決手段】脚部が延設されている。",
+                "isLastSentence": true
+              },
+              {
+                "tag": "text",
+                "text": "【選択図】図１",
+                "isLastSentence": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "drawings",
+        "jpTag": "【書類名】",
+        "text": "図面",
+        "indentLevel": "0",
+        "blocks": [
+          {
+            "tag": "image-container",
+            "number": "1",
+            "jpTag": "【図１】",
+            "indentLevel": "0",
+            "imageKind": "figures",
+            "file": "JPOXMLDOC01-appb-D000001.tif",
+            "alt": "Figure No. 1 平面図である。"
+          },
+          {
+            "tag": "image-container",
+            "number": "2",
+            "jpTag": "【図２】",
+            "indentLevel": "0",
+            "imageKind": "figures",
+            "file": "JPOXMLDOC01-appb-D000002.jpg",
+            "alt": "Figure No. 2 平面図である。"
+          },
+          {
+            "tag": "image-container",
+            "number": "3",
+            "jpTag": "【図３】",
+            "indentLevel": "0",
+            "imageKind": "figures",
+            "file": "JPOXMLDOC01-appb-D000003.jpg",
+            "alt": "Figure No. 3 平面図である。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tag": "pat-app-doc",
+    "text": "実用新案登録願",
+    "blocks": [
+      {
+        "tag": "jp:application-a63",
+        "blocks": [
+          {
+            "tag": "jp:document-code",
+            "text": "A263",
+            "jpTag": "【書類名】",
+            "indentLevel": "0",
+            "convertedText": "実用新案登録願"
+          },
+          {
+            "tag": "jp:file-reference-id",
+            "jpTag": "【整理番号】",
+            "indentLevel": "0",
+            "text": "X83232"
+          },
+          {
+            "tag": "jp:addressed-to-person",
+            "jpTag": "【あて先】",
+            "indentLevel": "0",
+            "text": "特許庁長官殿"
+          },
+          {
+            "tag": "jp:ipc",
+            "jpTag": "【国際特許分類】",
+            "text": "E04G 21/32       ",
+            "indentLevel": "0"
+          },
+          {
+            "tag": "jp:inventors",
+            "blocks": [
+              {
+                "tag": "jp:inventor",
+                "jpTag": "【考案者】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:text",
+                    "jpTag": "【住所又は居所】",
+                    "indentLevel": "2",
+                    "text": "東京都"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名】",
+                    "indentLevel": "2",
+                    "text": "発明者Ａ松"
+                  }
+                ]
+              },
+              {
+                "tag": "jp:inventor",
+                "jpTag": "【考案者】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:text",
+                    "jpTag": "【住所又は居所】",
+                    "indentLevel": "2",
+                    "text": "東京都"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名】",
+                    "indentLevel": "2",
+                    "text": "発明者Ａ小"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:applicants",
+            "blocks": [
+              {
+                "tag": "jp:applicant",
+                "indentLevel": "0",
+                "jpTag": "【実用新案登録出願人】",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814114"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "法人ＸＸ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:agents",
+            "blocks": [
+              {
+                "tag": "jp:agent",
+                "jpTag": "【代理人】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814194"
+                  },
+                  {
+                    "tag": "jp:attorney",
+                    "jpTag": "【弁理士】",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "代理人Ｘ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:attorney-change-article",
+            "blocks": [
+              {
+                "tag": "jp:agent",
+                "jpTag": "【選任した代理人】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814194"
+                  },
+                  {
+                    "tag": "jp:attorney",
+                    "jpTag": "【弁理士】",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "代理人Ｙ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:payment-years",
+            "jpTag": "【納付年分】",
+            "indentLevel": "0",
+            "text": "第1年分から第3年分"
+          },
+          {
+            "tag": "jp:charge-article",
+            "jpTag": "【手数料の表示】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "jp:payment",
+                "blocks": [
+                  {
+                    "tag": "jp:account",
+                    "jpTag": "【予納台帳番号】",
+                    "indentLevel": "2",
+                    "text": "999911"
+                  },
+                  {
+                    "tag": "jp:fee",
+                    "jpTag": "【納付金額】",
+                    "indentLevel": "2",
+                    "text": "21500",
+                    "convertedText": "21,500円"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:submission-object-list-article",
+            "jpTag": "【提出物件の目録】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "jp:list-group",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "jpTag": "【物件名】",
+                    "indentLevel": "2",
+                    "text": "明細書　1"
+                  }
+                ]
+              },
+              {
+                "tag": "jp:list-group",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "jpTag": "【物件名】",
+                    "indentLevel": "2",
+                    "text": "実用新案登録請求の範囲　1"
+                  }
+                ]
+              },
+              {
+                "tag": "jp:list-group",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "jpTag": "【物件名】",
+                    "indentLevel": "2",
+                    "text": "要約書　1"
+                  }
+                ]
+              },
+              {
+                "tag": "jp:list-group",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "jpTag": "【物件名】",
+                    "indentLevel": "2",
+                    "text": "図面　1"
+                  }
+                ]
+              },
+              {
+                "tag": "jp:list-group",
+                "blocks": [
+                  {
+                    "tag": "jp:general-power-of-attorney-id",
+                    "jpTag": "【包括委任状番号】",
+                    "indentLevel": "2",
+                    "text": "9991112"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

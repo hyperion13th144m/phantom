@@ -1,0 +1,152 @@
+[
+  {
+    "filename": "JPOXMLDOC01-appb-D000002.tif",
+    "sha256": "c711d845f29898e0f429d9fc23904fc339b2bc1914d0179b8871ce02883fd914",
+    "media_type": "image/tiff",
+    "kind": "figures",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-appb-D000002-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "d2e167e7d1cd3c8f8d0f767ad8a404a1b743f4c8edcf8654bd2d7fc0bb35c455",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-appb-D000002-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "2ec559ec56764c7bab1af358e50b5b4eebe96b56b04c3840c075dc31874d9b4a",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-appb-D000002-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 862,
+        "sha256": "9a6d9720a1b3db505c78d550e5050e97aa7d8ee465e0dd2f119527123804cbc4",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "number": "2",
+    "description": "平面図である。",
+    "representative": false
+  },
+  {
+    "filename": "JPOXMLDOC01-appb-D000001.tif",
+    "sha256": "9c717f396174f130b23b60172bc5f22593fc203eefbeb79139b66a840f141973",
+    "media_type": "image/tiff",
+    "kind": "figures",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-appb-D000001-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "9130d43bfec1abcf5e239ea94ecfd3c8d5d57c5140fa5825db5748a701d15308",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-appb-D000001-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "2782bf8595719bc5a718349fffb057ca3127db6e7114cd774ecb2d8c38b50730",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-appb-D000001-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 920,
+        "sha256": "b236317ce0685736cb4eaac87229f2097797f6e1bc889e628d8cfc8811714781",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "number": "1",
+    "description": "平面図である。",
+    "representative": true
+  },
+  {
+    "filename": "JPOXMLDOC01-appb-D000003.jpg",
+    "sha256": "740672f99284b6b6ad89793423812f57f88e66e1005384792bdb66714fa34584",
+    "media_type": "image/jpeg",
+    "kind": "figures",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-appb-D000003-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "5c9311defe3744f27f0c77a6f37e420913dac76b12db888850e8c3eea94e5952",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-appb-D000003-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "97031d3db2f9533726ad2e35e61c1dc52d7a906ce20a52ee0e4592cfc12d2b72",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-appb-D000003-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 734,
+        "sha256": "4ed88f3397d38e64cbad557de952e0ff99179f9152b7e8e033b7c4a845140849",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "number": "3",
+    "description": "平面図である。",
+    "representative": false
+  }
+]

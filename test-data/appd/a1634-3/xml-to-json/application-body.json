@@ -1,0 +1,360 @@
+{
+    "tag": "application-body",
+    "blocks": [
+        {
+            "tag": "description",
+            "jpTag": "【書類名】",
+            "text": "明細書",
+            "indentLevel": "0",
+            "blocks": [
+                {
+                    "tag": "invention-title",
+                    "jpTag": "【発明の名称】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "text",
+                            "text": "装置",
+                            "isLastSentence": true
+                        }
+                    ]
+                },
+                {
+                    "tag": "technical-field",
+                    "jpTag": "【技術分野】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "paragraph",
+                            "number": "0001",
+                            "jpTag": "【０００１】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "background-art",
+                    "jpTag": "【背景技術】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "paragraph",
+                            "number": "0002",
+                            "jpTag": "【０００２】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "paragraph",
+                            "number": "0003",
+                            "jpTag": "【０００３】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "summary-of-invention",
+                    "jpTag": "【発明の概要】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "tech-problem",
+                            "jpTag": "【発明が解決しようとする課題】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "paragraph",
+                                    "number": "0008",
+                                    "jpTag": "【０００８】",
+                                    "indentLevel": "1",
+                                    "blocks": [
+                                        {
+                                            "tag": "text",
+                                            "text": "　発明に関する説明",
+                                            "isLastSentence": true
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "tech-solution",
+                            "jpTag": "【課題を解決するための手段】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "paragraph",
+                                    "number": "0009",
+                                    "jpTag": "【０００９】",
+                                    "indentLevel": "1",
+                                    "blocks": [
+                                        {
+                                            "tag": "text",
+                                            "text": "　発明に関する説明",
+                                            "isLastSentence": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "paragraph",
+                                    "number": "0011",
+                                    "jpTag": "【００１１】",
+                                    "indentLevel": "1",
+                                    "blocks": [
+                                        {
+                                            "tag": "text",
+                                            "text": "　発明に関する説明",
+                                            "isLastSentence": true
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "description-of-drawings",
+                    "jpTag": "【図面の簡単な説明】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "paragraph",
+                            "number": "0016",
+                            "jpTag": "【００１６】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "figref",
+                                    "number": "1",
+                                    "jpTag": "【図１】",
+                                    "text": "平面図である。",
+                                    "indentLevel": "2"
+                                },
+                                {
+                                    "tag": "figref",
+                                    "number": "2",
+                                    "jpTag": "【図２】",
+                                    "text": "平面図である。",
+                                    "indentLevel": "2"
+                                },
+                                {
+                                    "tag": "figref",
+                                    "number": "3",
+                                    "jpTag": "【図３】",
+                                    "text": "平面図である。",
+                                    "indentLevel": "2"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "description-of-embodiments",
+                    "jpTag": "【発明を実施するための形態】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "paragraph",
+                            "number": "0024",
+                            "jpTag": "【００２４】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "paragraph",
+                            "number": "0025",
+                            "jpTag": "【００２５】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "paragraph",
+                            "number": "0026",
+                            "jpTag": "【００２６】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "paragraph",
+                            "number": "0039",
+                            "jpTag": "【００３９】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "第２の実施例",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　図１に示すように、",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "paragraph",
+                            "number": "0040",
+                            "jpTag": "【００４０】",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　発明に関する説明",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "claims",
+            "jpTag": "【書類名】",
+            "text": "特許請求の範囲",
+            "indentLevel": "0",
+            "blocks": [
+                {
+                    "tag": "claim",
+                    "jpTag": "【請求項１】",
+                    "number": "1",
+                    "indentLevel": "0",
+                    "isIndependent": true,
+                    "blocks": [
+                        {
+                            "tag": "claim-text",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　工作物の寸法を測定する",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　ことを特徴とする方法。",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "claim",
+                    "jpTag": "【請求項２】",
+                    "number": "2",
+                    "indentLevel": "0",
+                    "isIndependent": false,
+                    "blocks": [
+                        {
+                            "tag": "claim-text",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　請求項１に記載の方法において、",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　工作物に釘を打つ",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　ことを特徴とする方法。",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "claim",
+                    "jpTag": "【請求項３】",
+                    "number": "3",
+                    "indentLevel": "0",
+                    "isIndependent": true,
+                    "blocks": [
+                        {
+                            "tag": "claim-text",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　工作物を切断する",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　ことを特徴とする方法。",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "abstract",
+            "jpTag": "【書類名】",
+            "text": "要約書",
+            "indentLevel": "0",
+            "blocks": [
+                {
+                    "tag": "paragraph",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "text",
+                            "text": "【要約】工作物",
+                            "isLastSentence": true
+                        },
+                        {
+                            "tag": "text",
+                            "text": "【選択図】図１",
+                            "isLastSentence": true
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

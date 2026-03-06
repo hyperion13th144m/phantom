@@ -1,0 +1,67 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:30:08.042768"
+    },
+    "document": {
+        "doc_id": "20969471debdddcede3529f09a45224d960a7aaa161426b6ee93b3874e33e17a",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "20969471debdddcede3529f09a45224d960a7aaa161426b6ee93b3874e33e17a",
+                "byte_size": 4170,
+                "task": "A",
+                "kind": "AA",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "af22227b2cce8e35a269d666f19b9b913e82e2ccd7d9f894c5ace3ea9dee0657",
+                "byte_size": 3363,
+                "task": "A",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "JPOXMLDOC01-jpbibl.xml",
+            "original_filename": null,
+            "sha256": "c1cc17a2b687fd988bd231b213c144dc9cc47efeec96fdcf933c8609df0dc75f",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "05427eab81c9530ff1807c6ab339d5659b212d1d641d80d99e9b13dda9662696",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [],
+    "stats": {
+        "xml_count": 4,
+        "image_original_count": 0,
+        "image_derived_count": 0,
+        "ocr_result_count": 0
+    }
+}

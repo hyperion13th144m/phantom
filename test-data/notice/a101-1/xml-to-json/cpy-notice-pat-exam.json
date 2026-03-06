@@ -1,0 +1,171 @@
+{
+    "tag": "cpy-ntc-pt-e",
+    "text": "特許査定",
+    "blocks": [
+        {
+            "tag": "jp:cpy-notice-pat-exam",
+            "blocks": [
+                {
+                    "tag": "jp:dispatch-control-article",
+                    "blocks": [
+                        {
+                            "tag": "jp:file-reference-id",
+                            "jpTag": "整理番号",
+                            "indentLevel": "0",
+                            "text": "X8323−"
+                        },
+                        {
+                            "tag": "jp:dispatch-number",
+                            "jpTag": "発送番号",
+                            "indentLevel": "0",
+                            "text": "99３０1234"
+                        },
+                        {
+                            "tag": "jp:dispatch-date",
+                            "jpTag": "発送日",
+                            "indentLevel": "0",
+                            "text": "平成１８年　１月０８日"
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:notice-pat-exam",
+                    "blocks": [
+                        {
+                            "tag": "jp:decision-of-registration-a01",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "text": "特許査定"
+                                },
+                                {
+                                    "tag": "jp:bibliog-in-ntc-pat-exam",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:application-reference",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:document-id",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:doc-number",
+                                                            "jpTag": "特許出願の番号",
+                                                            "indentLevel": "0",
+                                                            "text": "2099114413",
+                                                            "convertedText": "特願2099-114413"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:drafting-date",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:date",
+                                                    "jpTag": "起案日",
+                                                    "indentLevel": "0",
+                                                    "text": "20110106",
+                                                    "convertedText": "平成23年01月06日"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:draft-person-group",
+                                            "jpTag": "特許庁審査官",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:name",
+                                                    "text": "審査官Ｄ"
+                                                },
+                                                {
+                                                    "tag": "jp:staff-code",
+                                                    "text": "9876",
+                                                    "convertedText": "９８７６"
+                                                },
+                                                {
+                                                    "tag": "jp:office-code",
+                                                    "text": "XX00",
+                                                    "convertedText": "ＸＸ００"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "invention-title",
+                                            "jpTag": "発明の名称",
+                                            "indentLevel": "0",
+                                            "text": "装置"
+                                        },
+                                        {
+                                            "tag": "jp:number-of-claim",
+                                            "jpTag": "請求項の数",
+                                            "indentLevel": "0",
+                                            "text": "2"
+                                        },
+                                        {
+                                            "tag": "jp:addressed-to-person-group",
+                                            "jpTag": "特許出願人",
+                                            "indentLevel": "0",
+                                            "text": "法人Ｌ（ほか1名）"
+                                        },
+                                        {
+                                            "tag": "jp:addressed-to-person-group",
+                                            "jpTag": "代理人",
+                                            "indentLevel": "0",
+                                            "text": "代理人Ｍ"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:conclusion-part-article",
+                                    "blocks": [
+                                        {
+                                            "tag": "paragraph",
+                                            "blocks": [
+                                                {
+                                                    "tag": "text",
+                                                    "text": "　この出願については、拒絶の理由を発見しないから、特許査定する。",
+                                                    "isLastSentence": true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:footer-article",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:certification-column-article",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:certification-column-group",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "上記はファイルに記録されている事項と相違ないことを認証する。",
+                                                            "isLastSentence": true
+                                                        },
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "認証日　平成25年01月06日　経済産業事務官　審査官Ｆ",
+                                                            "isLastSentence": true
+                                                        },
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "\n注意：この書面を受け取った日から３０日以内に特許料の納付が必要です。",
+                                                            "isLastSentence": true
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

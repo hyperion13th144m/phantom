@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:cpy-notice-pat-frm xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:dispatch-control-article>
+<jp:file-reference-id>X8323</jp:file-reference-id>
+<jp:dispatch-number>991234</jp:dispatch-number>
+<jp:dispatch-date><jp:date>平成２８年　７月１８日</jp:date></jp:dispatch-date>
+</jp:dispatch-control-article><jp:notice-pat-frm lang="ja" dtd-version="1.0">
+  <jp:notification-a242623 jp:kind-of-law="utility">
+    <jp:document-name>通知書</jp:document-name>
+    <jp:bibliog-in-ntc-pat-frm>
+      <jp:drafting-date>
+        <jp:date>20110622</jp:date>
+      </jp:drafting-date>
+      <jp:draft-person-group>
+        <jp:name>特　許　庁　長　官</jp:name>
+      </jp:draft-person-group>
+      <jp:addressed-to-person-group jp:kind-of-applicant="evaluation-requester" jp:kind-of-agent="representative">
+        <jp:addressbook>
+          <jp:name>代理人Ｍ</jp:name>
+        </jp:addressbook>
+      </jp:addressed-to-person-group>
+      <jp:application-reference appl-type="registration" jp:kind-of-law="utility">
+        <jp:document-id>
+          <jp:doc-number>2099114412</jp:doc-number>
+        </jp:document-id>
+      </jp:application-reference>
+    </jp:bibliog-in-ntc-pat-frm>
+    <jp:conclusion-part-article>
+      <p num="">　上記、実用新案登録出願又は実用新案登録について、実用新案技術評価請求に<br />
+基づき、実用新案技術評価書を作成したので通知します。</p>
+    </jp:conclusion-part-article>
+    <jp:footer-article>
+      <jp:certification-column-article>
+<jp:certification-column-group>
+<p num="">上記の書類は、ファイルに記録されている事項と相違ないことを認証する。</p>
+<jp:certification-group>
+<jp:date>20080812</jp:date>
+<jp:official-title>経済産業事務官</jp:official-title>
+<jp:name>審査官Ｒ</jp:name>
+</jp:certification-group>
+</jp:certification-column-group>
+</jp:certification-column-article>
+    </jp:footer-article>
+    <jp:image-group>
+      <img img-content="drawing" orientation="portrait" inline="no" he="247.6" wi="168.6" file="02212002996-jpntce-I000001.tif" img-format="tif" />
+      <img img-content="drawing" orientation="portrait" inline="no" he="247.6" wi="168.6" file="02212002996-jpntce-I000002.tif" img-format="tif" />
+      <img img-content="drawing" orientation="portrait" inline="no" he="247.6" wi="168.6" file="02212002996-jpntce-I000003.tif" img-format="tif" />
+      <img img-content="drawing" orientation="portrait" inline="no" he="247.6" wi="168.6" file="02212002996-jpntce-I000004.tif" img-format="tif" />
+    </jp:image-group>
+  </jp:notification-a242623>
+</jp:notice-pat-frm>
+</jp:cpy-notice-pat-frm>

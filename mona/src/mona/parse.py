@@ -1,10 +1,9 @@
 import tempfile
 from pathlib import Path
 
-from libefiling import Manifest, parse_archive
+from libefiling import Manifest
 from queen.translate_all import DoctypePathMap, translate_all
 
-from mona.config import image_params
 from mona.manifest_processor.image_info import image_info
 from mona.manifest_processor.metadata import metadata
 from mona.manifest_processor.ocr import ocr
@@ -13,29 +12,18 @@ from mona.manifest_processor.ocr import ocr
 from mona.merge_json import copy_items, merge_image_info, merge_jsons_as_array
 
 
-def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
-    ### Parse the archive into output_dir
-    ### other-images are only processed to ocr. other-images are used
-    ### for foreign language documents, which are not processed to full-text, but only ocr-ed.
-    ### other-images are also used for non patent documents.
-    parse_archive(
-        str(archive_path),
-        str(procedure_path),
-        str(output_dir),
-        image_params=image_params,
-        ocr_target=["other-images"],
-    )
+def parse(src_dir: Path, dst_dir: Path):
 
-    manifest_path = output_dir / "manifest.json"
+    manifest_path = src_dir / "manifest.json"
     manifest = Manifest.model_validate_json(manifest_path.open(encoding="utf-8").read())
 
     # rewrite path to manifest.json to output_dir
-    manifest.paths.root = str(output_dir)
+    manifest.paths.root = str(src_dir)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # final output jsons are stored in json_dir
-        json_dir = output_dir / "json"
-        json_dir.mkdir(exist_ok=True)
+        # json_dir = dst_dir / "json"
+        dst_dir.mkdir(exist_ok=True)
 
         # working directories
         work_dir = Path(temp_dir)
@@ -62,7 +50,7 @@ def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
         }
 
         # 1. translate all xml to json
-        xml_dir = output_dir / manifest.paths.xml_dir
+        xml_dir = src_dir / manifest.paths.xml_dir
         xml_files = [str(xml_dir / x.filename) for x in manifest.xml_files]
         translate_all(src_xml=xml_files, doctype_path_map=doctype_path_map)
 
@@ -81,22 +69,34 @@ def parse(archive_path: Path, procedure_path: Path, output_dir: Path):
                 metadata_path: ["docId"],
                 full_text_path: ["inventors", "applicants", "agents"],
             },
-            str(json_dir / "bibliography.json"),
+            str(dst_dir / "bibliography.json"),
         )
         copy_items(
             full_text_path,
             {
                 metadata_path: ["docId", "task", "kind"],
             },
-            str(json_dir / "full-text.json"),
+            str(dst_dir / "full-text.json"),
         )
         merge_jsons_as_array(
             [str(f) for f in doc_dir.glob("*.json")],
-            str(json_dir / "document.json"),
+            str(dst_dir / "document.json"),
         )
         merge_image_info(
             image_info_path,
             image_desc_path,
             ocr_path,
-            str(json_dir / "images-information.json"),
+            str(dst_dir / "images-information.json"),
         )
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Parse the archive and output json files."
+    )
+    parser.add_argument("src_dir", type=Path, help="Path to the src dir.")
+    parser.add_argument("dst_dir", type=Path, help="Path to the dst dir.")
+    args = parser.parse_args()
+    parse(src_dir=args.src_dir, dst_dir=args.dst_dir)

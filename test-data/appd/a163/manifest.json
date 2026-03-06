@@ -1,0 +1,223 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:31:05.436028"
+    },
+    "document": {
+        "doc_id": "7d01b2bb08369092ae29e5a2360fe0e8955e97897e84f84db21ac88818ecccc9",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "7d01b2bb08369092ae29e5a2360fe0e8955e97897e84f84db21ac88818ecccc9",
+                "byte_size": 1819703,
+                "task": "A",
+                "kind": "AA",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "e2c77bfc0eedf4ebc67b5d94f12d871b49abbcecd0eac743536b11f835a806bb",
+                "byte_size": 3932,
+                "task": "A",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "JPOXMLDOC01-jpbibl.xml",
+            "original_filename": null,
+            "sha256": "db47112f918bfd52525cd98066905fca85d89c9e8fdf2ea2ee842cc577293949",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "JPOXMLDOC01-appb.xml",
+            "original_filename": null,
+            "sha256": "e5aae81f5c7699b7e652ba6abce142541c14cfa47ef5a0dc78242bd98797d28f",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "3b0d18edcd441fe7fea41899605cf8982c4ce1459c7c57af3bf8c3c33269d369",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [
+        {
+            "filename": "JPOXMLDOC01-appb-D000002.tif",
+            "sha256": "c711d845f29898e0f429d9fc23904fc339b2bc1914d0179b8871ce02883fd914",
+            "media_type": "image/tiff",
+            "kind": "figures",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-appb-D000002-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "d2e167e7d1cd3c8f8d0f767ad8a404a1b743f4c8edcf8654bd2d7fc0bb35c455",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-appb-D000002-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "2ec559ec56764c7bab1af358e50b5b4eebe96b56b04c3840c075dc31874d9b4a",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-appb-D000002-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 862,
+                    "sha256": "9a6d9720a1b3db505c78d550e5050e97aa7d8ee465e0dd2f119527123804cbc4",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": null
+        },
+        {
+            "filename": "JPOXMLDOC01-appb-D000001.tif",
+            "sha256": "9c717f396174f130b23b60172bc5f22593fc203eefbeb79139b66a840f141973",
+            "media_type": "image/tiff",
+            "kind": "figures",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-appb-D000001-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "9130d43bfec1abcf5e239ea94ecfd3c8d5d57c5140fa5825db5748a701d15308",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-appb-D000001-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "2782bf8595719bc5a718349fffb057ca3127db6e7114cd774ecb2d8c38b50730",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-appb-D000001-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 920,
+                    "sha256": "b236317ce0685736cb4eaac87229f2097797f6e1bc889e628d8cfc8811714781",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": null
+        },
+        {
+            "filename": "JPOXMLDOC01-appb-D000003.jpg",
+            "sha256": "740672f99284b6b6ad89793423812f57f88e66e1005384792bdb66714fa34584",
+            "media_type": "image/jpeg",
+            "kind": "figures",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-appb-D000003-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "5c9311defe3744f27f0c77a6f37e420913dac76b12db888850e8c3eea94e5952",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-appb-D000003-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "97031d3db2f9533726ad2e35e61c1dc52d7a906ce20a52ee0e4592cfc12d2b72",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-appb-D000003-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 734,
+                    "sha256": "4ed88f3397d38e64cbad557de952e0ff99179f9152b7e8e033b7c4a845140849",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": null
+        }
+    ],
+    "stats": {
+        "xml_count": 6,
+        "image_original_count": 8,
+        "image_derived_count": 24,
+        "ocr_result_count": 8
+    }
+}

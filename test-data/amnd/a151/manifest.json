@@ -1,0 +1,124 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:30:58.623132"
+    },
+    "document": {
+        "doc_id": "275d48f8bbc98b8cb2a1cd565b81a79752a44d3575e840667d3afe3eabc268a1",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "275d48f8bbc98b8cb2a1cd565b81a79752a44d3575e840667d3afe3eabc268a1",
+                "byte_size": 99747,
+                "task": "A",
+                "kind": "AA",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "83ae0a27e3f75bb679ce8723bd171eca72f121a8658aa3fa98e9a7e17a228d45",
+                "byte_size": 3083,
+                "task": "A",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "JPOXMLDOC01-jpbibl.xml",
+            "original_filename": null,
+            "sha256": "6bb299fa21fd0b2f10a56b19f0ed4c25cf23a93fff0bf4fdd7b86d970a240af0",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "2f84ca72f733479f356f632e040d61e2c1d94a874966897fb1b1e4a7b9e328b6",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [
+        {
+            "filename": "JPOXMLDOC01-jpbibl-I000001.jpg",
+            "sha256": "9765daa04cdf0c43ab0682729a010b9509dce76da8c01ee5cf1eacd5d87f7573",
+            "media_type": "image/jpeg",
+            "kind": "other-images",
+            "derived": [
+                {
+                    "filename": "JPOXMLDOC01-jpbibl-I000001-thumbnail.webp",
+                    "media_type": "image/webp",
+                    "width": 300,
+                    "height": 300,
+                    "sha256": "4106c99a66c54fec186e013f660c96475ca9aa0be55b60c193b3e849b0b190dc",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "thumbnail"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpbibl-I000001-middle.webp",
+                    "media_type": "image/webp",
+                    "width": 600,
+                    "height": 600,
+                    "sha256": "42a874b2d851bcf4ef0bad9c9bf4bc90634c26108873eb6cef9792e8cf87e680",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "middle"
+                        }
+                    ]
+                },
+                {
+                    "filename": "JPOXMLDOC01-jpbibl-I000001-large.webp",
+                    "media_type": "image/webp",
+                    "width": 800,
+                    "height": 274,
+                    "sha256": "5c9acd2387e0575b2a5117895adcddd02cbcf6ab0d167892dbeea5c9047297d8",
+                    "attributes": [
+                        {
+                            "key": "sizeTag",
+                            "value": "large"
+                        }
+                    ]
+                }
+            ],
+            "ocr": {
+                "filename": "JPOXMLDOC01-jpbibl-I000001.txt",
+                "format": "text/plain",
+                "sha256": "7d29de12002b20626f2ab2ee481c8257eb1b5e611b8cbbc1f879dfb622faa241",
+                "lang": "jpn",
+                "engine": null,
+                "engine_version": null,
+                "confidence_avg": null
+            }
+        }
+    ],
+    "stats": {
+        "xml_count": 5,
+        "image_original_count": 1,
+        "image_derived_count": 3,
+        "ocr_result_count": 1
+    }
+}

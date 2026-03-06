@@ -1,0 +1,26 @@
+{
+  "inventionTitle": "装置",
+  "technicalField": "　発明に関する説明",
+  "backgroundArt": "　発明に関する説明 　発明に関する説明",
+  "techProblem": "　発明に関する説明",
+  "techSolution": "　発明に関する説明 　発明に関する説明",
+  "descriptionOfEmbodiments": "　発明に関する説明 　発明に関する説明 　発明に関する説明 第２の実施例 　図１に示すように、 　発明に関する説明",
+  "independentClaims": [
+    "　工作物の寸法を測定する 　ことを特徴とする方法。",
+    "　工作物を切断する 　ことを特徴とする方法。"
+  ],
+  "dependentClaims": [
+    "　請求項１に記載の方法において、 　工作物に釘を打つ 　ことを特徴とする方法。"
+  ],
+  "abstract": "【要約】工作物 【選択図】図１",
+  "applicants": [
+    "法人ＸＸ"
+  ],
+  "priorityClaims": [],
+  "agents": [
+    "代理人Ｘ"
+  ],
+  "docId": "a6efb3b71fc1c393b28f23c1570b8f8eac083214b99d4cd34f7e341bafb11ea5",
+  "task": "A",
+  "kind": "AA"
+}

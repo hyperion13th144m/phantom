@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:cpy-notice-pat-exam-rn xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:dispatch-control-article>
+<jp:file-reference-id>X832</jp:file-reference-id>
+<jp:dispatch-number>991234</jp:dispatch-number>
+<jp:dispatch-date><jp:date>令和　２年　９月０８日</jp:date></jp:dispatch-date>
+</jp:dispatch-control-article><jp:notice-pat-exam-rn lang="ja" dtd-version="1.0">
+<jp:examiner-notification-a30-rn jp:kind-of-law="patent">
+<jp:document-name>非特許文献送付書</jp:document-name>
+<jp:bibliog-in-ntc-pat-exam-rn>
+<jp:application-reference appl-type="application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114417</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+<jp:drafting-date>
+<jp:date>20260226</jp:date>
+</jp:drafting-date>
+<jp:draft-person-group>
+<jp:name>作成者Ｉ</jp:name>
+<jp:staff-code>9876</jp:staff-code>
+<jp:office-code>XX00</jp:office-code>
+</jp:draft-person-group>
+<invention-title>装置</invention-title>
+</jp:bibliog-in-ntc-pat-exam-rn>
+<jp:image-group>
+<img img-content="drawing" orientation="portrait" inline="no" he="215.5" wi="146.1" img-format="tif" file="06126096708-jpntce-I000001.tif" />
+<img img-content="drawing" orientation="portrait" inline="no" he="215.5" wi="146.1" img-format="tif" file="06126096708-jpntce-I000002.tif" />
+<img img-content="drawing" orientation="portrait" inline="no" he="215.5" wi="146.1" img-format="tif" file="06126096708-jpntce-I000003.tif" />
+<img img-content="drawing" orientation="portrait" inline="no" he="215.5" wi="146.1" img-format="tif" file="06126096708-jpntce-I000004.tif" />
+</jp:image-group>
+</jp:examiner-notification-a30-rn>
+</jp:notice-pat-exam-rn>
+</jp:cpy-notice-pat-exam-rn>

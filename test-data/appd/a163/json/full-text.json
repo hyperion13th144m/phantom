@@ -1,0 +1,37 @@
+{
+  "inventionTitle": "装置",
+  "technicalField": "　発明に関する説明",
+  "backgroundArt": "　発明に関する説明 特開２０３８−１４０６０６号公報",
+  "techProblem": "　発明に関する説明 　発明に関する説明",
+  "techSolution": "　発明に関する説明",
+  "advantageousEffects": "　発明に関する説明",
+  "descriptionOfEmbodiments": "　発明に関する説明 　発明に関する説明",
+  "industrialApplicability": "　発明に関する説明",
+  "independentClaims": [
+    "　なんとか装置であって、 　センサーが形成されている 　ことを特徴とする構造体。"
+  ],
+  "dependentClaims": [
+    "　請求項１に記載の構造体において、 　部材が形成されている 　ことを特徴とする構造体。",
+    "　請求項２に記載の構造体において、 　前記センサーは、 　検出センサーである 　ことを特徴とする構造体。"
+  ],
+  "abstract": "【要約】 【課題】特性を把握する。 【解決手段】 　構造体は形成されている。 【選択図】図１",
+  "inventors": [
+    "発明者Ａ植",
+    "発明者Ａ新",
+    "発明者Ａ古"
+  ],
+  "applicants": [
+    "法人ＸＺ"
+  ],
+  "specialMentionMatterArticle": [
+    "特許法第３０条第２項の規定の適用を受けようとする特許出願"
+  ],
+  "priorityClaims": [],
+  "agents": [
+    "代理人Ｘ",
+    "代理人Ｙ"
+  ],
+  "docId": "7d01b2bb08369092ae29e5a2360fe0e8955e97897e84f84db21ac88818ecccc9",
+  "task": "A",
+  "kind": "AA"
+}

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:procedure xmlns:jp="http://www.jpo.go.jp">
+  <jp:document-type jp:unconfirmed-state="0">I12010</jp:document-type>
+  <jp:computer-name>P019</jp:computer-name>
+  <jp:user-name>jpo</jp:user-name>
+  <jp:distinction-number>9990136</jp:distinction-number>
+  <jp:relation-file>
+    <jp:application-receipt-list>FILE_ARE.JWX</jp:application-receipt-list>
+  </jp:relation-file>
+  <jp:procedure-infomation>
+    <jp:result>
+      <jp:software-message>正常</jp:software-message>
+      <jp:communication-result>接受</jp:communication-result>
+      <jp:fd-and-cdr />
+    </jp:result>
+    <jp:law>1</jp:law>
+    <jp:document-name jp:document-code="A15211">特許協力条約第３４条補正の写し提出書</jp:document-name>
+    <jp:file-reference-id>P391</jp:file-reference-id>
+    <jp:invention-title />
+    <jp:application-reference>
+      <jp:registration-number />
+      <jp:application-number />
+      <jp:application-date />
+      <jp:international-application-number>XX2099750710</jp:international-application-number>
+      <jp:international-application-date />
+      <jp:reference-id />
+      <jp:appeal-reference-number />
+      <jp:appeal-reference-date />
+      <jp:number-of-annexation />
+    </jp:application-reference>
+    <jp:submission-date>
+      <jp:date>20100414</jp:date>
+      <jp:time>170909</jp:time>
+    </jp:submission-date>
+    <jp:page />
+    <jp:image-total>9</jp:image-total>
+    <jp:size>396932</jp:size>
+    <jp:receipt-number>94051128307</jp:receipt-number>
+    <jp:wad-message-digest-compare>0</jp:wad-message-digest-compare>
+    <jp:input-date>
+      <jp:date>20100414</jp:date>
+      <jp:time>131602314</jp:time>
+    </jp:input-date>
+    <jp:html-file-name>FILE.HTM</jp:html-file-name>
+    <jp:applicant-article jp:total="2">
+      <jp:applicant jp:division="01">
+        <jp:identification-number>9911222</jp:identification-number>
+        <jp:name>会社Ｘエ</jp:name>
+      </jp:applicant>
+      <jp:applicant jp:division="03">
+        <jp:identification-number>12301</jp:identification-number>
+        <jp:name>代理人Ｗ</jp:name>
+      </jp:applicant>
+    </jp:applicant-article>
+  </jp:procedure-infomation>
+</jp:procedure>

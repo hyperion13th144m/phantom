@@ -9,6 +9,7 @@ on:
       - 'env.sample'
       - 'LICENSE.md'
       - 'README.md'
+      - 'docker-compose.yml'
       - '.github/workflows/update-release.yml'
   pull_request:
     branches:
@@ -18,6 +19,7 @@ on:
       - 'env.sample'
       - 'LICENSE.md'
       - 'README.md'
+      - 'docker-compose.yml'
       - '.github/workflows/update-release.yml'
   workflow_dispatch:
 
@@ -43,7 +45,7 @@ jobs:
 
       - name: Copy files to release repository
         run: |
-          cp -R LICENSE.md README.md env.sample scripts/ ./release-repo/
+          cp -R LICENSE.md README.md env.sample docker-compose.yml scripts/ ./release-repo/
 
       - name: Commit and push changes to release repository
         run: |

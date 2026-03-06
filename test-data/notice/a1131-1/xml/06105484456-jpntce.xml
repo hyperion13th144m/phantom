@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:cpy-notice-pat-exam xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:dispatch-control-article>
+<jp:file-reference-id>X8323</jp:file-reference-id>
+<jp:dispatch-number>991234</jp:dispatch-number>
+<jp:dispatch-date><jp:date>平成８年　８月２８日</jp:date></jp:dispatch-date>
+</jp:dispatch-control-article><jp:notice-pat-exam lang="ja" dtd-version="1.0">
+<jp:notice-of-rejection-a131 jp:kind-of-law="patent">
+<jp:document-name>拒絶理由通知書</jp:document-name>
+<jp:bibliog-in-ntc-pat-exam>
+<jp:application-reference appl-type="application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114414</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+<jp:drafting-date>
+<jp:date>20201205</jp:date>
+</jp:drafting-date>
+<jp:draft-person-group>
+<jp:name>審査官Ｗ</jp:name>
+<jp:staff-code>9876</jp:staff-code>
+<jp:office-code>XX00</jp:office-code>
+</jp:draft-person-group>
+<jp:addressed-to-person-group jp:kind-of-person="applicant" jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｍ</jp:name>
+</jp:addressbook>
+</jp:addressed-to-person-group>
+<jp:article-group>
+<jp:article>第２９条第２項</jp:article>
+<jp:article>第３６条</jp:article>
+</jp:article-group>
+</jp:bibliog-in-ntc-pat-exam>
+<jp:reconsideration-before-appeal jp:true-or-false="false" />
+<jp:conclusion-part-article>
+<p num="">　この出願は、次の理由によって拒絶をすべきものである。これについて意見があれば、この通知書の発送の日から６０日以内に意見書を提出して下さい。<br />
+<br />
+　　　　　　　　　　　　　　　　理　由<br />
+</p>
+</jp:conclusion-part-article>
+<jp:drafting-body>
+<p num="">
+理由１<br />
+　この出願は、特許請求の範囲の記載が下記の点で、特許法第３６条第６項第２号に規定する要件を満たしていない。<br />
+<br />
+　　　　　　　　　　　　　　　　　記<br />
+　請求項８は技術的意義が不明である。<br />
+　よって、請求項８に係る発明は明確でない。<br />
+<br />
+<br />
+理由２<br />
+　この出願の下記の請求項に係る発明は、その出願前日本国内又は外国において頒布された下記の刊行物に記載された発明又は電気通信回線を通じて公衆に利用可能となった発明に基いて、その出願前にその発明の属する技術の分野における通常の知識を有する者が容易に発明をすることができたものであるから、特許法第２９条第２項の規定により特許を受けることができない。<br />
+<br />
+　　　　　記　　　（引用文献等については引用文献等一覧参照）<br />
+・請求項１、８<br />
+・引用文献１<br />
+（１）引用文献１には、）。<br />
+　引用文献１に記載の発明におけると認められる。<br />
+　したがって、請求項１に係る発明は、引用文献１に記載の発明から当業者が容易に想到し得るものである。<br />
+・請求項２、５、６<br />
+・引用文献１及び２<br />
+（６）請求項２及び５に関し、引用文献２には、動作を実行する点が記載されている<br />
+　したがって、引用文献１に係る発明における当業者が容易に想到し得ることである。<br />
+<br />
+　　　　　　　　　　　引　用　文　献　等　一　覧<br />
+１.特開平３−４８８６号公報<br />
+２.特開平１５−１８７５２号公報<br />
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−　　　　　　　　　　　先行技術文献調査結果の記録<br />
+<br />
+・調査した分野　　ＩＰＣ第７版　Ｃ４１Ｊ　３／１<br />
+・先行技術文献<br />
+１．特開平１−３１５号公報<br />
+２．特開平２０−４４６４８号公報<br />
+３．特開平３２−１６９４８９号公報<br />
+<br />
+　この先行技術文献調査結果の記録は、拒絶理由を構成するものではない。<br />
+<br />
+　この拒絶理由通知の内容に関するお問い合わせ、または面接のご希望がございましたら下記までご連絡下さい。<br />
+特許審査第一部　<br />
+ＴＥＬ．０３（３５８１）１１０１　内線３２５９<br />
+ＦＡＸ．０３（３５８０）６９０２<br />
+</p>
+</jp:drafting-body>
+<jp:footer-article>
+</jp:footer-article>
+</jp:notice-of-rejection-a131>
+</jp:notice-pat-exam>
+</jp:cpy-notice-pat-exam>

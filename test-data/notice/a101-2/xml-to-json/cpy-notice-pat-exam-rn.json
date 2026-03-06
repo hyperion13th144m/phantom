@@ -1,0 +1,300 @@
+{
+    "tag": "cpy-ntc-pt-e-rn",
+    "text": "特許査定 参考情報",
+    "blocks": [
+        {
+            "tag": "jp:cpy-notice-pat-exam-rn",
+            "blocks": [
+                {
+                    "tag": "jp:dispatch-control-article",
+                    "blocks": [
+                        {
+                            "tag": "jp:file-reference-id",
+                            "jpTag": "整理番号",
+                            "indentLevel": "0",
+                            "text": "X8323２"
+                        },
+                        {
+                            "tag": "jp:dispatch-number",
+                            "jpTag": "発送番号",
+                            "indentLevel": "0",
+                            "text": "99２６1234"
+                        },
+                        {
+                            "tag": "jp:dispatch-date",
+                            "jpTag": "発送日",
+                            "indentLevel": "0",
+                            "text": "令和　７年　５月０８日"
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:notice-pat-exam-rn",
+                    "blocks": [
+                        {
+                            "tag": "jp:decision-of-registration-a01-rn",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "text": "特許査定"
+                                },
+                                {
+                                    "tag": "jp:bibliog-in-ntc-pat-exam-rn",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:application-reference",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:document-id",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:doc-number",
+                                                            "jpTag": "特許出願の番号",
+                                                            "indentLevel": "0",
+                                                            "text": "2099114419",
+                                                            "convertedText": "特願2099-114419"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:drafting-date",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:date",
+                                                    "jpTag": "起案日",
+                                                    "indentLevel": "0",
+                                                    "text": "20220425",
+                                                    "convertedText": "令和4年04月25日"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:draft-person-group",
+                                            "jpTag": "特許庁審査官",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:name",
+                                                    "text": "審査官Ｑ"
+                                                },
+                                                {
+                                                    "tag": "jp:staff-code",
+                                                    "text": "9876",
+                                                    "convertedText": "９８７６"
+                                                },
+                                                {
+                                                    "tag": "jp:office-code",
+                                                    "text": "XX00",
+                                                    "convertedText": "ＸＸ００"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "invention-title",
+                                            "jpTag": "発明の名称",
+                                            "indentLevel": "0",
+                                            "text": "装置"
+                                        },
+                                        {
+                                            "tag": "jp:number-of-claim",
+                                            "jpTag": "請求項の数",
+                                            "indentLevel": "0",
+                                            "text": "6"
+                                        },
+                                        {
+                                            "sequence": "1",
+                                            "tag": "jp:addressed-to-person-group",
+                                            "jpTag": "特許出願人",
+                                            "indentLevel": "0",
+                                            "text": "法人Ｚ"
+                                        },
+                                        {
+                                            "sequence": "2",
+                                            "tag": "jp:addressed-to-person-group",
+                                            "jpTag": "代理人",
+                                            "indentLevel": "0",
+                                            "text": "代理人Ｍ（ほか1名）"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:conclusion-part-article",
+                                    "blocks": [
+                                        {
+                                            "tag": "paragraph",
+                                            "blocks": [
+                                                {
+                                                    "tag": "text",
+                                                    "text": "　この出願については、拒絶の理由を発見しないから、特許査定をします。",
+                                                    "isLastSentence": true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:footer-article",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:certification-column-article",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:certification-column-group",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "上記はファイルに記録されている事項と相違ないことを認証する。",
+                                                            "isLastSentence": true
+                                                        },
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "認証日　令和12年04月25日　経済産業事務官　発明者Ｃ",
+                                                            "isLastSentence": true
+                                                        },
+                                                        {
+                                                            "tag": "text",
+                                                            "text": "\n注意：この書面を受け取った日から３０日以内に特許料の納付が必要です。",
+                                                            "isLastSentence": true
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:final-decision-group-rn",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:kind-of-application",
+                                            "jpTag": "",
+                                            "indentLevel": "0",
+                                            "text": "（通常）"
+                                        },
+                                        {
+                                            "tag": "jp:exist-of-reference-doc",
+                                            "jpTag": "・参考文献",
+                                            "indentLevel": "0",
+                                            "text": "有"
+                                        },
+                                        {
+                                            "tag": "jp:patent-law-section30",
+                                            "jpTag": "・特許法第３０条適用",
+                                            "indentLevel": "0",
+                                            "text": "無"
+                                        },
+                                        {
+                                            "tag": "jp:change-flag-invention-title",
+                                            "jpTag": "・発明の名称の変更",
+                                            "indentLevel": "0",
+                                            "text": "無"
+                                        },
+                                        {
+                                            "tag": "jp:deposit-article",
+                                            "jpTag": "・菌寄託",
+                                            "blocks": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "jp:final-decision-memo-rn",
+                                    "blocks": [
+                                        {
+                                            "tag": "jp:document-name",
+                                            "text": "参考情報"
+                                        },
+                                        {
+                                            "tag": "jp:final-decision-bibliog-rn",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:application-reference",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:document-id",
+                                                            "blocks": [
+                                                                {
+                                                                    "tag": "jp:doc-number",
+                                                                    "jpTag": "特許出願の番号",
+                                                                    "indentLevel": "0",
+                                                                    "text": "2099114419",
+                                                                    "convertedText": "特願2099-114419"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "jp:final-decision-body-rn",
+                                            "blocks": [
+                                                {
+                                                    "tag": "jp:fi-article",
+                                                    "jpTag": "・ＦＩ",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:fi",
+                                                            "text": "Ａ０１Ｍ  ２９/３０             ,"
+                                                        },
+                                                        {
+                                                            "tag": "jp:fi",
+                                                            "text": "Ｆ２８Ｆ  １９/００     ５０１Ｂ    ,"
+                                                        },
+                                                        {
+                                                            "tag": "jp:fi",
+                                                            "text": "Ｆ２８Ｂ   １/００             ,"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "tag": "jp:field-of-search-article",
+                                                    "jpTag": "・調査した分野（ＩＰＣ，ＤＢ名）",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:field-of-search",
+                                                            "text": "Ａ０１Ｍ　　　１／００　−　９９／００"
+                                                        },
+                                                        {
+                                                            "tag": "jp:field-of-search",
+                                                            "text": "Ｆ２８Ｆ　　１９／００"
+                                                        },
+                                                        {
+                                                            "tag": "jp:field-of-search",
+                                                            "text": "Ｆ２８Ｂ　　　１／００"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "tag": "jp:patent-reference-article",
+                                                    "jpTag": "・参考特許文献",
+                                                    "blocks": [
+                                                        {
+                                                            "tag": "jp:patent-reference-group",
+                                                            "text": "特開２０９９−７４０３９０ （ＪＰ，Ａ）　　　",
+                                                            "convertedText": "特開２０９９−７４０３９０　（ＪＰ，Ａ）　　　"
+                                                        },
+                                                        {
+                                                            "tag": "jp:patent-reference-group",
+                                                            "text": "特開平０９−１４３４０２ （ＪＰ，Ａ）　　　",
+                                                            "convertedText": "特開平０９−１４３４０２　（ＪＰ，Ａ）　　　"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "tag": "jp:reference-books-article",
+                                                    "jpTag": "・参考図書雑誌",
+                                                    "blocks": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
