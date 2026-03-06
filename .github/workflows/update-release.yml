@@ -29,8 +29,7 @@ jobs:
   sync-release-repo:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
