@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ApiResponse, ApiResponseError, ApiResponseSuccess } from "@/app/interfaces/search-results";
 import { clamp } from "@/lib/helpers";
@@ -168,7 +168,7 @@ function ChipEditor(props: {
     );
 }
 
-export default function MetadataOnSearchGrid() {
+function MetadataOnSearchGrid() {
     const router = useRouter();
     const sp = useSearchParams();
     const queryFromUrl = parseSearchQuery(sp);
@@ -600,5 +600,13 @@ export default function MetadataOnSearchGrid() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function MetadataPage() {
+    return (
+        <Suspense fallback={<div className="mx-auto max-w-7xl p-6">読み込み中...</div>}>
+            <MetadataOnSearchGrid />
+        </Suspense>
     );
 }
