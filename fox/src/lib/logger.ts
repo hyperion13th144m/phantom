@@ -1,7 +1,6 @@
 import fs from 'fs';
-import path from 'path';
 import pino from 'pino';
-import { createStream } from 'pino-rotating-file-stream';
+import createStream from 'pino-rotating-file-stream';
 
 const logDir = '/var/log/fox';
 
@@ -11,7 +10,8 @@ if (!fs.existsSync(logDir)) {
 }
 
 const rotatingStream = createStream({
-    filename: path.join(logDir, 'fox.log'),
+    filename: 'fox.log',
+    path: logDir,
     size: '1M', // 1mb でローテーション
     maxFiles: 10, // 10世代保持
 });
