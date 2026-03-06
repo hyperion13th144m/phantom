@@ -1,0 +1,127 @@
+[
+  {
+    "tag": "pat-etc",
+    "text": "早期審査に関する事情説明補充書",
+    "blocks": [
+      {
+        "tag": "jp:etcetera-a872",
+        "blocks": [
+          {
+            "tag": "jp:document-code",
+            "text": "A1872",
+            "jpTag": "【書類名】",
+            "indentLevel": "0",
+            "convertedText": "早期審査に関する事情説明補充書"
+          },
+          {
+            "tag": "jp:file-reference-id",
+            "jpTag": "【整理番号】",
+            "indentLevel": "0",
+            "text": "P427"
+          },
+          {
+            "tag": "jp:addressed-to-person",
+            "jpTag": "【あて先】",
+            "indentLevel": "0",
+            "text": "特許庁長官　殿"
+          },
+          {
+            "tag": "jp:indication-of-case-article",
+            "jpTag": "【事件の表示】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "jp:doc-number",
+                "jpTag": "【出願番号】",
+                "indentLevel": "2",
+                "text": "特願2099-114410"
+              }
+            ]
+          },
+          {
+            "tag": "jp:applicants",
+            "blocks": [
+              {
+                "tag": "jp:applicant",
+                "indentLevel": "0",
+                "jpTag": "【提出者】",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814114"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "法人ＸＸ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:agents",
+            "blocks": [
+              {
+                "tag": "jp:agent",
+                "jpTag": "【代理人】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814194"
+                  },
+                  {
+                    "tag": "jp:attorney",
+                    "jpTag": "【弁理士】",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "代理人Ｘ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:opinion-contents-article",
+            "jpTag": "【補充の内容】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "paragraph",
+                "number": "",
+                "indentLevel": "1",
+                "blocks": [
+                  {
+                    "tag": "text",
+                    "text": "　第欄に記載された意見についての釈明",
+                    "isLastSentence": true
+                  },
+                  {
+                    "tag": "text",
+                    "text": "　第欄には、この出願の発明の詳細な説明は、当業者が請求項１に係る発明を実施することができる程度に明確かつ十分に記載されたものではない、との意見が記載されています。",
+                    "isLastSentence": true
+                  },
+                  {
+                    "tag": "text",
+                    "text": "　よって、この出願の発明の詳細な説明は、当業者が請求項１に係る発明を実施することができる程度に明確かつ十分に記載されたものです。",
+                    "isLastSentence": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

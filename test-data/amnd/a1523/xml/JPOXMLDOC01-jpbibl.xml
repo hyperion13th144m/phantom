@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:pat-amnd xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:amendment-a523 jp:kind-of-law="patent">
+<jp:document-code>A1523</jp:document-code>
+<jp:file-reference-id>P402</jp:file-reference-id>
+<jp:addressed-to-person>特許庁長官殿</jp:addressed-to-person>
+<jp:indication-of-case-article>
+<jp:application-reference appl-type="international-application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114413</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+</jp:indication-of-case-article>
+<jp:applicants>
+<jp:applicant>
+<jp:addressbook>
+<jp:name>法人ＸＸ</jp:name>
+<jp:registered-number>4814114</jp:registered-number>
+</jp:addressbook>
+</jp:applicant>
+</jp:applicants>
+<jp:agents>
+<jp:agent jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｘ</jp:name>
+<jp:registered-number>4814194</jp:registered-number>
+</jp:addressbook>
+<jp:attorney />
+</jp:agent>
+</jp:agents>
+<jp:amendment-article>
+<jp:amendment-group jp:serial-number="1">
+<jp:document-code>A16330</jp:document-code>
+<jp:item-of-amendment>００５６</jp:item-of-amendment>
+<jp:way-of-amendment>3</jp:way-of-amendment>
+<jp:contents-of-amendment jp:kind-of-law="patent" jp:kind-of-document="description">
+<p num="0056">
+　　１　装置<br />
+　　２　台<br />
+</p>
+</jp:contents-of-amendment>
+</jp:amendment-group>
+<jp:amendment-group jp:serial-number="2">
+<jp:document-code>A16331</jp:document-code>
+<jp:item-of-amendment>図１</jp:item-of-amendment>
+<jp:way-of-amendment>3</jp:way-of-amendment>
+<jp:contents-of-amendment jp:kind-of-law="patent" jp:kind-of-document="drawings">
+<figure num="1">
+<img he="128.3" wi="170.0" file="JPOXMLDOC01-jpbibl-I000001.tif" img-format="tif" />
+</figure>
+</jp:contents-of-amendment>
+</jp:amendment-group>
+</jp:amendment-article>
+</jp:amendment-a523>
+</jp:pat-amnd>

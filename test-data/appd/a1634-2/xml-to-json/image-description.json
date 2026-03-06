@@ -1,0 +1,26 @@
+[
+    {
+        "number": "1-1",
+        "file": "JPOXMLDOC01-appb-D000003.tif",
+        "description": "",
+        "representative": false
+    },
+    {
+        "number": "1-2",
+        "file": "JPOXMLDOC01-appb-D000004.tif",
+        "description": "",
+        "representative": false
+    },
+    {
+        "number": "1-3",
+        "file": "JPOXMLDOC01-appb-D000005.tif",
+        "description": "",
+        "representative": false
+    },
+    {
+        "number": "2",
+        "file": "JPOXMLDOC01-appb-D000006.jpg",
+        "description": "平面図である。",
+        "representative": false
+    }
+]

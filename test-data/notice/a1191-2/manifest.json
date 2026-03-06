@@ -1,0 +1,78 @@
+{
+    "manifest_version": "1.0.0",
+    "generator": {
+        "name": "libefiling",
+        "version": "0.1.44",
+        "created_at": "2026-03-07T11:30:27.914859"
+    },
+    "document": {
+        "doc_id": "21f71afdb214e6dfa5b60d3cbed997ba5d3b0dd7cfbb7d34824a067870225626",
+        "sources": [
+            {
+                "filename": "20991130.JWX",
+                "sha256": "21f71afdb214e6dfa5b60d3cbed997ba5d3b0dd7cfbb7d34824a067870225626",
+                "byte_size": 6174,
+                "task": "N",
+                "kind": "NF",
+                "extension": ".JWX"
+            },
+            {
+                "filename": "20991130.XML",
+                "sha256": "082b3966491c4536394f5763c1eebeb53af2b591406334b948d3afc8910b0dce",
+                "byte_size": 3031,
+                "task": "N",
+                "kind": "FM",
+                "extension": ".XML"
+            }
+        ]
+    },
+    "paths": {
+        "root": ".",
+        "raw_dir": "raw",
+        "xml_dir": "xml",
+        "images_dir": "images",
+        "ocr_dir": "ocr"
+    },
+    "xml_files": [
+        {
+            "filename": "06111393682-jpmngt.xml",
+            "original_filename": null,
+            "sha256": "a86285202767992353e785f06c72191da9090e7aefcd0fb6e1864e99c4e0d4a6",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "06111393682-jpntce.xml",
+            "original_filename": null,
+            "sha256": "85adefb79869ede465efedd94445378d026719348bba453e7ede6aaaaace2418",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        },
+        {
+            "filename": "procedure.xml",
+            "original_filename": null,
+            "sha256": "fc173da6e4704fd6225ccc38f83c4c03330a9677477a641c58626c86ed2906b3",
+            "encoding": {
+                "detected": "shift_jis",
+                "normalized_to": "UTF-8",
+                "had_bom": false
+            },
+            "media_type": "application/xml"
+        }
+    ],
+    "images": [],
+    "stats": {
+        "xml_count": 6,
+        "image_original_count": 0,
+        "image_derived_count": 0,
+        "ocr_result_count": 0
+    }
+}

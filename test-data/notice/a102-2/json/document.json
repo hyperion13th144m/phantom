@@ -1,0 +1,193 @@
+[
+  {
+    "tag": "cpy-ntc-pt-e-rn",
+    "text": "拒絶査定",
+    "blocks": [
+      {
+        "tag": "jp:cpy-notice-pat-exam-rn",
+        "blocks": [
+          {
+            "tag": "jp:dispatch-control-article",
+            "blocks": [
+              {
+                "tag": "jp:file-reference-id",
+                "jpTag": "整理番号",
+                "indentLevel": "0",
+                "text": "X8323"
+              },
+              {
+                "tag": "jp:dispatch-number",
+                "jpTag": "発送番号",
+                "indentLevel": "0",
+                "text": "991234"
+              },
+              {
+                "tag": "jp:dispatch-date",
+                "jpTag": "発送日",
+                "indentLevel": "0",
+                "text": "令和　３年０９月０１日"
+              }
+            ]
+          },
+          {
+            "tag": "jp:notice-pat-exam-rn",
+            "blocks": [
+              {
+                "tag": "jp:decision-of-rejection-a02-rn",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "text": "拒絶査定"
+                  },
+                  {
+                    "tag": "jp:bibliog-in-ntc-pat-exam-rn",
+                    "blocks": [
+                      {
+                        "tag": "jp:application-reference",
+                        "blocks": [
+                          {
+                            "tag": "jp:document-id",
+                            "blocks": [
+                              {
+                                "tag": "jp:doc-number",
+                                "jpTag": "特許出願の番号",
+                                "indentLevel": "0",
+                                "text": "2099114414",
+                                "convertedText": "特願2099-114414"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:drafting-date",
+                        "blocks": [
+                          {
+                            "tag": "jp:date",
+                            "jpTag": "起案日",
+                            "indentLevel": "0",
+                            "text": "20151021",
+                            "convertedText": "平成27年10月21日"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:draft-person-group",
+                        "jpTag": "特許庁審査官",
+                        "blocks": [
+                          {
+                            "tag": "jp:name",
+                            "text": "審査官Ａ"
+                          },
+                          {
+                            "tag": "jp:staff-code",
+                            "text": "9876",
+                            "convertedText": "９８７６"
+                          },
+                          {
+                            "tag": "jp:office-code",
+                            "text": "XX00",
+                            "convertedText": "ＸＸ００"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "invention-title",
+                        "jpTag": "発明の名称",
+                        "indentLevel": "0",
+                        "text": "装置"
+                      },
+                      {
+                        "sequence": "1",
+                        "tag": "jp:addressed-to-person-group",
+                        "jpTag": "特許出願人",
+                        "indentLevel": "0",
+                        "text": "法人Ｗ"
+                      },
+                      {
+                        "sequence": "2",
+                        "tag": "jp:addressed-to-person-group",
+                        "jpTag": "代理人",
+                        "indentLevel": "0",
+                        "text": "代理人Ｍ（ほか1名）"
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:conclusion-part-article",
+                    "blocks": [
+                      {
+                        "tag": "paragraph",
+                        "blocks": []
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:drafting-body",
+                    "blocks": [
+                      {
+                        "tag": "paragraph",
+                        "blocks": [
+                          {
+                            "tag": "text",
+                            "text": "　この出願については、令和　３年　５月０９日付け拒絶理由通知書に記載した理由によって、拒絶をすべきものです。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "────────────────────────────────────",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　この査定に不服があるときは、この査定の謄本の送達があった日から３月以内（在外者にあっては、４月以内）に、特許庁長官に対して、拒絶査定不服審判を請求することができます（参照条文：特許法第１２１条第１項）。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "＜行政事件訴訟法第４６条第２項に基づく教示＞",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　この査定に対しては取消訴訟を提起することはできません。この査定についての審判請求に対する審決に対してのみ取消訴訟を提起することができます（参照条文：特許法第１７８条第６項）。",
+                            "isLastSentence": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:footer-article",
+                    "blocks": [
+                      {
+                        "tag": "jp:certification-column-article",
+                        "blocks": [
+                          {
+                            "tag": "jp:certification-column-group",
+                            "blocks": [
+                              {
+                                "tag": "text",
+                                "text": "上記はファイルに記録されている事項と相違ないことを認証する。",
+                                "isLastSentence": true
+                              },
+                              {
+                                "tag": "text",
+                                "text": "認証日　令和10年10月31日　経済産業事務官　審査官Ｇ",
+                                "isLastSentence": true
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

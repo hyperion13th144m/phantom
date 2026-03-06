@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:cpy-notice-pat-exam-rn xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:dispatch-control-article>
+<jp:file-reference-id>X8323９</jp:file-reference-id>
+<jp:dispatch-number>99９８1234</jp:dispatch-number>
+<jp:dispatch-date><jp:date>令和　６年　７月０８日</jp:date></jp:dispatch-date>
+</jp:dispatch-control-article><jp:notice-pat-exam-rn lang="ja" dtd-version="1.0">
+<jp:notice-of-rejection-a131-rn jp:kind-of-law="patent">
+<jp:document-name>拒絶理由通知書</jp:document-name>
+<jp:bibliog-in-ntc-pat-exam-rn>
+<jp:application-reference appl-type="application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114414</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+<jp:drafting-date>
+<jp:date>20290724</jp:date>
+</jp:drafting-date>
+<jp:draft-person-group>
+<jp:name>審査官Ｅ</jp:name>
+<jp:staff-code>9876</jp:staff-code>
+<jp:office-code>XX00</jp:office-code>
+</jp:draft-person-group>
+<jp:addressed-to-person-group jp:kind-of-person="applicant" jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｍ</jp:name>
+</jp:addressbook>
+<jp:number-of-other-persons> 1</jp:number-of-other-persons>
+</jp:addressed-to-person-group>
+<jp:article-group>
+<jp:article>第３６条第６項第２号（明確性）</jp:article>
+</jp:article-group>
+</jp:bibliog-in-ntc-pat-exam-rn>
+<jp:reconsideration-before-appeal jp:true-or-false="false" />
+<jp:conclusion-part-article>
+<p num="">　　　　　　　　　　＜＜＜＜　　最後　　＞＞＞＞<br />
+<br />
+　この出願は、次の理由によって拒絶をすべきものです。これについて意見が<br />
+ありましたら、この通知書の発送の日から６０日以内に意見書を提出してくだ<br />
+さい。<br />
+<br />
+　　　　　　　　　　　　　　　　理由<br />
+</p>
+</jp:conclusion-part-article>
+<jp:drafting-body>
+<p num="">１．（明確性）この出願は、特許請求の範囲の記載が下記の点で、特許法第３６条第６項第２号に規定する要件を満たしていない。<br /><br />
+                    記<br /><br />
+●理由１（明確性）について<br /><br />・請求項７<br />　請求項７矛盾する。<br />　よって、請求項７に係る発明は明確でない。<br /><br />＜拒絶の理由を発見しない請求項＞<br />　請求項１−６に係る発明については、現時点では、拒絶の理由を発見しない。拒絶の理由が新たに発見された場合には拒絶の理由が通知される。<br /><br />　　　　　　　　　　＜最後の拒絶理由通知とする理由＞<br /><br />　この拒絶理由通知は、最初の拒絶理由通知に対する応答時の補正によって通知することが必要になった拒絶理由のみを通知するものである。<br />−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−<br />　　　　　　　　　　＜先行技術文献調査結果の記録＞<br /><br />・調査した分野　　ＩＰＣ　Ｇ０２Ｆ１／１７<br />　　　　　　　　　　　　　Ｃ０８Ｇ３／１<br />　　　　　　　　　　　　　Ｃ０７Ｄ７／０８<br /><br />　この先行技術文献調査結果の記録は、拒絶理由を構成するものではありません。<br /><br />＜補正をする際の注意＞<br />（１）明細書、特許請求の範囲について補正をする場合は、補正により記載を変更した個所に下線を引いてください（特許法施行規則様式第１３備考５、６）。<br />（２）補正は、この出願の出願当初の明細書、特許請求の範囲又は図面に記載した事項の範囲内で行わなければなりません。さらに、特許請求の範囲について補正をする際には、請求項の削除、特許請求の範囲の限定的減縮、誤記の訂正又は明瞭でない記載の釈明（拒絶の理由に示す事項についてするものに限る）を目的とする補正に限られます。また、意見書で、各補正事項について補正が適法なものである理由を、根拠となる出願当初の明細書等の記載箇所を明確に示したうえで主張してください。<br />（３）特許請求の範囲について補正をする際には、特許法第１７条の２第４項に違反する補正とならないよう、注意してください。<br /><br />　この拒絶理由通知の内容に関するお問合せ又は面接のご希望がありましたら、次の連絡先までご連絡ください。補正案等の送付を希望される際は、その旨を事前にご連絡ください。<br />　電子メールにて連絡する際は、氏名、所属、出願番号、電話番号、下記審査官（補）名を記載していただき、下記メールアドレス（※）までご連絡ください。電子メールの連絡内容について不明な点等がある場合、電話で確認させていただく場合があります。<br /><br />審査第一部<br />ＴＥＬ．０３−３５８１−１１０１ 内線３２９３<br />※ ●●●●@jpo.go.jp （上記「●●●●」に置き換えてください。）</p>
+</jp:drafting-body>
+<jp:footer-article>
+</jp:footer-article>
+</jp:notice-of-rejection-a131-rn>
+</jp:notice-pat-exam-rn>
+</jp:cpy-notice-pat-exam-rn>

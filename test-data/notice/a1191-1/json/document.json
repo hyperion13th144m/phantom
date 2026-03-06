@@ -1,0 +1,224 @@
+[
+  {
+    "tag": "cpy-ntc-pt-e-rn",
+    "text": "補正の却下の決定",
+    "blocks": [
+      {
+        "tag": "jp:cpy-notice-pat-exam-rn",
+        "blocks": [
+          {
+            "tag": "jp:dispatch-control-article",
+            "blocks": [
+              {
+                "tag": "jp:file-reference-id",
+                "jpTag": "整理番号",
+                "indentLevel": "0",
+                "text": "X8323"
+              },
+              {
+                "tag": "jp:dispatch-number",
+                "jpTag": "発送番号",
+                "indentLevel": "0",
+                "text": "991234"
+              },
+              {
+                "tag": "jp:dispatch-date",
+                "jpTag": "発送日",
+                "indentLevel": "0",
+                "text": "令和　６年　８月２８日"
+              }
+            ]
+          },
+          {
+            "tag": "jp:notice-pat-exam-rn",
+            "blocks": [
+              {
+                "tag": "jp:declining-the-amendment-a191-rn",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "text": "補正の却下の決定"
+                  },
+                  {
+                    "tag": "jp:bibliog-in-ntc-pat-exam-rn",
+                    "blocks": [
+                      {
+                        "tag": "jp:application-reference",
+                        "blocks": [
+                          {
+                            "tag": "jp:document-id",
+                            "blocks": [
+                              {
+                                "tag": "jp:doc-number",
+                                "jpTag": "特許出願の番号",
+                                "indentLevel": "0",
+                                "text": "2099114417",
+                                "convertedText": "特願2099-114417"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:drafting-date",
+                        "blocks": [
+                          {
+                            "tag": "jp:date",
+                            "jpTag": "起案日",
+                            "indentLevel": "0",
+                            "text": "20110625",
+                            "convertedText": "平成23年06月25日"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:draft-person-group",
+                        "jpTag": "特許庁審査官",
+                        "blocks": [
+                          {
+                            "tag": "jp:name",
+                            "text": "審査官Ｈ"
+                          },
+                          {
+                            "tag": "jp:staff-code",
+                            "text": "9876",
+                            "convertedText": "９８７６"
+                          },
+                          {
+                            "tag": "jp:office-code",
+                            "text": "XX00",
+                            "convertedText": "ＸＸ００"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "invention-title",
+                        "jpTag": "発明の名称",
+                        "indentLevel": "0",
+                        "text": "装置"
+                      },
+                      {
+                        "sequence": "1",
+                        "tag": "jp:addressed-to-person-group",
+                        "jpTag": "特許出願人",
+                        "indentLevel": "0",
+                        "text": "法人Ｆ"
+                      },
+                      {
+                        "sequence": "2",
+                        "tag": "jp:addressed-to-person-group",
+                        "jpTag": "代理人",
+                        "indentLevel": "0",
+                        "text": "代理人Ｍ（ほか1名）"
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:conclusion-part-article",
+                    "blocks": [
+                      {
+                        "tag": "paragraph",
+                        "blocks": [
+                          {
+                            "tag": "text",
+                            "text": "　　　　　　　　　　　　　　　　結論",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　令和　８年　３月２８日付け手続補正書でした明細書、特許請求の範囲又は図面についての補正は、次の理由によって却下します。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　　　　　　　　　　　　　　　　理由",
+                            "isLastSentence": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:drafting-body",
+                    "blocks": [
+                      {
+                        "tag": "paragraph",
+                        "blocks": [
+                          {
+                            "tag": "text",
+                            "text": "　令和７年２月０８日付けの手続補正書における請求項１に対する補正は、「・・・",
+                            "isLastSentence": false
+                          },
+                          {
+                            "tag": "underline",
+                            "text": "組成物",
+                            "isLastSentence": false
+                          },
+                          {
+                            "tag": "text",
+                            "text": "。」を「形成するにあたり、・・・ことを特徴とする",
+                            "isLastSentence": false
+                          },
+                          {
+                            "tag": "underline",
+                            "text": "方法",
+                            "isLastSentence": false
+                          },
+                          {
+                            "tag": "text",
+                            "text": "。」とする補正であるが、当該補正は、特許法第１７条の２第５項に掲げる（i）請求項の削除（第１号）、（ii）特許請求の範囲の減縮（第２号）（iii）誤記の訂正(第３号)、（iv）明瞭でない記載の釈明（第４号）のうちいずれの事項を目的とするものにも該当しない。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　よって、この補正は同法第１７条の２第５項の規定に違反するものであるから、同法第５３条第１項の規定により上記結論のとおり決定する。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "────────────────────────────────────",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　この決定に対しては、不服を申し立てることはできません。ただし、この出願について拒絶査定がなされた場合において、拒絶査定不服審判を請求したときに限り、その審判において、この決定に対する不服を申し立てることができます（参照条文：特許法第５３条第３項）。",
+                            "isLastSentence": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:footer-article",
+                    "blocks": [
+                      {
+                        "tag": "jp:certification-column-article",
+                        "blocks": [
+                          {
+                            "tag": "jp:certification-column-group",
+                            "blocks": [
+                              {
+                                "tag": "text",
+                                "text": "上記はファイルに記録されている事項と相違ないことを認証する。",
+                                "isLastSentence": true
+                              },
+                              {
+                                "tag": "text",
+                                "text": "認証日　令和5年06月25日　経済産業事務官　発明者Ｃ",
+                                "isLastSentence": true
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

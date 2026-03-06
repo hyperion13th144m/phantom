@@ -1,0 +1,27 @@
+{
+  "law": "patent",
+  "documentName": "非特許文献送付書",
+  "documentCode": "A130",
+  "registrationNumber": "",
+  "applicationNumber": "2099212341",
+  "internationalApplicationNumber": "",
+  "appealReferenceNumber": "",
+  "submissionDate": "",
+  "submissionTime": "",
+  "receiptNumber": "",
+  "dispatchDate": "20990903",
+  "dispatchTime": "100813",
+  "fileReferenceId": "X832",
+  "docId": "1588140067a4bf4e7f266e32dbf77ed677cac4e110d5823b13ad38b2b69fd3cf",
+  "applicants": [
+    "法人Ｆ",
+    "法人Ｆ",
+    "法人Ｆ",
+    "法人Ｆ",
+    "法人Ｐ"
+  ],
+  "agents": [
+    "代理人Ｘ",
+    "代理人Ｋ"
+  ]
+}

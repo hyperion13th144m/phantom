@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='utf-8'?>
+<application-body country="JP" dtd-version="1.6" lang="ja" status="n">
+<description>
+<invention-title>装置</invention-title>
+<technical-field>
+<p num="0001">
+　発明に関する説明
+</p>
+</technical-field>
+<background-art>
+<p num="0002">
+　発明に関する説明
+</p>
+<p num="0006">
+<patcit num="1"><text>特開２０３８−１４０６０６号公報</text></patcit>
+</p>
+</background-art>
+<summary-of-invention>
+<tech-problem>
+<p num="0007">
+　発明に関する説明
+</p>
+<p num="0008">
+　発明に関する説明
+</p>
+</tech-problem>
+<tech-solution>
+<p num="0009">
+　発明に関する説明
+</p>
+</tech-solution>
+<advantageous-effects>
+<p num="0026">
+　発明に関する説明
+</p>
+</advantageous-effects>
+</summary-of-invention>
+<description-of-drawings>
+<p num="0028">
+<figref num="1">平面図である。</figref>
+<figref num="2">平面図である。</figref>
+<figref num="3">平面図である。</figref>
+</p>
+</description-of-drawings>
+<description-of-embodiments>
+<p num="0029">
+　発明に関する説明
+</p>
+<p num="0057">
+　発明に関する説明
+</p>
+</description-of-embodiments>
+<industrial-applicability>
+<p num="0062">
+　発明に関する説明
+</p>
+</industrial-applicability>
+<reference-signs-list>
+<p num="0063">
+　　１　構造体<br />
+ 
+</p>
+</reference-signs-list>
+</description>
+<claims>
+<claim num="1">
+<claim-text>
+　なんとか装置であって、<br />
+　センサーが形成されている<br />
+　ことを特徴とする構造体。
+</claim-text>
+</claim>
+<claim num="2">
+<claim-text>
+　請求項１に記載の構造体において、<br />
+　部材が形成されている<br />
+　ことを特徴とする構造体。
+</claim-text>
+</claim>
+<claim num="3">
+<claim-text>
+　請求項２に記載の構造体において、<br />
+　前記センサーは、<br />
+　検出センサーである<br />
+　ことを特徴とする構造体。
+</claim-text>
+</claim>
+</claims>
+<abstract>
+<p num="">
+【要約】<br />
+【課題】特性を把握する。<br />
+【解決手段】<br />
+　構造体は形成されている。<br />
+【選択図】図１
+</p>
+</abstract>
+<drawings>
+<figure num="1">
+<img he="191.2" wi="170.0" file="JPOXMLDOC01-appb-D000001.tif" img-format="tif" />
+</figure>
+<figure num="2">
+<img he="180.3" wi="170.0" file="JPOXMLDOC01-appb-D000002.tif" img-format="tif" />
+</figure>
+<figure num="3">
+<img he="163.9" wi="170.0" file="JPOXMLDOC01-appb-D000003.jpg" img-format="jpg" />
+</figure>
+</drawings>
+</application-body>

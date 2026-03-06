@@ -1,0 +1,434 @@
+[
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000006.tif",
+    "sha256": "560ac061e22a5ef918b5a9e5bcef12c2dd174913f55a1b473f0f52069df5eb8c",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000006-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "082a0a72900cf2a4ff9a8f718ef54e7eaf6718c0edde4185e433c503b3d83031",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000006-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "a941afe1265ea44f876f1264ab53f8dfbfd202a53a48b02882aa816558376712",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000006-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1318,
+        "sha256": "f5fc99aa0a49a303d3b29882e5deaa2c6240149595d9dbb6c37069bd7ea8e5e6",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "コア射出保持搬送"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000002.tif",
+    "sha256": "524eb5d5056c6fa6f39f66dee3f001d0b481c8f4eb6080597102ce9765e33c8c",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000002-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "bc0e397b20dc2748106e9fa424be5dded45c49cd738e55dc1f571a76398d9e5a",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000002-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "82313d4e5995d0d1ccec4d9ba5c45e85d4c1c569088b56ff413da5ffe20d65e2",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000002-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1324,
+        "sha256": "60104275f67348a461b3c1f7bf2e8f1485bb94a919a2073a0c3c81ed168ae067",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "添付書類"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000008.tif",
+    "sha256": "6a89b7db5d6fe30bbacd377c9837f4ac37b1b7d63625ca7a42e52186a287899a",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000008-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "3f77623bb56548c8021393c52457d8191e28ef90cbea84cf7e51b03d765bf96a",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000008-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "49685f51eb87ae13d36695502cecf4654154978a9a7e90d8e858aa59da2ec4da",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000008-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1235,
+        "sha256": "6d17e7f6ffa628d52d52bce44e150d3dcf09e6a8a4ac99a13cf15695671195c4",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "冷却搬送手段閉じユニットおいて、"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000003.tif",
+    "sha256": "1619d53d0cc2b9a04e8047fd339ebe44705482193419d8fdb1cc06215b12c232",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000003-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "be6230f8707c6a7017b6bf2de9a96b1ff865a08520fbcf9ce7ee005a08814ee3",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000003-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "b936c23463b61e6fe995148db3d73a6a5ef08e255750af56beb56909b72a851f",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000003-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1269,
+        "sha256": "af4f4c17ff1a90ceb9f4666eb89a5d690603ffd15f008412c566be38cbb644bf",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "冷却に伴うコア型に吸着す"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000007.tif",
+    "sha256": "e54e6771a605051c6e6dab4eb2f80a95008ee99c8842be7945c0b602c3a4e811",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000007-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "e0262c840b7e802f423d42fc736c070c05a1c7e71401888aa3aea1284037bbd8",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000007-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "fe405e8f9c62a43b627415bf002d41b801fc870f12eddeead4cc830017b29b62",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000007-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1279,
+        "sha256": "3813da9c7f93cd472c52c38d78fb9862d13bb5cf14907ab53525d82d19d62616",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "移動可能フォーム射出"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000004.tif",
+    "sha256": "d496436184d0c427adaf2f7289b799412fa7417376a23be990774d1282a5306a",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000004-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "2422daf3e58987290961667ad4c9ce770294302e0b0cb04889611438f36c91bf",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000004-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "d51fb4b249467bb660faa68c36e4f315f16043865e769f115f457ac42d09c342",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000004-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1483,
+        "sha256": "e43372040ef2a7f5b899493fc5b92ce624857798e860e81da9b840a05dfbea7d",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "搬送手段開口面"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000009.tif",
+    "sha256": "d0714d62422690de1fb450c5c1f56c3da8fcb626de194dbcb3271b63ab4407d1",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000009-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "fd7dd9f4dcade9e8685a4c9a52c2b088860495b1a4b1d9adffaca886a03c48d4",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000009-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "56f675f3c1f260f46739f41bea45468bc5467598d278365422e18dd93f18b152",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000009-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1335,
+        "sha256": "b3369ecddc1d2adfe318466d302bda93a3aec64e6082bd848b4827b1e51c2e29",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "状態"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000005.tif",
+    "sha256": "50c80931f111c9849e50a22c7cc9e19dd62dfe6f1ab6442a342af059a247d309",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000005-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "9b8f8983be56ed4272cfe5c32462ed861486a1b85da8892e066f25719a841e07",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000005-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "120054523b65e7e5d0b641a1e2183b5bd91709663373484512271916f36e8122",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000005-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1303,
+        "sha256": "7c942906649b335ddafceecbc096601f2925189e65f7ae1293d12d71c4ee19d8",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "底部上昇支持部材金型"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000001.tif",
+    "sha256": "de0a2f73a4ac29e40fd3fa045a01aa7b3e9d2ba9c2541a820ccde46f87c3f7c8",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000001-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "e6f97889bcaa5ffe2ad7bae71b68cc921a828e0d8e305fed2961f4a1ed9d5ff5",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000001-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "fc9f5174f4913c9a4ac314509f80e26b7a849cf6b2849a4185ea2f20d6ae1e9b",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000001-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1286,
+        "sha256": "d94089d82f1b8c77b099276d6b643ee1c70df84238820447b65e194af1e3710e",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "明細書収縮カによって搬送する開口保持"
+  }
+]

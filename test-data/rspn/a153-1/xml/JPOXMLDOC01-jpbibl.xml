@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:pat-rspns xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:response-a53 jp:kind-of-law="patent">
+<jp:document-code>A153</jp:document-code>
+<jp:file-reference-id>X83232</jp:file-reference-id>
+<jp:addressed-to-person>特許庁審査官　堀江　義隆　殿</jp:addressed-to-person>
+<jp:indication-of-case-article>
+<jp:application-reference appl-type="application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114412</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+</jp:indication-of-case-article>
+<jp:applicants>
+<jp:applicant>
+<jp:addressbook>
+<jp:name>法人ＸＹ</jp:name>
+<jp:registered-number>4814114</jp:registered-number>
+</jp:addressbook>
+</jp:applicant>
+</jp:applicants>
+<jp:agents>
+<jp:agent jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｘ</jp:name>
+<jp:registered-number>4814194</jp:registered-number>
+</jp:addressbook>
+<jp:attorney />
+</jp:agent>
+</jp:agents>
+<jp:dispatch-number>99581234</jp:dispatch-number>
+<jp:opinion-contents-article><p num="">
+１．特許法第２９条第２項 <br />
+　審査官殿が拒絶理由のないとされた補正前の請求項２に限定したので、拒絶理由は解消したものと思料する。<br />
+ <br />
+３．結論<br />
+　以上説明したように、理由１に基づく拒絶理由は解消したものと思料する。<br />
+　よって、再度のご審査を賜り、本願発明が特許をするべきものであるとのご決定を下されることを希求する。<br />
+ <br />
+ <br />
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　以　上
+</p>
+</jp:opinion-contents-article>
+<jp:dtext>同日付で出願人名義変更届を提出致しました。</jp:dtext>
+</jp:response-a53>
+</jp:pat-rspns>

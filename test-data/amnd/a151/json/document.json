@@ -1,0 +1,260 @@
+[
+  {
+    "tag": "pat-amnd",
+    "text": "手続補正書（方式）",
+    "blocks": [
+      {
+        "tag": "jp:amendment-a51",
+        "blocks": [
+          {
+            "tag": "jp:document-code",
+            "text": "A151",
+            "jpTag": "【書類名】",
+            "indentLevel": "0",
+            "convertedText": "手続補正書（方式）"
+          },
+          {
+            "tag": "jp:file-reference-id",
+            "jpTag": "【整理番号】",
+            "indentLevel": "0",
+            "text": "X83232"
+          },
+          {
+            "tag": "jp:addressed-to-person",
+            "jpTag": "【あて先】",
+            "indentLevel": "0",
+            "text": "特許庁長官　殿"
+          },
+          {
+            "tag": "jp:indication-of-case-article",
+            "jpTag": "【事件の表示】",
+            "indentLevel": "0",
+            "blocks": [
+              {
+                "tag": "jp:doc-number",
+                "jpTag": "【審判番号】",
+                "indentLevel": "2",
+                "text": "不服2099-114411"
+              },
+              {
+                "tag": "jp:doc-number",
+                "jpTag": "【出願番号】",
+                "indentLevel": "2",
+                "text": "特願2099-114413"
+              }
+            ]
+          },
+          {
+            "tag": "jp:applicants",
+            "blocks": [
+              {
+                "tag": "jp:applicant",
+                "indentLevel": "0",
+                "jpTag": "【補正をする者】",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814114"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "法人ＸＹ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:agents",
+            "blocks": [
+              {
+                "tag": "jp:agent",
+                "jpTag": "【代理人】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:registered-number",
+                    "jpTag": "【識別番号】",
+                    "indentLevel": "2",
+                    "text": "4814194"
+                  },
+                  {
+                    "tag": "jp:attorney",
+                    "jpTag": "【弁理士】",
+                    "indentLevel": "2"
+                  },
+                  {
+                    "tag": "jp:name",
+                    "jpTag": "【氏名又は名称】",
+                    "indentLevel": "2",
+                    "text": "代理人Ｘ"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "jp:dispatch-number",
+            "jpTag": "【発送番号】",
+            "indentLevel": "0",
+            "text": "99791234"
+          },
+          {
+            "tag": "jp:amendment-article",
+            "blocks": [
+              {
+                "tag": "jp:amendment-group",
+                "jpTag": "【手続補正1】",
+                "indentLevel": "0",
+                "blocks": [
+                  {
+                    "tag": "jp:document-code",
+                    "text": "C160",
+                    "jpTag": "【補正対象書類名】",
+                    "indentLevel": "1",
+                    "convertedText": "審判請求書"
+                  },
+                  {
+                    "tag": "jp:item-of-amendment",
+                    "text": "請求の理由",
+                    "jpTag": "【補正対象項目名】",
+                    "indentLevel": "1"
+                  },
+                  {
+                    "tag": "jp:way-of-amendment",
+                    "jpTag": "【補正方法】",
+                    "text": "変更",
+                    "indentLevel": "1"
+                  },
+                  {
+                    "tag": "jp:contents-of-amendment",
+                    "jpTag": "【補正の内容】",
+                    "indentLevel": "1",
+                    "blocks": [
+                      {
+                        "tag": "jp:contents-part-article",
+                        "blocks": [
+                          {
+                            "tag": "jp:contents-part-group",
+                            "blocks": [
+                              {
+                                "tag": "jp:contents-name",
+                                "jpTag": "【請求の理由】",
+                                "indentLevel": "2"
+                              },
+                              {
+                                "tag": "paragraph",
+                                "number": "",
+                                "indentLevel": "2",
+                                "blocks": [
+                                  {
+                                    "tag": "text",
+                                    "text": "１．手続の経緯",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　出願　　　　　　　　　　　平成３０年０７月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　拒絶理由の通知（発送日）　令和　４年０６月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　意見書（提出日）　　　　　令和　４年０７月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　手続補正書（提出日）　　　令和　４年０７月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　拒絶査定（起案日）　　　　令和　４年０８月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　同　謄本送達（送達日）　　令和　４年０８月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　審判請求書（提出日）　　　令和　４年１１月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　　手続補正書（提出日）　　　令和　４年１１月０８日",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": " ",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "２．拒絶査定の理由の要点",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　拒絶査定は、拒絶をすべきものあり、要点は次の通りです。",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": " ",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "３．本願発明が特許されるべき理由",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "（１）本願発明の説明",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "（２）本願発明と引用文献との対比",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "４．むすび",
+                                    "isLastSentence": true
+                                  },
+                                  {
+                                    "tag": "text",
+                                    "text": "　以上に述べたように、本願発明は引用文献１に記載された発明から当業者が容易に発明をすることができたものではありません。よって、原査定を取り消す、本願発明は特許すべきものとする、との審決を下さるようお願い致します。",
+                                    "isLastSentence": true
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

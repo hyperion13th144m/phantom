@@ -1,0 +1,202 @@
+[
+  {
+    "tag": "cpy-ntc-pt-e",
+    "text": "拒絶査定",
+    "blocks": [
+      {
+        "tag": "jp:cpy-notice-pat-exam",
+        "blocks": [
+          {
+            "tag": "jp:dispatch-control-article",
+            "blocks": [
+              {
+                "tag": "jp:file-reference-id",
+                "jpTag": "整理番号",
+                "indentLevel": "0",
+                "text": "X83239"
+              },
+              {
+                "tag": "jp:dispatch-number",
+                "jpTag": "発送番号",
+                "indentLevel": "0",
+                "text": "991234"
+              },
+              {
+                "tag": "jp:dispatch-date",
+                "jpTag": "発送日",
+                "indentLevel": "0",
+                "text": "平成８年　１月０８日"
+              }
+            ]
+          },
+          {
+            "tag": "jp:notice-pat-exam",
+            "blocks": [
+              {
+                "tag": "jp:decision-of-rejection-a02",
+                "blocks": [
+                  {
+                    "tag": "jp:document-name",
+                    "text": "拒絶査定"
+                  },
+                  {
+                    "tag": "jp:bibliog-in-ntc-pat-exam",
+                    "blocks": [
+                      {
+                        "tag": "jp:application-reference",
+                        "blocks": [
+                          {
+                            "tag": "jp:document-id",
+                            "blocks": [
+                              {
+                                "tag": "jp:doc-number",
+                                "jpTag": "特許出願の番号",
+                                "indentLevel": "0",
+                                "text": "2099114417",
+                                "convertedText": "特願2099-114417"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:drafting-date",
+                        "blocks": [
+                          {
+                            "tag": "jp:date",
+                            "jpTag": "起案日",
+                            "indentLevel": "0",
+                            "text": "20191205",
+                            "convertedText": "令和1年12月05日"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "jp:draft-person-group",
+                        "jpTag": "特許庁審査官",
+                        "blocks": [
+                          {
+                            "tag": "jp:name",
+                            "text": "審査官Ｂ"
+                          },
+                          {
+                            "tag": "jp:staff-code",
+                            "text": "9876",
+                            "convertedText": "９８７６"
+                          },
+                          {
+                            "tag": "jp:office-code",
+                            "text": "XX00",
+                            "convertedText": "ＸＸ００"
+                          }
+                        ]
+                      },
+                      {
+                        "tag": "invention-title",
+                        "jpTag": "発明の名称",
+                        "indentLevel": "0",
+                        "text": "装置"
+                      },
+                      {
+                        "tag": "jp:addressed-to-person-group",
+                        "jpTag": "特許出願人",
+                        "indentLevel": "0",
+                        "text": "法人Ｏ"
+                      },
+                      {
+                        "tag": "jp:addressed-to-person-group",
+                        "jpTag": "代理人",
+                        "indentLevel": "0",
+                        "text": "代理人Ｍ"
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:drafting-body",
+                    "blocks": [
+                      {
+                        "tag": "paragraph",
+                        "blocks": [
+                          {
+                            "tag": "text",
+                            "text": "　この出願については、平成７年１１月０８日付け拒絶理由通知書に記載した理由によって、拒絶をすべきものである。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　なお、意見書及び手続補正書の内容を検討したが、拒絶理由を覆すに足りる根拠が見いだせない。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "備考",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　なお、出願人は、意見書において、本願発明の進歩性を主張しているので、このことについて以下検討する。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　他の請求項２〜８についても先の拒絶理由通知書に記載した理由により進歩性を有しない。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　よって、出願人の主張は採用できない。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "────────────────────────────────────　この査定に不服があるときは、この査定の謄本の送達があった日から３０日以内（在外者にあっては、９０日以内）に、特許庁長官に対して、審判を請求することができます（特許法第１２１条第１項）。",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "（行政事件訴訟法第４６条第２項に基づく教示）",
+                            "isLastSentence": true
+                          },
+                          {
+                            "tag": "text",
+                            "text": "　この査定に対しては、この査定についての審判請求に対する審決に対してのみ取消訴訟を提起することができます（特許法第１７８条第６項）。",
+                            "isLastSentence": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "jp:footer-article",
+                    "blocks": [
+                      {
+                        "tag": "jp:certification-column-article",
+                        "blocks": [
+                          {
+                            "tag": "jp:certification-column-group",
+                            "blocks": [
+                              {
+                                "tag": "text",
+                                "text": "上記はファイルに記録されている事項と相違ないことを認証する。",
+                                "isLastSentence": true
+                              },
+                              {
+                                "tag": "text",
+                                "text": "認証日　令和3年12月05日　経済産業事務官　審査官Ｆ",
+                                "isLastSentence": true
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

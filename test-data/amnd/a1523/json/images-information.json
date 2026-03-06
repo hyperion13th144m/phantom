@@ -1,0 +1,50 @@
+[
+  {
+    "filename": "JPOXMLDOC01-jpbibl-I000001.tif",
+    "sha256": "e4f8b0f95e7350ca381e72833d8232becd2e62a998b6a3b9673d746cd0d6b1c0",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpbibl-I000001-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "64209b01b6143cdb51b4e05a1e431548cb465ae8a9c91f25980e0000e41d1ea2",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpbibl-I000001-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "ecc8e0cdfc84a1b5be89b5a25625a48177592c170634f27b0ee5cf36ee52290d",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpbibl-I000001-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 588,
+        "sha256": "7008d9dc8f1ac67e6c31260ff020b5e8a6d95d9e480086333b197419b81c23ba",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "対象PCで「ファイルとプリンターの共有」等のサービスが止まっていると通らない"
+  }
+]

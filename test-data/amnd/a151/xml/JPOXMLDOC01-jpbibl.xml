@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jp:pat-amnd xmlns:jp="http://www.jpo.go.jp" lang="ja" dtd-version="1.0">
+<jp:amendment-a51 jp:kind-of-law="patent">
+<jp:document-code>A151</jp:document-code>
+<jp:file-reference-id>X83232</jp:file-reference-id>
+<jp:addressed-to-person>特許庁長官　殿</jp:addressed-to-person>
+<jp:indication-of-case-article>
+<jp:appeal-reference>
+<jp:doc-number>2099114411</jp:doc-number>
+</jp:appeal-reference>
+<jp:application-reference appl-type="application" jp:kind-of-law="patent">
+<jp:document-id>
+<jp:doc-number>2099114413</jp:doc-number>
+</jp:document-id>
+</jp:application-reference>
+</jp:indication-of-case-article>
+<jp:applicants>
+<jp:applicant>
+<jp:addressbook>
+<jp:name>法人ＸＹ</jp:name>
+<jp:registered-number>4814114</jp:registered-number>
+</jp:addressbook>
+</jp:applicant>
+</jp:applicants>
+<jp:agents>
+<jp:agent jp:kind-of-agent="representative">
+<jp:addressbook>
+<jp:name>代理人Ｘ</jp:name>
+<jp:registered-number>4814194</jp:registered-number>
+</jp:addressbook>
+<jp:attorney />
+</jp:agent>
+</jp:agents>
+<jp:dispatch-number>99791234</jp:dispatch-number>
+<jp:amendment-article>
+<jp:amendment-group jp:serial-number="1">
+<jp:document-code>C160</jp:document-code>
+<jp:item-of-amendment>請求の理由</jp:item-of-amendment>
+<jp:way-of-amendment>3</jp:way-of-amendment>
+<jp:contents-of-amendment jp:kind-of-law="patent" jp:kind-of-document="appeal-c60">
+<jp:contents-part-article><jp:contents-part-group>
+<jp:contents-name>請求の理由</jp:contents-name>
+<p num="">
+１．手続の経緯<br />
+　　出願　　　　　　　　　　　平成３０年０７月０８日<br />
+　　拒絶理由の通知（発送日）　令和　４年０６月０８日<br />
+　　意見書（提出日）　　　　　令和　４年０７月０８日<br />
+　　手続補正書（提出日）　　　令和　４年０７月０８日<br />
+　　拒絶査定（起案日）　　　　令和　４年０８月０８日<br />
+　　同　謄本送達（送達日）　　令和　４年０８月０８日<br />
+　　審判請求書（提出日）　　　令和　４年１１月０８日<br />
+　　手続補正書（提出日）　　　令和　４年１１月０８日<br />
+ <br />
+２．拒絶査定の理由の要点<br />
+　拒絶査定は、拒絶をすべきものあり、要点は次の通りです。<br />
+ <br />
+３．本願発明が特許されるべき理由<br />
+（１）本願発明の説明<br />
+（２）本願発明と引用文献との対比<br />
+４．むすび<br />
+　以上に述べたように、本願発明は引用文献１に記載された発明から当業者が容易に発明をすることができたものではありません。よって、原査定を取り消す、本願発明は特許すべきものとする、との審決を下さるようお願い致します。
+</p>
+</jp:contents-part-group>
+</jp:contents-part-article>
+</jp:contents-of-amendment>
+</jp:amendment-group>
+</jp:amendment-article>
+</jp:amendment-a51>
+</jp:pat-amnd>

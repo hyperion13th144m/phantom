@@ -1,0 +1,146 @@
+[
+  {
+    "filename": "06110315890-jpntce-I000001.tif",
+    "sha256": "2232ed07e09d63cccd65c36db0f94307cbf15995bd9d8ccab919e6bbc217aba7",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "06110315890-jpntce-I000001-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "c7a0249c97f1a5489c450bdd79a2dca8320f4a6a5698900328235e18855ca67a",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "06110315890-jpntce-I000001-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "575ffc420f7b1d12642cc486690b594ef1c921cc31ae187c28df0e4bb11e1fff",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "06110315890-jpntce-I000001-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1190,
+        "sha256": "f6493178d1b393a650277ceb8b95dc226c0c8e25b0ed32d76ce250bced54d199",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "mmaieriai deoomposHtton wers rpi arTihtted Mr. weh Pl"
+  },
+  {
+    "filename": "06110315890-jpntce-I000003.tif",
+    "sha256": "799e77ddad9549dd3354af160ffa3729211212aebb7ecd540ffbf5b049808742",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "06110315890-jpntce-I000003-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "b54839207983ce4efb17994d9444fc55c276e080f9d3280c779095e3dbd7787f",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "06110315890-jpntce-I000003-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "fe631d244a13865ee7be7a3d4f5aa7ee80928c8f8a3935b16058b486f353e133",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "06110315890-jpntce-I000003-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1190,
+        "sha256": "68be71fa470319c03a73575287ff5f4a422d536e49c5f69df740ed24230e4a43",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": ""
+  },
+  {
+    "filename": "06110315890-jpntce-I000002.tif",
+    "sha256": "5a801a278acc9d7af450e520f870e72977febc1ae45dabebcd7e35b9e69fe209",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "06110315890-jpntce-I000002-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "3b9774718b01e5c37d41560eb9ec4eef428c9c1ebefb5bc4a94c01a1433ee0f8",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "06110315890-jpntce-I000002-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "9332a2cd605b0a2ddb1e0371dd70eb9e9357781e42dae0642af63dfe6d02ed17",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "06110315890-jpntce-I000002-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1191,
+        "sha256": "fc63502ec7ee482f89d4af4a51e13247a6ae52ee592ca346cb90f66d583f12b6",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "days。xs. Jnnew Aa Einua"
+  }
+]

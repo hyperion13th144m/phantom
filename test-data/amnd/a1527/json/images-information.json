@@ -1,0 +1,98 @@
+[
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000002.tif",
+    "sha256": "2d88269f86a6c2cbb4686ecda82dd04badbcc2e5ffd465ac8722533aed1477b3",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000002-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "8e3c60a9dec836a79cb1c4d3a0a20448559d6b5c359fc11ed1b3df8b4e3ed881",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000002-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "5feac6d61699643fa8cc790ddd39e104055797639090815137fc205ca6f1815d",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000002-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 930,
+        "sha256": "adfae4347b276af56c9e7fd97b687bb4062e98e834ac6af944994b3542e6290a",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "新規性、進歩性を有すると思料します。"
+  },
+  {
+    "filename": "JPOXMLDOC01-jpatta-I000001.tif",
+    "sha256": "dcb94dd7e03543a2331993f607fa5bba213be8906903e6bdb6018e02b9286d2e",
+    "media_type": "image/tiff",
+    "kind": "other-images",
+    "derived": [
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000001-thumbnail.webp",
+        "media_type": "image/webp",
+        "width": 300,
+        "height": 300,
+        "sha256": "4dce6ca7639c31bef349536dc4bbd295f075ed3994013570ff9bc4350cdcd77c",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "thumbnail"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000001-middle.webp",
+        "media_type": "image/webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "3bae8dd69028aec6f6df09853e5278dc44ba8f6584eb13bf331b2821a2f3b776",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "middle"
+          }
+        ]
+      },
+      {
+        "filename": "JPOXMLDOC01-jpatta-I000001-large.webp",
+        "media_type": "image/webp",
+        "width": 800,
+        "height": 1164,
+        "sha256": "afc77e277c8563d7df77488d5a81c1e6da45dac21798628e4bd81d43184b15f2",
+        "attributes": [
+          {
+            "key": "sizeTag",
+            "value": "large"
+          }
+        ]
+      }
+    ],
+    "text": "リモートデスクトップ（RDP）再起動"
+  }
+]
