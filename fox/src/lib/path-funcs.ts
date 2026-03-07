@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { BASE_URL, DATA_DIR } from "~/constants";
 import type { ImagesInformation } from "~/interfaces/generated/images-information";
+import cfg from "../interfaces/generated/config/storage-config.json";
 
 
 // docId で特定されるコンテンツが保存されたディレクトリのパスを取得
@@ -47,3 +48,20 @@ export const getImageUrl = async (docId: string, imageName: string, sizeTag: str
         height: derived?.height || 0,
     };
 };
+
+export function computePath(docId: string): string {
+    if (cfg.mode === "prod") {
+        return cfg.pattern
+            .replace("{0}", docId[0])
+            .replace("{1}", docId[1])
+            .replace("{2}", docId[2])
+            .replace("{3}", docId[3])
+            .replace("{docId}", docId);
+    } else {
+        const devPath: { [key: string]: string } = cfg.devMap;
+        if (!(docId in devPath)) {
+            throw new Error(`docId ${docId} not found in devMap`);
+        }
+        return devPath[docId];
+    }
+}

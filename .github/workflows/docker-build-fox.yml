@@ -49,10 +49,11 @@ jobs:
           cd queen
           uv sync
 
-      - name: Run build-all script to generate json schema for fox directory.
+      - name: Run build-all and build_dev_map scripts to generate json for fox directory.
         run: |
-          chmod +x ./queen/scripts/build-all.sh
+          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build_dev_map.sh
           ./queen/scripts/build-all.sh
+          ./queen/scripts/build_dev_map.sh
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

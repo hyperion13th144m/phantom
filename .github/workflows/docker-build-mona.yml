@@ -34,6 +34,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Python dependencies
+        run: |
+          cd queen
+          uv sync
+
+      - name: Run build_dev_map script to generate json config for mona directory.
+        run: |
+          chmod +x ./queen/scripts/build_dev_map.sh
+          ./queen/scripts/build_dev_map.sh
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
