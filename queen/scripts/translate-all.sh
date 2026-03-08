@@ -2,7 +2,9 @@
 
 SRC_XML_DIR=$1
 SRC_XML=$(find $SRC_XML_DIR -type f -name "*.xml")
-OUTPUT_DIR=$2
+OUTPUT_SUB_DIR=$(basename $SRC_XML_DIR)
+OUTPUT_DIR=$2/$OUTPUT_SUB_DIR
+
 if [ -z "$OUTPUT_DIR" ]; then
     echo "Output directory not specified. Exiting."
     exit 1

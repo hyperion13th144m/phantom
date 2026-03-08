@@ -30,6 +30,7 @@ TranslatorKey = Literal[
     "cpy-notice-pat-exam-rn",
     "cpy-notice-pat-frm",
     "full-text",
+    "attaching-document",
 ]
 
 
@@ -128,5 +129,12 @@ translator_config: TranslatorConfig = {
         namespace="",
         doctype="*",
         default_filename="full-text.json",
+    ),
+    "attaching-document": TranslatorConfigItems(
+        ### 添付書類
+        xsl_path=xsl_path("attaching-document.xsl"),
+        namespace="http://www.jpo.go.jp",
+        doctype="attaching-document",
+        default_filename="attaching-document.json",
     ),
 }

@@ -234,3 +234,30 @@ scripts/
  - build-schema.sh, build-ts-guard.sh, build-ts-schema.sh, build-all.sh: build-fox.sh, build-panther.sh などから呼ばれる
 
 xsl のschemaを更新したら build-fox.sh, build-panther.sh を実行して型を生成する。
+
+
+## 新規文書タイプ追加
+### xsl 作成
+ - doctypeから元になるxslを探す。
+ - xslを編集  xsl template, schema
+ - config.py に設定追加
+ - 変換チェック
+```bash
+$ scripts/translate-all.sh xml_dir out_dir [--debug]
+```
+
+### 正解のjsonをテスト用にコピー
+```bash
+$ cp *.josn test-data/*/xml-to-json
+```
+
+### 全体テストとおるか確認
+```bash
+$ scripts/run-test.sh
+```
+
+### json schema 生成
+ - xslを↓のスクリプトに追加
+ - scripts/build-all.sh  if 文書本体のxslのみ
+ - scripts/build-schema.sh  if 文書本体のxsl,文書本体から参照されるxsl
+ - json schema 生成、fox/panther にコピーされるか確認
