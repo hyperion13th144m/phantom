@@ -19,6 +19,9 @@ def find_archives(
         if re.match(r".+AAA$", file.stem) or re.match(r".+NNF$", file.stem):
             if is_target_document(file, doc_codes):
                 procedure = find_procedure_xml(file)
+                if procedure is None:
+                    logger.warning(f"Procedure XML not found for archive: {file}")
+                    continue
                 yield file, procedure
             else:
                 logging.debug(f"Skip non-target document code: {file.name}")
@@ -35,11 +38,11 @@ def is_target_document(document_filename: Path, doc_codes: list[str]) -> bool:
     return False
 
 
-def find_procedure_xml(archive_path: Path) -> Path:
+def find_procedure_xml(archive_path: Path) -> Path | None:
     """Find the corresponding procedure XML file for the given archive."""
     with_name = re.sub(r"AAA$", "AFM", archive_path.stem)
     with_name = re.sub(r"NNF$", "NFM", with_name)
     xml_path = archive_path.with_name(with_name).with_suffix(".XML")
     if not xml_path.exists():
-        raise FileNotFoundError(f"Procedure XML not found for archive: {archive_path}")
+        return None
     return xml_path

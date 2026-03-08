@@ -5050,7 +5050,9 @@
         application-body//chemistry | jp:contents-of-amendment//chemistry |
         application-body//figure | jp:contents-of-amendment//figure">
         <xsl:variable name="num" select="@num" />
+        <!-- 図面の説明は、image-desc.xsl で取得する
         <xsl:variable name="alt" select="//description-of-drawings//figref[@num=$num]" />
+        -->
         <xsl:variable name="params"
             select="key('image-container-key', name(), $image-container-parameters)" />
         <xf:map>
@@ -5081,6 +5083,7 @@
             <xf:string key="file">
                 <xsl:value-of select="img/@file" />
             </xf:string>
+            <!--
             <xf:string key="alt">
                 <xsl:choose>
                     <xsl:when test="name() = 'figure'">
@@ -5092,6 +5095,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xf:string>
+            -->
         </xf:map>
     </xsl:template>
     
@@ -5110,9 +5114,11 @@
             <xf:string key="file">
                 <xsl:value-of select="@file" />
             </xf:string>
+            <!--
             <xf:string key="alt">
                 <xsl:value-of select="'Image No. ' || @num" />
             </xf:string>
+            -->
         </xf:map>
     </xsl:template>
     
@@ -5145,7 +5151,9 @@
         <schema:property name="imageKind" type="string"
                          enum="figures tables equations chemical-formulas other-images" />
         <schema:property name="file" type="string"/>
+        <!--
         <schema:property name="alt" type="string" />
+        -->
     </schema:object>
     <!-- ============= End of image-container ============================= -->
     
