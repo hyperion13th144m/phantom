@@ -1,0 +1,64 @@
+---
+// 特許出願書類の明細書,請求の範囲,図面,要約書を表示するためのコンポーネント
+import type {
+    DocumentName,
+    ImageContainer,
+} from "~/interfaces/generated/attaching-document";
+import {
+    isDocumentName,
+    isImageContainer,
+} from "~/interfaces/generated/attaching-document.guard";
+import { getImageUrl } from "~/lib/path-funcs";
+
+const { block } = Astro.props as {
+    block: DocumentName | ImageContainer;
+};
+
+const { docId } = Astro.params as { docId: string };
+const imageInfo = isImageContainer(block)
+    ? await getImageUrl(docId, block.file, "large")
+    : null;
+---
+
+{
+    isDocumentName(block) && (
+        <div class="document-name flex">
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            <div class="document-name-text">{block.text}</div>
+        </div>
+    )
+}
+
+{
+    isImageContainer(block) && imageInfo && (
+        <div class="image-container">
+            <div class={`indent-level-${block.indentLevel}`}>{block.jpTag}</div>
+            <img
+                src={imageInfo.url}
+                alt={block.alt}
+                width={imageInfo.width}
+                height={imageInfo.height}
+                style="max-width: 100%; height: auto;"
+            />
+        </div>
+    )
+}
+
+<style>
+    .document-name-text {
+        break-before: page;
+        text-indent: 6em;
+    }
+    .image-container:not(:last-child) {
+        break-after: page;
+    }
+    .indent-level-0 {
+        text-indent: 0;
+    }
+    .indent-level-1 {
+        text-indent: 1em;
+    }
+    .indent-level-2 {
+        text-indent: 2em;
+    }
+</style>

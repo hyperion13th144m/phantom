@@ -28,6 +28,7 @@ SRC_XML_ARRAY=(
     "common-templates/ntc-paragraph.xsl"
     "common-templates/dispatch-control-article.xsl"
     "common-templates/unsupported-tags.xsl"
+    "attaching-document.xsl"
 )
 DSL="./src/queen/stylesheets/schema/schema-dsl.xsl"
 

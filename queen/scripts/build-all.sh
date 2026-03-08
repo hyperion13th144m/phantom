@@ -69,6 +69,7 @@ JSON_SCHEMA_ARRAY=(
     "cpy-ntc-pt-e-rn.json"
     "cpy-ntc-pt-f.json"
     "pat_common.json"
+    "attaching-document"
 )
 BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
 XSL_ROOT="$PROJECT_ROOT/src/queen/stylesheets/2.0"

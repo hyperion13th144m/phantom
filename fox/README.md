@@ -104,3 +104,16 @@ docker で /data_dir をマウントする。
   }
 ```
 として、/images へのアクセスを /data_dir へのアクセスに変換する。 
+
+
+## 新規文書のレンダラチェック
+ 1. mona で文書を処理して、/data_dir に保存する。
+```bash
+$ phantom/scripts/crawl.sh -d -m 4 -t ALL
+```
+ または test-data を /data_dir にコピーする。
+ 2. queen で ./scripts/build_dev_map.sh dev を実行して、interfaces/generated/config/storage-config.json  を更新する。
+ 3. queen で ./scripts/build-all.sh を実行し、interfaces/generated/json-schema を更新
+ 4. fox で scripts/build-schema.sh に json schema を追加、それを実行してinterface を更新する。
+ 5. renderer 実装
+ 5. ブラウザで http://localhost:3000/docs/[docId] にアクセスして、正しくレンダリングされることを確認する。

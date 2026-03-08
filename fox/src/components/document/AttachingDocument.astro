@@ -1,0 +1,32 @@
+---
+// ApplicationBody の文書の表示用/印刷用レイアウトを定義、
+// 子要素は items/ApplicationBodyItems.astro で定義する。
+import Card from "~/components/ui/Card.astro";
+import type { AttachingDocument } from "~/interfaces/generated/attaching-document";
+import AttachingDocumentItems from "./items/AttachingDocumentItems.astro";
+
+const { document, forPrinting = false } = Astro.props as {
+    document: AttachingDocument;
+    forPrinting: boolean;
+};
+---
+
+{
+    forPrinting === false && (
+        <Card title={document.text}>
+            {document.blocks.map((b) => (
+                <AttachingDocumentItems block={b} />
+            ))}
+        </Card>
+    )
+}
+
+{
+    forPrinting === true && (
+        <div class={document.tag}>
+            {document.blocks.map((b) => (
+                <AttachingDocumentItems block={b} />
+            ))}
+        </div>
+    )
+}

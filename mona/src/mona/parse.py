@@ -47,6 +47,7 @@ def parse(src_dir: Path, dst_dir: Path):
             "cpy-notice-pat-exam": str(doc_dir / "cpy-notice-pat-exam.json"),
             "cpy-notice-pat-exam-rn": str(doc_dir / "cpy-notice-pat-exam-rn.json"),
             "cpy-notice-pat-frm": str(doc_dir / "cpy-notice-pat-frm.json"),
+            "attaching-document": str(doc_dir / "attaching-document.json"),
         }
 
         # 1. translate all xml to json
