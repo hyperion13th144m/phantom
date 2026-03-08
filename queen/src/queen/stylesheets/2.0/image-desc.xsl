@@ -44,8 +44,15 @@
         <xsl:for-each select="figure">
             <xsl:variable name="num" select="@num" />
             <xsl:variable name="file" select="img/@file" />
-            <xsl:variable name="desc" select="//description-of-drawings//figref[@num=$num]"/>
             <xsl:variable name="repr-image" select="//jp:representation-image/jp:file-name"/>
+            <!-- 図面の簡単な説明 figref の num と、
+                 図面のfigure の num は一致しないことがある。
+                 外内などは図番号に "1-1"とか使われるが、
+                 figrefは通番で1,2,3,... であるため。
+                 1-1, 1-2 などは、図1扱いとして、figref num=1 の説明を description にする。
+            -->     
+            <xsl:variable name="figref-index" select="position()"/>
+
             <xf:map>
                 <xf:string key="number">
                     <xsl:value-of select="$num" />
@@ -54,8 +61,22 @@
                     <xsl:value-of select="$file" />
                 </xf:string>
                 <xf:string key="description">
-                    <xsl:value-of select="$desc" />
-                </xf:string>
+                    <xsl:variable name="normalize-fignum">
+                        <xsl:choose>
+                            <xsl:when test="contains($num, '-')">
+                                <xsl:value-of select="substring-before($num, '-')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$num"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:for-each select="//description-of-drawings//figref">
+                        <xsl:if test="./@num = $normalize-fignum">
+                            <xsl:value-of select="normalize-space(.)" />
+                        </xsl:if>
+                    </xsl:for-each>
+               </xf:string>
                 <xf:boolean key="representative">
                     <xsl:choose>
                         <xsl:when test="$repr-image = $file">

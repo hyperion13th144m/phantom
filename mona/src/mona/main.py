@@ -84,6 +84,22 @@ def multi_processes_parent(
     processes: List[Process] = []
     log_queue, listener = setup_logger(log_level=log_level)
 
+    def _enqueue_sentinels() -> None:
+        for _ in range(num_processors):
+            queue.put(None)
+
+    def _join_or_terminate(timeout_sec: float = 5.0) -> None:
+        # Prevent the parent from hanging forever when a child does not exit.
+        deadline = time.time() + timeout_sec
+        for p in processes:
+            remaining = max(0.0, deadline - time.time())
+            p.join(timeout=remaining)
+        for p in processes:
+            if p.is_alive():
+                p.terminate()
+        for p in processes:
+            p.join(timeout=1.0)
+
     for _ in range(num_processors):
         p = Process(
             target=multi_processes_child,
@@ -100,31 +116,22 @@ def multi_processes_parent(
             queue.put(item)
 
         # 正常終了ルート：sentinel投入
-        for _ in range(num_processors):
-            queue.put(None)
+        _enqueue_sentinels()
 
     except KeyboardInterrupt:
         stop_event.set()
-
-        # 子がqueue.getから抜けられるようにsentinelも投げる（重要）
-        for _ in range(num_processors):
-            queue.put(None)
-
-        # “穏当停止”を少し待つ
-        deadline = time.time() + 5
-        for p in processes:
-            remaining = max(0, deadline - time.time())
-            p.join(timeout=remaining)
-
-        # まだ残ってたら強制停止
-        for p in processes:
-            if p.is_alive():
-                p.terminate()
+        # 子がqueue.getから抜けられるようにsentinelを投げる
+        _enqueue_sentinels()
+    except Exception:
+        # 親側の想定外エラーでも子を停止させてから再送出する。
+        stop_event.set()
+        _enqueue_sentinels()
+        raise
     finally:
-        # wait for all processes
-        for p in processes:
-            p.join()
+        _join_or_terminate(timeout_sec=5.0)
         listener.stop()
+        queue.close()
+        queue.join_thread()
 
 
 def multi_processes_child(
@@ -163,25 +170,27 @@ def main(
 
     ### check if already processed
     doc_id = generate_sha256(str(archive_path))
-    output_dir = get_output_dir(doc_id, output_dir_root)
-    if overwrite is False and output_dir.exists():
-        logger.info(
-            f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
-            extra={"archive_path": str(archive_path), "doc_id": doc_id},
-        )
-        return
-    if overwrite is True and output_dir.exists():
-        shutil.rmtree(output_dir)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = None
     try:
+        output_dir = get_output_dir(doc_id, output_dir_root)
+        if overwrite is False and output_dir.exists():
+            logger.info(
+                f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
+                extra={"archive_path": str(archive_path), "doc_id": doc_id},
+            )
+            return
+        if overwrite is True and output_dir.exists():
+            shutil.rmtree(output_dir)
+
+        output_dir.mkdir(parents=True, exist_ok=True)
         if stop_event.is_set():
             logger.info(
                 f"[INTERRUPTED] doc_id={doc_id}, archive_path={archive_path}",
                 extra={"archive_path": str(archive_path), "doc_id": doc_id},
             )
-            shutil.rmtree(output_dir)
-            sys.exit(0)
+            if output_dir and output_dir.exists():
+                shutil.rmtree(output_dir)
+            return
 
         ### OCR 対象は other-imagesだけ。
         ### other-images は 外国語書面出願、被引用文献 で使われる画像
@@ -206,7 +215,8 @@ def main(
                 "traceback": traceback.format_exc(),
             },
         )
-        shutil.rmtree(output_dir)
+        if output_dir and output_dir.exists():
+            shutil.rmtree(output_dir)
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:

@@ -37,6 +37,7 @@ export const getImageUrl = async (docId: string, imageName: string, sizeTag: str
         "utf-8",
     );
     const json: ImagesInformation[] = JSON.parse(txt);
+    const imageInfo = json.filter((info) => info.filename === imageName).at(0)
     const derived = json
         .filter((info) => info.filename === imageName)
         .flatMap((info) => info.derived)
@@ -47,6 +48,7 @@ export const getImageUrl = async (docId: string, imageName: string, sizeTag: str
         url: path.join(getBaseUrl(docId), derived ? derived.filename : ""),
         width: derived?.width || 0,
         height: derived?.height || 0,
+        alt: imageInfo?.description || "",
     };
 };
 
