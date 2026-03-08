@@ -1,0 +1,26 @@
+{
+    "tag": "attaching-document",
+    "text": "条約第１９条補正の写し",
+    "blocks": [
+        {
+            "tag": "jp:document-name",
+            "jpTag": "【物件名】",
+            "indentLevel": "0",
+            "text": "条約第１９条補正の写し"
+        },
+        {
+            "tag": "image-container",
+            "imageKind": "other-images",
+            "indentLevel": "0",
+            "file": "JPOXMLDOC01-jpatta-I000001.tif",
+            "alt": "Image name: JPOXMLDOC01-jpatta-I000001.tif"
+        },
+        {
+            "tag": "image-container",
+            "imageKind": "other-images",
+            "indentLevel": "0",
+            "file": "JPOXMLDOC01-jpatta-I000002.tif",
+            "alt": "Image name: JPOXMLDOC01-jpatta-I000002.tif"
+        }
+    ]
+}

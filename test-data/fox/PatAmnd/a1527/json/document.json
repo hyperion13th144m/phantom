@@ -1,0 +1,133 @@
+{
+    "tag": "pat-amnd",
+    "text": "特許協力条約第１９条補正の写し提出書",
+    "blocks": [
+        {
+            "tag": "jp:amendment-a527",
+            "blocks": [
+                {
+                    "tag": "jp:document-code",
+                    "text": "A1527",
+                    "jpTag": "【書類名】",
+                    "indentLevel": "0",
+                    "convertedText": "特許協力条約第１９条補正の写し提出書"
+                },
+                {
+                    "tag": "jp:file-reference-id",
+                    "jpTag": "【整理番号】",
+                    "indentLevel": "0",
+                    "text": "X83232"
+                },
+                {
+                    "tag": "jp:addressed-to-person",
+                    "jpTag": "【あて先】",
+                    "indentLevel": "0",
+                    "text": "特許庁長官殿"
+                },
+                {
+                    "tag": "jp:indication-of-case-article",
+                    "jpTag": "【出願の表示】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "jp:doc-number",
+                            "jpTag": "【国際出願番号】",
+                            "indentLevel": "2",
+                            "text": "Unknown doc-number"
+                        },
+                        {
+                            "tag": "shutugan-kubun",
+                            "jpTag": "【出願の区分】",
+                            "text": "特許",
+                            "indentLevel": "2"
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:applicants",
+                    "blocks": [
+                        {
+                            "tag": "jp:applicant",
+                            "indentLevel": "0",
+                            "jpTag": "【特許出願人】",
+                            "blocks": [
+                                {
+                                    "tag": "jp:registered-number",
+                                    "jpTag": "【識別番号】",
+                                    "indentLevel": "2",
+                                    "text": "4814114"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名又は名称】",
+                                    "indentLevel": "2",
+                                    "text": "法人ＸＡ"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:agents",
+                    "blocks": [
+                        {
+                            "tag": "jp:agent",
+                            "jpTag": "【代理人】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "jp:registered-number",
+                                    "jpTag": "【識別番号】",
+                                    "indentLevel": "2",
+                                    "text": "4814194"
+                                },
+                                {
+                                    "tag": "jp:attorney",
+                                    "jpTag": "【弁理士】",
+                                    "indentLevel": "2"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名又は名称】",
+                                    "indentLevel": "2",
+                                    "text": "代理人Ｘ"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:submit-date-of-amendment",
+                    "jpTag": "【補正書の提出年月日】",
+                    "indentLevel": "0",
+                    "text": "20140811",
+                    "convertedText": "平成26年08月11日"
+                },
+                {
+                    "tag": "jp:dtext",
+                    "jpTag": "【その他】",
+                    "text": "請求項１：出願時の請求項１に請求項２の内容を付加して新たな請求項１とした。補正の根拠は、出願時の明細書の段落［００８４］である。",
+                    "indentLevel": "0"
+                },
+                {
+                    "tag": "jp:submission-object-list-article",
+                    "jpTag": "【提出物件の目録】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "jp:list-group",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "jpTag": "【物件名】",
+                                    "indentLevel": "2",
+                                    "text": "条約第１９条補正の写し　1"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

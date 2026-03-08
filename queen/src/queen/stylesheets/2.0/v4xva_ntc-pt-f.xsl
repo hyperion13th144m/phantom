@@ -31,6 +31,7 @@
     <xsl:include href="common-templates/ntc-paragraph.xsl" />
     <xsl:include href="common-templates/country.xsl" />
     <xsl:include href="common-templates/v4xva_prm.xsl" />
+    <xsl:include href="common-templates/dispatch-control-article.xsl" />
     <xsl:include href="common-templates/string-utils.xsl" />
     <xsl:include href="common-templates/date-templates.xsl" />
     <xsl:include href="common-templates/unsupported-tags.xsl" />
@@ -224,7 +225,7 @@
     <xsl:template match="jp:document-name">
         <xf:map>
             <xf:string key="tag">
-                <xsl:value-of select="notice-document-name" />
+                <xsl:value-of select="name()" />
             </xf:string>
             <xf:string key="text">
                 <xsl:value-of select="." />
@@ -238,7 +239,7 @@
     <xsl:template match="jp:name">
         <xf:map>
             <xf:string key="tag">
-                <xsl:value-of select="'notice-name'" />
+                <xsl:value-of select="name()" />
             </xf:string>
             <xf:string key="text">
                 <xsl:value-of select="normalize-space(.)" />
@@ -252,7 +253,7 @@
     <xsl:template match="jp:text">
         <xf:map>
             <xf:string key="tag">
-                <xsl:value-of select="'notice-pat-frm-text'" />
+                <xsl:value-of select="name()" />
             </xf:string>
             <xf:string key="indentLevel">0</xf:string>
             <xf:string key="text">

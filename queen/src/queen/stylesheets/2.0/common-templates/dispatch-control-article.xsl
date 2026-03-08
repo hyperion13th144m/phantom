@@ -10,14 +10,14 @@
     xmlns:schema="urn:schema-dsl">
     
     <xsl:output method="text" encoding="UTF-8" />
-
+    
     <xsl:template match="jp:dispatch-control-article">
         <xf:map>
             <xf:string key="tag">
                 <xsl:value-of select="name()" />
             </xf:string>
             <xf:array key="blocks">
-            <xsl:apply-templates />
+                <xsl:apply-templates />
             </xf:array>
         </xf:map>
     </xsl:template>

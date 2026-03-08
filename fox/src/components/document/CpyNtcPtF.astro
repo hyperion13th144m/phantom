@@ -16,9 +16,11 @@ const { document, forPrinting = false } = Astro.props as {
 {
     forPrinting === false && (
         <Card title={document.text}>
-            {document.blocks.map((b) =>
-                b.blocks.map((b) => <CpyNtcPtFItems block={b} />),
-            )}
+            <div class={document.tag}>
+                {document.blocks.map((b) =>
+                    b.blocks.map((b) => <CpyNtcPtFItems block={b} />),
+                )}
+            </div>
         </Card>
     )
 }

@@ -1,0 +1,151 @@
+{
+    "tag": "pat-etc",
+    "text": "早期審査に関する事情説明書",
+    "blocks": [
+        {
+            "tag": "jp:etcetera-a871",
+            "blocks": [
+                {
+                    "tag": "jp:document-code",
+                    "text": "A1871",
+                    "jpTag": "【書類名】",
+                    "indentLevel": "0",
+                    "convertedText": "早期審査に関する事情説明書"
+                },
+                {
+                    "tag": "jp:file-reference-id",
+                    "jpTag": "【整理番号】",
+                    "indentLevel": "0",
+                    "text": "X83239"
+                },
+                {
+                    "tag": "jp:addressed-to-person",
+                    "jpTag": "【あて先】",
+                    "indentLevel": "0",
+                    "text": "特許庁長官　殿"
+                },
+                {
+                    "tag": "jp:indication-of-case-article",
+                    "jpTag": "【事件の表示】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "jp:doc-number",
+                            "jpTag": "【出願番号】",
+                            "indentLevel": "2",
+                            "text": "特願2099-114410"
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:applicants",
+                    "blocks": [
+                        {
+                            "tag": "jp:applicant",
+                            "indentLevel": "0",
+                            "jpTag": "【提出者】",
+                            "blocks": [
+                                {
+                                    "tag": "jp:registered-number",
+                                    "jpTag": "【識別番号】",
+                                    "indentLevel": "2",
+                                    "text": "4814114"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名又は名称】",
+                                    "indentLevel": "2",
+                                    "text": "法人ＸＹ"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:agents",
+                    "blocks": [
+                        {
+                            "tag": "jp:agent",
+                            "jpTag": "【代理人】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "jp:registered-number",
+                                    "jpTag": "【識別番号】",
+                                    "indentLevel": "2",
+                                    "text": "4814194"
+                                },
+                                {
+                                    "tag": "jp:attorney",
+                                    "jpTag": "【弁理士】",
+                                    "indentLevel": "2"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名又は名称】",
+                                    "indentLevel": "2",
+                                    "text": "代理人Ｘ"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:kind-of-accelerated-examination",
+                    "jpTag": "【早期審査の種別】",
+                    "indentLevel": "0",
+                    "text": "早期審査"
+                },
+                {
+                    "tag": "jp:opinion-contents-article",
+                    "jpTag": "【早期審査に関する事情説明】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "paragraph",
+                            "number": "",
+                            "indentLevel": "1",
+                            "blocks": [
+                                {
+                                    "tag": "text",
+                                    "text": "　１．事情",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　請求項１〜９に記載されている、組成物を２年以内に実施する予定の実施関連出願である。",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　２．先行技術の開示及び対比説明",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　　（１）文献名",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　明細書中の段落【０００８】に記載している。",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　　（２）対比説明",
+                                    "isLastSentence": true
+                                },
+                                {
+                                    "tag": "text",
+                                    "text": "　明細書の段落【０００２】【０００５】において、十分な対比説明を行っている。 ",
+                                    "isLastSentence": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

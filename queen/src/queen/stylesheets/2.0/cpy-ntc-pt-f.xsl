@@ -47,8 +47,8 @@
         </xsl:choose>
     </xsl:template>
     <schema:title>cpy-ntc-pt-f</schema:title>
-    <schema:object name="cpy-notice-pat-frm" is-root="true">
-        <schema:property name="tag" type="string" const="cpy-notice-pat-frm" />
+    <schema:object name="cpy-ntc-pt-f" is-root="true">
+        <schema:property name="tag" type="string" const="cpy-ntc-pt-f" />
         <schema:property name="text" type="string" />
         <schema:property name="blocks" type="array">
             <schema:ref name="cpy-notice-pat-frm" />

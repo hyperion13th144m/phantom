@@ -1,0 +1,232 @@
+{
+    "tag": "pat-app-doc",
+    "text": "国内書面",
+    "blocks": [
+        {
+            "tag": "jp:application-a632",
+            "blocks": [
+                {
+                    "tag": "jp:document-code",
+                    "text": "A1632",
+                    "jpTag": "【書類名】",
+                    "indentLevel": "0",
+                    "convertedText": "国内書面"
+                },
+                {
+                    "tag": "jp:file-reference-id",
+                    "jpTag": "【整理番号】",
+                    "indentLevel": "0",
+                    "text": "X83232"
+                },
+                {
+                    "tag": "jp:addressed-to-person",
+                    "jpTag": "【あて先】",
+                    "indentLevel": "0",
+                    "text": "特許庁長官殿"
+                },
+                {
+                    "tag": "jp:indication-of-case-article",
+                    "jpTag": "【出願の表示】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "jp:doc-number",
+                            "jpTag": "【国際出願番号】",
+                            "indentLevel": "2",
+                            "text": "Unknown doc-number"
+                        },
+                        {
+                            "tag": "shutugan-kubun",
+                            "jpTag": "【出願の区分】",
+                            "text": "特許",
+                            "indentLevel": "2"
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:inventors",
+                    "blocks": [
+                        {
+                            "tag": "jp:inventor",
+                            "jpTag": "【発明者】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "jp:text",
+                                    "jpTag": "【住所又は居所】",
+                                    "indentLevel": "2",
+                                    "text": "東京都"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名】",
+                                    "indentLevel": "2",
+                                    "text": "発明者Ａ城"
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "jp:inventor",
+                            "jpTag": "【発明者】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "jp:text",
+                                    "jpTag": "【住所又は居所】",
+                                    "indentLevel": "2",
+                                    "text": "東京都"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名】",
+                                    "indentLevel": "2",
+                                    "text": "発明者Ａ宮"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:applicants",
+                    "blocks": [
+                        {
+                            "tag": "jp:applicant",
+                            "indentLevel": "0",
+                            "jpTag": "【特許出願人】",
+                            "blocks": [
+                                {
+                                    "tag": "jp:registered-number",
+                                    "jpTag": "【識別番号】",
+                                    "indentLevel": "2",
+                                    "text": "4814114"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名又は名称】",
+                                    "indentLevel": "2",
+                                    "text": "法人ＸＥ"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:agents",
+                    "blocks": [
+                        {
+                            "tag": "jp:agent",
+                            "jpTag": "【代理人】",
+                            "indentLevel": "0",
+                            "blocks": [
+                                {
+                                    "tag": "jp:registered-number",
+                                    "jpTag": "【識別番号】",
+                                    "indentLevel": "2",
+                                    "text": "4814194"
+                                },
+                                {
+                                    "tag": "jp:attorney",
+                                    "jpTag": "【弁理士】",
+                                    "indentLevel": "2"
+                                },
+                                {
+                                    "tag": "jp:name",
+                                    "jpTag": "【氏名又は名称】",
+                                    "indentLevel": "2",
+                                    "text": "代理人Ｘ"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:charge-article",
+                    "jpTag": "【手数料の表示】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "jp:payment",
+                            "blocks": [
+                                {
+                                    "tag": "jp:account",
+                                    "jpTag": "【予納台帳番号】",
+                                    "indentLevel": "2",
+                                    "text": "999911"
+                                },
+                                {
+                                    "tag": "jp:fee",
+                                    "jpTag": "【納付金額】",
+                                    "indentLevel": "2",
+                                    "text": "14000",
+                                    "convertedText": "14,000円"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tag": "jp:submission-object-list-article",
+                    "jpTag": "【提出物件の目録】",
+                    "indentLevel": "0",
+                    "blocks": [
+                        {
+                            "tag": "jp:list-group",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "jpTag": "【物件名】",
+                                    "indentLevel": "2",
+                                    "text": "明細書の翻訳文　1"
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "jp:list-group",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "jpTag": "【物件名】",
+                                    "indentLevel": "2",
+                                    "text": "請求の範囲の翻訳文　1"
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "jp:list-group",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "jpTag": "【物件名】",
+                                    "indentLevel": "2",
+                                    "text": "要約書の翻訳文　1"
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "jp:list-group",
+                            "blocks": [
+                                {
+                                    "tag": "jp:document-name",
+                                    "jpTag": "【物件名】",
+                                    "indentLevel": "2",
+                                    "text": "図面の翻訳文　1"
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "jp:list-group",
+                            "blocks": [
+                                {
+                                    "tag": "jp:general-power-of-attorney-id",
+                                    "jpTag": "【包括委任状番号】",
+                                    "indentLevel": "2",
+                                    "text": "9991112"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

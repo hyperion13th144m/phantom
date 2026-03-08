@@ -6,6 +6,7 @@ import ApplicationBody from "~/components/document/ApplicationBody.astro";
 import AttachingDocument from "~/components/document/AttachingDocument.astro";
 import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
 import CpyNtcPtERn from "~/components/document/CpyNtcPtERn.astro";
+import CpyNtcPtF from "~/components/document/CpyNtcPtF.astro";
 import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
 import PatAmnd from "~/components/document/PatAmnd.astro";
 import PatAppDoc from "~/components/document/PatAppDoc.astro";
@@ -18,6 +19,7 @@ import { isApplicationBody } from "~/interfaces/generated/application-body.guard
 import { isAttachingDocument } from "~/interfaces/generated/attaching-document.guard";
 import { isCpyNtcPtERn } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { isCpyNtcPtE } from "~/interfaces/generated/cpy-ntc-pt-e.guard";
+import { isCpyNtcPtF } from "~/interfaces/generated/cpy-ntc-pt-f.guard";
 import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
 import { isPatAmnd } from "~/interfaces/generated/pat-amnd.guard";
 import { isPatAppDoc } from "~/interfaces/generated/pat-appd.guard";
@@ -37,6 +39,7 @@ const order = [
     isPatRspn,
     isPatEtc,
     isPatAmnd,
+    isCpyNtcPtF,
     isCpyNtcPtE,
     isCpyNtcPtERn,
     isAttachingDocument,
@@ -49,6 +52,8 @@ const title = `${formatApplicationNumber(bibliography.law, bibliography.applicat
 const thumbnails = await getCarouselImage(docId, "figures", "thumbnail");
 const images = await getCarouselImage(docId, "figures", "middle");
 const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
+console.log(JSON.stringify(json, null, 2));
+console.log(sortedJson);
 ---
 
 <Layout title={title}>
@@ -77,6 +82,8 @@ const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
                                 return <CpyNtcPtE document={block} />;
                             } else if (isCpyNtcPtERn(block)) {
                                 return <CpyNtcPtERn document={block} />;
+                            } else if (isCpyNtcPtF(block)) {
+                                return <CpyNtcPtF document={block} />;
                             } else if (isAttachingDocument(block)) {
                                 return <AttachingDocument document={block} />;
                             } else {

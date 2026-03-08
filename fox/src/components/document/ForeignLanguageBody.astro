@@ -36,9 +36,11 @@ const sortedDocs = order
     forPrinting === false &&
         sortedDocs.map((block) => (
             <Card title={block.text}>
-                {block.blocks.map((b) => (
-                    <PatCommon block={b} />
-                ))}
+                <div class={block.tag}>
+                    {block.blocks.map((b) => (
+                        <PatCommon block={b} />
+                    ))}
+                </div>
             </Card>
         ))
 }
