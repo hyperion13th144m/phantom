@@ -51,7 +51,6 @@
                  figrefは通番で1,2,3,... であるため。
                  1-1, 1-2 などは、図1扱いとして、figref num=1 の説明を description にする。
             -->     
-            <xsl:variable name="figref-index" select="position()"/>
 
             <xf:map>
                 <xf:string key="number">
