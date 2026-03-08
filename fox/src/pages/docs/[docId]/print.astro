@@ -1,5 +1,6 @@
 ---
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
+import AttachingDocument from "~/components/document/AttachingDocument.astro";
 import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
 import CpyNtcPtERn from "~/components/document/CpyNtcPtERn.astro";
 import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
@@ -8,6 +9,7 @@ import PatAppDoc from "~/components/document/PatAppDoc.astro";
 import PatEtc from "~/components/document/PatEtc.astro";
 import PatRspn from "~/components/document/PatRspn.astro";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isAttachingDocument } from "~/interfaces/generated/attaching-document.guard";
 import { isCpyNtcPtERn } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { isCpyNtcPtE } from "~/interfaces/generated/cpy-ntc-pt-e.guard";
 import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
@@ -30,6 +32,7 @@ const order = [
     isPatAmnd,
     isCpyNtcPtE,
     isCpyNtcPtERn,
+    isAttachingDocument,
 ];
 const bibliography = await getBibliography(docId);
 const sortedJson = order
@@ -65,6 +68,13 @@ const title = `${formatApplicationNumber(bibliography.law, bibliography.applicat
                     return <CpyNtcPtE document={block} forPrinting={true} />;
                 } else if (isCpyNtcPtERn(block)) {
                     return <CpyNtcPtERn document={block} forPrinting={true} />;
+                } else if (isAttachingDocument(block)) {
+                    return (
+                        <AttachingDocument
+                            document={block}
+                            forPrinting={true}
+                        />
+                    );
                 } else {
                     return null;
                 }

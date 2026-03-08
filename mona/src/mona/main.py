@@ -11,6 +11,7 @@ from typing import List
 
 from libefiling import generate_sha256, parse_archive
 
+from mona.compute_path import compute_path
 from mona.config import TARGET_DOCUMENT_CODES, image_params
 from mona.find_archives import find_archives
 from mona.logger import setup_child_logging, setup_logger
@@ -210,7 +211,8 @@ def main(
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:
     """Convert document ID to directory path."""
-    return base_dir.joinpath(doc_id[0:2], doc_id[2:4], doc_id)
+    p = Path(compute_path(doc_id))
+    return base_dir.joinpath(p)
 
 
 if __name__ == "__main__":

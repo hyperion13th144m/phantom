@@ -13,7 +13,8 @@ export const getContentRoot = (docId: string) => {
 function id2dir(docId: string) {
     // docId をディレクトリ名に変換するロジックをここに実装
     // このロジックは、画像を保存するツールと一致する必要がある
-    return `${docId.substring(0, 2)}/${docId.substring(2, 4)}/${docId}`;
+    return computePath(docId);
+    //return `${docId.substring(0, 2)}/${docId.substring(2, 4)}/${docId}`;
 }
 
 // docId で特定されるコンテンツのベースURLパスを取得
@@ -49,7 +50,7 @@ export const getImageUrl = async (docId: string, imageName: string, sizeTag: str
     };
 };
 
-export function computePath(docId: string): string {
+function computePath(docId: string): string {
     if (cfg.mode === "prod") {
         return cfg.pattern
             .replace("{0}", docId[0])

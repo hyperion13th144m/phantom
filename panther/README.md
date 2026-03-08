@@ -96,3 +96,10 @@ ESを作り直したときの手順は：
 特許JSONをESへ再投入
 
 このスクリプトでSQLiteメタを反映
+
+## 新規文書タイプの追加
+とくに実装することなし。
+## full-text.json bibliography.json images-information.json
+これらが変更されたときは、ES 用JSON生成 patent_doc_editr.py を修正する。
+document-mapping.json も合わせて編集する必要がある。
+ESのインデックスを削除して、再度作成する必要がある。

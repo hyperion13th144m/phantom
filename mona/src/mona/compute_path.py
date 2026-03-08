@@ -27,4 +27,3 @@ if __name__ == "__main__":
 
     doc_id = sys.argv[1]
     print(compute_path(doc_id))
-    print(compute_path(doc_id))

@@ -52,3 +52,13 @@ $ cp attaching-document.json ../test-data/amnd/a1527/json
 ```bash
 $ scripts/run-test.sh
 ```
+
+### config に A1524など取り込み可能な文書のコードを追加
+新規文書が 新たな文書コードであれば、config.py の TARGET_DOCUMENT_CODES に追加
+```python
+TARGET_DOCUMENT_CODES = [
+    "A1524",
+    "A1527",
+]
+```
+phantom/scripts/crawl.sh にも同様にコードを追加

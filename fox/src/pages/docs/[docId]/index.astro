@@ -3,6 +3,7 @@
 // components/document/*.astro は 文書タイプの表示用/印刷用レイアウトを定義する。
 import Bibliography from "~/components/bibliographic-items/Bibliography.astro";
 import ApplicationBody from "~/components/document/ApplicationBody.astro";
+import AttachingDocument from "~/components/document/AttachingDocument.astro";
 import CpyNtcPtE from "~/components/document/CpyNtcPtE.astro";
 import CpyNtcPtERn from "~/components/document/CpyNtcPtERn.astro";
 import ForeignLanguageBody from "~/components/document/ForeignLanguageBody.astro";
@@ -14,6 +15,7 @@ import Card from "~/components/ui/Card.astro";
 import ImageCarousel from "~/components/ui/ImageCarousel.astro";
 import KeywordHighlighter from "~/components/ui/KeywordHighlighter.astro";
 import { isApplicationBody } from "~/interfaces/generated/application-body.guard";
+import { isAttachingDocument } from "~/interfaces/generated/attaching-document.guard";
 import { isCpyNtcPtERn } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { isCpyNtcPtE } from "~/interfaces/generated/cpy-ntc-pt-e.guard";
 import { isForeignLanguageBody } from "~/interfaces/generated/foreign-language-body.guard";
@@ -37,6 +39,7 @@ const order = [
     isPatAmnd,
     isCpyNtcPtE,
     isCpyNtcPtERn,
+    isAttachingDocument,
 ];
 const bibliography = await getBibliography(docId);
 const sortedJson = order
@@ -74,6 +77,8 @@ const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
                                 return <CpyNtcPtE document={block} />;
                             } else if (isCpyNtcPtERn(block)) {
                                 return <CpyNtcPtERn document={block} />;
+                            } else if (isAttachingDocument(block)) {
+                                return <AttachingDocument document={block} />;
                             } else {
                                 return null;
                             }
