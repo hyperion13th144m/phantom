@@ -44,7 +44,7 @@
                 "--index",
                 "patent-documents",
                 "--data-root",
-                "/data_dir",
+                "/data-dir",
                 "--use-hash-guard"
             ]
         },
@@ -83,7 +83,7 @@
             "args": [
                 "import-extra-data",
                 "--data-dir",
-                "/data_dir",
+                "/data-dir",
                 "--sqlite-db",
                 "patent.db"
             ]

@@ -3,7 +3,7 @@
 
 ## レンダリングの対象のディレクトリ構造
 ```text
-/data_dir/
+/data-dir/
 ├── 03
 │   └── 36
 │       └── 0336492181f26350eff4bcb1e50d661ca2edd1283db2c981d97717c1eded4639
@@ -44,7 +44,7 @@ mona がこのようなデータを作成する。一つの特許文書は、doc
 ├── package.json
 ├── public
 │   ├── favicon.svg
-│   └── images -> /data_dir      # 開発時に画像を参照するためのシンボリックリンク
+│   └── images -> /data-dir      # 開発時に画像を参照するためのシンボリックリンク
 ├── README.md
 ├── src
 │   ├── assets
@@ -76,7 +76,7 @@ mona がこのようなデータを作成する。一つの特許文書は、doc
 ```
 
 ### src/pages/docs/[docId]/index.astro
-特許文書の詳細ページ。constants.ts DATA_DIR (/data_dir) から、 docId に対応するdocument.json等を読み出す。
+特許文書の詳細ページ。constants.ts DATA_DIR (/data-dir) から、 docId に対応するdocument.json等を読み出す。
 
 ### 画像
 astro は、document.json を html にレンダリングする際に、画像ファイルのurlを生成する。
@@ -91,27 +91,27 @@ astro は、document.json を html にレンダリングする際に、画像フ
 ```
 ### 開発環境と本番環境での画像の参照
   - 開発環境では、public/images が参照される。
-  - 本番環境では、NGINX に /images/* をリクエストすると /data_dir/*/images/* を読み出す。
+  - 本番環境では、NGINX に /images/* をリクエストすると /data-dir/*/images/* を読み出す。
 
 ## 運用
 ### fox 起動
-docker で /data_dir をマウントする。
+docker で /data-dir をマウントする。
 
 ### nginx
 ```
   location /images/ {
-    alias /data_dir/;
+    alias /data-dir/;
   }
 ```
-として、/images へのアクセスを /data_dir へのアクセスに変換する。 
+として、/images へのアクセスを /data-dir へのアクセスに変換する。 
 
 
 ## 新規文書のレンダラチェック
- 1. mona で文書を処理して、/data_dir に保存する。
+ 1. mona で文書を処理して、/data-dir に保存する。
 ```bash
 $ phantom/scripts/crawl.sh -d -m 4 -t ALL
 ```
- または test-data を /data_dir にコピーする。
+ または test-data を /data-dir にコピーする。
  2. queen で ./scripts/build_dev_map.sh dev を実行して、interfaces/generated/config/storage-config.json  を更新する。
  3. queen で ./scripts/build-all.sh を実行し、interfaces/generated/json-schema を更新
  4. fox で scripts/build-schema.sh に json schema を追加、それを実行してinterface を更新する。

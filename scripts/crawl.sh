@@ -67,7 +67,7 @@ list_of_targets(){
 usage(){
     echo "Usage: $0 [-m {num_multi_processors}] [-o] [-t {target}] [ -d ]"
     echo "  -m: Number of multi-processors to use for crawling. Default is 1. max is 4"
-    echo "  -o: Overwrite existing data in the data_dir. WARNING: This will delete all existing data in the data_dir."
+    echo "  -o: Overwrite existing data in the data-dir. WARNING: This will delete all existing data in the data-dir."
     echo "  -t: Specify the target for crawling. default is ALL"
     echo "  -d: execute this script for debug."
     echo 
@@ -135,7 +135,7 @@ if [ "$MODE" = "prod" ]; then
   docker compose -f $PROJECT_DIR/docker-compose.yml \
     run --rm -i mona \
       $OVERWRITE $NUM_MULTI_PROCESSORS \
-      /src_dir /data_dir $TARGET_CODES
+      /src-dir /data-dir $TARGET_CODES
 elif [ "$MODE" = "dev" ]; then
   source $PROJECT_DIR/.env
   export SRC_DIR DATA_DIR

@@ -34,7 +34,7 @@ done
 if [ "$MODE" = "prod" ]; then
   docker compose -f $PROJECT_DIR/docker-compose.yml \
     run --rm -i panther \
-      upload-documents $SKIP_IF_EXISTS --data-root /data_dir
+      upload-documents $SKIP_IF_EXISTS --data-root /data-dir
 elif [ "$MODE" = "dev" ]; then
   source $PROJECT_DIR/.env
   export ES_URL ES_API_KEY ES_USER ES_PASSWORD ES_INDEX

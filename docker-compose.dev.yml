@@ -2,14 +2,12 @@ services:
   fox-dev:
     container_name: fox-dev
     image: node:24-bookworm
-    tty: true
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
     volumes:
-      - .:/workspaces:cached
-      - ${DATA_DIR}:/data_dir
+      - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_FOX}:/var/log/fox
     networks:
       - dev-net
@@ -18,21 +16,19 @@ services:
     container_name: joker-dev
     image: node:24-bookworm
     volumes:
-      - .:/workspaces:cached
       - ${LOG_DIR_JOKER}:/var/log/joker
-      - ${DATA_DIR}:/data_dir
-      - ${EXTRA_DATA_DIR}:/extra_dir
+      - ${DATA_DIR}:/data-dir
+      - ${EXTRA_DATA_DIR}:/extra-dir
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
       ES_URL: http://es01-dev:9200
-      ES_USER: ${ELASTIC_USER}
-      ES_PASSWORD: ${ELASTIC_PASSWORD}
+      ES_USER: ${ES_USER}
+      ES_PASSWORD: ${ES_PASSWORD}
       NEXT_PUBLIC_IMAGE_BASE_URL: /images
       NEXT_PUBLIC_DOCUMENT_BASE_URL: /docs
-      SQLITE_PATH: /extra_dir/extra_data.sqlite3
-    tty: true
+      SQLITE_PATH: /extra-dir/${SQLITE_NAME}
     networks:
       - dev-net
 
@@ -45,7 +41,7 @@ services:
       discovery.type: single-node
       xpack.security.enabled: false
       network.host: 0.0.0.0
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_PASSWORD: ${ES_PASSWORD}
       ES_JAVA_OPTS: -Xms512m -Xmx512m
     volumes:
       - es-data-dev:/usr/share/elasticsearch/data

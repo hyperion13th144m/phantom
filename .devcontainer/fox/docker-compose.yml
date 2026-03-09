@@ -1,0 +1,6 @@
+services:
+  fox-dev:
+    tty: true
+    volumes:
+      - .:/workspaces:cached
+    command: sh -c "sleep infinity"

@@ -1,0 +1,6 @@
+services:
+  joker-dev:
+    volumes:
+      - .:/workspaces:cached
+    tty: true
+    command: sh -c "sleep infinity"
