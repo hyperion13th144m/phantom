@@ -31,7 +31,7 @@ def parse(src_dir: Path, dst_dir: Path):
         doc_dir.mkdir(exist_ok=True)
 
         # setup output file names for each doctype
-        bibliography_path = str(work_dir / "bibliography.json")
+        bibliography_path = str(work_dir / "bibliographic-items.json")
         full_text_path = str(work_dir / "full-text.json")
         image_desc_path = str(work_dir / "image-description.json")
         doctype_path_map: DoctypePathMap = {
@@ -101,3 +101,6 @@ if __name__ == "__main__":
     parser.add_argument("dst_dir", type=Path, help="Path to the dst dir.")
     args = parser.parse_args()
     parse(src_dir=args.src_dir, dst_dir=args.dst_dir)
+    from pathlib import Path
+
+    p = Path("hoge")

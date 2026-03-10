@@ -13,7 +13,7 @@ from libefiling import generate_sha256, parse_archive
 
 from mona.compute_path import compute_path
 from mona.config import TARGET_DOCUMENT_CODES, image_params
-from mona.find_archives import find_archives
+from mona.find_archives import find_archives, find_extracted_directories
 from mona.logger import setup_child_logging, setup_logger
 from mona.parse import parse
 
@@ -23,7 +23,11 @@ def get_args() -> dict:
         description="An application for parsing XML handled by the Internet Application Software."
     )
     p.add_argument("src_dir", type=str, help="Directory containing archives")
-    p.add_argument("output_dir", type=str, help="Directory to store parsed output")
+    p.add_argument(
+        "output_dir",
+        type=str,
+        help="Directory to store parsed output in production mode.",
+    )
     p.add_argument(
         "doc_code",
         nargs="+",
@@ -49,6 +53,12 @@ def get_args() -> dict:
     p.add_argument(
         "-o", "--overwrite", action="store_true", help="Overwrite existing output"
     )
+    p.add_argument(
+        "--mode",
+        choices=["production", "development"],
+        default="production",
+        help="Enable production mode",
+    )
     args = p.parse_args()
 
     src_dir = Path(args.src_dir)
@@ -67,6 +77,7 @@ def get_args() -> dict:
         "log_level": args.log_level,
         "num_processors": args.multi_processors,
         "overwrite": args.overwrite,
+        "mode": args.mode,
     }
 
 
@@ -77,6 +88,7 @@ def multi_processes_parent(
     log_level: str,
     overwrite: bool,
     num_processors: int,
+    mode: str,
 ):
 
     queue = Queue()
@@ -103,14 +115,27 @@ def multi_processes_parent(
     for _ in range(num_processors):
         p = Process(
             target=multi_processes_child,
-            args=(output_dir_root, queue, log_queue, log_level, overwrite, stop_event),
+            args=(
+                output_dir_root,
+                queue,
+                log_queue,
+                log_level,
+                overwrite,
+                stop_event,
+                mode,
+            ),
         )
         p.start()
         processes.append(p)
 
     try:
         # give archive to each processes via queue
-        for item in find_archives(str(src_dir), doc_code):
+        iterator = (
+            find_archives(str(src_dir), doc_code)
+            if mode == "production"
+            else find_extracted_directories(str(src_dir), doc_code)
+        )
+        for item in iterator:
             if stop_event.is_set():
                 break
             queue.put(item)
@@ -135,7 +160,13 @@ def multi_processes_parent(
 
 
 def multi_processes_child(
-    output_dir_root, queue, log_queue, log_level, overwrite: bool, stop_event
+    output_dir_root,
+    queue,
+    log_queue,
+    log_level,
+    overwrite: bool,
+    stop_event,
+    mode: str,
 ):
     setup_child_logging(log_queue, log_level)
     while True:
@@ -149,74 +180,101 @@ def multi_processes_child(
         if item is None:
             break
 
-        archive_path, procedure_path = item
-        main(
-            archive_path,
-            procedure_path,
-            output_dir_root,
-            overwrite,
-            stop_event,
-        )
+        if mode == "production":
+            archive_path, procedure_path = item
+            main(
+                output_dir_root,
+                overwrite,
+                stop_event,
+                archive_path=archive_path,
+                procedure_path=procedure_path,
+            )
+        else:
+            main(output_dir_root, overwrite, stop_event, src_path=item)
 
 
 def main(
-    archive_path: Path,
-    procedure_path: Path,
     output_dir_root: Path,
     overwrite: bool,
     stop_event,
+    src_path: Path | None = None,
+    archive_path: Path | None = None,
+    procedure_path: Path | None = None,
 ):
     logger = logging.getLogger(__name__)
-
-    ### check if already processed
-    doc_id = generate_sha256(str(archive_path))
-    output_dir = None
+    is_production = archive_path is not None and procedure_path is not None
+    is_development = src_path is not None
+    extracted_dir = None
+    output_json_dir = None
     try:
-        output_dir = get_output_dir(doc_id, output_dir_root)
-        if overwrite is False and output_dir.exists():
-            logger.info(
-                f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
-                extra={"archive_path": str(archive_path), "doc_id": doc_id},
-            )
-            return
-        if overwrite is True and output_dir.exists():
-            shutil.rmtree(output_dir)
+        if is_production:
+            ### check if already processed
+            doc_id = generate_sha256(str(archive_path))
+            extracted_dir = get_output_dir(doc_id, output_dir_root)
+            output_json_dir = extracted_dir / "json"
+            if overwrite is False and extracted_dir.exists():
+                logger.info(
+                    f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
+                    extra={"archive_path": str(archive_path), "doc_id": doc_id},
+                )
+                return
+            if overwrite is True and extracted_dir.exists():
+                shutil.rmtree(extracted_dir)
 
-        output_dir.mkdir(parents=True, exist_ok=True)
-        if stop_event.is_set():
-            logger.info(
-                f"[INTERRUPTED] doc_id={doc_id}, archive_path={archive_path}",
-                extra={"archive_path": str(archive_path), "doc_id": doc_id},
-            )
-            if output_dir and output_dir.exists():
-                shutil.rmtree(output_dir)
-            return
+            extracted_dir.mkdir(parents=True, exist_ok=True)
+            if stop_event.is_set():
+                logger.info(
+                    f"[INTERRUPTED] doc_id={doc_id}, archive_path={archive_path}",
+                    extra={"archive_path": str(archive_path), "doc_id": doc_id},
+                )
+                if extracted_dir and extracted_dir.exists():
+                    shutil.rmtree(extracted_dir)
+                return
 
-        ### OCR 対象は other-imagesだけ。
-        ### other-images は 外国語書面出願、被引用文献 で使われる画像
-        parse_archive(
-            str(archive_path),
-            str(procedure_path),
-            str(output_dir),
-            image_params=image_params,
-            ocr_target=["other-images"],
-        )
-        parse(output_dir, output_dir / "json")
-        logger.info(
-            f"[SUCCESS] doc_id={doc_id}, archive_path={archive_path}",
-            extra={"archive_path": str(archive_path), "doc_id": doc_id},
-        )
+            ### OCR 対象は other-imagesだけ。
+            ### other-images は 外国語書面出願、被引用文献 で使われる画像
+            parse_archive(
+                str(archive_path),
+                str(procedure_path),
+                str(extracted_dir),
+                image_params=image_params,
+                ocr_target=["other-images"],
+            )
+        elif is_development:
+            doc_id = ""
+            extracted_dir = src_path
+            output_json_dir = Path(output_dir_root) / src_path
+        else:
+            raise ValueError(
+                "Either archive_path and procedure_path or src_path must be provided."
+            )
+
+        parse(extracted_dir, output_json_dir)
+        if is_production:
+            logger.info(
+                f"[SUCCESS] doc_id={doc_id}, archive_path={archive_path}, output={output_json_dir}",
+                extra={
+                    "archive_path": str(archive_path),
+                    "doc_id": doc_id,
+                    "output": str(output_json_dir),
+                },
+            )
+        elif is_development:
+            logger.info(
+                f"[SUCCESS] src_path={src_path}, output={output_json_dir}",
+                extra={"src_path": str(src_path), "output": str(output_json_dir)},
+            )
     except Exception as e:
         logger.info(
-            f"[FAIL] doc_id={doc_id}, archive_path={archive_path}, error={traceback.format_exc()}",
+            f"[FAIL] archive_path={archive_path}, src_path={src_path} error={traceback.format_exc()}",
             extra={
                 "archive_path": str(archive_path),
-                "doc_id": doc_id,
+                "src_path": str(src_path),
                 "traceback": traceback.format_exc(),
             },
         )
-        if output_dir and output_dir.exists():
-            shutil.rmtree(output_dir)
+        if extracted_dir and extracted_dir.exists():
+            shutil.rmtree(extracted_dir)
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:

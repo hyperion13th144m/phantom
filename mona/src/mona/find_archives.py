@@ -8,6 +8,8 @@ from itertools import chain
 from pathlib import Path
 from typing import Generator
 
+from libefiling import get_document_code
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,3 +48,13 @@ def find_procedure_xml(archive_path: Path) -> Path | None:
     if not xml_path.exists():
         return None
     return xml_path
+
+
+def find_extracted_directories(
+    directory: str, doc_codes: list[str]
+) -> Generator[Path, None, None]:
+    """Find all extracted archive directories contains manifest.json."""
+    for m in Path(directory).rglob("manifest.json"):
+        doc_code = get_document_code(str(m))
+        if doc_code in doc_codes:
+            yield m.parent
