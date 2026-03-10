@@ -36,6 +36,7 @@
     "xml_files": [
         {
             "filename": "06124369827-jpntce.xml",
+            "kind": "notice",
             "original_filename": null,
             "sha256": "cd850a40b948693dd6969962b8c542eae603e63f1d59e6f44ecd098444cb6178",
             "encoding": {
@@ -47,6 +48,7 @@
         },
         {
             "filename": "06124369827-jpmngt.xml",
+            "kind": "management-info",
             "original_filename": null,
             "sha256": "bdcf8942f2470db3b4d441b62deefebc15a3f3280183175a940e1badc9d52718",
             "encoding": {
@@ -58,6 +60,7 @@
         },
         {
             "filename": "procedure.xml",
+            "kind": "procedure",
             "original_filename": null,
             "sha256": "ac2f23c8574b4dd4f253a9f47ab8290d877523fe0267b8031c6089aa918f9fed",
             "encoding": {

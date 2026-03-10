@@ -36,6 +36,7 @@
     "xml_files": [
         {
             "filename": "JPOXMLDOC01-jpbibl.xml",
+            "kind": "bibliographic-info",
             "original_filename": null,
             "sha256": "5d446344e23b5247fd8fedc3fcf5e958f3e6c5fe77f6ae02a7ffd4c9c31b38cb",
             "encoding": {
@@ -47,6 +48,7 @@
         },
         {
             "filename": "procedure.xml",
+            "kind": "procedure",
             "original_filename": null,
             "sha256": "22c85d249f3f0b8af8c9b06e907660464ce3c1639027b9346684d2f0fe9db4d5",
             "encoding": {

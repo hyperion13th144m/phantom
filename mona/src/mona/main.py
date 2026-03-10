@@ -60,7 +60,7 @@ def get_args() -> dict:
         help="Enable production mode",
     )
     args = p.parse_args()
-
+    print(args)
     src_dir = Path(args.src_dir)
     output_dir_root = Path(args.output_dir)
     if not src_dir.exists():
@@ -243,7 +243,7 @@ def main(
         elif is_development:
             doc_id = ""
             extracted_dir = src_path
-            output_json_dir = Path(output_dir_root) / src_path
+            output_json_dir = Path(output_dir_root) / src_path / "json"
         else:
             raise ValueError(
                 "Either archive_path and procedure_path or src_path must be provided."

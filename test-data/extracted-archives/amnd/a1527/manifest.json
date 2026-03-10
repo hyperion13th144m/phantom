@@ -35,7 +35,8 @@
     },
     "xml_files": [
         {
-            "filename": "JPOXMLDOC01-jpatta.xml",
+            "filename": "JPOXMLDOC01-appb.xml",
+            "kind": "attached-documents",
             "original_filename": null,
             "sha256": "d73075a9040f6ec598c918cd0f4a49dc31181c0db9e891b627da557a1b617e8f",
             "encoding": {
@@ -47,6 +48,7 @@
         },
         {
             "filename": "JPOXMLDOC01-jpbibl.xml",
+            "kind": "bibliographic-info",
             "original_filename": null,
             "sha256": "0222ee4c82099e3804f1d8e91dd91b8027e256c3bb428277f1f73a8c92e3a2c2",
             "encoding": {
@@ -58,6 +60,7 @@
         },
         {
             "filename": "procedure.xml",
+            "kind": "procedure",
             "original_filename": null,
             "sha256": "9445112f735a456dc03daefad5d39bb8df2e2db6a6ccef2044fa933503bdc0a1",
             "encoding": {

@@ -23,7 +23,7 @@ def parse(src_dir: Path, dst_dir: Path):
     with tempfile.TemporaryDirectory() as temp_dir:
         # final output jsons are stored in json_dir
         # json_dir = dst_dir / "json"
-        dst_dir.mkdir(exist_ok=True)
+        dst_dir.mkdir(exist_ok=True, parents=True)
 
         # working directories
         work_dir = Path(temp_dir)
