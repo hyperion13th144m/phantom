@@ -2,3 +2,4 @@
 fox/src/interfaces/generated
 mona/src/mona/models/generated
 panther/src/panther/models/generated
+var/data/test-data/

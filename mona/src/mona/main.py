@@ -273,8 +273,9 @@ def main(
                 "traceback": traceback.format_exc(),
             },
         )
-        if extracted_dir and extracted_dir.exists():
-            shutil.rmtree(extracted_dir)
+        if is_production:
+            if extracted_dir and extracted_dir.exists():
+                shutil.rmtree(extracted_dir)
 
 
 def get_output_dir(doc_id: str, base_dir: Path) -> Path:

@@ -162,8 +162,7 @@
                                     "jpTag": "【表１】",
                                     "indentLevel": "2",
                                     "imageKind": "tables",
-                                    "file": "JPOXMLDOC01-appb-T000001.tif",
-                                    "alt": "tables No. 1"
+                                    "file": "JPOXMLDOC01-appb-T000001.tif"
                                 }
                             ]
                         },
@@ -205,8 +204,7 @@
                                     "jpTag": "【表２】",
                                     "indentLevel": "2",
                                     "imageKind": "tables",
-                                    "file": "JPOXMLDOC01-appb-T000002.tif",
-                                    "alt": "tables No. 2"
+                                    "file": "JPOXMLDOC01-appb-T000002.tif"
                                 }
                             ]
                         },
@@ -439,8 +437,7 @@
                     "jpTag": "【図１-１】",
                     "indentLevel": "0",
                     "imageKind": "figures",
-                    "file": "JPOXMLDOC01-appb-D000003.tif",
-                    "alt": "Figure No. 1-1 "
+                    "file": "JPOXMLDOC01-appb-D000003.tif"
                 },
                 {
                     "tag": "image-container",
@@ -448,8 +445,7 @@
                     "jpTag": "【図１-２】",
                     "indentLevel": "0",
                     "imageKind": "figures",
-                    "file": "JPOXMLDOC01-appb-D000004.tif",
-                    "alt": "Figure No. 1-2 "
+                    "file": "JPOXMLDOC01-appb-D000004.tif"
                 },
                 {
                     "tag": "image-container",
@@ -457,8 +453,7 @@
                     "jpTag": "【図１-３】",
                     "indentLevel": "0",
                     "imageKind": "figures",
-                    "file": "JPOXMLDOC01-appb-D000005.tif",
-                    "alt": "Figure No. 1-3 "
+                    "file": "JPOXMLDOC01-appb-D000005.tif"
                 },
                 {
                     "tag": "image-container",
@@ -466,8 +461,7 @@
                     "jpTag": "【図２】",
                     "indentLevel": "0",
                     "imageKind": "figures",
-                    "file": "JPOXMLDOC01-appb-D000006.jpg",
-                    "alt": "Figure No. 2 平面図である。"
+                    "file": "JPOXMLDOC01-appb-D000006.jpg"
                 }
             ]
         }
