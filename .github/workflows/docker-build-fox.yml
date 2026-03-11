@@ -51,9 +51,9 @@ jobs:
 
       - name: Run build-all and build_dev_map scripts to generate json for fox directory.
         run: |
-          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build_dev_map.sh
+          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/copy-config.sh
           ./queen/scripts/build-all.sh
-          ./queen/scripts/build_dev_map.sh
+          ./queen/scripts/copy-config.sh
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -95,7 +95,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./fox
-          file: ./docker/Dockerfile.fox
+          file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

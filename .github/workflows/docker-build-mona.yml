@@ -39,20 +39,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install uv
+      - name: Run copy-config script to generate json config for mona directory.
         run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Install Python dependencies
-        run: |
-          cd queen
-          uv sync
-
-      - name: Run build_dev_map script to generate json config for mona directory.
-        run: |
-          chmod +x ./queen/scripts/build_dev_map.sh
-          ./queen/scripts/build_dev_map.sh
+          chmod +x ./queen/scripts/copy-config.sh
+          ./queen/scripts/copy-config.sh
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -79,7 +69,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./docker/Dockerfile.mona
+          file: ./mona/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
