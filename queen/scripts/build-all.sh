@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(dirname $0)"
-PROJECT_ROOT="$SCRIPT_DIR/.."
+PROJECT_ROOT="$(cd $SCRIPT_DIR && cd .. && pwd)"
 cd "$PROJECT_ROOT" || exit 1
 
 # ============================
@@ -73,7 +73,7 @@ fi
 # Step 1: translate xsl as xml to json schemas.
 # ============================
 log "Step 1: translate xsl as xml to json schemas."
-bash "$BUILD_SCHEMA" -o "$JSON_SCHEMA_DIR" -x "$XSL_ROOT"
+"$BUILD_SCHEMA" -o "$JSON_SCHEMA_DIR" -x "$XSL_ROOT"
 
 # ============================
 # Step 2: copy json schema to the projects
