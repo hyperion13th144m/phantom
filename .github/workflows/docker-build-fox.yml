@@ -51,10 +51,12 @@ jobs:
 
       - name: Run build-all and build_dev_map scripts to generate json for fox directory.
         run: |
+          pwd
           chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
           ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
           mkdir -p ./fox/src/interfaces/generated/config
           cp ./queen/storage-config.json ./fox/src/interfaces/generated/config
+          ls -l ./fox/src/interfaces/generated/config
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -69,6 +71,7 @@ jobs:
       - name: Run build-schema script to generate ts schema from json schema.
         run: |
           chmod +x ./fox/scripts/build-schema.sh
+          ls -l ./fox/src/interfaces/generated/config
           ./fox/scripts/build-schema.sh
 
       - name: Set up Docker Buildx
