@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(dirname $0)"
-PROJECT_ROOT="$(cd $SCRIPT_DIR && cd .. && pwd)"
+PROJECT_ROOT="$(cd $SCRIPT_DIR/.. && pwd)"
 cd "$PROJECT_ROOT" || exit 1
 
 # ============================
