@@ -49,11 +49,12 @@ jobs:
           cd queen
           uv sync
 
-      - name: Run build-all and build_dev_map scripts to generate json for fox directory.
+      - name: Run build-all and copy config to generate json for fox directory.
         run: |
-          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build_dev_map.sh
-          ./queen/scripts/build-all.sh
-          ./queen/scripts/build_dev_map.sh
+          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
+          ./queen/scripts/build-all.sh -f "./fox/src/interfaces/generated/json-schema"
+          mkdir -p ./fox/src/interfaces/generated/config
+          cp ./queen/storage-config.json ./fox/src/interfaces/generated/config/storage-config.json
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -95,7 +96,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./fox
-          file: ./docker/Dockerfile.fox
+          file: ./fox/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

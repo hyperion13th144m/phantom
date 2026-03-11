@@ -1,9 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR/.."
-
+SCRIPT_DIR="$(dirname $0)"
+PROJECT_ROOT="$(cd $SCRIPT_DIR/.. && pwd)"
 cd "$PROJECT_ROOT" || exit 1
 
 DEBUG=${1:-}
