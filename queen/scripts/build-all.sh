@@ -83,26 +83,27 @@ if [ $TARGET = "panther" ]; then
   if [ ! -d "$PANTHER_SCHEMA" ]; then
     mkdir -p "$PANTHER_SCHEMA"
   fi
-  cp -r "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
 fi
 
 if [ $TARGET = "fox" ]; then
   if [ ! -d "$FOX_SCHEMA" ]; then
     mkdir -p "$FOX_SCHEMA"
   fi
-  cp -r "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+  echo cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
 fi
 
 if [ $TARGET = "ALL" ]; then
   if [ ! -d "$PANTHER_SCHEMA" ]; then
     mkdir -p "$PANTHER_SCHEMA"
   fi
-  cp -r "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
 
   if [ ! -d "$FOX_SCHEMA" ]; then
     mkdir -p "$FOX_SCHEMA"
   fi
-  cp -r "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
 fi
 
 
