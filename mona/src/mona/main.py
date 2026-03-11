@@ -186,12 +186,12 @@ def multi_processes_child(
                 output_dir_root,
                 overwrite,
                 stop_event,
+                mode=mode,
                 archive_path=archive_path,
                 procedure_path=procedure_path,
-                mode=mode
             )
         else:
-            main(output_dir_root, overwrite, stop_event, src_path=item, mode=mode)
+            main(output_dir_root, overwrite, stop_event, mode=mode, src_path=item)
 
 
 def main(
@@ -204,12 +204,16 @@ def main(
     procedure_path: Path | None = None,
 ):
     logger = logging.getLogger(__name__)
-    is_production = mode == "production"
-    is_development = mode == "development"
+    is_production = mode == 'production'
+    is_development = mode == 'development'
     extracted_dir = None
     output_json_dir = None
     try:
         if is_production:
+            if archive_path is None or procedure_path is None:
+                raise ValueError(
+                    'archive_path and procedure_path must be provided in production mode.'
+                )
             ### check if already processed
             doc_id = generate_sha256(str(archive_path))
             extracted_dir = get_output_dir(doc_id, output_dir_root)
@@ -243,6 +247,8 @@ def main(
                 ocr_target=['other-images'],
             )
         elif is_development:
+            if src_path is None:
+                raise ValueError('src_path must be provided in development mode.')
             extracted_dir = src_path
             mp = src_path / 'manifest.json'
             if not mp.exists():
