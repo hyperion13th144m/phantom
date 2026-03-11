@@ -3,10 +3,11 @@
 # This script builds the patent document schema
 # by translating XSL as XML to JSON files.
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR/.." || exit 1
-OUTPUT_DIR="./out/generated-schema"
-XSL_ROOT="./src/queen/stylesheets/2.0"
+SCRIPT_DIR="$(dirname $0)"
+PROJECT_ROOT="$SCRIPT_DIR/.."
+cd "$PROJECT_ROOT" || exit 1
+OUTPUT_DIR="$PROJECT_ROOT/out/generated-schema"
+XSL_ROOT="$PROJECT_ROOT/src/queen/stylesheets/2.0"
 SRC_XML_ARRAY=(
     "full-text.xsl"
     "images-information.xsl"
@@ -30,7 +31,7 @@ SRC_XML_ARRAY=(
     "common-templates/unsupported-tags.xsl"
     "attaching-document.xsl"
 )
-DSL="./src/queen/stylesheets/schema/schema-dsl.xsl"
+DSL="$PROJECT_ROOT/src/queen/stylesheets/schema/schema-dsl.xsl"
 
 usage() {
   echo "Usage: $0 [ -o output_dir ] [ -x xsl_root ] [ -s schema_xsl ]"
@@ -74,7 +75,7 @@ for src_xml in "${SRC_XML_ARRAY[@]}"; do
     echo "Translating $src_xml to $dst_json"
 
     # read xsl as xml and translate them to json using the DSL
-    uv run src/queen/translate.py \
+    uv run "$PROJECT_ROOT/src/queen/translate.py" \
        "$XSL_ROOT/$src_xml" \
        "$DSL" \
        "$dst_json" --prettify

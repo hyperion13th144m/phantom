@@ -8,9 +8,8 @@ import sqlite3
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Protocol
 
-from elasticsearch.helpers import bulk
-
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
 
 
 @dataclass
@@ -129,7 +128,6 @@ def add_args(parser: SupportsAddParser) -> None:
     )
     p.add_argument(
         "--sqlite",
-        required=True,
         help="Path to sqlite3 file",
         default=os.getenv("SQLITE_PATH"),
     )

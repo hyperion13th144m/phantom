@@ -6,20 +6,27 @@
             "tag": "jp:cpy-notice-pat-frm",
             "blocks": [
                 {
-                    "tag": "text",
-                    "text": "X8323",
-                    "isLastSentence": true
-                },
-                {
-                    "tag": "text",
-                    "text": "991234",
-                    "isLastSentence": true
-                },
-                {
-                    "tag": "jp:date",
-                    "jpTag": "",
-                    "text": "平成２８年　７月１８日",
-                    "convertedText": ""
+                    "tag": "jp:dispatch-control-article",
+                    "blocks": [
+                        {
+                            "tag": "jp:file-reference-id",
+                            "jpTag": "整理番号",
+                            "indentLevel": "0",
+                            "text": "X8323"
+                        },
+                        {
+                            "tag": "jp:dispatch-number",
+                            "jpTag": "発送番号",
+                            "indentLevel": "0",
+                            "text": "991234"
+                        },
+                        {
+                            "tag": "jp:dispatch-date",
+                            "jpTag": "発送日",
+                            "indentLevel": "0",
+                            "text": "平成２８年　７月１８日"
+                        }
+                    ]
                 },
                 {
                     "tag": "jp:notice-pat-frm",
@@ -28,7 +35,7 @@
                             "tag": "jp:notification-a242623",
                             "blocks": [
                                 {
-                                    "tag": "",
+                                    "tag": "jp:document-name",
                                     "text": "通知書"
                                 },
                                 {
@@ -49,7 +56,7 @@
                                             "tag": "jp:draft-person-group",
                                             "blocks": [
                                                 {
-                                                    "tag": "notice-name",
+                                                    "tag": "jp:name",
                                                     "text": "特　許　庁　長　官"
                                                 }
                                             ]

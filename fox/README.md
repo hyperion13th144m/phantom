@@ -112,7 +112,7 @@ docker で /data-dir をマウントする。
 $ phantom/scripts/crawl.sh -d -m 4 -t ALL
 ```
  または test-data を /data-dir にコピーする。
- 2. queen で ./scripts/build_dev_map.sh dev を実行して、interfaces/generated/config/storage-config.json  を更新する。
+ 2. queen で ./scripts/copy-config.sh を実行して、interfaces/generated/config/storage-config.json  を更新する。
  3. queen で ./scripts/build-all.sh を実行し、interfaces/generated/json-schema を更新
  4. fox で scripts/build-schema.sh に json schema を追加、それを実行してinterface を更新する。
  5. renderer 実装

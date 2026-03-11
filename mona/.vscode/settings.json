@@ -3,5 +3,5 @@
         "titleBar.activeBackground": "#1109f0",
         "titleBar.inactiveBackground": "#181380"
     },
-    "python-envs.pythonProjects": []
+    "python-envs.defaultEnvManager": "ms-python.python:venv"
 }

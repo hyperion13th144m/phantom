@@ -5,24 +5,22 @@
      original: pat-amnd.xsl at Jan 22  2007 
      sha256sum: 07526880fdb7472ad99e02fc63356fc9f0f122846d24b52678691f1730d3d037
      ====================================================================-->
-<xsl:stylesheet
-    version="3.0"
+<xsl:stylesheet version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:jp="http://www.jpo.go.jp"
     xmlns:schema="urn:schema-dsl"
-    xmlns:xf="http://www.w3.org/2005/xpath-functions"
-    exclude-result-prefixes="xsl jp schema xf">
-    
+    xmlns:xf="http://www.w3.org/2005/xpath-functions" exclude-result-prefixes="xsl jp schema xf">
+
     <xsl:output method="text" encoding="UTF-8" />
-    
+
     <xsl:variable name="node" select="name(//jp:pat-amnd/*)" />
     <xsl:variable name="kind-of-law" select="//jp:pat-amnd/*/@jp:kind-of-law" />
     <xsl:variable name="payment" select="substring($node,1,11)" />
     <xsl:param name="debug" select="'false'"/>
-    
+
     <xsl:include href="common-templates/pat_common.xsl" />
     <xsl:include href="debug.xsl"/>
-    
+
     <!-- ====================================================================
          root
          ====================================================================-->
@@ -62,8 +60,8 @@
                 <schema:ref name="amendment-a528-a5212"/>
             </schema:anyOf>
         </schema:property>
-    </schema:object> 
-    
+    </schema:object>
+
     <!-- ====================================================================
          jp:amendment-a51 | jp:amendment-a523 手続補正書（方式）| 手続補正書
          ====================================================================-->
@@ -100,10 +98,8 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    <schema:object
-        name="amendment-a51-a523">
-        <schema:property
-            name="tag" type="string" enum="jp:amendment-a51,jp:amendment-a523" />
+    <schema:object name="amendment-a51-a523">
+        <schema:property name="tag" type="string" enum="jp:amendment-a51,jp:amendment-a523" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
@@ -115,7 +111,7 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
+
     <!-- ====================================================================
          jp:amendment-a524 誤訳訂正書
          ====================================================================-->
@@ -153,10 +149,8 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    <schema:object
-        name="amendment-a524">
-        <schema:property
-            name="tag" type="string" const="jp:amendment-a524" />
+    <schema:object name="amendment-a524">
+        <schema:property name="tag" type="string" const="jp:amendment-a524" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
@@ -168,7 +162,7 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
+
     <!-- ====================================================================
          jp:amendment-a525 | jp:amendment-a529
          特許協力条約第１９条補正の翻訳文提出書 | 特許協力条約第３４条補正の翻訳文提出書
@@ -201,10 +195,8 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    <schema:object
-        name="amendment-a525-a529">
-        <schema:property
-            name="tag" type="string" enum="jp:amendment-a525,jp:amendment-a529" />
+    <schema:object name="amendment-a525-a529">
+        <schema:property name="tag" type="string" enum="jp:amendment-a525,jp:amendment-a529" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
@@ -215,7 +207,7 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
+
     <!-- ====================================================================
          jp:amendment-a526 | jp:amendment-a5210
          特許協力条約第１９条補正の翻訳文提出書（職権） |
@@ -250,10 +242,8 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    <schema:object
-        name="amendment-a526-a5210">
-        <schema:property
-            name="tag" type="string" enum="jp:amendment-a526,jp:amendment-a5210" />
+    <schema:object name="amendment-a526-a5210">
+        <schema:property name="tag" type="string" enum="jp:amendment-a526,jp:amendment-a5210" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
@@ -264,7 +254,7 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
+
     <!-- ====================================================================
          jp:amendment-a527 | jp:amendment-a5211
          特許協力条約第１９条補正の写し提出書 |
@@ -297,10 +287,8 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    <schema:object
-        name="amendment-a527-a5211">
-        <schema:property
-            name="tag" type="string" enum="jp:amendment-a527,jp:amendment-a5211" />
+    <schema:object name="amendment-a527-a5211">
+        <schema:property name="tag" type="string" enum="jp:amendment-a527,jp:amendment-a5211" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>
@@ -310,7 +298,7 @@
             </schema:anyOf>
         </schema:property>
     </schema:object>
-    
+
     <!-- ====================================================================
          jp:amendment-a528 | jp:amendment-a5212
          特許協力条約第１９条補正の写し提出書（職権） |
@@ -345,8 +333,7 @@
         </xf:map>
     </xsl:template>
     <schema:object name="amendment-a528-a5212">
-        <schema:property
-            name="tag" type="string" enum="jp:amendment-a528,jp:amendment-a5212" />
+        <schema:property name="tag" type="string" enum="jp:amendment-a528,jp:amendment-a5212" />
         <schema:property name="blocks" type="array">
             <schema:anyOf>
                 <schema:ref file="pat_common.json" name="pat-common-terminal-type-a"/>

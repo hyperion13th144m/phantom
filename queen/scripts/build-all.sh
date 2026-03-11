@@ -1,14 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(dirname $0)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-WORKSPACE_ROOT="$PROJECT_ROOT/.."
-
 cd "$PROJECT_ROOT" || exit 1
 
-WORK_DIR="$PROJECT_ROOT/out"
-OUTPUT_DIR="$WORK_DIR/schema"
+# ============================
+# Paths and files.
+# ============================
+JSON_SCHEMA_DIR="$PROJECT_ROOT/out/json-schema"
+PANTHER_SCHEMA="/panther-schema"
+FOX_SCHEMA="/fox-schema"
+BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
+XSL_ROOT="$PROJECT_ROOT/src/queen/stylesheets/2.0"
 
 # ============================
 # Utility
@@ -21,27 +25,27 @@ log() {
 }
 
 usage() {
-  echo "Usage: $0 [ -o output_dir ] [ -w work_dir ] [ -d ]"
+  echo "Usage: $0 [ -j json_schema_dir ] [ -f fox_schema ] [ -p panther_schema ] [ -h ]"
   echo "This script builds the patent document schema by translating XML to JSON files and merging them."
 }
 
-while getopts "hdw:o:" opt; do
+while getopts "hj:f:p:" opt; do
   case $opt in
     h)
       usage
       exit 0
       ;;
-    o)
-      echo "Option -o with argument: $OPTARG"
-      OUTPUT_DIR="$OPTARG"
+    j)
+      echo "Option -j with argument: $OPTARG"
+      JSON_SCHEMA_DIR="$OPTARG"
       ;;
-    w)
-      echo "Option -w with argument: $OPTARG"
-      WORK_DIR="$OPTARG"
+    f)
+      echo "Option -f with argument: $OPTARG"
+      FOX_SCHEMA="$OPTARG"
       ;;
-    d)
-      echo "Option -d (debug mode) enabled"
-      DEBUG="--debug"
+    p)
+      echo "Option -p with argument: $OPTARG"
+      PANTHER_SCHEMA="$OPTARG"
       ;;
     *)
       echo "Invalid option: -$OPTARG" >&2
@@ -51,42 +55,12 @@ while getopts "hdw:o:" opt; do
   esac
 done
 
-# ============================
-# Paths and files.
-# ============================
-JSON_SCHEMA_DIR="$WORK_DIR/json-schema"
-JSON_SCHEMA_ARRAY=(
-    "full-text.json"
-    "images-information.json"
-    "bibliographic-items.json"
-    "pat-appd.json"
-    "pat-amnd.json"
-    "pat-rspn.json"
-    "pat-etc.json"
-    "application-body.json"
-    "foreign-language-body.json"
-    "cpy-ntc-pt-e.json"
-    "cpy-ntc-pt-e-rn.json"
-    "cpy-ntc-pt-f.json"
-    "pat_common.json"
-    "attaching-document"
-)
-BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
-XSL_ROOT="$PROJECT_ROOT/src/queen/stylesheets/2.0"
-PANTHER_SCHEMA="$WORKSPACE_ROOT/panther/src/panther/models/generated/json-schema"
-FOX_SCHEMA="$WORKSPACE_ROOT/fox/src/interfaces/generated/json-schema"
 
 # ============================
 # Step 0: Prepare directories
 # ============================
 log "Preparing directories"
 
-if [ ! -d "$OUTPUT_DIR" ]; then
-  mkdir -p "$OUTPUT_DIR"
-fi
-if [ ! -d "$WORK_DIR" ]; then
-  mkdir -p "$WORK_DIR"
-fi
 if [ ! -d "$JSON_SCHEMA_DIR" ]; then
   mkdir -p "$JSON_SCHEMA_DIR"
 fi

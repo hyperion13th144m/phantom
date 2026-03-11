@@ -10,17 +10,17 @@ ENV TZ=Asia/Tokyo
 ### to avoid low performance on running in multi-processing environment
 ENV OMP_THREAD_LIMIT=1
 
-RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/sh -u $UID -g $GID $USERNAME
+RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
 RUN apt-get update && \
-    apt-get install -y bash tesseract-ocr tesseract-ocr-jpn && \
+    apt-get install -y tesseract-ocr tesseract-ocr-jpn && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install uv
 RUN mkdir /var/log/mona && chown $USERNAME:$GROUPNAME /var/log/mona
 
 USER $USERNAME
 WORKDIR /app
-COPY --chown=$USERNAME:$GROUPNAME pyproject.toml ./
-COPY --chown=$USERNAME:$GROUPNAME mona /app/mona
-COPY --chown=$USERNAME:$GROUPNAME queen /app/queen
+COPY --chown=$USERNAME:$GROUPNAME mona /app/
+COPY --chown=$USERNAME:$GROUPNAME queen /queen
 RUN uv sync
-ENTRYPOINT [ "uv", "run", "mona/src/mona/main.py" ]
+
+ENTRYPOINT [ "uv", "run", "src/mona/main.py" ]

@@ -132,8 +132,7 @@ const findElementInTree = (pattern: ElementInfo, haystack: ElementInfo): boolean
 
 describe('HTML Fixture Comparison', () => {
     it('compares expected-html and html document pairs', async () => {
-        const repoRoot = path.resolve(__dirname, '../..');
-        const testDataRoot = path.resolve(repoRoot, '../test-data/fox');
+        const testDataRoot = '/test-data';
         const pairs = await walkForFixtures(testDataRoot);
 
         expect(pairs.length).toBeGreaterThan(0);

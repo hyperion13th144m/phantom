@@ -73,18 +73,10 @@ export const dateTag = (documentCode: string | undefined) => {
     }
 }
 export function computePath(docId: string): string {
-    if (cfg.mode === "prod") {
-        return cfg.pattern
-            .replace("{0}", docId[0])
-            .replace("{1}", docId[1])
-            .replace("{2}", docId[2])
-            .replace("{3}", docId[3])
-            .replace("{docId}", docId);
-    } else {
-        const devPath: { [key: string]: string } = cfg.devMap;
-        if (!(docId in devPath)) {
-            throw new Error(`docId ${docId} not found in devMap`);
-        }
-        return devPath[docId];
-    }
+    return cfg.pattern
+        .replace("{0}", docId[0])
+        .replace("{1}", docId[1])
+        .replace("{2}", docId[2])
+        .replace("{3}", docId[3])
+        .replace("{docId}", docId);
 }

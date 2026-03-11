@@ -1,7 +1,45 @@
 services:
+  mona-dev:
+    container_name: mona-dev
+    build:
+      context: .
+      dockerfile: mona/Dockerfile
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ${SRC_DIR}:/src-dir
+      - ${DATA_DIR}:/data-dir
+      - ${LOG_DIR_MONA}:/var/log/mona
+      - ./queen:/queen
+    networks:
+      - dev-net
+
+  panther-dev:
+    container_name: panther-dev
+    build:
+      context: panther
+      dockerfile: Dockerfile
+    environment:
+      ES_URL: http://es01-dev:9200
+      ES_USER: ${ES_USER}
+      ES_PASSWORD: ${ES_PASSWORD}
+      ES_INDEX: ${ES_INDEX}
+      SQLITE_PATH: /extra-dir/${SQLITE_NAME}
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ${DATA_DIR}:/data-dir
+      - ${LOG_DIR_PANTHER}:/var/log/panther
+      - ${EXTRA_DATA_DIR}:/extra-dir
+    networks:
+      - dev-net
+
   fox-dev:
     container_name: fox-dev
-    image: node:24-bookworm
+    build:
+      context: fox
+      dockerfile: Dockerfile
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8
@@ -9,12 +47,15 @@ services:
     volumes:
       - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_FOX}:/var/log/fox
+      - ./test-data/fox:/test-data
     networks:
       - dev-net
 
   joker-dev:
     container_name: joker-dev
-    image: node:24-bookworm
+    build:
+      context: joker
+      dockerfile: Dockerfile
     volumes:
       - ${LOG_DIR_JOKER}:/var/log/joker
       - ${DATA_DIR}:/data-dir
@@ -32,11 +73,29 @@ services:
     networks:
       - dev-net
 
+  queen-dev:
+    container_name: queen-dev
+    build:
+      context: queen
+      dockerfile: Dockerfile
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ./fox/src/interfaces/generated/json-schema:/fox-schema
+      - ./fox/src/interfaces/generated/config:/fox-config
+      - ./panther/src/panther/models/generated/json-schema:/panther-schema
+      - ./mona/src/mona/generated/config:/mona-config
+      - ./joker/generated/config:/joker-config
+      - ./test-data/extracted-archives:/test-data
+    networks:
+      - dev-net
+
   es01-dev:
     image: phantom-elasticsearch
     container_name: phantom-elasticsearch-dev
     build:
-      dockerfile: docker/Dockerfile.es
+      dockerfile: es/Dockerfile
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
@@ -55,7 +114,7 @@ services:
     container_name: nginx-dev
     image: nginx-dev
     build:
-      context: docker/nginx
+      context: nginx
       dockerfile: Dockerfile.dev
     volumes:
       - ${DATA_DIR}:/usr/share/nginx/html

@@ -1,0 +1,6 @@
+services:
+  mona-dev:
+    volumes:
+      - .:/workspaces:cached
+    tty: true
+    entrypoint: ["sh", "-c", "cd /workspaces/mona && uv sync && sleep infinity"]

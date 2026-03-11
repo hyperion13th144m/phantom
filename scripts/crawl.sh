@@ -7,7 +7,7 @@ PROJECT_DIR="$SCRIPT_DIR/.."
 TARGET=ALL
 NUM_MULTI_PROCESSORS="-m 1"
 OVERWRITE=""
-
+BUILD="false"
 
 list_of_targets(){
     echo "-t {target}: Specify the target for crawling. Supported targets are: ALL, APP_DOC, AMND, RSPN, ETC, NOTICE"
@@ -77,7 +77,7 @@ usage(){
 # MODE, SRC_DIR, DATA_DIR must be defined in .env file.
 source $PROJECT_DIR/.env
 
-while getopts "lon:t:d:" opt; do
+while getopts "blon:t:d:" opt; do
   case $opt in
     n)
       NUM_MULTI_PROCESSORS="-m $OPTARG"
@@ -94,6 +94,9 @@ while getopts "lon:t:d:" opt; do
     l)
       list_of_targets
       exit 0
+      ;;
+    b)
+      BUILD="true"
       ;;
     *)
       usage
@@ -139,10 +142,13 @@ if [ "$MODE" = "production" ]; then
       $OVERWRITE $NUM_MULTI_PROCESSORS \
       /src-dir /data-dir $TARGET_CODES
 elif [ "$MODE" = "development" ]; then
-  export SRC_DIR DATA_DIR
-  uv run $PROJECT_DIR/mona/src/mona/main.py \
+  if [ "$BUILD" = "true" ]; then
+    docker compose -f $PROJECT_DIR/docker-compose.dev.yml build mona-dev
+  fi
+  docker compose -f $PROJECT_DIR/docker-compose.dev.yml \
+    run --rm -i mona-dev \
       $OVERWRITE $NUM_MULTI_PROCESSORS \
-      $SRC_DIR $DATA_DIR $TARGET_CODES --mode development
+      /src-dir /data-dir $TARGET_CODES --mode development
 else
   usage
 fi

@@ -1,0 +1,6 @@
+services:
+  queen-dev:
+    volumes:
+      - .:/workspaces:cached
+    tty: true
+    entrypoint: ["sh", "-c", "cd /workspaces/queen && uv sync && sleep infinity"]

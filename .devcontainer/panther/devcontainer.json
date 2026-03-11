@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
-    "name": "Phantom/fox",
+    "name": "Phantom/panther",
     // Update the 'dockerComposeFile' list if you have more compose files or use different names.
     // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
     "dockerComposeFile": [
@@ -10,26 +10,17 @@
     ],
     // The 'service' property is the name of the service for the container that VS Code should
     // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
-    "service": "fox-dev",
+    "service": "panther-dev",
     // The optional 'workspaceFolder' property is the path VS Code should open by default when
     // connected. This is typically a file mount in .devcontainer/docker-compose.yml
-    "workspaceFolder": "/workspaces/fox",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "KevinRose.vsc-python-indent",
-                "astro-build.astro-vscode"
-            ]
-        }
-    },
+    "workspaceFolder": "/workspaces/panther",
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
     // Uncomment the next line if you want start specific services in your Docker Compose config.
-    // "runServices": [],
     "runServices": [
-        "fox-dev"
+        "panther-dev"
     ],
     // Uncomment the next line if you want to keep your containers running after VS Code shuts down.
     // "shutdownAction": "none",
@@ -38,5 +29,14 @@
     // Configure tool-specific properties.
     // "customizations": {},
     // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-    "remoteUser": "node"
+    "remoteUser": "pyuser",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "be5invis.toml",
+                "charliermarsh.ruff"
+            ]
+        }
+    }
 }
