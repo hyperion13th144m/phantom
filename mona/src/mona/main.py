@@ -244,7 +244,7 @@ def main(
                 str(procedure_path),
                 str(extracted_dir),
                 image_params=image_params,
-                ocr_target=['other-images'],
+                ocr_target=None,  # [''],
             )
         elif is_development:
             if src_path is None:
