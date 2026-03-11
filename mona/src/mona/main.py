@@ -182,30 +182,30 @@ def multi_processes_child(
 
         if mode == 'production':
             archive_path, procedure_path = item
-            print(f'[INFO] Got archive: {archive_path}')
-            print(f'[INFO] Got proc: {procedure_path}')
             main(
                 output_dir_root,
                 overwrite,
                 stop_event,
                 archive_path=archive_path,
                 procedure_path=procedure_path,
+                mode=mode
             )
         else:
-            main(output_dir_root, overwrite, stop_event, src_path=item)
+            main(output_dir_root, overwrite, stop_event, src_path=item, mode=mode)
 
 
 def main(
     output_dir_root: Path,
     overwrite: bool,
     stop_event,
+    mode: str,
     src_path: Path | None = None,
     archive_path: Path | None = None,
     procedure_path: Path | None = None,
 ):
     logger = logging.getLogger(__name__)
-    is_production = archive_path is not None and procedure_path is not None
-    is_development = src_path is not None
+    is_production = mode == "production"
+    is_development = mode == "development"
     extracted_dir = None
     output_json_dir = None
     try:
