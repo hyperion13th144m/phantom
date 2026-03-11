@@ -46,6 +46,8 @@ jobs:
       - name: Copy files to release repository
         run: |
           cp -R LICENSE.md README.md env.sample docker-compose.yml scripts/ ./release-repo/
+          mkdir ./release-repo/nginx
+          cp nginx/nginx.conf ./release-repo/nginx/
 
       - name: Commit and push changes to release repository
         run: |
