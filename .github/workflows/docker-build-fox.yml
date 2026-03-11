@@ -51,10 +51,9 @@ jobs:
 
       - name: Run build-all and build_dev_map scripts to generate json for fox directory.
         run: |
-          pwd
+          mkdir -p ./fox/src/interfaces/generated/config
           chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
           bash -x ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
-          mkdir -p ./fox/src/interfaces/generated/config
           cp ./queen/storage-config.json ./fox/src/interfaces/generated/config
           find ./fox/src/interfaces
 
