@@ -34,15 +34,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Run copy-config script to generate json config for mona directory.
+      - name: Copy storage-config.json for mona directory.
         run: |
-          chmod +x ./queen/scripts/copy-config.sh
-          ./queen/scripts/copy-config.sh
+          mkdir -p ./mona/src/mona/generated/config
+          cp ./queen/storage-config.json ./mona/src/mona/generated/config
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
