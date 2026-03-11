@@ -1,11 +1,6 @@
-### please set path to src directory ###
-SRC_DIR=/path/to/src
-
-### change as you like
-NGINX_PORT=8080
-
-### do not change below values
-MODE=production
+### do not have to change below values
+MODE=development
+SRC_DIR=./test-data/extracted-archives
 DATA_DIR=./var/data
 EXTRA_DATA_DIR=./var/extra-data
 LOG_DIR_MONA=./var/log/mona
