@@ -1,8 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+CALLER_PWD="$(pwd)"
 SCRIPT_DIR="$(dirname $0)"
-PROJECT_ROOT="$SCRIPT_DIR/.."
+PROJECT_ROOT="$(cd $SCRIPT_DIR/.. && pwd)"
+cd "$PROJECT_ROOT" || exit 1
 
 # ============================
 # Paths and files.
@@ -28,6 +30,17 @@ usage() {
   echo "This script builds the patent document schema by translating XML to JSON files and merging them."
 }
 
+resolve_path_from_caller() {
+  case "$1" in
+    /*)
+      echo "$1"
+      ;;
+    *)
+      echo "$CALLER_PWD/$1"
+      ;;
+  esac
+}
+
 TARGET="ALL"
 while getopts "hj:f:p:" opt; do
   case $opt in
@@ -37,16 +50,16 @@ while getopts "hj:f:p:" opt; do
       ;;
     j)
       echo "Option -j with argument: $OPTARG"
-      JSON_SCHEMA_DIR="$OPTARG"
+      JSON_SCHEMA_DIR="$(resolve_path_from_caller "$OPTARG")"
       ;;
     f)
       echo "Option -f with argument: $OPTARG"
-      FOX_SCHEMA="$OPTARG"
+      FOX_SCHEMA="$(resolve_path_from_caller "$OPTARG")"
       TARGET="fox"
       ;;
     p)
       echo "Option -p with argument: $OPTARG"
-      PANTHER_SCHEMA="$OPTARG"
+      PANTHER_SCHEMA="$(resolve_path_from_caller "$OPTARG")"
       TARGET="panther"
       ;;
     *)
