@@ -53,7 +53,7 @@ jobs:
         run: |
           pwd
           chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
-          ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
+          bash -x ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
           mkdir -p ./fox/src/interfaces/generated/config
           cp ./queen/storage-config.json ./fox/src/interfaces/generated/config
           find ./fox/src/interfaces
