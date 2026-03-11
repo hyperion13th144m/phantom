@@ -147,10 +147,11 @@ def multi_processes_parent(
         stop_event.set()
         # 子がqueue.getから抜けられるようにsentinelを投げる
         _enqueue_sentinels()
-    except Exception:
+    except Exception as e:
         # 親側の想定外エラーでも子を停止させてから再送出する。
         stop_event.set()
         _enqueue_sentinels()
+        print('exception', e)
         raise
     finally:
         _join_or_terminate(timeout_sec=5.0)
@@ -241,7 +242,6 @@ def main(
                 ocr_target=['other-images'],
             )
         elif is_development:
-            doc_id = ''
             extracted_dir = src_path
             mp = src_path / 'manifest.json'
             if not mp.exists():
