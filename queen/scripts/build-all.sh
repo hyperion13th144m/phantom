@@ -73,7 +73,7 @@ fi
 # Step 1: translate xsl as xml to json schemas.
 # ============================
 log "Step 1: translate xsl as xml to json schemas."
-"$BUILD_SCHEMA" -o "$JSON_SCHEMA_DIR" -x "$XSL_ROOT"
+bash "$BUILD_SCHEMA" -o "$JSON_SCHEMA_DIR" -x "$XSL_ROOT"
 
 # ============================
 # Step 2: copy json schema to the projects
