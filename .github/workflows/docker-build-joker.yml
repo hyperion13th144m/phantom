@@ -32,10 +32,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run build-dev_map script to generate storage-config.json for joker.
+      - name: Copy storage-config.json for joker.
         run: |
-          chmod +x ./queen/scripts/copy-config.sh
-          ./queen/scripts/copy-config.sh
+          mkdir -p ./joker/generated/config
+          cp ./queen/storage-config.json ./joker/generated/config/storage-config.json
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
