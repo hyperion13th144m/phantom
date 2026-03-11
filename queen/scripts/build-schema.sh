@@ -5,7 +5,6 @@
 
 SCRIPT_DIR="$(dirname $0)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-cd "$PROJECT_ROOT" || exit 1
 OUTPUT_DIR="$PROJECT_ROOT/out/generated-schema"
 XSL_ROOT="$PROJECT_ROOT/src/queen/stylesheets/2.0"
 SRC_XML_ARRAY=(
