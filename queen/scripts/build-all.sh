@@ -87,11 +87,20 @@ if [ $TARGET = "panther" ]; then
 fi
 
 if [ $TARGET = "fox" ]; then
+  echo "DEBUG: pwd = $(pwd)"
+  echo "DEBUG: FOX_SCHEMA = $FOX_SCHEMA"
+  echo "DEBUG: JSON_SCHEMA_DIR = $JSON_SCHEMA_DIR"
+  echo "DEBUG: ls -la $JSON_SCHEMA_DIR"
+  ls -la "$JSON_SCHEMA_DIR"
   if [ ! -d "$FOX_SCHEMA" ]; then
+    echo "DEBUG: Creating directory: $FOX_SCHEMA"
     mkdir -p "$FOX_SCHEMA"
   fi
+  echo "DEBUG: After mkdir: ls -la $FOX_SCHEMA"
+  ls -la "$FOX_SCHEMA" || echo "Directory does not exist"
+  echo "DEBUG: Copying files"
   echo cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
-  cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/" || echo "Copy failed"
 fi
 
 if [ $TARGET = "ALL" ]; then
