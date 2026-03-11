@@ -56,7 +56,7 @@ jobs:
           ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
           mkdir -p ./fox/src/interfaces/generated/config
           cp ./queen/storage-config.json ./fox/src/interfaces/generated/config
-          ls -l ./fox/src/interfaces/generated/json-schema
+          find ./fox/src/interfaces
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
