@@ -51,9 +51,9 @@ jobs:
 
       - name: Run build-all and build_dev_map scripts to generate json for fox directory.
         run: |
-          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/copy-config.sh
-          ./queen/scripts/build-all.sh
-          ./queen/scripts/copy-config.sh
+          chmod +x ./queen/scripts/build-all.sh
+          ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
+          cp ./queen/storage-config.json ./fox/src/interfaces/generated/config/storage-config.json
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
