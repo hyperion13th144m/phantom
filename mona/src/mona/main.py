@@ -173,7 +173,7 @@ def multi_processes_child(
         if stop_event.is_set():
             break
         try:
-            item = queue.get(timeout=0.5)
+            item = queue.get(timeout=20)
         except queue_module.Empty:
             continue
 
