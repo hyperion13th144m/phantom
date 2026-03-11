@@ -29,6 +29,7 @@ usage() {
   echo "This script builds the patent document schema by translating XML to JSON files and merging them."
 }
 
+TARGET="ALL"
 while getopts "hj:f:p:" opt; do
   case $opt in
     h)
@@ -42,10 +43,12 @@ while getopts "hj:f:p:" opt; do
     f)
       echo "Option -f with argument: $OPTARG"
       FOX_SCHEMA="$OPTARG"
+      TARGET="fox"
       ;;
     p)
       echo "Option -p with argument: $OPTARG"
       PANTHER_SCHEMA="$OPTARG"
+      TARGET="panther"
       ;;
     *)
       echo "Invalid option: -$OPTARG" >&2
@@ -64,12 +67,7 @@ log "Preparing directories"
 if [ ! -d "$JSON_SCHEMA_DIR" ]; then
   mkdir -p "$JSON_SCHEMA_DIR"
 fi
-if [ ! -d "$PANTHER_SCHEMA" ]; then
-  mkdir -p "$PANTHER_SCHEMA"
-fi
-if [ ! -d "$FOX_SCHEMA" ]; then
-  mkdir -p "$FOX_SCHEMA"
-fi
+
 
 # ============================
 # Step 1: translate xsl as xml to json schemas.
@@ -81,8 +79,32 @@ log "Step 1: translate xsl as xml to json schemas."
 # Step 2: copy json schema to the projects
 # ============================
 log "Step 2: copy json schema to the projects"
-cp -r "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
-cp -r "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+if [ $TARGET = "panther" ]; then
+  if [ ! -d "$PANTHER_SCHEMA" ]; then
+    mkdir -p "$PANTHER_SCHEMA"
+  fi
+  cp -r "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
+fi
+
+if [ $TARGET = "fox" ]; then
+  if [ ! -d "$FOX_SCHEMA" ]; then
+    mkdir -p "$FOX_SCHEMA"
+  fi
+  cp -r "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+fi
+
+if [ $TARGET = "ALL" ]; then
+  if [ ! -d "$PANTHER_SCHEMA" ]; then
+    mkdir -p "$PANTHER_SCHEMA"
+  fi
+  cp -r "$JSON_SCHEMA_DIR/"* "$PANTHER_SCHEMA/"
+
+  if [ ! -d "$FOX_SCHEMA" ]; then
+    mkdir -p "$FOX_SCHEMA"
+  fi
+  cp -r "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
+fi
+
 
 # ============================
 # Done
