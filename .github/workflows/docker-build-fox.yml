@@ -55,7 +55,7 @@ jobs:
           chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
           echo "Before build-all:"
           ls -la ./queen/out/json-schema || echo "json-schema dir does not exist"
-          ./queen/scripts/build-all.sh -f ./fox/src/interfaces/generated/json-schema
+          ./queen/scripts/build-all.sh -f "$(pwd)/fox/src/interfaces/generated/json-schema"
           echo "After build-all:"
           ls -la ./queen/out/json-schema || echo "json-schema dir does not exist"
           ls -la ./fox/src/interfaces/generated/
