@@ -56,10 +56,6 @@ services:
     build:
       context: joker
       dockerfile: Dockerfile
-    volumes:
-      - ${LOG_DIR_JOKER}:/var/log/joker
-      - ${DATA_DIR}:/data-dir
-      - ${EXTRA_DATA_DIR}:/extra-dir
     environment:
       NODE_ENV: development
       LANG: ja_JP.UTF-8
@@ -67,9 +63,14 @@ services:
       ES_URL: http://es01-dev:9200
       ES_USER: ${ES_USER}
       ES_PASSWORD: ${ES_PASSWORD}
+      ES_INDEX: ${ES_INDEX}
       NEXT_PUBLIC_IMAGE_BASE_URL: /images
       NEXT_PUBLIC_DOCUMENT_BASE_URL: /docs
       SQLITE_PATH: /extra-dir/${SQLITE_NAME}
+    volumes:
+      - ${LOG_DIR_JOKER}:/var/log/joker
+      - ${DATA_DIR}:/data-dir
+      - ${EXTRA_DATA_DIR}:/extra-dir
     networks:
       - dev-net
 

@@ -37,7 +37,7 @@ done
 ARGS="create-index --recreate --mapping elasticsearch/document-mapping.json"
 if [ "$MODE" = "prod" ]; then
   docker compose -f $PROJECT_DIR/docker-compose.yml \
-    run --rm -i panther $ARGS
+    run --rm -i ghcr.io/hyperion13th144m/phantom-panther:main $ARGS
 elif [ "$MODE" = "development" ]; then
   if [ "$BUILD" = "true" ]; then
     docker compose -f $PROJECT_DIR/docker-compose.dev.yml build panther-dev
