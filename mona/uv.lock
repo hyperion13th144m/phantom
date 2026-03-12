@@ -51,7 +51,7 @@ wheels = [
 
 [[package]]
 name = "libefiling"
-version = "0.1.52"
+version = "0.1.54"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asn1crypto" },
@@ -60,9 +60,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "pytesseract" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/59/12/4b1cac303fd8dfeb73d029c1b7968253f69962411bb8700ef06d58cd6bf3/libefiling-0.1.52.tar.gz", hash = "sha256:354071f1c55a342d8432d1f56b2920b8bb110d663a96442a83d2b9e9f3b6fa43", size = 74128, upload-time = "2026-03-11T20:42:59.966Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/32/fa/6d45d4d45666e3da291ef4baab9e8097feafbda6f2617110392177adedb0/libefiling-0.1.54.tar.gz", hash = "sha256:74f4a9f47b73bdecf0b2f82d66b2a42eb29fbaa32ba35f81dbb6edf93d9784fd", size = 74736, upload-time = "2026-03-12T06:57:16.966Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/06/91264876dd059511771b30c2dca027fdd32b774261694d046e80b2a8863f/libefiling-0.1.52-py3-none-any.whl", hash = "sha256:b341e62cf09bbfff04b2f03a5efa76235803afa132eaacf0418e72d182d274ac", size = 19504, upload-time = "2026-03-11T20:42:58.76Z" },
+    { url = "https://files.pythonhosted.org/packages/27/4f/e5ef545be79f2bcb212ed33739264b510467deebf0e5f479027fe9980048/libefiling-0.1.54-py3-none-any.whl", hash = "sha256:33e9376fb29d8d229e42afac0411d07ff8001c51aebcb640325ba8c9975a367d", size = 20114, upload-time = "2026-03-12T06:57:15.741Z" },
 ]
 
 [[package]]
