@@ -1,3 +1,7 @@
+### change below value depends on data kind
+KIND_OF_DATA=dummy
+#KIND_OF_DATA=real
+
 ### do not have to change below values
 MODE=development
 SRC_DIR=./test-data/extracted-archives
