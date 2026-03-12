@@ -187,12 +187,14 @@ MEM_LIMIT=1073741824
 ```
 
 ### 初回設定
-elasticsearch のインデックスを作成する。
+./scripts/start.sh のあとしばらく時間をおいて、elasticsearch のインデックスを作成する。
 (一回実行すればいい。バージョンアップのときに実行することがあるかも。)
 ```
 ./scripts/setup.sh
 ```
 これでセットアップ完了
+
+start.sh のあとすぐに実行すると、elasticsearch が起動完了してないので失敗することも。
 
 
 ## 全文検索システムの運用
