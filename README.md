@@ -181,6 +181,13 @@ ES_PASSWORD=elastic
 ES_INDEX=patent-documents
 MEM_LIMIT=1073741824
 ```
+
+### 全文検索システムイメージダウンロード
+```bash
+docker compose pull
+```
+全文検索システムを動作させるためのイメージファイルをダウンロードします。2GBぐらいあります。
+
 ### 全文検索システム起動
 ```bash
 ./scripts/start.sh
