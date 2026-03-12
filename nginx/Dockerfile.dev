@@ -1,3 +1,0 @@
-FROM nginx:alpine AS runtime
-COPY ./nginx-dev.conf /etc/nginx/conf.d/default.conf
-EXPOSE 38080
