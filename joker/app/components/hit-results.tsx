@@ -16,7 +16,7 @@ export default function HitResults({ hitResult, keywords }: Props) {
             <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center font-extrabold text-lg mb-1.5">
                     <div>
-                        {hitResult.source.inventionTitle ?? hitResult.source.documentName ?? "(no title)"}{" "}
+                        {`${hitResult.source.documentName ?? ""} ${hitResult.source.inventionTitle ?? ""}`}
                     </div>
                     <div>
                         {hitResult.source.docId && (
