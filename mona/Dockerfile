@@ -21,6 +21,7 @@ USER $USERNAME
 WORKDIR /app
 COPY --chown=$USERNAME:$GROUPNAME mona /app/
 COPY --chown=$USERNAME:$GROUPNAME queen /queen
-RUN uv sync
-
+RUN cd /queen && uv build && \
+    cd /app && uv add /queen/dist/queen-*.whl
+RUN uv sync --frozen --no-cache
 ENTRYPOINT [ "uv", "run", "src/mona/main.py" ]

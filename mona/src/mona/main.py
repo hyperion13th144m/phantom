@@ -19,55 +19,55 @@ logger = logging.getLogger(__name__)
 
 def get_args() -> dict:
     p = argparse.ArgumentParser(
-        description='An application for parsing XML handled by the Internet Application Software.'
+        description="An application for parsing XML handled by the Internet Application Software."
     )
-    p.add_argument('src_dir', type=str, help='Directory containing archives')
+    p.add_argument("src_dir", type=str, help="Directory containing archives")
     p.add_argument(
-        'output_dir',
+        "output_dir",
         type=str,
-        help='Directory to store parsed output in production mode.',
+        help="Directory to store parsed output in production mode.",
     )
     p.add_argument(
-        'doc_code',
-        nargs='+',
+        "doc_code",
+        nargs="+",
         choices=TARGET_DOCUMENT_CODES,
-        help='document codes to parse',
+        help="document codes to parse",
     )
     p.add_argument(
-        '-l',
-        '--log_level',
+        "-l",
+        "--log_level",
         type=str,
-        choices=['info', 'debug'],
-        default='info',
-        help='Logging level',
+        choices=["info", "debug"],
+        default="info",
+        help="Logging level",
     )
     p.add_argument(
-        '-o', '--overwrite', action='store_true', help='Overwrite existing output'
+        "-o", "--overwrite", action="store_true", help="Overwrite existing output"
     )
     p.add_argument(
-        '--mode',
-        choices=['production', 'development'],
-        default='production',
-        help='Enable production mode',
+        "--mode",
+        choices=["production", "development"],
+        default="production",
+        help="Enable production mode",
     )
     args = p.parse_args()
 
     src_dir = Path(args.src_dir)
     output_dir_root = Path(args.output_dir)
     if not src_dir.exists():
-        print(f'Source directory {args.src_dir} does not exist.')
+        print(f"Source directory {args.src_dir} does not exist.")
         sys.exit(1)
     if not output_dir_root.exists():
-        print(f'Output directory {args.output_dir} does not exist.')
+        print(f"Output directory {args.output_dir} does not exist.")
         sys.exit(1)
 
     return {
-        'src_dir': src_dir,
-        'output_dir_root': output_dir_root,
-        'doc_code': args.doc_code,
-        'log_level': args.log_level,
-        'overwrite': args.overwrite,
-        'mode': args.mode,
+        "src_dir": src_dir,
+        "output_dir_root": output_dir_root,
+        "doc_code": args.doc_code,
+        "log_level": args.log_level,
+        "overwrite": args.overwrite,
+        "mode": args.mode,
     }
 
 
@@ -81,13 +81,13 @@ def main(
 ):
     setup_logger(log_level)
 
-    if mode == 'production':
+    if mode == "production":
         for item in find_archives(str(src_dir), doc_code):
             archive_path, procedure_path = item
             main_in_production_mode(
                 archive_path, procedure_path, output_dir_root, overwrite
             )
-    elif mode == 'development':
+    elif mode == "development":
         for item in find_extracted_directories(str(src_dir), doc_code):
             main_in_development_mode(
                 item,
@@ -112,11 +112,11 @@ def main_in_production_mode(
         ### check if already processed
         doc_id = generate_sha256(str(archive_path))
         extracted_dir = get_output_dir(doc_id, output_dir_root)
-        output_json_dir = extracted_dir / 'json'
+        output_json_dir = extracted_dir / "json"
         if overwrite is False and extracted_dir.exists():
             logger.info(
-                f'[SKIP] doc_id={doc_id}, archive_path={archive_path}',
-                extra={'archive_path': str(archive_path), 'doc_id': doc_id},
+                f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
+                extra={"archive_path": str(archive_path), "doc_id": doc_id},
             )
             return
         if overwrite is True and extracted_dir.exists():
@@ -131,25 +131,25 @@ def main_in_production_mode(
             str(procedure_path),
             str(extracted_dir),
             image_params=image_params,
-            ocr_target=['other-images'],
+            ocr_target=["other-images"],
             image_max_workers=0,
         )
 
         parse(extracted_dir, output_json_dir)
         logger.info(
-            f'[SUCCESS] doc_id={doc_id}, archive_path={archive_path}, output={output_json_dir}',
+            f"[SUCCESS] doc_id={doc_id}, archive_path={archive_path}, output={output_json_dir}",
             extra={
-                'archive_path': str(archive_path),
-                'doc_id': doc_id,
-                'output': str(output_json_dir),
+                "archive_path": str(archive_path),
+                "doc_id": doc_id,
+                "output": str(output_json_dir),
             },
         )
     except Exception as e:
         logger.info(
-            f'[FAIL] archive_path={archive_path}, error={traceback.format_exc()}',
+            f"[FAIL] archive_path={archive_path}, error={traceback.format_exc()}",
             extra={
-                'archive_path': str(archive_path),
-                'traceback': traceback.format_exc(),
+                "archive_path": str(archive_path),
+                "traceback": traceback.format_exc(),
             },
         )
         if extracted_dir and extracted_dir.exists():
@@ -203,12 +203,12 @@ def main_in_development_mode(
     output_json_dir = None
     try:
         extracted_dir = src_path
-        mp = src_path / 'manifest.json'
+        mp = src_path / "manifest.json"
         doc_id = get_doc_id(str(mp))
         if not doc_id:
             logger.info(
-                f'[SKIP] src_path={src_path} doc_id not found in manifest.json.',
-                extra={'src_path': str(src_path)},
+                f"[SKIP] src_path={src_path} doc_id not found in manifest.json.",
+                extra={"src_path": str(src_path)},
             )
             return
 
@@ -217,22 +217,22 @@ def main_in_development_mode(
             src_path,
             copy_to,
             dirs_exist_ok=overwrite,
-            ignore=shutil.ignore_patterns('json/*'),
+            ignore=shutil.ignore_patterns("json/*"),
         )
 
         ## set output_json_dir to the json directory in the copied directory
-        output_json_dir = copy_to / 'json'
+        output_json_dir = copy_to / "json"
         parse(extracted_dir, output_json_dir)
         logger.info(
-            f'[SUCCESS] src_path={src_path}, output={output_json_dir}',
-            extra={'src_path': str(src_path), 'output': str(output_json_dir)},
+            f"[SUCCESS] src_path={src_path}, output={output_json_dir}",
+            extra={"src_path": str(src_path), "output": str(output_json_dir)},
         )
     except Exception as e:
         logger.info(
-            f'[FAIL] src_path={src_path} error={traceback.format_exc()}',
+            f"[FAIL] src_path={src_path} error={traceback.format_exc()}",
             extra={
-                'src_path': str(src_path),
-                'traceback': traceback.format_exc(),
+                "src_path": str(src_path),
+                "traceback": traceback.format_exc(),
             },
         )
 
@@ -243,5 +243,5 @@ def get_output_dir(doc_id: str, base_dir: Path) -> Path:
     return base_dir.joinpath(p)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(**get_args())

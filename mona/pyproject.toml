@@ -2,7 +2,7 @@
 dependencies = [
   "libefiling>=0.1.42",
   "python-json-logger>=4.0.0",
-  "queen",
+  "queen @ file:///queen",
   "saxonche>=12.9.0",
 ]
 description = "Add your description here"
@@ -17,9 +17,6 @@ requires = ["uv_build>=0.10.3,<0.11.0"]
 
 [dependency-groups]
 dev = ["pytest>=9.0.2"]
-
-[tool.uv.sources]
-queen = {path = "/queen"}
 
 [tool.ruff.lint]
 # 1. Enable flake8-bugbear (`B`) rules, in addition to the defaults.
@@ -37,5 +34,5 @@ unfixable = ["B"]
 "__init__.py" = ["E402"]
 
 [tool.ruff.format]
-# 5. Use single quotes in `ruff format`.
-quote-style = "single"
+# 5. Use double quotes in `ruff format`.
+quote-style = "double"

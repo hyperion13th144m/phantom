@@ -6,7 +6,7 @@ from pythonjsonlogger.json import JsonFormatter
 
 
 def setup_logger(
-    log_level: str = 'info', log_path: Path = Path('/var/log/mona/mona.log')
+    log_level: str = "info", log_path: Path = Path("/var/log/mona/mona.log")
 ):
     """
     ロガーの設定を行う
@@ -23,7 +23,7 @@ def setup_logger(
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(
         logging.Formatter(
-            '%(asctime)s %(processName)s %(levelname)s %(name)s: %(message)s'
+            "%(asctime)s %(processName)s %(levelname)s %(name)s: %(message)s"
         )
     )
     handlers.append(console_handler)
@@ -34,7 +34,7 @@ def setup_logger(
         log_path,
         maxBytes=1024 * 1024,  # 1MB
         backupCount=20,
-        encoding='utf-8',
+        encoding="utf-8",
     )
     file_handler.setFormatter(JsonFormatter())
     handlers.append(file_handler)
