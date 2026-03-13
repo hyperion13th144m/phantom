@@ -147,7 +147,7 @@ def main_in_production_mode(
             str(extracted_dir),
             image_params=image_params,
             ocr_target=["other-images"],
-            image_max_workers=2,
+            image_max_workers=1,
         )
 
         parse(extracted_dir, output_json_dir)
