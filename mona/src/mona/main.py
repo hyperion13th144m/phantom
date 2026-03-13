@@ -1,10 +1,8 @@
 import argparse
 import logging
-import os
 import shutil
 import sys
 import traceback
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import List
 
@@ -84,24 +82,11 @@ def main(
     setup_logger(log_level)
 
     if mode == "production":
-        archive_items = list(find_archives(str(src_dir), doc_code))
-        if not archive_items:
-            return
-
-        max_workers = min(len(archive_items), max(1, (os.cpu_count() or 1) * 2))
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [
-                executor.submit(
-                    main_in_production_mode,
-                    archive_path,
-                    procedure_path,
-                    output_dir_root,
-                    overwrite,
-                )
-                for archive_path, procedure_path in archive_items
-            ]
-            for future in as_completed(futures):
-                future.result()
+        for item in find_archives(str(src_dir), doc_code):
+            archive_path, procedure_path = item
+            main_in_production_mode(
+                archive_path, procedure_path, output_dir_root, overwrite
+            )
     elif mode == "development":
         for item in find_extracted_directories(str(src_dir), doc_code):
             main_in_development_mode(
@@ -147,7 +132,7 @@ def main_in_production_mode(
             str(extracted_dir),
             image_params=image_params,
             ocr_target=["other-images"],
-            image_max_workers=1,
+            image_max_workers=0,
         )
 
         parse(extracted_dir, output_json_dir)
@@ -159,7 +144,7 @@ def main_in_production_mode(
                 "output": str(output_json_dir),
             },
         )
-    except Exception as e:
+    except Exception:
         logger.info(
             f"[FAIL] archive_path={archive_path}, error={traceback.format_exc()}",
             extra={
