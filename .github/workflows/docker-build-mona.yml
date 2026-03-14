@@ -10,14 +10,14 @@ on:
       - 'queen/**'
       - 'docker/Dockerfile.mona'
       - '.github/workflows/docker-build-mona.yml'
-  pull_request:
-    branches:
-      - main
-      #- develop
-    paths:
-      - 'mona/**'
-      - 'queen/**'
-      - 'docker/Dockerfile.mona'
+  #pull_request:
+  #  branches:
+  #    - main
+  #    #- develop
+  #  paths:
+  #    - 'mona/**'
+  #    - 'queen/**'
+  #    - 'docker/Dockerfile.mona'
   workflow_dispatch:
 
 env:

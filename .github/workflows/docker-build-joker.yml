@@ -9,13 +9,13 @@ on:
       - 'joker/**'
       - 'docker/Dockerfile.joker'
       - '.github/workflows/docker-build-joker.yml'
-  pull_request:
-    branches:
-      - main
-      #- develop
-    paths:
-      - 'joker/**'
-      - 'docker/Dockerfile.joker'
+  #pull_request:
+  #  branches:
+  #    - main
+  #    #- develop
+  #  paths:
+  #    - 'joker/**'
+  #    - 'docker/Dockerfile.joker'
   workflow_dispatch:
 
 env:

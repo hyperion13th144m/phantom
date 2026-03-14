@@ -10,14 +10,14 @@ on:
       - 'queen/**'
       - 'docker/Dockerfile.panther'
       - '.github/workflows/docker-build-panther.yml'
-  pull_request:
-    branches:
-      - main
-      #- develop
-    paths:
-      - 'panther/**'
-      - 'queen/**'
-      - 'docker/Dockerfile.panther'
+  #pull_request:
+  #  branches:
+  #    - main
+  #    #- develop
+  #  paths:
+  #    - 'panther/**'
+  #    - 'queen/**'
+  #    - 'docker/Dockerfile.panther'
   workflow_dispatch:
 
 env:
