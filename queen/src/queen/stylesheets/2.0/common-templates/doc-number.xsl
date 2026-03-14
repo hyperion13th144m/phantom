@@ -127,7 +127,8 @@
 
             <!-- 国際出願番号
                   INPUT:
-                    $number : 出願番号文字列 (10桁)
+                    $number : 出願番号文字列 (9 or 12桁)
+                    e.g., JP2011987654
             -->
             <xsl:when
                 test="ancestor::jp:application-reference
