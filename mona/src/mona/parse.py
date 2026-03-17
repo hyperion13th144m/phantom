@@ -31,7 +31,7 @@ def parse(src_dir: Path, dst_dir: Path):
         doc_dir.mkdir(exist_ok=True)
 
         # setup output file names for each doctype
-        bibliography_path = str(work_dir / "bibliographic-items.json")
+        bibliography_path = str(work_dir / "bibliographic.json")
         full_text_path = str(work_dir / "full-text.json")
         image_desc_path = str(work_dir / "image-description.json")
         doctype_path_map: DoctypePathMap = {
