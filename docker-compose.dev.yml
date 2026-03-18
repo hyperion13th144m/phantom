@@ -84,10 +84,8 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./fox/src/interfaces/generated/json-schema:/fox-schema
-      - ./fox/src/interfaces/generated/config:/fox-config
       - ./panther/src/panther/generated/json-schema:/panther-schema
       - ./mona/src/mona/generated/json-schema:/mona-schema
-      - ./joker/generated/config:/joker-config
       - ./test-data/extracted-archives:/test-data
     networks:
       - dev-net
