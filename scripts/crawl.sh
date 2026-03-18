@@ -167,6 +167,6 @@ echo targets=$TARGET_CODES
 echo mode=$MODE_OPT
 
 docker compose $DOCKER_COMPOSE \
-  run --rm -i $CONTAINER_NAME \
+  run --rm -i $CONTAINER_NAME -m mona.cli \
     $OVERWRITE $NUM_MULTI_PROCESSORS \
     /src-dir /data-dir $TARGET_CODES $MODE_OPT

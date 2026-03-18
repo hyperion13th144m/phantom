@@ -14,7 +14,8 @@ from mona.find_archives import find_archives, find_extracted_directories
 from mona.logger import setup_logger
 from mona.parse import parse
 
-logger = logging.getLogger(__name__)
+setup_logger()
+logger = logging.getLogger("mona.cli")
 
 
 def get_args() -> dict:
@@ -32,14 +33,6 @@ def get_args() -> dict:
         nargs="+",
         choices=TARGET_DOCUMENT_CODES,
         help="document codes to parse",
-    )
-    p.add_argument(
-        "-l",
-        "--log_level",
-        type=str,
-        choices=["info", "debug"],
-        default="info",
-        help="Logging level",
     )
     p.add_argument(
         "-o", "--overwrite", action="store_true", help="Overwrite existing output"
@@ -75,11 +68,9 @@ def main(
     src_dir: Path,
     output_dir_root: Path,
     doc_code: List[str],
-    log_level: str,
     overwrite: bool,
     mode: str,
 ):
-    setup_logger(log_level)
 
     if mode == "production":
         for item in find_archives(str(src_dir), doc_code):
@@ -116,7 +107,6 @@ def main_in_production_mode(
         if overwrite is False and extracted_dir.exists():
             logger.info(
                 f"[SKIP] doc_id={doc_id}, archive_path={archive_path}",
-                extra={"archive_path": str(archive_path), "doc_id": doc_id},
             )
             return
         if overwrite is True and extracted_dir.exists():
@@ -138,19 +128,10 @@ def main_in_production_mode(
         parse(extracted_dir, output_json_dir)
         logger.info(
             f"[SUCCESS] doc_id={doc_id}, archive_path={archive_path}, output={output_json_dir}",
-            extra={
-                "archive_path": str(archive_path),
-                "doc_id": doc_id,
-                "output": str(output_json_dir),
-            },
         )
     except Exception:
         logger.info(
             f"[FAIL] archive_path={archive_path}, error={traceback.format_exc()}",
-            extra={
-                "archive_path": str(archive_path),
-                "traceback": traceback.format_exc(),
-            },
         )
         if extracted_dir and extracted_dir.exists():
             shutil.rmtree(extracted_dir)
@@ -208,7 +189,6 @@ def main_in_development_mode(
         if not doc_id:
             logger.info(
                 f"[SKIP] src_path={src_path} doc_id not found in manifest.json.",
-                extra={"src_path": str(src_path)},
             )
             return
 
@@ -225,15 +205,10 @@ def main_in_development_mode(
         parse(extracted_dir, output_json_dir)
         logger.info(
             f"[SUCCESS] src_path={src_path}, output={output_json_dir}",
-            extra={"src_path": str(src_path), "output": str(output_json_dir)},
         )
-    except Exception as e:
+    except Exception:
         logger.info(
             f"[FAIL] src_path={src_path} error={traceback.format_exc()}",
-            extra={
-                "src_path": str(src_path),
-                "traceback": traceback.format_exc(),
-            },
         )
 
 

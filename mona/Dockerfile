@@ -24,4 +24,5 @@ COPY --chown=$USERNAME:$GROUPNAME queen /queen
 RUN cd /queen && uv build && \
     cd /app && uv add /queen/dist/queen-*.whl
 RUN uv sync --frozen --no-cache
-ENTRYPOINT [ "uv", "run", "src/mona/main.py" ]
+ENTRYPOINT [ "uv", "run" ]
+CMD [ "uvicorn", "mona.server:app", "--host", "0.0.0.0", "--port", "8000" ]

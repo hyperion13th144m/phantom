@@ -68,3 +68,5 @@ $ scripts/run-test.sh
 ```
 /src-dir/amnd/a1527/ のデータからjsonを生成し、/src-dir/amnd/a1527/json のファイルと比較する。一致しなければテスト失敗
 
+## REST API
+
