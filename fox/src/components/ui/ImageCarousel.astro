@@ -1,6 +1,5 @@
 ---
 import { randomUUID } from "node:crypto";
-import { getBaseUrl } from "~/lib/path-funcs";
 import type { CarouselImage } from "~/interfaces/carousel-images";
 
 const {
@@ -21,7 +20,6 @@ const {
 
 // uid を確実にユニーク化（Node 18+ / Astro なら crypto.randomUUID() が普通に使えます）
 const uid = randomUUID();
-const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
 ---
 
 <div id={`ic-${uid}`} class="w-full" data-ic-root data-loop={loop ? "1" : "0"}>
@@ -38,7 +36,7 @@ const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
                         aria-label={`Go to image ${i + 1}`}
                     >
                         <img
-                            src={baseUrlPath + "/" + img.filename}
+                            src={img.filename}
                             alt={img.description ?? `thumbnail ${i + 1}`}
                             loading="lazy"
                             decoding="async"
@@ -58,7 +56,7 @@ const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
             <!-- 画像 -->
             <img
                 data-ic-main-img
-                src={baseUrlPath + "/" + images[initialIndex].filename}
+                src={images[initialIndex].filename}
                 alt={images[initialIndex].description ?? `image 1`}
                 decoding="async"
                 fetchpriority="high"
@@ -134,7 +132,7 @@ const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
     </figure>
 </div>
 
-<script type="module" define:vars={{ uid, images, initialIndex, baseUrlPath }}>
+<script type="module" define:vars={{ uid, images, initialIndex }}>
     const root = document.getElementById(`ic-${uid}`);
     if (!root) throw new Error("ImageCarousel root not found");
 
@@ -196,7 +194,7 @@ const baseUrlPath = Astro.params.docId ? getBaseUrl(Astro.params.docId) : "";
 
     function render() {
         const img = images[index];
-        mainImg.src = baseUrlPath + "/" + img.filename;
+        mainImg.src = img.filename;
         mainImg.alt = img.description ?? `image ${index + 1}`;
 
         indicator.textContent = `${index + 1} / ${images.length}`;

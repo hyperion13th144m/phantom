@@ -1,7 +1,4 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import type { BibliographicItems } from "~/interfaces/generated/bibliographic-items";
-import { getContentRoot } from "~/lib/path-funcs";
 
 // 国内出願番号形式（例：2023001234）
 const domestic_number_re = /^[0-9]{10}$/;
@@ -10,18 +7,23 @@ const domestic_number_re = /^[0-9]{10}$/;
 const pct_number_re = /^[A-Za-z]{2}[0-9]{4}[0-9]{6}$/;
 
 export const getBibliography = async (docId: string) => {
-    const bibliographyPath = path.join(getContentRoot(docId), "json/bibliography.json");
-    const bibliographyRaw = await fs.readFile(bibliographyPath, "utf-8");
-    const bibliography: BibliographicItems = JSON.parse(bibliographyRaw);
+    try {
+        const res = await fetch(`http://localhost:4321/api/${docId}/bibliographic-items`);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data: BibliographicItems = await res.json();
 
-    const submissionDate = bibliography.submissionDate ? formatDate(bibliography.submissionDate) : null;
-    const dispatchDate = bibliography.dispatchDate ? formatDate(bibliography.dispatchDate) : null;
+        const submissionDate = data.submissionDate ? formatDate(data.submissionDate) : null;
+        const dispatchDate = data.dispatchDate ? formatDate(data.dispatchDate) : null;
 
-    return {
-        ...bibliography,
-        submissionDate,
-        dispatchDate,
-    } as BibliographicItems
+        return {
+            ...data,
+            submissionDate,
+            dispatchDate,
+        } as BibliographicItems
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
 }
 
 const formatDate = (dateStr: string): string => {

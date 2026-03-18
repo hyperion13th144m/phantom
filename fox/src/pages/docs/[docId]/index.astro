@@ -28,68 +28,66 @@ import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
 import { getCarouselImage } from "~/lib/carousel-images";
-import { getDocument } from "~/lib/path-funcs";
+import { getDocument } from "~/lib/document";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
-const order = [
-    isPatAppDoc,
-    isApplicationBody,
-    isForeignLanguageBody,
-    isPatRspn,
-    isPatEtc,
-    isPatAmnd,
-    isCpyNtcPtF,
-    isCpyNtcPtE,
-    isCpyNtcPtERn,
-    isAttachingDocument,
-];
 const bibliography = await getBibliography(docId);
-const sortedJson = order
-    .map((guard) => json.find((b) => guard(b)))
-    .filter((b): b is NonNullable<typeof b> => b !== undefined);
-const title = `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
+const title = bibliography
+    ? `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`
+    : "Error: Bibliography not found";
 const thumbnails = await getCarouselImage(docId, "figures", "thumbnail");
 const images = await getCarouselImage(docId, "figures", "middle");
 const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
-console.log(JSON.stringify(json, null, 2));
-console.log(sortedJson);
 ---
 
 <Layout title={title}>
     <main class="w-full my-2">
-        <Bibliography bibliography={bibliography} />
+        {bibliography && <Bibliography bibliography={bibliography} />}
         <KeywordHighlighter urlParamKey="q">
             <div
                 class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}
             >
                 <div data-search-root>
                     {
-                        sortedJson.map((block) => {
-                            if (isPatAppDoc(block)) {
-                                return <PatAppDoc document={block} />;
-                            } else if (isApplicationBody(block)) {
-                                return <ApplicationBody document={block} />;
-                            } else if (isForeignLanguageBody(block)) {
-                                return <ForeignLanguageBody document={block} />;
-                            } else if (isPatRspn(block)) {
-                                return <PatRspn document={block} />;
-                            } else if (isPatEtc(block)) {
-                                return <PatEtc document={block} />;
-                            } else if (isPatAmnd(block)) {
-                                return <PatAmnd document={block} />;
-                            } else if (isCpyNtcPtE(block)) {
-                                return <CpyNtcPtE document={block} />;
-                            } else if (isCpyNtcPtERn(block)) {
-                                return <CpyNtcPtERn document={block} />;
-                            } else if (isCpyNtcPtF(block)) {
-                                return <CpyNtcPtF document={block} />;
-                            } else if (isAttachingDocument(block)) {
-                                return <AttachingDocument document={block} />;
-                            } else {
-                                return null;
-                            }
-                        })
+                        json.length > 0 ? (
+                            json.map((block) => {
+                                if (isPatAppDoc(block)) {
+                                    return <PatAppDoc document={block} />;
+                                } else if (isApplicationBody(block)) {
+                                    return <ApplicationBody document={block} />;
+                                } else if (isForeignLanguageBody(block)) {
+                                    return (
+                                        <ForeignLanguageBody document={block} />
+                                    );
+                                } else if (isPatRspn(block)) {
+                                    return <PatRspn document={block} />;
+                                } else if (isPatEtc(block)) {
+                                    return <PatEtc document={block} />;
+                                } else if (isPatAmnd(block)) {
+                                    return <PatAmnd document={block} />;
+                                } else if (isCpyNtcPtE(block)) {
+                                    return <CpyNtcPtE document={block} />;
+                                } else if (isCpyNtcPtERn(block)) {
+                                    return <CpyNtcPtERn document={block} />;
+                                } else if (isCpyNtcPtF(block)) {
+                                    return <CpyNtcPtF document={block} />;
+                                } else if (isAttachingDocument(block)) {
+                                    return (
+                                        <AttachingDocument document={block} />
+                                    );
+                                } else {
+                                    return (
+                                        <div>
+                                            can't display document due to
+                                            unknown type.
+                                        </div>
+                                    );
+                                }
+                            })
+                        ) : (
+                            <div>文書が見つかりませんでした。</div>
+                        )
                     }
                 </div>
                 {

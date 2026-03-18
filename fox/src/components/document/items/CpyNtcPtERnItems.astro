@@ -22,14 +22,17 @@ import {
     isParagraph,
 } from "~/interfaces/generated/cpy-ntc-pt-e-rn.guard";
 import { concatBlocks } from "~/lib/concat-blocks";
-import { getImageUrl } from "~/lib/path-funcs";
 
 const { block } = Astro.props as {
     block: any;
 };
-const { docId } = Astro.params as { docId: string };
 const imageInfo = isImageContainer(block)
-    ? await getImageUrl(docId, block.file, "large")
+    ? {
+          url: typeof block.url === "string" ? block.url : block.file,
+          width: typeof block.width === "number" ? block.width : undefined,
+          height: typeof block.height === "number" ? block.height : undefined,
+          alt: typeof block.alt === "string" ? block.alt : "",
+      }
     : null;
 
 /* isNtcPtETerminalItemsTypeB に含まれる要素のうち

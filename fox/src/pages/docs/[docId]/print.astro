@@ -21,69 +21,75 @@ import { isPatEtc } from "~/interfaces/generated/pat-etc.guard";
 import { isPatRspn } from "~/interfaces/generated/pat-rspn.guard";
 import PrintingLayout from "~/layouts/PrintingLayout.astro";
 import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
-import { getDocument } from "~/lib/path-funcs";
+import { getDocument } from "~/lib/document";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);
-const order = [
-    isPatAppDoc,
-    isApplicationBody,
-    isForeignLanguageBody,
-    isPatRspn,
-    isPatEtc,
-    isPatAmnd,
-    isCpyNtcPtF,
-    isCpyNtcPtE,
-    isCpyNtcPtERn,
-    isAttachingDocument,
-];
 const bibliography = await getBibliography(docId);
-const sortedJson = order
-    .map((guard) => json.find((b) => guard(b)))
-    .filter((b): b is NonNullable<typeof b> => b !== undefined);
-const title = `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`;
+const title = bibliography
+    ? `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`
+    : "Error: Bibliography not found";
 ---
 
 <PrintingLayout title={title}>
     <main class="w-full my-2">
         {
-            sortedJson.map((block) => {
-                if (isPatAppDoc(block)) {
-                    return <PatAppDoc document={block} forPrinting={true} />;
-                } else if (isApplicationBody(block)) {
-                    return (
-                        <ApplicationBody document={block} forPrinting={true} />
-                    );
-                } else if (isForeignLanguageBody(block)) {
-                    return (
-                        <ForeignLanguageBody
-                            document={block}
-                            forPrinting={true}
-                        />
-                    );
-                } else if (isPatRspn(block)) {
-                    return <PatRspn document={block} forPrinting={true} />;
-                } else if (isPatEtc(block)) {
-                    return <PatEtc document={block} forPrinting={true} />;
-                } else if (isPatAmnd(block)) {
-                    return <PatAmnd document={block} forPrinting={true} />;
-                } else if (isCpyNtcPtE(block)) {
-                    return <CpyNtcPtE document={block} forPrinting={true} />;
-                } else if (isCpyNtcPtERn(block)) {
-                    return <CpyNtcPtERn document={block} forPrinting={true} />;
-                } else if (isCpyNtcPtF(block)) {
-                    return <CpyNtcPtF document={block} />;
-                } else if (isAttachingDocument(block)) {
-                    return (
-                        <AttachingDocument
-                            document={block}
-                            forPrinting={true}
-                        />
-                    );
-                } else {
-                    return null;
-                }
-            })
+            json.length > 0 ? (
+                json.map((block) => {
+                    if (isPatAppDoc(block)) {
+                        return (
+                            <PatAppDoc document={block} forPrinting={true} />
+                        );
+                    } else if (isApplicationBody(block)) {
+                        return (
+                            <ApplicationBody
+                                document={block}
+                                forPrinting={true}
+                            />
+                        );
+                    } else if (isForeignLanguageBody(block)) {
+                        return (
+                            <ForeignLanguageBody
+                                document={block}
+                                forPrinting={true}
+                            />
+                        );
+                    } else if (isPatRspn(block)) {
+                        return <PatRspn document={block} forPrinting={true} />;
+                    } else if (isPatEtc(block)) {
+                        return <PatEtc document={block} forPrinting={true} />;
+                    } else if (isPatAmnd(block)) {
+                        return <PatAmnd document={block} forPrinting={true} />;
+                    } else if (isCpyNtcPtE(block)) {
+                        return (
+                            <CpyNtcPtE document={block} forPrinting={true} />
+                        );
+                    } else if (isCpyNtcPtERn(block)) {
+                        return (
+                            <CpyNtcPtERn document={block} forPrinting={true} />
+                        );
+                    } else if (isCpyNtcPtF(block)) {
+                        return (
+                            <CpyNtcPtF document={block} forPrinting={true} />
+                        );
+                    } else if (isAttachingDocument(block)) {
+                        return (
+                            <AttachingDocument
+                                document={block}
+                                forPrinting={true}
+                            />
+                        );
+                    } else {
+                        return (
+                            <div>
+                                can't display document due to unknown type
+                            </div>
+                        );
+                    }
+                })
+            ) : (
+                <div>Document data not found.</div>
+            )
         }
     </main>
 </PrintingLayout>

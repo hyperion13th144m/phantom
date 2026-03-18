@@ -21,8 +21,8 @@ USER $USERNAME
 WORKDIR /app
 COPY --chown=$USERNAME:$GROUPNAME mona /app/
 COPY --chown=$USERNAME:$GROUPNAME queen /queen
-RUN cd /queen && uv build && \
-    cd /app && uv add /queen/dist/queen-*.whl
-RUN uv sync --frozen --no-cache
+#RUN cd /queen && uv build && \
+#    cd /app && uv add /queen/dist/queen-*.whl
+RUN cd /app && uv sync --no-cache --frozen
 ENTRYPOINT [ "uv", "run" ]
 CMD [ "uvicorn", "mona.server:app", "--host", "0.0.0.0", "--port", "8000" ]

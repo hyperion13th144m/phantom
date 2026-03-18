@@ -34,13 +34,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy storage-config.json for mona directory.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
         run: |
-          mkdir -p ./mona/src/mona/generated/config
-          cp ./queen/storage-config.json ./mona/src/mona/generated/config
-          pwd
-          find ./mona
-          ls -l ./mona/src/mona/generated/config
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Python dependencies
+        run: |
+          cd queen
+          uv sync
+
+      - name: Run build-all script to generate json schema for mona directory.
+        run: |
+          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
+          ./queen/scripts/build-all.sh -m ./mona/src/mona/generated/json-schema
+
+      - name: Run build-schema script to generate python schema from json schema.
+        run: |
+          chmod +x ./mona/scripts/build-schema.sh
+          ./mona/scripts/build-schema.sh
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

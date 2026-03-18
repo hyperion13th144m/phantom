@@ -52,7 +52,7 @@ jobs:
       - name: Run build-all script to generate json schema for panther directory.
         run: |
           chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
-          ./queen/scripts/build-all.sh -p ./panther/src/panther/models/generated/json-schema
+          ./queen/scripts/build-all.sh -p ./panther/src/panther/generated/json-schema
 
       - name: Run build-schema script to generate python schema from json schema.
         run: |

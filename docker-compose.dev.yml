@@ -44,8 +44,8 @@ services:
       NODE_ENV: development
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
+      MONA_URL: http://mona-dev:8000
     volumes:
-      - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_FOX}:/var/log/fox
       - ./test-data/fox:/test-data
     networks:
