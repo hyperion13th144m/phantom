@@ -2,7 +2,6 @@ import tempfile
 from pathlib import Path
 
 from libefiling import Manifest
-from queen.translate_all import DoctypePathMap, translate_all
 
 from mona.manifest_processor.image_info import image_info
 from mona.manifest_processor.metadata import metadata
@@ -10,6 +9,7 @@ from mona.manifest_processor.ocr import ocr
 
 # from mona.manifest_processor.xslt import XSLTProcessor
 from mona.merge_json import copy_items, merge_image_info, merge_jsons_as_array
+from queen.translate_all import DoctypePathMap, translate_all
 
 
 def parse(src_dir: Path, dst_dir: Path):
@@ -31,7 +31,7 @@ def parse(src_dir: Path, dst_dir: Path):
         doc_dir.mkdir(exist_ok=True)
 
         # setup output file names for each doctype
-        bibliography_path = str(work_dir / "bibliographic.json")
+        bibliography_path = str(work_dir / "bibliographic-items.json")
         full_text_path = str(work_dir / "full-text.json")
         image_desc_path = str(work_dir / "image-description.json")
         doctype_path_map: DoctypePathMap = {
@@ -70,7 +70,7 @@ def parse(src_dir: Path, dst_dir: Path):
                 metadata_path: ["docId"],
                 full_text_path: ["inventors", "applicants", "agents"],
             },
-            str(dst_dir / "bibliography.json"),
+            str(dst_dir / "bibliographic-items.json"),
         )
         copy_items(
             full_text_path,

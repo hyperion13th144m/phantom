@@ -1,5 +1,6 @@
 [project]
 dependencies = [
+  "datamodel-code-generator[ruff]>=0.55.0",
   "fastapi>=0.135.1",
   "libefiling>=0.1.42",
   "python-json-logger>=4.0.0",
