@@ -10,14 +10,14 @@ on:
       - 'queen/**'
       - 'docker/Dockerfile.fox'
       - '.github/workflows/docker-build-fox.yml'
-  pull_request:
-    branches:
-      - main
-      #- develop
-    paths:
-      - 'fox/**'
-      - 'queen/**'
-      - 'docker/Dockerfile.fox'
+  #pull_request:
+  #  branches:
+  #    - main
+  #    #- develop
+  #  paths:
+  #    - 'fox/**'
+  #    - 'queen/**'
+  #    - 'docker/Dockerfile.fox'
   workflow_dispatch:
 
 env:
