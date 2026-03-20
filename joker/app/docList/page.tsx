@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ErrorMessage from "@/app/components/error-message";
-import { buildDocUrl, dateTag, formatApplicationNumber, formatDate } from "@/lib/helpers";
+import { getDocUrl, dateTag, formatApplicationNumber, formatDate } from "@/lib/helpers";
 
 type DocResult = {
     docId: string;
@@ -319,7 +319,7 @@ function DocListPageContent() {
                                                         </span>
                                                     )
                                                 }
-                                                <span className="px-5 text-gray-800"><a className="text-blue-600 hover:underline" href={buildDocUrl(doc.docId)}>{doc.documentName}</a></span>
+                                                <span className="px-5 text-gray-800"><a className="text-blue-600 hover:underline" href={getDocUrl(doc.docId)}>{doc.documentName}</a></span>
                                             </li>
                                         ))}
                                     </ol>

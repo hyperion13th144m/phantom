@@ -15,7 +15,7 @@ RUN yarn build
 
 
 FROM node:24-slim AS runner
-ENV NODE_ENV=production
+#ENV NODE_ENV=production
 ENV LANG=ja_JP.UTF-8
 ENV TZ=Asia/Tokyo
 ARG USERNAME=node

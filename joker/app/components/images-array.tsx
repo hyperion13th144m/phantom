@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ImageInformation } from "@/app/interfaces/search-results";
-import { buildImageUrl } from "@/lib/helpers";
+import { getImageUrl } from "@/lib/helpers";
 
 interface Props {
     docId: string;
@@ -31,7 +31,7 @@ const ImagesArray: React.FC<Props> = ({ docId, images, thumbnailTag = "thumbnail
                             className="cursor-pointer hover:opacity-80 transition-opacity"
                         >
                             <img
-                                src={buildImageUrl(docId, img.filename)}
+                                src={getImageUrl(docId, img.filename)}
                                 alt={img.description || `Image ${img.number}`}
                                 className="max-w-[120px] max-h-[120px] object-contain"
                                 width={img.width}
@@ -69,7 +69,7 @@ const ImagesArray: React.FC<Props> = ({ docId, images, thumbnailTag = "thumbnail
                         </button>
                         <div className="p-4">
                             <img
-                                src={buildImageUrl(docId, largeImages[selectedImage].filename)}
+                                src={getImageUrl(docId, largeImages[selectedImage].filename)}
                                 alt={largeImages[selectedImage].description || `Image ${largeImages[selectedImage].number}`}
                                 className="max-w-full h-auto"
                             />

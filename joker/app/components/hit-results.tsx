@@ -2,7 +2,7 @@
 
 import Highlight from "@/app/components/highlight";
 import ImagesArray from "@/app/components/images-array";
-import { dateTag, buildDocUrl, formatApplicationNumber, formatDate } from "@/lib/helpers";
+import { dateTag, getDocUrl, formatApplicationNumber, formatDate } from "@/lib/helpers";
 import { Hit } from "@/app/interfaces/search-results";
 
 interface Props {
@@ -20,7 +20,7 @@ export default function HitResults({ hitResult, keywords }: Props) {
                     </div>
                     <div>
                         {hitResult.source.docId && (
-                            <a href={`${buildDocUrl(hitResult.source.docId)}?q=${keywords?.split(/ /).join(',')}`}
+                            <a href={`${getDocUrl(hitResult.source.docId)}?q=${keywords?.split(/ /).join(',')}`}
                                 target="_blank" rel="noopener noreferrer" className="ml-2 text-xs">
                                 詳細
                             </a>

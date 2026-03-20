@@ -1,18 +1,25 @@
-import cfg from "../generated/config/storage-config.json";
+export function getDocUrl(docId: string): string {
+    // generates url to fox server in production. the url consists of only path.
+    // the host:port part is resolved by reverse proxy server.
+    return `/docs/${docId}`;
+}
+
+export const getImageUrl = (docId: string, imageName: string) => {
+    if (process.env.NODE_ENV === "production") {
+        // generates url to mona server in production. the url consists of only path.
+        // the host:port part is resolved by reverse proxy server.
+        return `/documents/${docId}/images/${imageName}`;
+    } else if (process.env.NODE_ENV === "development") {
+        // in development, generates url to local API.
+        return `/api/dev/images/${docId}/${imageName}`;
+    } else {
+        throw new Error("Unknown environment");
+    }
+};
+
 
 export function clamp(n: number, min: number, max: number) {
     return Math.max(min, Math.min(max, n));
-}
-
-// 画像URLを構築するヘルパー関数
-export function buildImageUrl(docId: string, filename: string): string {
-    const baseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || "/images";
-    return `${baseUrl}/${docId.substring(0, 2)}/${docId.substring(2, 4)}/${docId}/images/${filename}`;
-}
-
-export function buildDocUrl(docId: string): string {
-    const baseUrl = process.env.NEXT_PUBLIC_DOCUMENT_BASE_URL || "/docs";
-    return `${baseUrl}/${docId}`;
 }
 
 // 国内出願番号形式（例：2023001234）
@@ -71,12 +78,4 @@ export const dateTag = (documentCode: string | undefined) => {
         return "提出日";
 
     }
-}
-export function computePath(docId: string): string {
-    return cfg.pattern
-        .replace("{0}", docId[0])
-        .replace("{1}", docId[1])
-        .replace("{2}", docId[2])
-        .replace("{3}", docId[3])
-        .replace("{docId}", docId);
 }
