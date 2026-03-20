@@ -8,18 +8,17 @@ from itertools import chain
 from pathlib import Path
 from typing import Generator
 
-from libefiling import get_document_code
-
 logger = logging.getLogger(__name__)
 
 
 def find_archives(
-    directory: str, doc_codes: list[str]
+    directory: str,
+    doc_codes: list[str],
 ) -> Generator[tuple[Path, Path], None, None]:
     """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
     for file in chain(Path(directory).rglob("*.JWX"), Path(directory).rglob("*.JPC")):
         if re.match(r".+AAA$", file.stem) or re.match(r".+NNF$", file.stem):
-            if is_target_document(file, doc_codes):
+            if len(doc_codes) == 0 or is_target_document(file, doc_codes):
                 procedure = find_procedure_xml(file)
                 if procedure is None:
                     logger.warning(f"Procedure XML not found for archive: {file}")
@@ -48,13 +47,3 @@ def find_procedure_xml(archive_path: Path) -> Path | None:
     if not xml_path.exists():
         return None
     return xml_path
-
-
-def find_extracted_directories(
-    directory: str, doc_codes: list[str]
-) -> Generator[Path, None, None]:
-    """Find all extracted archive directories contains manifest.json."""
-    for m in Path(directory).rglob("manifest.json"):
-        doc_code = get_document_code(str(m))
-        if doc_code in doc_codes:
-            yield m.parent

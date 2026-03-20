@@ -1,7 +1,9 @@
 import logging
 import logging.config
+from datetime import datetime
 from typing import Any
 
+LOG_DIR = "/var/log/mona"
 CLI_LOG_PATH = "/var/log/mona/mona.log"
 SERVER_LOG_PATH = "/var/log/mona/mona.server.log"
 ACCESS_LOG_PATH = "/var/log/mona/mona.access.log"
@@ -104,3 +106,34 @@ LOGGING_CONFIG: dict[str, Any] = {
 
 def setup_logger():
     logging.config.dictConfig(LOGGING_CONFIG)
+
+
+def setup_crawling_logger(job_id: str):
+    timestamp = datetime.now().strftime("%Y%m%d")
+    filename = f"{LOG_DIR}/crawling_{timestamp}_{job_id}.log"
+    config: dict[str, Any] = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "default": {
+                "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+                "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+            },
+        },
+        "handlers": {
+            "stream_handler": {
+                "class": "logging.FileHandler",
+                "filename": filename,
+                "formatter": "default",
+            },
+        },
+        "loggers": {
+            "mona.crawling": {
+                "handlers": ["stream_handler"],
+                "level": "INFO",
+                "propagate": False,
+            },
+        },
+    }
+    logging.config.dictConfig(config)

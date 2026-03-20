@@ -11,6 +11,8 @@ services:
       - ${SRC_DIR}:/src-dir
       - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_MONA}:/var/log/mona
+      - ./test-data/extracted-archives:/test-data-src
+      - ./var/data-debug:/test-data-dst
       - ./queen:/queen
     networks:
       - dev-net
@@ -21,7 +23,7 @@ services:
       context: panther
       dockerfile: Dockerfile
     environment:
-      ES_URL: http://es01-dev:9200
+      ES_URL: http://es-dev:9200
       ES_USER: ${ES_USER}
       ES_PASSWORD: ${ES_PASSWORD}
       ES_INDEX: ${ES_INDEX}
@@ -59,7 +61,7 @@ services:
     environment:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
-      ES_URL: http://es01-dev:9200
+      ES_URL: http://es-dev:9200
       ES_USER: ${ES_USER}
       ES_PASSWORD: ${ES_PASSWORD}
       ES_INDEX: ${ES_INDEX}
@@ -91,9 +93,9 @@ services:
     networks:
       - dev-net
 
-  es01-dev:
+  es-dev:
     image: phantom-elasticsearch
-    container_name: phantom-elasticsearch-dev
+    container_name: es-dev
     build:
       dockerfile: es/Dockerfile
     environment:

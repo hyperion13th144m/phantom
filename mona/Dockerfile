@@ -25,4 +25,4 @@ COPY --chown=$USERNAME:$GROUPNAME queen /queen
 #    cd /app && uv add /queen/dist/queen-*.whl
 RUN cd /app && uv sync --no-cache --frozen
 ENTRYPOINT [ "uv", "run" ]
-CMD [ "uvicorn", "mona.server:app", "--host", "0.0.0.0", "--port", "8000" ]
+CMD [ "uvicorn", "mona.server.server:app", "--host", "0.0.0.0", "--port", "8000" ]

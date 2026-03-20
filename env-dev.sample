@@ -1,10 +1,8 @@
-### change below value depends on data kind
-KIND_OF_DATA=dummy
-#KIND_OF_DATA=real
+### change below value depend on your environment
+SRC_DIR=/src
 
 ### do not have to change below values
 MODE=development
-SRC_DIR=./test-data/extracted-archives
 DATA_DIR=./var/data
 EXTRA_DATA_DIR=./var/extra-data
 LOG_DIR_MONA=./var/log/mona
