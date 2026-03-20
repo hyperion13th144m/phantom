@@ -100,8 +100,8 @@ def convert(
       1. copy all under output_dir_root
         output_dir_root
         └── 00
-        └── 01
-        └── f'{doc_id}' (from manifes.json)
+            └── 01
+                └── f'{doc_id}' (from manifes.json)
                     ├── images
                     │   └── *.webp
                     ├── manifest.json
@@ -115,9 +115,6 @@ def convert(
         f'{doc_id}' (from manifes.json)
         ├── json
         │   └── *.json
-        ├── images
-        │   └── *.webp
-        ├── manifest.json
         ...
     """
 

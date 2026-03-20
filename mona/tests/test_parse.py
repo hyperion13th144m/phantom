@@ -11,7 +11,7 @@ from mona.crawler.parse import parse
 
 def find_test_data_dirs():
     """Find all test data directories that contain manifest.json."""
-    test_data_root = Path("/src-dir")
+    test_data_root = Path("/test-data-src")
 
     if not test_data_root.exists():
         return []
