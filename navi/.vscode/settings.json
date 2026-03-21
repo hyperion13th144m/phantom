@@ -1,0 +1,9 @@
+{
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#5ea048",
+        "titleBar.inactiveBackground": "#498a38",
+        "titleBar.activeForeground": "#ffffff",
+        "titleBar.inactiveForeground": "#ffffff"
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:venv"
+}
