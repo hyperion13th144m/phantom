@@ -31,13 +31,21 @@ def crawl(
     for item in find_archives(src_dir, doc_codes or []):
         if max_files and count >= max_files:
             break
+
         archive_path, procedure_path = item
+
+        # ドキュメントIDが指定されている場合、ID(SHA256ハッシュ)が一致しないアーカイブはスキップ
         if doc_id and generate_sha256(str(archive_path)) != doc_id:
             continue
+
         status = convert(archive_path, procedure_path, Path(output_dir_root), overwrite)
         yield status
+
+        # ドキュメントIDが指定されている場合、処理後にもうfind_archivesする
+        # 必要はないので、ループを抜ける
         if doc_id and status.doc_id == doc_id:
             break
+
         count += 1
 
 

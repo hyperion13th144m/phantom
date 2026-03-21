@@ -4,6 +4,7 @@ ARG USERNAME=pyuser
 ARG GROUPNAME=pygroup
 ARG UID=1000
 ARG GID=1000
+ARG LOG_DIR=/var/log/craw
 ENV TZ=Asia/Tokyo
 
 ### disable multi-threading for tesseract-ocr 
@@ -15,7 +16,8 @@ RUN apt-get update && \
     apt-get install -y tesseract-ocr tesseract-ocr-jpn && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install uv
-RUN mkdir /var/log/craw && chown $USERNAME:$GROUPNAME /var/log/craw
+RUN mkdir -p $LOG_DIR/api $LOG_DIR/jobs $LOG_DIR/crawling && \
+    chown -R $USERNAME:$GROUPNAME $LOG_DIR
 
 USER $USERNAME
 WORKDIR /app

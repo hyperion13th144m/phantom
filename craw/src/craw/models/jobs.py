@@ -1,8 +1,10 @@
 from datetime import datetime
-from typing import List, Literal, Optional
+from typing import Any, List, Literal, Optional, Union, get_args
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
+
+from craw.crawler.config import Category, DocCode
 
 Status = Literal["idle", "queued", "running", "completed", "failed", "canceled"]
 
@@ -99,17 +101,26 @@ class JobState:
         )
 
 
-class JobOptions(BaseModel):
+class JobRequest(BaseModel):
     overwrite: bool = Field(
         default=False,
         description="force to crawl when existing JSON/webp files are present",
     )
     max_files: Optional[int] = Field(
-        default=None, ge=1, description="maximum number of files to process"
+        default=None, ge=0, description="maximum number of files to process"
     )
     doc_id: Optional[str] = Field(
         default=None, description="crawl only the specified docId"
     )
-    doc_codes: Optional[List[str]] = Field(
-        default=None, description="crawl only the specified docCodes"
+    doc_codes: List[Union[Category, DocCode]] = Field(
+        default_factory=list, description="crawl only the specified docCodes"
     )
+
+    def get_doc_codes(self) -> List[str]:
+        return list(get_args(self.doc_codes))
+
+
+class JobResponse(BaseModel):
+    job_id: str
+    status: str
+    message: Optional[str] = None

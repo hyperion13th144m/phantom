@@ -1,36 +1,37 @@
 import logging
 import os
 from pathlib import Path
+from typing import List
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from craw.crawler.config import (
+    DocCodeConfig,
     code_config,
     get_all_document_codes,
-    is_valid_document_code,
 )
 from craw.crawler.crawler import crawl
 from craw.logger import (
     get_all_job_id,
-    get_job_history,
-    save_job_history,
+    get_old_job_state,
+    save_job_state,
     setup_api_logger,
     setup_logger,
 )
-from craw.server.models.jobs import JobOptions, JobState
+from craw.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
 
 
-def create_app(src_dir: str, data_dir: str) -> FastAPI:
+def create_app() -> FastAPI:
     setup_api_logger()
     app = FastAPI(title="craw API", version="0.1.0")
 
-    @app.get("/jobs/history")
+    @app.get("/jobs/history", response_model=List[str])
     def list_jobs():
         return get_all_job_id()
 
-    @app.post("/jobs")
-    def start_jobs(payload: dict, background_tasks: BackgroundTasks):
+    @app.post("/jobs", response_model=JobResponse)
+    def start_jobs(payload: JobRequest, background_tasks: BackgroundTasks):
         global current_job
         if current_job is not None and current_job.status in ["queued", "running"]:
             raise HTTPException(status_code=409, detail="A job is already running.")
@@ -39,72 +40,79 @@ def create_app(src_dir: str, data_dir: str) -> FastAPI:
         job.status = "queued"
         current_job = job
         background_tasks.add_task(run_job, job, payload)
-        return {"job_id": job.job_id, "status": job.status}
+        return JobResponse(job_id=job.job_id, status=job.status)
 
-    @app.get("/jobs/status")
+    @app.get(
+        "/jobs/status",
+        response_model=JobStateModel,
+        description="Get the status of the current job",
+    )
     def get_job_status():
         if current_job is None:
             raise HTTPException(404, "No job found")
         return current_job.to_model().model_dump_json(ensure_ascii=False, indent=2)
 
-    @app.post("/jobs/cancel")
+    @app.post("/jobs/cancel", response_model=JobResponse)
     def cancel_job():
         if current_job is None or current_job.status not in ["queued", "running"]:
             raise HTTPException(404, "No job running")
         current_job.request_cancel()
-        return {"status": "cancel_requested"}
+        return JobResponse(
+            job_id=current_job.job_id,
+            status=current_job.status,
+            message="cancel_requested",
+        )
 
-    @app.get("/jobs/{job_id}/log")
+    @app.get(
+        "/jobs/{job_id}/log",
+        description="Get the log of a completed job",
+        response_model=JobStateModel,
+    )
     def get_job_log(job_id: str) -> JSONResponse:
         try:
-            content = get_job_history(job_id)
+            content = get_old_job_state(job_id)
             return JSONResponse(content=content)
         except FileNotFoundError as e:
             raise HTTPException(status_code=404, detail="Log file not found.") from e
 
-    @app.get("/jobs/doc-codes")
+    @app.get("/jobs/doc-codes", response_model=List[DocCodeConfig])
     def get_doc_codes():
         # Implement the logic to return available document codes
         return {
-            "doc_codes_definitions": code_config,
+            "doc_codes_definitions": list(map(lambda x: x.model_dump(), code_config)),
             "available_doc_codes": get_all_document_codes(),
         }
 
     return app
 
 
-def run_job(job: JobState, options: dict):
+def run_job(job: JobState, options: JobRequest):
     setup_logger(job.job_id)
     logger = logging.getLogger("craw.crawling")
     logger.setLevel(LOG_LEVEL)
 
     try:
-        job_opts = JobOptions.model_validate(options)
+        request = JobRequest.model_validate(options)
     except Exception as e:
         job.fail(f"Invalid job options: {e}")
         logger.error(job.message)
         return
 
-    if job_opts.doc_codes and is_valid_document_code(job_opts.doc_codes) is False:
-        job.fail(f"Invalid document codes: {job_opts.doc_codes}")
-        logger.error(job.message)
-        return
-    logger.info(f"Starting job {job.job_id} with options: {job_opts.model_dump()}")
-
+    logger.info(f"Starting job {job.job_id} with options: {request.model_dump()}")
     try:
         job.run()
 
         for s in crawl(
             SRC_DIR,
             DATA_DIR,
-            overwrite=job_opts.overwrite,
-            doc_codes=job_opts.doc_codes or [],
-            doc_id=job_opts.doc_id,
-            max_files=job_opts.max_files,
+            overwrite=request.overwrite,
+            doc_codes=request.get_doc_codes() or [],
+            doc_id=request.doc_id,
+            max_files=request.max_files,
         ):
             if job.cancel_requested:
                 job.cancel()
-                save_job_history(job)
+                save_job_state(job)
                 return
 
             job.progress(
@@ -127,11 +135,11 @@ def run_job(job: JobState, options: dict):
                 },
             )
         job.complete()
-        save_job_history(job)
+        save_job_state(job)
     except Exception as e:
         logger.error(f"Job {job.job_id} failed: {e}", exc_info=True)
         job.fail(f"Job failed: {e}")
-        save_job_history(job)
+        save_job_state(job)
 
 
 def get_log_level():
@@ -155,4 +163,4 @@ LOG_JOB_DIR = Path("/var/log/craw/jobs")
 LOG_JOB_DIR.mkdir(parents=True, exist_ok=True)
 LOG_LEVEL = get_log_level()
 
-app = create_app(SRC_DIR, DATA_DIR)
+app = create_app()

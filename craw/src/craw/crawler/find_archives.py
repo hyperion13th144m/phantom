@@ -6,19 +6,24 @@ import logging
 import re
 from itertools import chain
 from pathlib import Path
-from typing import Generator
+from typing import Generator, List, Literal, Union
+
+from craw.crawler.config import Category, DocCode, get_target_document_codes
 
 logger = logging.getLogger(__name__)
 
 
 def find_archives(
     directory: str,
-    doc_codes: list[str],
+    doc_codes: List[str],
 ) -> Generator[tuple[Path, Path], None, None]:
     """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
+    if len(doc_codes) == 0:
+        doc_codes = get_target_document_codes(["ALL"])
+
     for file in chain(Path(directory).rglob("*.JWX"), Path(directory).rglob("*.JPC")):
         if re.match(r".+AAA$", file.stem) or re.match(r".+NNF$", file.stem):
-            if len(doc_codes) == 0 or is_target_document(file, doc_codes):
+            if is_target_document(file, doc_codes):
                 procedure = find_procedure_xml(file)
                 if procedure is None:
                     logger.warning(f"Procedure XML not found for archive: {file}")
