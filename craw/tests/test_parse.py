@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from mona.crawler.parse import parse
+from craw.crawler.parse import parse
 
 
 def find_test_data_dirs():

@@ -35,7 +35,7 @@
 │               ├── JPOXMLDOC01-pkgh.xml
 │               └── procedure.xml   
 ```
-mona がこのようなデータを作成する。一つの特許文書は、docId = "0336492181f26350eff4bcb1e50d661ca2edd1283db2c981d97717c1eded4639" のような文字列で識別される。
+craw がこのようなデータを作成する。一つの特許文書は、docId = "0336492181f26350eff4bcb1e50d661ca2edd1283db2c981d97717c1eded4639" のような文字列で識別される。
 
 
 ## プロジェクトのディレクトリ構造

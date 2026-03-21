@@ -1,4 +1,16 @@
 services:
+  craw:
+    container_name: craw
+    image: ghcr.io/hyperion13th144m/phantom-craw:main
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ${SRC_DIR}:/src-dir
+      - ${DATA_DIR}:/data-dir
+      - ${LOG_DIR_CRAW}:/var/log/craw
+    tty: true
+
   mona:
     container_name: mona
     image: ghcr.io/hyperion13th144m/phantom-mona:main
@@ -10,7 +22,7 @@ services:
       - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_MONA}:/var/log/mona
     tty: true
-  
+   
   panther:
     container_name: panther
     image: ghcr.io/hyperion13th144m/phantom-panther:main

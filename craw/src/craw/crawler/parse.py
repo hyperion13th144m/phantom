@@ -2,13 +2,13 @@ import tempfile
 from pathlib import Path
 
 from libefiling import Manifest
-from queen.translate_all import DoctypePathMap, translate_all
 
 # from mona.manifest_processor.xslt import XSLTProcessor
-from mona.crawler.merge_json import copy_items, merge_image_info, merge_jsons_as_array
-from mona.manifest_processor.image_info import image_info
-from mona.manifest_processor.metadata import metadata
-from mona.manifest_processor.ocr import ocr
+from craw.crawler.merge_json import copy_items, merge_image_info, merge_jsons_as_array
+from craw.manifest_processor.image_info import image_info
+from craw.manifest_processor.metadata import metadata
+from craw.manifest_processor.ocr import ocr
+from queen.translate_all import DoctypePathMap, translate_all
 
 
 def parse(src_dir: Path, dst_dir: Path):

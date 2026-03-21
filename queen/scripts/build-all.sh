@@ -10,7 +10,7 @@ cd "$PROJECT_ROOT" || exit 1
 # Paths and files.
 # ============================
 JSON_SCHEMA_DIR="$PROJECT_ROOT/out/json-schema"
-MONA_SCHEMA="/mona-schema"
+CRAW_SCHEMA="/craw-schema"
 PANTHER_SCHEMA="/panther-schema"
 FOX_SCHEMA="/fox-schema"
 BUILD_SCHEMA="$PROJECT_ROOT/scripts/build-schema.sh"
@@ -27,7 +27,7 @@ log() {
 }
 
 usage() {
-  echo "Usage: $0 [ -j json_schema_dir ] [ -f fox_schema ] [ -p panther_schema ] [ -m mona_schema ] [ -h ]"
+  echo "Usage: $0 [ -j json_schema_dir ] [ -f fox_schema ] [ -p panther_schema ] [ -c craw_schema ] [ -h ]"
   echo "This script builds the patent document schema by translating XML to JSON files and merging them."
 }
 
@@ -43,7 +43,7 @@ resolve_path_from_caller() {
 }
 
 TARGET="ALL"
-while getopts "hj:f:p:m:" opt; do
+while getopts "hj:f:p:c:" opt; do
   case $opt in
     h)
       usage
@@ -63,10 +63,10 @@ while getopts "hj:f:p:m:" opt; do
       PANTHER_SCHEMA="$(resolve_path_from_caller "$OPTARG")"
       TARGET="panther"
       ;;
-    m)
-      echo "Option -m with argument: $OPTARG"
-      MONA_SCHEMA="$(resolve_path_from_caller "$OPTARG")"
-      TARGET="mona"
+    c)
+      echo "Option -c with argument: $OPTARG"
+      CRAW_SCHEMA="$(resolve_path_from_caller "$OPTARG")"
+      TARGET="craw"
       ;;
     *)
       echo "Invalid option: -$OPTARG" >&2
@@ -111,11 +111,11 @@ if [ $TARGET = "fox" ]; then
   cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
 fi
 
-if [ $TARGET = "mona" ]; then
-  if [ ! -d "$MONA_SCHEMA" ]; then
-    mkdir -p "$MONA_SCHEMA"
+if [ $TARGET = "craw" ]; then
+  if [ ! -d "$CRAW_SCHEMA" ]; then
+    mkdir -p "$CRAW_SCHEMA"
   fi
-  cp "$JSON_SCHEMA_DIR/"* "$MONA_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$CRAW_SCHEMA/"
 fi
 
 if [ $TARGET = "ALL" ]; then
@@ -129,10 +129,10 @@ if [ $TARGET = "ALL" ]; then
   fi
   cp "$JSON_SCHEMA_DIR/"* "$FOX_SCHEMA/"
 
-  if [ ! -d "$MONA_SCHEMA" ]; then
-    mkdir -p "$MONA_SCHEMA"
+  if [ ! -d "$CRAW_SCHEMA" ]; then
+    mkdir -p "$CRAW_SCHEMA"
   fi
-  cp "$JSON_SCHEMA_DIR/"* "$MONA_SCHEMA/"
+  cp "$JSON_SCHEMA_DIR/"* "$CRAW_SCHEMA/"
 fi
 
 

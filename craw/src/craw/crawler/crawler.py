@@ -6,9 +6,9 @@ from typing import List, Literal, Optional
 from libefiling import generate_sha256, parse_archive
 from pydantic import BaseModel
 
-from mona.crawler.config import image_params
-from mona.crawler.find_archives import find_archives
-from mona.crawler.parse import parse
+from craw.crawler.config import image_params
+from craw.crawler.find_archives import find_archives
+from craw.crawler.parse import parse
 
 
 class Result(BaseModel):

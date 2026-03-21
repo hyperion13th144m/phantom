@@ -1,35 +1,31 @@
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Dict, List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 
-from mona.generated.bibliographic_items import BibliographicItems
-from mona.generated.full_text import FullText
-from mona.generated.images_information import ImagesInformation
 from mona.logger import setup_logger
-from mona.server.models.documents import PatentDocument
+from mona.models.documents import PatentDocument
+from mona.models.generated.bibliographic_items import BibliographicItems
+from mona.models.generated.full_text import FullText
+from mona.models.generated.images_information import ImagesInformation
 
-setup_logger()
-logger = logging.getLogger("mona.server")
-logger.setLevel(logging.INFO)
 
+def create_app(data_dir: str) -> FastAPI:
+    app = FastAPI(title="mona API", version="0.1.0")
 
-def create_router(data_dir: str) -> APIRouter:
     dir_map = get_docid_dict(data_dir)
+    logger.info(f"Loaded {len(dir_map)} documents from {data_dir}")
 
-    # tags for Swagger UI
-    router = APIRouter(prefix="/documents", tags=["documents"])
-
-    ### REST API /documents/*
-    @router.get("/idList", response_model=list[str])
+    @app.get("/idList", response_model=list[str])
     async def get_documents_id_list() -> JSONResponse:
         keys = list(dir_map.keys())
         return JSONResponse(json.dumps(keys))
 
-    @router.get(
+    @app.get(
         "/{doc_id}/json/content",
         description="this returns the content of the document for rendering to html",
         response_model=List[PatentDocument],
@@ -41,7 +37,7 @@ def create_router(data_dir: str) -> APIRouter:
             media_type="application/json",
         )
 
-    @router.get(
+    @app.get(
         "/{doc_id}/json/images-information",
         description="this returns the image information of the document",
         response_model=ImagesInformation,
@@ -53,7 +49,7 @@ def create_router(data_dir: str) -> APIRouter:
             media_type="application/json",
         )
 
-    @router.get(
+    @app.get(
         "/{doc_id}/json/bibliographic-items",
         description="this returns the bibliographic items of the document",
         response_model=BibliographicItems,
@@ -65,7 +61,7 @@ def create_router(data_dir: str) -> APIRouter:
             media_type="application/json",
         )
 
-    @router.get(
+    @app.get(
         "/{doc_id}/json/full-text",
         description="this returns the full text of the document",
         response_model=FullText,
@@ -77,7 +73,7 @@ def create_router(data_dir: str) -> APIRouter:
             media_type="application/json",
         )
 
-    @router.get(
+    @app.get(
         "/{doc_id}/images/{file_name}",
         description="this returns the image body",
         response_model=None,  # 画像は response_model を定義しない (FileResponse で返すため)
@@ -109,7 +105,16 @@ def create_router(data_dir: str) -> APIRouter:
         else:
             raise HTTPException(status_code=400, detail="Unsupported media type")
 
-    return router
+    return app
+
+
+def get_log_level():
+    level = os.getenv("LOG_LEVEL", "INFO").upper()
+    valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    if level not in valid_levels:
+        print(f"Invalid LOG_LEVEL '{level}' specified. Defaulting to 'INFO'.")
+        return logging.INFO
+    return getattr(logging, level)
 
 
 def get_docid_dict(data_dir: str) -> Dict[str, str]:
@@ -126,3 +131,14 @@ def get_docid_dict(data_dir: str) -> Dict[str, str]:
             if doc_id:
                 results[doc_id] = str(file.parent)
     return results
+
+
+setup_logger()
+logger = logging.getLogger("mona.server")
+logger.setLevel(get_log_level())
+
+# docker コンテナ起動時に /data-dir に
+# 実データがあるディレクトリがマウントされるので、決め打ちで良い。
+DATA_DIR = "/data-dir"
+
+app = create_app(DATA_DIR)

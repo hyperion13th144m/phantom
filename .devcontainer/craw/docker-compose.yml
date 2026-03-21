@@ -1,5 +1,5 @@
 services:
-  mona-dev:
+  craw-dev:
     volumes:
       - .:/workspaces:cached
     tty: true

@@ -175,6 +175,7 @@ MODE=production
 KIND_OF_DATA=real
 DATA_DIR=./var/data
 EXTRA_DATA_DIR=./var/extra-data
+LOG_DIR_CRAW=./var/log/craw
 LOG_DIR_MONA=./var/log/mona
 LOG_DIR_FOX=./var/log/fox
 LOG_DIR_PANTHER=./var/log/panther

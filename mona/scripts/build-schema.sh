@@ -5,13 +5,13 @@ SCRIPT_DIR="$(dirname "$0")"
 PROJECT_ROOT="$(cd $SCRIPT_DIR/.. && pwd)"
 cd "$PROJECT_ROOT" || exit 1
 
-JSON_SCHEMA_DIR="$PROJECT_ROOT/src/mona/generated/json-schema"
+JSON_SCHEMA_DIR="$PROJECT_ROOT/src/mona/models/generated/json-schema"
 JSON_SCHEMA_ARRAY=(
     "full-text.json"
     "images-information.json"
     "bibliographic-items.json"
 )
-OUTPUT_DIR="$PROJECT_ROOT/src/mona/generated"
+OUTPUT_DIR="$PROJECT_ROOT/src/mona/models/generated"
 
 for file in "${JSON_SCHEMA_ARRAY[@]}"; do
   base_name=$(basename "$file" .json)

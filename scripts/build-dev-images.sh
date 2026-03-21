@@ -7,6 +7,7 @@ PROJECT_DIR="$SCRIPT_DIR/.."
 BUILD="${1:-ALL}"
 TARGET=(
   "mona-dev"
+  "craw-dev"
   "panther-dev"
   "fox-dev"
   "joker-dev"

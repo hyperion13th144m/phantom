@@ -4,16 +4,16 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
-from mona.crawler.config import (
+from craw.crawler.config import (
     code_config,
     get_all_document_codes,
     get_target_document_codes,
 )
-from mona.crawler.crawler import crawl
-from mona.logger import setup_logger
+from craw.crawler.crawler import crawl
+from craw.logger import setup_logger
 
 setup_logger()
-logger = logging.getLogger("mona.cli")
+logger = logging.getLogger("craw.cli")
 
 # docker コンテナ起動時に /data-dir に
 # 実データがあるディレクトリがマウントされるので、決め打ちで良い。
