@@ -46,7 +46,8 @@ def crawl(
         if doc_id and status.doc_id == doc_id:
             break
 
-        count += 1
+        if status.status == "success":
+            count += 1
 
 
 def convert(

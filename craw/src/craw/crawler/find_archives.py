@@ -18,6 +18,7 @@ def find_archives(
     doc_codes: List[str],
 ) -> Generator[tuple[Path, Path], None, None]:
     """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
+    print(f"Checking codes: {doc_codes}")
     if len(doc_codes) == 0:
         doc_codes = get_target_document_codes(["ALL"])
 

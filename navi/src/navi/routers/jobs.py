@@ -1,36 +1,35 @@
-# from fastapi import APIRouter, Form, Request
-#
-# from navi.api_client import get_job_detail, start_job
-# from navi.main import templates
-#
-# router = APIRouter(prefix="/jobs")
-#
-#
-# @router.get("/new")
-# def new_job(request: Request):
-#    return templates.TemplateResponse("jobs.html", {"request": request})
-#
-#
-# @router.post("/new")
-# def create_job(
-#    request: Request,
-#    src_dir: str = Form(...),
-#    job_name: str = Form(None),
-#    force: bool = Form(False),
-#    diff: bool = Form(False),
-#    max_files: int = Form(None),
-#    doc_id: str = Form(None),
-# ):
-#    payload = {
-#        "src_dir": src_dir,
-#        "job_name": job_name,
-#        "options": {
-#            "force": force,
-#            "diff": diff,
-#            "max_files": max_files,
-#            "doc_id": doc_id,
-#        },
-#    }
-#    start_job(payload)
-#    return templates.TemplateResponse("job_started.html", {"request": request})
-#
+from typing import List
+
+from craw_api_client.api.default.start_jobs_jobs_post import sync_detailed
+from craw_api_client.models import (
+    JobRequest,
+    JobRequestDocCodesItemType0,
+    JobRequestDocCodesItemType1,
+)
+from fastapi import APIRouter, Form, Request
+
+from navi.api_client import start_job
+from navi.ui import templates
+
+router = APIRouter(prefix="/jobs")
+
+
+@router.get("/start")
+def new_job(request: Request):
+    return templates.TemplateResponse("jobs/get-start.html", {"request": request})
+
+
+@router.post("/start")
+def create_job(
+    request: Request,
+    overwrite: bool = Form(False),
+    doc_codes: list[str] = Form([]),
+    max_files: int = Form(None),
+    doc_id: str = Form(None),
+):
+    response = start_job(
+        overwrite=overwrite, doc_codes=doc_codes, max_files=max_files, doc_id=doc_id
+    )
+    return templates.TemplateResponse(
+        "jobs/post-start.html", {"request": request, "job_request": response}
+    )

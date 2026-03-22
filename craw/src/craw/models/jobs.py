@@ -9,11 +9,36 @@ from craw.crawler.config import Category, DocCode
 Status = Literal["idle", "queued", "running", "completed", "failed", "canceled"]
 
 
+class JobRequest(BaseModel):
+    overwrite: bool = Field(
+        default=False,
+        description="force to crawl when existing JSON/webp files are present",
+    )
+    max_files: Optional[int] = Field(
+        default=None, ge=0, description="maximum number of files to process"
+    )
+    doc_id: Optional[str] = Field(
+        default=None, description="crawl only the specified docId"
+    )
+    doc_codes: List[Union[Category, DocCode]] = Field(
+        default_factory=list, description="crawl only the specified docCodes"
+    )
+
+    def get_doc_codes(self) -> List[str]:
+        return [str(code) for code in self.doc_codes]
+
+
+class JobResponse(BaseModel):
+    job_id: str
+    status: str
+    message: Optional[str] = None
+
+
 class JobStateModel(BaseModel):
     job_id: str
     status: Status
-    started_at: Optional[str] = None
-    finished_at: Optional[str] = None
+    started_at: Optional[float] = None
+    finished_at: Optional[float] = None
 
     current_doc_id: Optional[str] = None
     current_file: Optional[str] = None
@@ -26,9 +51,11 @@ class JobStateModel(BaseModel):
     message: str = ""
     cancel_requested: bool
 
+    request: JobRequest
+
 
 class JobState:
-    def __init__(self):
+    def __init__(self, job_request: JobRequest):
         self.job_id = uuid4().hex[:8]
         self.status: Status = "idle"
         self.started_at: datetime | None = None
@@ -44,6 +71,8 @@ class JobState:
 
         self.message = ""
         self.cancel_requested = False
+
+        self.request = job_request
 
     def run(self):
         self.status = "running"
@@ -88,8 +117,8 @@ class JobState:
         return JobStateModel(
             job_id=self.job_id,
             status=self.status,
-            started_at=self.started_at.isoformat() if self.started_at else None,
-            finished_at=self.finished_at.isoformat() if self.finished_at else None,
+            started_at=self.started_at.timestamp() if self.started_at else None,
+            finished_at=self.finished_at.timestamp() if self.finished_at else None,
             current_doc_id=self.current_doc_id,
             current_file=self.current_file,
             total=self.total,
@@ -98,29 +127,5 @@ class JobState:
             skipped_files=self.skipped_files,
             message=self.message,
             cancel_requested=self.cancel_requested,
+            request=self.request,
         )
-
-
-class JobRequest(BaseModel):
-    overwrite: bool = Field(
-        default=False,
-        description="force to crawl when existing JSON/webp files are present",
-    )
-    max_files: Optional[int] = Field(
-        default=None, ge=0, description="maximum number of files to process"
-    )
-    doc_id: Optional[str] = Field(
-        default=None, description="crawl only the specified docId"
-    )
-    doc_codes: List[Union[Category, DocCode]] = Field(
-        default_factory=list, description="crawl only the specified docCodes"
-    )
-
-    def get_doc_codes(self) -> List[str]:
-        return list(get_args(self.doc_codes))
-
-
-class JobResponse(BaseModel):
-    job_id: str
-    status: str
-    message: Optional[str] = None

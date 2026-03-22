@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <title>Navi Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <h1>Navi Dashboard</h1>
+    <hr />
+    <div>
+        <a href="/jobs/start">Start New Job</a>
+    </div>
+
+    <h2>Start Job</h2>
+    <div>
+        <form action="/jobs/start" method="post">
+            <div>
+                <input type="checkbox" id="overwrite" name="overwrite">
+                <label for="overwrite">Overwrite existing job</label>
+            </div>
+            <div>
+                <input type="number" id="max_files" name="max_files">
+                <label for="max_files">Max files to process (leave blank for no limit)</label>
+            </div>
+            <div>
+                <input type="text" id="doc_id" name="doc_id">
+                <label for="doc_id">process only specific doc_id</label>
+            </div>
+            <div>
+                <input type="text" id="doc_codes" name="doc_codes">
+                <label for="doc_codes">process only specific doc_codes (comma-separated)</label>
+            </div>
+            <div>
+                <button type="submit">Start Job</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

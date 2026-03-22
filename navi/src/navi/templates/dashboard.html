@@ -7,6 +7,56 @@
 
 <body>
     <h1>Navi Dashboard</h1>
+    <hr />
+    <div>
+        <a href="/jobs/start">Start New Job</a>
+    </div>
+
+    <h2>Latest job status</h2>
+    <div>
+        {% if status %}
+        <h3>request parameters</h3>
+        <ul>
+            <li>Overwrite: {{ status.request.overwrite }}</li>
+            <li>Max files: {{ status.request.max_files }}</li>
+            <li>Doc ID: {{ status.request.doc_id }}</li>
+            <li>Doc Codes: {{ status.request.doc_codes | join(", ") }}</li>
+        </ul>
+
+        <h3>status</h3>
+        <table>
+            <tr>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>Started At</th>
+                <th>Finished At</th>
+                <th>Total Processed Files</th>
+                <th>Number of Successful Files</th>
+                <th>Number of Failed Files</th>
+                <th>Number of Skipped Files</th>
+            </tr>
+            <tr>
+                <td>{{ status.job_id }}</td>
+                <td>{{ status.status }}</td>
+                <td>{{ status.started_at }}</td>
+                <td>{{ status.finished_at }}</td>
+                <td>{{ status.total }}</td>
+                <td>{{ status.success_files | length }}</td>
+                <td>{{ status.failed_files | length }}</td>
+                <td>{{ status.skipped_files | length }}</td>
+            </tr>
+        </table>
+        {% if status.status == "running" %}
+        <div>processing file: {{ status.current_file }}</div>
+        <div>
+            <a href="/jobs/stop">Stop Job</a>
+        </div>
+        {% endif %}
+
+        {% else %}
+        No current job status available.
+        {% endif %}
+    </div>
     <h2>Recent Jobs</h2>
     <table>
         <tr>
@@ -25,14 +75,11 @@
             <td>{{ job.started_at }}</td>
             <td>{{ job.finished_at }}</td>
             <td>{{ job.doc_id }}</td>
-            <td>{{ job.get_doc_codes() | join(", ") }}</td>
+            <td>{{ job.doc_codes | join(", ") }}</td>
             -->
         </tr>
         {% endfor %}
     </table>
-    <div>
-        {{ status }}
-    </div>
 </body>
 
 </html>

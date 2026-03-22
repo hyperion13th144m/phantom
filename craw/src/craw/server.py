@@ -31,15 +31,15 @@ def create_app() -> FastAPI:
         return get_all_job_id()
 
     @app.post("/jobs", response_model=JobResponse)
-    def start_jobs(payload: JobRequest, background_tasks: BackgroundTasks):
+    def start_jobs(request: JobRequest, background_tasks: BackgroundTasks):
         global current_job
         if current_job is not None and current_job.status in ["queued", "running"]:
             raise HTTPException(status_code=409, detail="A job is already running.")
 
-        job = JobState()
+        job = JobState(request)
         job.status = "queued"
         current_job = job
-        background_tasks.add_task(run_job, job, payload)
+        background_tasks.add_task(run_job, job, request)
         return JobResponse(job_id=job.job_id, status=job.status)
 
     @app.get(
@@ -50,7 +50,7 @@ def create_app() -> FastAPI:
     def get_job_status():
         if current_job is None:
             raise HTTPException(404, "No job found")
-        return current_job.to_model().model_dump_json(ensure_ascii=False, indent=2)
+        return current_job.to_model().model_dump()
 
     @app.post("/jobs/cancel", response_model=JobResponse)
     def cancel_job():
@@ -99,6 +99,8 @@ def run_job(job: JobState, options: JobRequest):
         return
 
     logger.info(f"Starting job {job.job_id} with options: {request.model_dump()}")
+    logger.info(f"Document codes1: {request.doc_codes}")
+    logger.info(f"Document codes2: {request.get_doc_codes()}")
     try:
         job.run()
 

@@ -14,6 +14,12 @@ services:
       - ./test-data/extracted-archives:/test-data-src
       - ./var/data-debug:/test-data-dst
       - ./queen:/queen
+      - ./var/shared/craw-api:/export-api
+
+      # whl は github workflows で作成するので
+      # このマウントは不要だけど
+      # ローカルで navi プロダクション用ビルドを試すために残しておく
+      - ./var/pkgs/craw:/pkgs
     networks:
       - dev-net
 
@@ -41,6 +47,7 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ${LOG_DIR_NAVI}:/var/log/navi
+      - ./var/shared/craw-api:/craw-api
     networks:
       - dev-net
 

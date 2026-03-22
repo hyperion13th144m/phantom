@@ -180,3 +180,5 @@ output2
 document*.json
 
 reference
+src/craw/client
+openapi.json
