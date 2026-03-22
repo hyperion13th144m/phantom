@@ -1,18 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR/.."
+SCRIPT_DIR="$(dirname $0)"
+PROJECT_ROOT="$(dirname $SCRIPT_DIR)"
 
-cd "$PROJECT_ROOT" || exit 1
 
-JSON_SCHEMA_DIR="$PROJECT_ROOT/src/panther/generated/json-schema"
+JSON_SCHEMA_DIR="$PROJECT_ROOT/src/panther/models/generated/json-schema"
 JSON_SCHEMA_ARRAY=(
     "full-text.json"
     "images-information.json"
     "bibliographic-items.json"
 )
-OUTPUT_DIR="$PROJECT_ROOT/src/panther/generated"
+OUTPUT_DIR="$PROJECT_ROOT/src/panther/models/generated"
 
 for file in "${JSON_SCHEMA_ARRAY[@]}"; do
   base_name=$(basename "$file" .json)

@@ -2,8 +2,8 @@ services:
   craw-dev:
     container_name: craw-dev
     build:
-      context: .
-      dockerfile: craw/Dockerfile
+      context: craw
+      dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
@@ -48,6 +48,20 @@ services:
     volumes:
       - ${LOG_DIR_NAVI}:/var/log/navi
       - ./var/shared/craw-api:/craw-api
+    networks:
+      - dev-net
+
+  skull-dev:
+    container_name: skull-dev
+    build:
+      context: skull
+      dockerfile: Dockerfile
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ${LOG_DIR_SKULL}:/var/log/skull
+      - ./var/shared/skull-api:/export-api
     networks:
       - dev-net
 
@@ -121,9 +135,10 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./fox/src/interfaces/generated/json-schema:/fox-schema
-      - ./panther/src/panther/generated/json-schema:/panther-schema
-      - ./craw/src/craw/generated/json-schema:/craw-schema
+      - ./panther/src/panther/models/generated/json-schema:/panther-schema
+      - ./craw/src/craw/models/generated/json-schema:/craw-schema
       - ./test-data/extracted-archives:/test-data
+      - ./var/pkgs/queen:/pkgs
     networks:
       - dev-net
 

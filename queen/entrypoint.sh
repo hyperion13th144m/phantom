@@ -8,7 +8,7 @@ Usage: $0 <command> [options]
 
 Available commands:
   build-all          Build all components
-  build-dev-map      Build development map
+  build-pkg          Build package
   build-schema       Build schema
   gen-test-data      Generate test data
   run-test           Run tests
@@ -18,6 +18,7 @@ Available commands:
 
 Examples:
   $0 build-all
+  $0 build-pkg
   $0 translate --help
   $0 run-test
 
@@ -42,8 +43,8 @@ case "$COMMAND" in
     build-all)
         exec ./scripts/build-all.sh "$@"
         ;;
-    build-dev-map)
-        exec ./scripts/build-dev-map.sh "$@"
+    build-pkg)
+        exec ./scripts/build-pkg.sh "$@"
         ;;
     build-schema)
         exec ./scripts/build-schema.sh "$@"

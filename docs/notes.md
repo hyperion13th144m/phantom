@@ -117,7 +117,7 @@ queen
 a2a0a5
 
 skull
-a2a0a5
+f9f242
 ecd700
 
 

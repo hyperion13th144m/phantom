@@ -1,0 +1,8 @@
+./.gitignore
+./.vscode
+./tests
+./.venv
+**/__pycache__
+./reference
+./Dockerfile
+./dist

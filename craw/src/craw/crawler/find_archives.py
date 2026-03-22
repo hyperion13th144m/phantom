@@ -6,9 +6,11 @@ import logging
 import re
 from itertools import chain
 from pathlib import Path
-from typing import Generator, List, Literal, Union
+from typing import Generator, List
 
-from craw.crawler.config import Category, DocCode, get_target_document_codes
+from libefiling import get_document_code
+
+from craw.crawler.config import get_target_document_codes
 
 logger = logging.getLogger(__name__)
 
@@ -38,11 +40,8 @@ def find_archives(
 
 def is_target_document(document_filename: Path, doc_codes: list[str]) -> bool:
     """Check if the document code is in the target list."""
-    for target in doc_codes:
-        pattern = rf".+_{target}_.+"
-        if re.match(pattern, document_filename.name):
-            return True
-    return False
+    document_code = get_document_code(document_filename.name)
+    return document_code in doc_codes
 
 
 def find_procedure_xml(archive_path: Path) -> Path | None:

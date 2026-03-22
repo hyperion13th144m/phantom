@@ -21,10 +21,7 @@ RUN mkdir -p $LOG_DIR/api $LOG_DIR/jobs $LOG_DIR/crawling && \
 
 USER $USERNAME
 WORKDIR /app
-COPY --chown=$USERNAME:$GROUPNAME craw /app/
-COPY --chown=$USERNAME:$GROUPNAME queen /queen
-#RUN cd /queen && uv build && \
-#    cd /app && uv add /queen/dist/queen-*.whl
-RUN cd /app && uv sync --no-cache --frozen
+COPY --chown=$USERNAME:$GROUPNAME . /app
+RUN if [ -n "$(ls pkgs/queen-*.whl 2>/dev/null)" ]; then uv add "$(ls pkgs/queen-*.whl | sort -V | tail -n 1)"; uv sync --no-cache --frozen; fi
 ENTRYPOINT [ "uv", "run" ]
 CMD [ "uvicorn", "craw.server:app", "--host", "0.0.0.0", "--port", "8000" ]

@@ -1,0 +1,6 @@
+services:
+  skull-dev:
+    volumes:
+      - .:/workspaces:cached
+    tty: true
+    entrypoint: ["sh", "-c", "sleep infinity"]
