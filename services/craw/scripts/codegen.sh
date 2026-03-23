@@ -4,7 +4,7 @@ SCRIPT_DIR=$(dirname "$0")
 PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
 
 DIST=/pkgs
-CLIENT_DIR=/export-api
+CLIENT_DIR=$PROJECT_ROOT/generated
 OPENAPI_FILE=/tmp/openapi.json
 
 echo "Generating OpenAPI client..."

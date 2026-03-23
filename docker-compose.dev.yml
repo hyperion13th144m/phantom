@@ -2,7 +2,7 @@ services:
   craw-dev:
     container_name: craw-dev
     build:
-      context: craw
+      context: services/craw
       dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
@@ -13,12 +13,12 @@ services:
       - ${LOG_DIR_CRAW}:/var/log/craw
       - ./test-data/extracted-archives:/test-data-src
       - ./var/data-debug:/test-data-dst
-      - ./queen:/queen
+      - ./infra/queen:/queen
       - ./var/shared/craw-api:/export-api
 
-      # whl は github workflows で作成するので
-      # このマウントは不要だけど
-      # ローカルで navi プロダクション用ビルドを試すために残しておく
+      # craw generates its package to /pkgs directory
+      # for building container(e.g. navi) that requires the pakcage
+      # in development environment.
       - ./var/pkgs/craw:/pkgs
     networks:
       - dev-net
@@ -26,7 +26,7 @@ services:
   mona-dev:
     container_name: mona-dev
     build:
-      context: mona
+      context: services/mona
       dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
@@ -40,7 +40,7 @@ services:
   navi-dev:
     container_name: navi-dev
     build:
-      context: navi
+      context: services/navi
       dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
@@ -54,7 +54,7 @@ services:
   skull-dev:
     container_name: skull-dev
     build:
-      context: skull
+      context: services/skull
       dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
@@ -68,7 +68,7 @@ services:
   panther-dev:
     container_name: panther-dev
     build:
-      context: panther
+      context: services/panther
       dockerfile: Dockerfile
     environment:
       ES_URL: http://es-dev:9200
@@ -88,7 +88,7 @@ services:
   fox-dev:
     container_name: fox-dev
     build:
-      context: fox
+      context: services/fox
       dockerfile: Dockerfile
     environment:
       NODE_ENV: development
@@ -104,7 +104,7 @@ services:
   joker-dev:
     container_name: joker-dev
     build:
-      context: joker
+      context: services/joker
       dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
@@ -128,16 +128,17 @@ services:
   queen-dev:
     container_name: queen-dev
     build:
-      context: queen
+      context: services/queen
       dockerfile: Dockerfile
     environment:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
     volumes:
-      - ./fox/src/interfaces/generated/json-schema:/fox-schema
-      - ./panther/src/panther/models/generated/json-schema:/panther-schema
-      - ./craw/src/craw/models/generated/json-schema:/craw-schema
       - ./test-data/extracted-archives:/test-data
+
+      # queen generates its package to /pkgs directory
+      # for building container(e.g. craw) that requires the pakcage
+      # in development environment.
       - ./var/pkgs/queen:/pkgs
     networks:
       - dev-net
@@ -146,7 +147,8 @@ services:
     image: phantom-elasticsearch
     container_name: es-dev
     build:
-      dockerfile: es/Dockerfile
+      context: infra/es
+      dockerfile: Dockerfile
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
@@ -166,7 +168,7 @@ services:
     image: nginx:1.29.6-alpine
     volumes:
       - ${DATA_DIR}:/usr/share/nginx/html
-      - ./nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf
+      - ./infra/nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 38080:38080
     networks:

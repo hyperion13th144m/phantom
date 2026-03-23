@@ -1,0 +1,16 @@
+{
+    "name": "ts-builder",
+    "version": "1.0.0",
+    "description": "a builder for typescript interfaces based on json schema",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "",
+    "dependencies": {
+        "json-schema-to-typescript": "^15.0.4",
+        "ts-auto-guard": "^5.0.1",
+        "typescript": "^5.9.3"
+    }
+}

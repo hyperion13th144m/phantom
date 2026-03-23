@@ -1,0 +1,9 @@
+out
+.venv
+.envrc
+__pycache__
+reference
+ts/node_modules
+
+generated
+reference

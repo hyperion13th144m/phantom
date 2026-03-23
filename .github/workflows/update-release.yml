@@ -47,7 +47,7 @@ jobs:
         run: |
           cp -R LICENSE.md README.md env.sample docker-compose.yml assets/ scripts/ ./release-repo/
           mkdir -p ./release-repo/nginx
-          cp nginx/nginx.conf ./release-repo/nginx/
+          cp infra/nginx/nginx.conf ./release-repo/nginx/
 
       - name: Commit and push changes to release repository
         run: |

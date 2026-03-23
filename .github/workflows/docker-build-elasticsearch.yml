@@ -6,14 +6,14 @@ on:
       - main
       #- develop
     paths:
-      - 'docker/Dockerfile.es'
+      - 'infra/es/Dockerfile.es'
       - '.github/workflows/docker-build-elasticsearch.yml'
   pull_request:
     branches:
       - main
       #- develop
     paths:
-      - 'docker/Dockerfile.es'
+      - 'infra/es/Dockerfile.es'
   workflow_dispatch:
 
 env:
@@ -54,8 +54,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./es
-          file: ./es/Dockerfile
+          context: ./infra/es
+          file: ./infra/es/Dockerfile.es
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

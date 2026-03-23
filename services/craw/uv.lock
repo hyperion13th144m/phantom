@@ -152,7 +152,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "libefiling", specifier = ">=0.1.42" },
     { name = "python-json-logger", specifier = ">=4.0.0" },
-    { name = "queen", directory = "/queen" },
+    { name = "queen", directory = "../queen" },
     { name = "saxonche", specifier = ">=12.9.0" },
     { name = "uvicorn", specifier = ">=0.42.0" },
 ]
@@ -767,15 +767,19 @@ wheels = [
 [[package]]
 name = "queen"
 version = "0.1.21"
-source = { directory = "/queen" }
+source = { directory = "../queen" }
 dependencies = [
+    { name = "datamodel-code-generator", extra = ["ruff"] },
     { name = "pydantic" },
+    { name = "ruff" },
     { name = "saxonche" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "datamodel-code-generator", extras = ["ruff"], specifier = ">=0.55.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "ruff", specifier = ">=0.15.7" },
     { name = "saxonche", specifier = ">=12.9.0" },
 ]
 

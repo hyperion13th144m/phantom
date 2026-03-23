@@ -6,8 +6,8 @@ on:
       - main
       #- develop
     paths:
-      - 'mona/**'
-      - 'queen/**'
+      - 'services/mona/**'
+      - 'services/queen/**'
       - 'docker/Dockerfile.mona'
       - '.github/workflows/docker-build-mona.yml'
   #pull_request:
@@ -51,13 +51,13 @@ jobs:
 
       - name: Run build-all script to generate json schema for mona directory.
         run: |
-          chmod +x ./queen/scripts/build-all.sh ./queen/scripts/build-schema.sh
-          ./queen/scripts/build-all.sh -m ./mona/src/mona/generated/json-schema
+          chmod +x ./services/queen/scripts/build-all.sh ./services/queen/scripts/build-schema.sh
+          ./services/queen/scripts/build-all.sh -m ./services/mona/src/mona/generated/json-schema
 
       - name: Run build-schema script to generate python schema from json schema.
         run: |
-          chmod +x ./mona/scripts/build-schema.sh
-          ./mona/scripts/build-schema.sh
+          chmod +x ./services/mona/scripts/build-schema.sh
+          ./services/mona/scripts/build-schema.sh
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -84,7 +84,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./mona/Dockerfile
+          file: ./services/mona/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

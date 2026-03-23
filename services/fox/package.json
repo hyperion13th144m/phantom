@@ -29,8 +29,6 @@
         "@vitest/ui": "^4.0.18",
         "chai": "^6.2.2",
         "cheerio": "^1.2.0",
-        "json-schema-to-typescript": "^15.0.4",
-        "ts-auto-guard": "^5.0.1",
         "vitest": "^4.0.18"
     }
 }

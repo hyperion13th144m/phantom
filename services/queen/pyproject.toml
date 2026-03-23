@@ -5,7 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "hyperion13th144m", email = "hyperion13th144m@gmail.com" }]
 requires-python = ">=3.12"
-dependencies = ["pydantic>=2.12.5", "saxonche>=12.9.0"]
+dependencies = [
+    "datamodel-code-generator[ruff]>=0.55.0",
+    "pydantic>=2.12.5",
+    "ruff>=0.15.7",
+    "saxonche>=12.9.0",
+]
 
 [build-system]
 requires = ["uv_build>=0.10.3,<0.11.0"]
