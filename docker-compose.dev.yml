@@ -57,6 +57,19 @@ services:
     networks:
       - dev-net
 
+  noir-dev:
+    container_name: noir-dev
+    build:
+      context: services/noir
+      dockerfile: Dockerfile
+    environment:
+      LANG: ja_JP.UTF-8
+      TZ: Asia/Tokyo
+    volumes:
+      - ${LOG_DIR_NOIR}:/var/log/noir
+    networks:
+      - dev-net
+
   panther-dev:
     container_name: panther-dev
     build:

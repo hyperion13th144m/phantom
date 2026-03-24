@@ -12,6 +12,7 @@ LOG_DIR_FOX=./var/log/fox
 LOG_DIR_PANTHER=./var/log/panther
 LOG_DIR_JOKER=./var/log/joker
 LOG_DIR_SKULL=./var/log/skull
+LOG_DIR_NOIR=./var/log/noir
 SQLITE_NAME=extra-data.sqlite3
 
 ES_USER=elastic
