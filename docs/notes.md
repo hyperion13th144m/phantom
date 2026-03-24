@@ -137,9 +137,30 @@ fox
 05d2ff
 1eabd9
 
-craw
+## craw
 dedace
 cbc6b0
+### development
+install dependencies
+```bash
+uv add ../queen
+```
+### building container
+```bash
+# build craw container in local
+# build queen pkg at first 
+cd queen
+uv build -o ../craw/deps
+cd ../craw
+docker compose -f docker-compose.dev.yml build craw-dev
+
+# or in github workflows
+checkout
+cd queen
+uv build -o ../craw/deps
+cd ../
+docker build
+```
 
 violet
 a743d9

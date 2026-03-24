@@ -18,9 +18,8 @@ ALL_TARGET=(
 
 prep_craw() {
   echo "Preparing craw-dev image..."
-  docker compose -f docker-compose.dev.yml \
-    run --rm -i queen-dev build-pkg
-  cp $PROJECT_DIR/var/pkgs/queen/queen-*.whl $PROJECT_DIR/services/craw/deps
+  $SCRIPT_DIR/build-pkgs.sh queen
+  cp $PROJECT_DIR/var/pkgs/queen/queen-*.whl $PROJECT_DIR/services/craw/deps/
 }
 
 DOCKER_COMPOSE="-f $PROJECT_DIR/docker-compose.dev.yml"

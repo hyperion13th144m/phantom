@@ -1,6 +1,5 @@
 import logging
 import os
-from pathlib import Path
 from typing import List
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
@@ -23,12 +22,18 @@ from craw.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
 
 
 def create_app() -> FastAPI:
-    setup_api_logger()
+    # default は docker コンテナ起動でbind される先のディレクトリ
+    src_dir = os.environ.get("SRC_DIR", "/src-dir")
+    dst_dir = os.environ.get("DST_DIR", "/dst-dir")
+    log_dir = os.environ.get("LOG_DIR", "/var/log/craw")
+    log_level = os.environ.get("LOG_LEVEL", "INFO")
+
     app = FastAPI(title="craw API", version="0.1.0")
+    setup_api_logger(log_dir, log_level)
 
     @app.get("/jobs/history", response_model=List[str])
     def list_jobs():
-        return get_all_job_id()
+        return get_all_job_id(log_dir)
 
     @app.post("/jobs", response_model=JobResponse)
     def start_jobs(request: JobRequest, background_tasks: BackgroundTasks):
@@ -39,7 +44,15 @@ def create_app() -> FastAPI:
         job = JobState(request)
         job.status = "queued"
         current_job = job
-        background_tasks.add_task(run_job, job, request)
+        background_tasks.add_task(
+            run_job,
+            src_dir,
+            dst_dir,
+            job,
+            request,
+            log_dir,
+            log_level,
+        )
         return JobResponse(job_id=job.job_id, status=job.status)
 
     @app.get(
@@ -70,7 +83,7 @@ def create_app() -> FastAPI:
     )
     def get_job_log(job_id: str) -> JSONResponse:
         try:
-            content = get_old_job_state(job_id)
+            content = get_old_job_state(job_id, log_dir)
             return JSONResponse(content=content)
         except FileNotFoundError as e:
             raise HTTPException(status_code=404, detail="Log file not found.") from e
@@ -86,10 +99,16 @@ def create_app() -> FastAPI:
     return app
 
 
-def run_job(job: JobState, options: JobRequest):
-    setup_logger(job.job_id)
+def run_job(
+    src_dir: str,
+    dst_dir: str,
+    job: JobState,
+    options: JobRequest,
+    log_dir: str,
+    log_level: str,
+):
+    setup_logger(job.job_id, log_dir, log_level)
     logger = logging.getLogger("craw.crawling")
-    logger.setLevel(LOG_LEVEL)
 
     try:
         request = JobRequest.model_validate(options)
@@ -105,8 +124,8 @@ def run_job(job: JobState, options: JobRequest):
         job.run()
 
         for s in crawl(
-            SRC_DIR,
-            DATA_DIR,
+            src_dir,
+            dst_dir,
             overwrite=request.overwrite,
             doc_codes=request.get_doc_codes() or [],
             doc_id=request.doc_id,
@@ -114,7 +133,7 @@ def run_job(job: JobState, options: JobRequest):
         ):
             if job.cancel_requested:
                 job.cancel()
-                save_job_state(job)
+                save_job_state(job, log_dir)
                 return
 
             job.progress(
@@ -137,32 +156,14 @@ def run_job(job: JobState, options: JobRequest):
                 },
             )
         job.complete()
-        save_job_state(job)
+        save_job_state(job, log_dir)
     except Exception as e:
         logger.error(f"Job {job.job_id} failed: {e}", exc_info=True)
         job.fail(f"Job failed: {e}")
-        save_job_state(job)
+        save_job_state(job, log_dir)
 
-
-def get_log_level():
-    level = os.getenv("LOG_LEVEL", "INFO").upper()
-    valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-    if level not in valid_levels:
-        print(f"Invalid LOG_LEVEL '{level}' specified. Defaulting to 'INFO'.")
-        return logging.INFO
-    return getattr(logging, level)
-
-
-# docker コンテナ起動時に /data-dir に
-# 実データがあるディレクトリがマウントされるので、決め打ちで良い。
-SRC_DIR = "/src-dir"
-DATA_DIR = "/data-dir"
 
 # only one job at a time for now, so global variable is fine.
 current_job: JobState | None = None
-
-LOG_JOB_DIR = Path("/var/log/craw/jobs")
-LOG_JOB_DIR.mkdir(parents=True, exist_ok=True)
-LOG_LEVEL = get_log_level()
 
 app = create_app()

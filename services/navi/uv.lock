@@ -115,7 +115,7 @@ wheels = [
 [[package]]
 name = "craw-api-client"
 version = "0.1.2"
-source = { directory = "../../craw-api" }
+source = { directory = "../../var/api/craw" }
 dependencies = [
     { name = "attrs" },
     { name = "httpx" },
@@ -126,7 +126,7 @@ dependencies = [
 requires-dist = [
     { name = "attrs", specifier = ">=22.2.0" },
     { name = "httpx", specifier = ">=0.23.0,<0.29.0" },
-    { name = "python-dateutil", specifier = ">=2.8.0,<3.0.0" },
+    { name = "python-dateutil", specifier = ">=2.8.0,<3" },
 ]
 
 [[package]]
@@ -248,7 +248,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "craw-api-client", directory = "../../craw-api" },
+    { name = "craw-api-client", directory = "../../var/api/craw" },
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "python-multipart", specifier = ">=0.0.22" },

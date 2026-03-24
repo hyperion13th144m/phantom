@@ -2,10 +2,5 @@ services:
   panther-dev:
     volumes:
       - .:/workspaces:cached
-
-      # panther generates its package to /pkgs directory
-      # for building container(e.g. navi) that requires the pakcage
-      # in development environment.
-      - ./var/pkgs/panther:/pkgs
     tty: true
     entrypoint: ["sh", "-c", "sleep infinity"]

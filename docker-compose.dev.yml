@@ -7,19 +7,13 @@ services:
     environment:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
+      LOG_DIR: /var/log/craw
     volumes:
       - ${SRC_DIR}:/src-dir:ro
       - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_CRAW}:/var/log/craw
       - ./test-data/extracted-archives:/test-data-src
       - ./var/data-debug:/test-data-dst
-      - ./infra/queen:/queen
-      - ./var/shared/craw-api:/export-api
-
-      # craw generates its package to /pkgs directory
-      # for building container(e.g. navi) that requires the pakcage
-      # in development environment.
-      - ./var/pkgs/craw:/pkgs
     networks:
       - dev-net
 
@@ -47,7 +41,6 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ${LOG_DIR_NAVI}:/var/log/navi
-      - ./var/shared/craw-api:/craw-api
     networks:
       - dev-net
 
@@ -61,7 +54,6 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ${LOG_DIR_SKULL}:/var/log/skull
-      - ./var/shared/skull-api:/export-api
     networks:
       - dev-net
 
@@ -135,11 +127,8 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./test-data/extracted-archives:/test-data
-
-      # queen generates its package to /pkgs directory
-      # for building container(e.g. craw) that requires the pakcage
-      # in development environment.
-      - ./var/pkgs/queen:/pkgs
+      - ./services/panther/src/panther/models/generated:/panther-models
+      - ./services/fox/src/interfaces/generated:/fox-models
     networks:
       - dev-net
 

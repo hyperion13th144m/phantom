@@ -18,4 +18,4 @@ requires-python = ">=3.14"
 version = "0.1.0"
 
 [tool.uv.sources]
-craw-api-client = {path = "../../craw-api"}
+craw-api-client = { path = "../../var/api/craw" }

@@ -4,7 +4,10 @@ SCRIPT_DIR="$(dirname $0)"
 PROJECT_ROOT="$(dirname $SCRIPT_DIR)"
 
 DEBUG=${1:-}
+
+## use absolute path due to change directory in processing
 JSON_SCHEMA_DIR="$(readlink -f $PROJECT_ROOT/generated/json-schema)"
+OUTPUT_DIR="$(readlink -f $PROJECT_ROOT/generated/typescript)"
 JSON_SCHEMA_ARRAY=(
     "full-text.json"
     "images-information.json"
@@ -22,7 +25,6 @@ JSON_SCHEMA_ARRAY=(
     "dispatch-control-article.json"
     "attaching-document.json"
 )
-OUTPUT_DIR="$(readlink -f $PROJECT_ROOT/generated/typescript)"
 
 echo "Step 1: Generating TypeScript types"
 

@@ -59,7 +59,6 @@ def main(args: argparse.Namespace) -> int:
     logger.info(f"Connecting to Elasticsearch: {args.es}")
     es = create_es_client(args)
     try:
-
         # Check connection
         if not es.ping():
             logger.error("Error: Cannot connect to Elasticsearch")
@@ -73,7 +72,7 @@ def main(args: argparse.Namespace) -> int:
         # Show index info
         stats = es.indices.stats(index=args.index)
         total_docs = stats["indices"][args.index]["total"]["docs"]["count"]
-        logger.info(f"\nIndex info:")
+        logger.info("\nIndex info:")
         logger.info(f"  Name: {args.index}")
         logger.info(f"  Documents: {total_docs}")
 
@@ -125,7 +124,7 @@ def create_or_update_index(
         if "mappings" in mapping_config:
             logger.info(f"Updating mappings for index: {index_name}")
             es.indices.put_mapping(index=index_name, body=mapping_config["mappings"])
-            logger.info(f"✓ Mappings updated successfully")
+            logger.info("✓ Mappings updated successfully")
 
         # Note: Settings cannot be updated on open index except for dynamic settings
         if "settings" in mapping_config:

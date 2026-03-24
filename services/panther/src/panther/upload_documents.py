@@ -86,7 +86,6 @@ def main(args: argparse.Namespace) -> int:
     logger.info(f"Connecting to Elasticsearch: {args.es}")
     es = create_es_client(args)
     try:
-
         # Check connection
         if not es.ping():
             logger.error("Error: Cannot connect to Elasticsearch")
