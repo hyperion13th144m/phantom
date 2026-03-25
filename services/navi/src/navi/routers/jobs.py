@@ -1,7 +1,7 @@
 from typing import List
 
-from craw_api_client.api.default.start_jobs_jobs_post import sync_detailed
-from craw_api_client.models import (
+from crow_api_client.api.default.start_jobs_jobs_post import sync_detailed
+from crow_api_client.models import (
     JobRequest,
     JobRequestDocCodesItemType0,
     JobRequestDocCodesItemType1,

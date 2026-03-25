@@ -4,16 +4,16 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
-from craw.crawler.config import (
+from crow.crawler.config import (
     code_config,
     get_all_document_codes,
     get_target_document_codes,
 )
-from craw.crawler.crawler import crawl
-from craw.logger import setup_logger
+from crow.crawler.crawler import crawl
+from crow.logger import setup_logger
 
 setup_logger()
-logger = logging.getLogger("craw.cli")
+logger = logging.getLogger("crow.cli")
 
 # docker コンテナ起動時に /data-dir に
 # 実データがあるディレクトリがマウントされるので、決め打ちで良い。

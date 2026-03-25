@@ -1,22 +1,22 @@
 import json
 
 import requests
-from craw_api_client import Client
-from craw_api_client.api.default import (
+from crow_api_client import Client
+from crow_api_client.api.default import (
     get_job_status_jobs_status_get,
     start_jobs_jobs_post,
 )
-from craw_api_client.api.default import start_jobs_jobs_post as api_start_job
-from craw_api_client.models import (
+from crow_api_client.api.default import start_jobs_jobs_post as api_start_job
+from crow_api_client.models import (
     JobRequest,
     JobRequestDocCodesItemType0,
     JobRequestDocCodesItemType1,
     JobStateModel,
 )
-from craw_api_client.types import Response
+from crow_api_client.types import Response
 from fastapi.staticfiles import StaticFiles
 
-client = Client("http://craw-dev:8000")
+client = Client("http://crow-dev:8000")
 
 
 def start_job(

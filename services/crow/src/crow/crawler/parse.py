@@ -4,10 +4,10 @@ from pathlib import Path
 from libefiling import Manifest
 
 # from mona.manifest_processor.xslt import XSLTProcessor
-from craw.crawler.merge_json import copy_items, merge_image_info, merge_jsons_as_array
-from craw.manifest_processor.image_info import image_info
-from craw.manifest_processor.metadata import metadata
-from craw.manifest_processor.ocr import ocr
+from crow.crawler.merge_json import copy_items, merge_image_info, merge_jsons_as_array
+from crow.manifest_processor.image_info import image_info
+from crow.manifest_processor.metadata import metadata
+from crow.manifest_processor.ocr import ocr
 from queen.translate_all import DoctypePathMap, translate_all
 
 

@@ -102,7 +102,7 @@ block-beta
   LLM --> Joker 
 ```
 
-violet navi craw
+violet navi crow
 
 joker
 fe0000
@@ -137,7 +137,7 @@ fox
 05d2ff
 1eabd9
 
-## craw
+## crow
 dedace
 cbc6b0
 ### development
@@ -147,17 +147,17 @@ uv add ../queen
 ```
 ### building container
 ```bash
-# build craw container in local
+# build crow container in local
 # build queen pkg at first 
 cd queen
-uv build -o ../craw/deps
-cd ../craw
-docker compose -f docker-compose.dev.yml build craw-dev
+uv build -o ../crow/deps
+cd ../crow
+docker compose -f docker-compose.dev.yml build crow-dev
 
 # or in github workflows
 checkout
 cd queen
-uv build -o ../craw/deps
+uv build -o ../crow/deps
 cd ../
 docker build
 ```

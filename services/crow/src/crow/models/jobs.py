@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from craw.crawler.config import Category, DocCode
+from crow.crawler.config import Category, DocCode
 
 Status = Literal["idle", "queued", "running", "completed", "failed", "canceled"]
 

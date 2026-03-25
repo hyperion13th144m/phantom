@@ -13,7 +13,7 @@ RUN mkdir /var/log/navi && chown $USERNAME:$GROUPNAME /var/log/navi
 USER $USERNAME
 WORKDIR /app
 COPY --chown=$USERNAME:$GROUPNAME . /app
-RUN uv add "$(ls pkgs/craw_api_client-*.whl | sort -V | tail -n 1)"
+RUN uv add "$(ls pkgs/crow_api_client-*.whl | sort -V | tail -n 1)"
 RUN uv sync --no-cache --frozen
 ENTRYPOINT [ "uv", "run" ]
 CMD [ "uvicorn", "navi.server:app", "--host", "0.0.0.0", "--port", "8000" ]

@@ -10,11 +10,11 @@ PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
 # default vars.
 BUILD="${1:-ALL}"
 ALL_TARGET=(
-  "craw"
+  "crow"
 )
 
 declare -A SRC_DIR=(
-  ["craw"]="$PROJECT_ROOT/services/craw"
+  ["crow"]="$PROJECT_ROOT/services/crow"
 )
 
 if [ "$BUILD" = "ALL" ]; then

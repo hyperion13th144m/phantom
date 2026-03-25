@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from craw.models.jobs import JobState
+from crow.models.jobs import JobState
 
 
 def save_job_state(job: JobState, log_dir: str):
@@ -92,7 +92,7 @@ def setup_logger(job_id: str, log_dir: str, log_level: str):
             },
         },
         "loggers": {
-            "craw.crawling": {
+            "crow.crawling": {
                 "handlers": ["file_handler"],
                 "level": log_level,
                 "propagate": False,

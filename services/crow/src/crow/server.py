@@ -5,30 +5,30 @@ from typing import List
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
-from craw.crawler.config import (
+from crow.crawler.config import (
     DocCodeConfig,
     code_config,
     get_all_document_codes,
 )
-from craw.crawler.crawler import crawl
-from craw.logger import (
+from crow.crawler.crawler import crawl
+from crow.logger import (
     get_all_job_id,
     get_old_job_state,
     save_job_state,
     setup_api_logger,
     setup_logger,
 )
-from craw.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
+from crow.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
 
 
 def create_app() -> FastAPI:
     # default は docker コンテナ起動でbind される先のディレクトリ
     src_dir = os.environ.get("SRC_DIR", "/src-dir")
     dst_dir = os.environ.get("DST_DIR", "/dst-dir")
-    log_dir = os.environ.get("LOG_DIR", "/var/log/craw")
+    log_dir = os.environ.get("LOG_DIR", "/var/log/crow")
     log_level = os.environ.get("LOG_LEVEL", "INFO")
 
-    app = FastAPI(title="craw API", version="0.1.0")
+    app = FastAPI(title="crow API", version="0.1.0")
     setup_api_logger(log_dir, log_level)
 
     @app.get("/jobs/history", response_model=List[str])
@@ -108,7 +108,7 @@ def run_job(
     log_level: str,
 ):
     setup_logger(job.job_id, log_dir, log_level)
-    logger = logging.getLogger("craw.crawling")
+    logger = logging.getLogger("crow.crawling")
 
     try:
         request = JobRequest.model_validate(options)

@@ -113,9 +113,9 @@ wheels = [
 ]
 
 [[package]]
-name = "craw-api-client"
+name = "crow-api-client"
 version = "0.1.2"
-source = { directory = "../../var/api/craw" }
+source = { directory = "../../var/api/crow" }
 dependencies = [
     { name = "attrs" },
     { name = "httpx" },
@@ -238,7 +238,7 @@ name = "navi"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "craw-api-client" },
+    { name = "crow-api-client" },
     { name = "fastapi" },
     { name = "jinja2" },
     { name = "python-multipart" },
@@ -248,7 +248,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "craw-api-client", directory = "../../var/api/craw" },
+    { name = "crow-api-client", directory = "../../var/api/crow" },
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "python-multipart", specifier = ">=0.0.22" },

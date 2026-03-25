@@ -8,7 +8,7 @@
             "name": "single",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/craw/main.py",
+            "program": "src/crow/main.py",
             "console": "integratedTerminal",
             "args": "-m 1 -l info reference/src-dir reference/A163 A163",
             "env": {
@@ -19,7 +19,7 @@
             "name": "multi",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/craw/main.py",
+            "program": "src/crow/main.py",
             "console": "integratedTerminal",
             //"args": "-m 1 -l debug /src-dir/ /data-dir A163"
             "args": "-o -m 4 -l debug /src-dir/ /data-dir {A101,A102,A1131,A1191,A130,A1523,A163,A1631,A1632,A1634,A153,A1781,A1871,A1872,A2242623} --mode development",

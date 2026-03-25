@@ -318,9 +318,9 @@ wheels = [
 ]
 
 [[package]]
-name = "craw"
+name = "crow"
 version = "0.1.0"
-source = { editable = "craw" }
+source = { editable = "crow" }
 dependencies = [
     { name = "libefiling" },
     { name = "python-json-logger" },

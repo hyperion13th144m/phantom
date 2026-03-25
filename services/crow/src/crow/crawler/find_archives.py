@@ -10,7 +10,7 @@ from typing import Generator, List
 
 from libefiling import get_document_code
 
-from craw.crawler.config import get_target_document_codes
+from crow.crawler.config import get_target_document_codes
 
 logger = logging.getLogger(__name__)
 

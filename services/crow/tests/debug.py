@@ -7,8 +7,8 @@ from typing import Generator, List
 
 from libefiling import get_doc_id, get_document_code
 
-from craw.crawler.config import get_all_document_codes, get_target_document_codes
-from craw.crawler.parse import parse
+from crow.crawler.config import get_all_document_codes, get_target_document_codes
+from crow.crawler.parse import parse
 
 # docker コンテナ起動時に /test-data-src, /test-data-dst に
 # 実データがあるディレクトリがマウントされるので、決め打ちで良い。

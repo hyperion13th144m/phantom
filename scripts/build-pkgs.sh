@@ -6,16 +6,16 @@ PROJECT_DIR="$(dirname $SCRIPT_DIR)"
 # default vars.
 BUILD="${1:-ALL}"
 ALL_TARGET=(
-  "craw"
+  "crow"
   "queen"
 )
 
 declare -A SRC_DIR=(
-  ["craw"]="$PROJECT_DIR/var/api/craw"
+  ["crow"]="$PROJECT_DIR/var/api/crow"
   ["queen"]="$PROJECT_DIR/services/queen"
 )
 declare -A PKG_DIR=(
-  ["craw"]="$PROJECT_DIR/var/pkgs/craw"
+  ["crow"]="$PROJECT_DIR/var/pkgs/crow"
   ["queen"]="$PROJECT_DIR/var/pkgs/queen"
 )
 

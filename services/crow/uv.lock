@@ -127,7 +127,7 @@ wheels = [
 ]
 
 [[package]]
-name = "craw"
+name = "crow"
 version = "0.1.2"
 source = { editable = "." }
 dependencies = [

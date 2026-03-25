@@ -1,5 +1,5 @@
 services:
-  craw-dev:
+  crow-dev:
     volumes:
       - .:/workspaces:cached
     tty: true
