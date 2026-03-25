@@ -17,7 +17,9 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Protocol, Tuple
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Protocol, Tuple
+from urllib.parse import quote, urljoin
+from urllib.request import urlopen
 
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
 from panther.es_client import create_es_client
@@ -29,6 +31,14 @@ from panther.patent_doc_editor import PatentDocEditor
 logger = logging.getLogger(__name__)
 
 PRESERVE_FIELDS = {"assignees", "tags", "extraNumbers"}  # user-managed fields in ES
+
+
+class UploadCancelledError(Exception):
+    """Raised when a running upload has been cancelled."""
+
+
+class UploadResult(Dict[str, int | str]):
+    pass
 
 
 class SupportsAddParser(Protocol):
@@ -44,6 +54,11 @@ def add_args(parser: SupportsAddParser) -> None:
         "--data-root",
         default="data",
         help="Root directory containing docid/document.json files (default: data)",
+    )
+    p.add_argument(
+        "--mona-base-url",
+        default=os.getenv("MONA_BASE_URL"),
+        help="Base URL of mona API server, e.g. http://localhost:8000",
     )
     p.add_argument(
         "--pipeline",
@@ -77,10 +92,29 @@ def add_args(parser: SupportsAddParser) -> None:
 
 def main(args: argparse.Namespace) -> int:
     """Upload documents to Elasticsearch."""
-    data_root = Path(args.data_root)
-    if not data_root.exists():
-        logger.error(f"Error: Data root not found: {data_root}")
+    try:
+        result = execute_upload(args)
+        logger.info(
+            f"\n[DONE] source={result['source']} Total: {result['total']}, Success: {result['success']}, Failed: {result['failed']}"
+        )
+        return 0 if result["failed"] == 0 else 1
+    except UploadCancelledError:
+        logger.warning("Upload cancelled")
         return 1
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return 1
+
+
+def execute_upload(
+    args: argparse.Namespace,
+    should_cancel: Optional[Callable[[], bool]] = None,
+) -> UploadResult:
+    """Upload documents to Elasticsearch and return summary details."""
+    data_root = Path(args.data_root)
+    use_api = bool(args.mona_base_url)
+    if not use_api and not data_root.exists():
+        raise FileNotFoundError(f"Data root not found: {data_root}")
 
     # Connect to Elasticsearch
     logger.info(f"Connecting to Elasticsearch: {args.es}")
@@ -92,16 +126,31 @@ def main(args: argparse.Namespace) -> int:
             return 1
 
         logger.info("✓ Connected to Elasticsearch")
-        logger.info(f"Uploading documents from: {data_root}")
+        source_label = args.mona_base_url if use_api else str(data_root)
+        logger.info(f"Uploading documents from: {source_label}")
 
-        # Build actions
-        actions = build_actions(
-            index=args.index,
-            data_root=data_root,
-            pipeline=args.pipeline,
-            refresh=args.refresh,
-            use_hash_guard=args.use_hash_guard,
-        )
+        if use_api:
+            actions = list(
+                build_actions_from_mona_api(
+                    index=args.index,
+                    mona_base_url=args.mona_base_url,
+                    pipeline=args.pipeline,
+                    use_hash_guard=args.use_hash_guard,
+                    should_cancel=should_cancel,
+                )
+            )
+            source = "mona-api"
+        else:
+            actions = list(
+                build_actions_from_local(
+                    index=args.index,
+                    data_root=data_root,
+                    pipeline=args.pipeline,
+                    use_hash_guard=args.use_hash_guard,
+                    should_cancel=should_cancel,
+                )
+            )
+            source = "local"
 
         # Bulk upsert with retries
         success, failed = bulk_upsert_with_retries(
@@ -111,18 +160,19 @@ def main(args: argparse.Namespace) -> int:
             max_retries=args.max_retries,
             initial_backoff=1.0,
             max_backoff=30.0,
+            should_cancel=should_cancel,
         )
 
         if args.refresh:
             logger.info("Refreshing index...")
             es.indices.refresh(index=args.index)
 
-        logger.info(f"\n[DONE] Success: {success}, Failed: {failed}")
-        return 0 if failed == 0 else 1
-
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        return 1
+        return {
+            "source": source,
+            "total": len(actions),
+            "success": success,
+            "failed": failed,
+        }
     finally:
         es.close()
 
@@ -177,83 +227,134 @@ def load_document_json(
     )
 
 
-def build_actions(
+def build_action(
+    index: str,
+    jsons: tuple[BibliographicItems, FullText, List[ImagesInformation]],
+    pipeline: Optional[str],
+    use_hash_guard: bool,
+) -> Dict:
+    _doc = PatentDocEditor(*jsons).to_es_model()
+    edited = _doc.model_dump(exclude_none=True)
+    doc = strip_preserve_fields(edited)
+
+    docid = doc["docId"]
+    ingest_hash = stable_hash(doc)
+    now = utc_now_iso()
+
+    if use_hash_guard:
+        action = {
+            "_op_type": "update",
+            "_index": index,
+            "_id": docid,
+            "retry_on_conflict": 3,
+            "scripted_upsert": True,
+            "script": {
+                "lang": "painless",
+                "source": """
+                    if (ctx._source.ingest_hash != params.ingest_hash) {
+                        // merge doc (does not delete unspecified fields)
+                        for (entry in params.doc.entrySet()) {
+                            ctx._source[entry.getKey()] = entry.getValue();
+                        }
+                        ctx._source.ingest_hash = params.ingest_hash;
+                        ctx._source.ingested_at = params.now;
+                    }
+                """,
+                "params": {"doc": doc, "ingest_hash": ingest_hash, "now": now},
+            },
+            "upsert": {
+                **doc,
+                "ingest_hash": ingest_hash,
+                "ingested_at": now,
+            },
+        }
+    else:
+        action = {
+            "_op_type": "update",
+            "_index": index,
+            "_id": docid,
+            "retry_on_conflict": 3,
+            "doc_as_upsert": True,
+            "doc": {
+                **doc,
+                "ingest_hash": ingest_hash,
+                "ingested_at": now,
+            },
+        }
+
+    if pipeline:
+        action["pipeline"] = pipeline
+
+    return action
+
+
+def _load_json_url(base_url: str, endpoint: str) -> Any:
+    url = urljoin(base_url.rstrip("/") + "/", endpoint.lstrip("/"))
+    with urlopen(url) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def load_document_json_from_mona(
+    mona_base_url: str, doc_id: str
+) -> tuple[BibliographicItems, FullText, List[ImagesInformation]]:
+    encoded_doc_id = quote(doc_id, safe="")
+    bib = _load_json_url(mona_base_url, f"/{encoded_doc_id}/json/bibliographic-items")
+    full_text = _load_json_url(mona_base_url, f"/{encoded_doc_id}/json/full-text")
+    images_info = _load_json_url(
+        mona_base_url, f"/{encoded_doc_id}/json/images-information"
+    )
+
+    images_list = images_info if isinstance(images_info, list) else [images_info]
+    return (
+        BibliographicItems(**bib),
+        FullText(**full_text),
+        [ImagesInformation(**img) for img in images_list],
+    )
+
+
+def build_actions_from_local(
     index: str,
     data_root: Path,
     pipeline: Optional[str],
-    refresh: bool,
     use_hash_guard: bool,
+    should_cancel: Optional[Callable[[], bool]] = None,
 ) -> Iterable[Dict]:
-    """
-    Generate bulk update actions.
-    """
+    """Generate bulk update actions from local files."""
     for path in iter_documents(data_root):
+        if should_cancel and should_cancel():
+            raise UploadCancelledError("Upload was cancelled before completion")
         try:
             jsons = load_document_json(path)
-            _doc = PatentDocEditor(*jsons).to_es_model()
-            edited = _doc.model_dump(exclude_none=True)
-            doc = strip_preserve_fields(edited)
-
-            # Put docid inside source too (optional but handy)
-            docid = doc["docId"]
-
-            ingest_hash = stable_hash(doc)
-            now = utc_now_iso()
-
-            if use_hash_guard:
-                # Only update when ingest_hash differs; otherwise do nothing.
-                # Still upsert if missing.
-                action = {
-                    "_op_type": "update",
-                    "_index": index,
-                    "_id": docid,
-                    "retry_on_conflict": 3,
-                    "scripted_upsert": True,
-                    "script": {
-                        "lang": "painless",
-                        "source": """
-                            if (ctx._source.ingest_hash != params.ingest_hash) {
-                                // merge doc (does not delete unspecified fields)
-                                for (entry in params.doc.entrySet()) {
-                                    ctx._source[entry.getKey()] = entry.getValue();
-                                }
-                                ctx._source.ingest_hash = params.ingest_hash;
-                                ctx._source.ingested_at = params.now;
-                            }
-                        """,
-                        "params": {"doc": doc, "ingest_hash": ingest_hash, "now": now},
-                    },
-                    "upsert": {
-                        **doc,
-                        "ingest_hash": ingest_hash,
-                        "ingested_at": now,
-                    },
-                }
-            else:
-                # Simple partial update + upsert.
-                action = {
-                    "_op_type": "update",
-                    "_index": index,
-                    "_id": docid,
-                    "retry_on_conflict": 3,
-                    "doc_as_upsert": True,
-                    "doc": {
-                        **doc,
-                        "ingest_hash": ingest_hash,
-                        "ingested_at": now,
-                    },
-                }
-
-            if pipeline:
-                action["pipeline"] = pipeline
-
-            # `refresh` is controlled outside bulk (safer). Kept here for compatibility if needed.
-            # helpers.bulk doesn't accept per-action refresh; ignore.
-
-            yield action
-
+            yield build_action(index, jsons, pipeline, use_hash_guard)
+        except UploadCancelledError:
+            raise
         except Exception as e:
             logger.error(f"[ERROR] {path}: {e}")
+            continue
+
+
+def build_actions_from_mona_api(
+    index: str,
+    mona_base_url: str,
+    pipeline: Optional[str],
+    use_hash_guard: bool,
+    should_cancel: Optional[Callable[[], bool]] = None,
+) -> Iterable[Dict]:
+    """Generate bulk update actions from mona REST API."""
+    id_list_payload = _load_json_url(mona_base_url, "/idList")
+    doc_ids = json.loads(id_list_payload) if isinstance(id_list_payload, str) else id_list_payload
+    if not isinstance(doc_ids, list):
+        raise ValueError("mona /idList response must be list[str]")
+
+    for doc_id in doc_ids:
+        if should_cancel and should_cancel():
+            raise UploadCancelledError("Upload was cancelled before completion")
+        try:
+            jsons = load_document_json_from_mona(mona_base_url, str(doc_id))
+            yield build_action(index, jsons, pipeline, use_hash_guard)
+
+        except Exception as e:
+            logger.error(f"[ERROR] doc_id={doc_id}: {e}")
             continue
 
 
@@ -264,6 +365,7 @@ def bulk_upsert_with_retries(
     max_retries: int,
     initial_backoff: float,
     max_backoff: float,
+    should_cancel: Optional[Callable[[], bool]] = None,
 ) -> Tuple[int, int]:
     """
     Bulk upsert with retry/backoff for transient errors.
@@ -298,6 +400,8 @@ def bulk_upsert_with_retries(
                 ok_count += 1
             else:
                 errors_accum.append(item)
+            if should_cancel and should_cancel():
+                raise UploadCancelledError("Upload was cancelled during bulk request")
 
         if not errors_accum:
             success += ok_count

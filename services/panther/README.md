@@ -50,6 +50,30 @@ $ python src/panther/main.py upload-documents \
   --use-hash-guard \
   --refresh
 
+### mona REST API からドキュメントを取得してアップロード
+`--mona-base-url` を指定すると、ローカルファイルの代わりに mona API (`/idList`, `/{doc_id}/json/*`) から取得してアップロードする。
+
+```bash
+$ python src/panther/main.py upload-documents \
+  --index patent-documents \
+  --mona-base-url http://mona:8000 \
+  --use-hash-guard \
+  --refresh
+```
+
+### Panther REST API サーバー
+`panther.server:app` を起動すると、ジョブ実行 API を提供する。
+
+```bash
+$ uvicorn panther.server:app --host 0.0.0.0 --port 8080
+```
+
+- `POST /jobs` : 新規アップロードジョブ開始
+- `GET /jobs` : 現在の実行状況（running/latest）
+- `GET /jobs/list` : 過去ジョブID一覧
+- `GET /jobs/{job_id}` : 指定ジョブの詳細
+- `GET /jobs/{job_id}/cancel` : 実行中ジョブのキャンセル要求
+
 ### 付加データのインポートとアップロード
 #### 付加データ用データベースの初期化
 ```bash
