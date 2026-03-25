@@ -5,7 +5,7 @@ import os
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Iterator
 
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -69,7 +69,7 @@ app = FastAPI(title="skull API", version="0.1.0")
 
 
 @contextmanager
-def get_conn() -> sqlite3.Connection:
+def get_conn() -> Iterator[sqlite3.Connection]:
     conn = sqlite3.connect(SQLITE_PATH)
     conn.row_factory = sqlite3.Row
     try:
@@ -162,7 +162,9 @@ def list_metadata(
         where.append("EXISTS (SELECT 1 FROM json_each(assignees_json) WHERE value = ?)")
         binds.append(assignee.strip())
     if extra and extra.strip():
-        where.append("EXISTS (SELECT 1 FROM json_each(extraNumbers_json) WHERE value = ?)")
+        where.append(
+            "EXISTS (SELECT 1 FROM json_each(extraNumbers_json) WHERE value = ?)"
+        )
         binds.append(extra.strip())
 
     where_sql = f"WHERE {' AND '.join(where)}" if where else ""
@@ -250,16 +252,12 @@ def bulk_update(payload: BulkUpdateRequest) -> dict[str, Any]:
                     next_assignees = (
                         normalize_list(update.assignees, max_items=20)
                         if update.assignees is not None
-                        else (
-                            json.loads(current["assignees_json"]) if current else []
-                        )
+                        else (json.loads(current["assignees_json"]) if current else [])
                     )
                     next_tags = (
                         normalize_list(update.tags, max_items=50)
                         if update.tags is not None
-                        else (
-                            json.loads(current["tags_json"]) if current else []
-                        )
+                        else (json.loads(current["tags_json"]) if current else [])
                     )
                     next_extra = (
                         normalize_list(update.extraNumbers, max_items=20)
