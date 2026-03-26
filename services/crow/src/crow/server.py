@@ -1,15 +1,12 @@
 import logging
 import os
-from typing import List
+import threading
+from typing import Any
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
-from crow.crawler.config import (
-    DocCodeConfig,
-    code_config,
-    get_all_document_codes,
-)
+from crow.crawler.config import DocCodeConfig, code_config, get_all_document_codes
 from crow.crawler.crawler import crawl
 from crow.logger import (
     get_all_job_id,
@@ -19,6 +16,134 @@ from crow.logger import (
     setup_logger,
 )
 from crow.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
+
+class JobManager:
+    def __init__(self, src_dir: str, dst_dir: str, log_dir: str, log_level: str):
+        self._src_dir = src_dir
+        self._dst_dir = dst_dir
+        self._log_dir = log_dir
+        self._log_level = log_level
+
+        self._lock = threading.Lock()
+        self._jobs: dict[str, JobState] = {}
+        self._running_job_id: str | None = None
+
+    def start_job(self, request: JobRequest) -> JobResponse:
+        with self._lock:
+            if self._running_job_id and self._jobs[self._running_job_id].status in {
+                "queued",
+                "running",
+            }:
+                raise HTTPException(status_code=409, detail="A job is already running.")
+
+            job = JobState(request)
+            job.status = "queued"
+            self._jobs[job.job_id] = job
+            self._running_job_id = job.job_id
+
+        worker = threading.Thread(target=self._run_job, args=(job.job_id,), daemon=True)
+        worker.start()
+        return JobResponse(job_id=job.job_id, status=job.status)
+
+    def _run_job(self, job_id: str) -> None:
+        with self._lock:
+            job = self._jobs[job_id]
+
+        setup_logger(job.job_id, self._log_dir, self._log_level)
+        crawling_logger = logging.getLogger("crow.crawling")
+
+        try:
+            request = JobRequest.model_validate(job.request)
+        except Exception as exc:
+            job.fail(f"Invalid job options: {exc}")
+            save_job_state(job, self._log_dir)
+            crawling_logger.error(job.message)
+            self._clear_running_job(job_id)
+            return
+
+        crawling_logger.info(
+            "Starting job %s with options: %s", job.job_id, request.model_dump()
+        )
+
+        try:
+            job.run()
+            for state in crawl(
+                self._src_dir,
+                self._dst_dir,
+                overwrite=request.overwrite,
+                doc_codes=request.get_doc_codes() or [],
+                doc_id=request.doc_id,
+                max_files=request.max_files,
+            ):
+                if job.cancel_requested:
+                    job.cancel()
+                    save_job_state(job, self._log_dir)
+                    return
+
+                job.progress(
+                    doc_id=state.doc_id,
+                    archive_path=str(state.archive_path),
+                    status=state.status,
+                    message=state.error_message,
+                )
+
+                crawling_logger.debug(
+                    "Finished processing an archive",
+                    extra={
+                        "doc_id": state.doc_id,
+                        "archive_path": str(state.archive_path),
+                        "output_json_dir": str(state.output_json_dir)
+                        if state.output_json_dir
+                        else None,
+                        "status": state.status,
+                        "error_message": state.error_message or "",
+                    },
+                )
+
+            job.complete()
+            save_job_state(job, self._log_dir)
+        except Exception as exc:
+            crawling_logger.error("Job %s failed: %s", job.job_id, exc, exc_info=True)
+            job.fail(f"Job failed: {exc}")
+            save_job_state(job, self._log_dir)
+        finally:
+            self._clear_running_job(job_id)
+
+    def _clear_running_job(self, job_id: str) -> None:
+        with self._lock:
+            if self._running_job_id == job_id:
+                self._running_job_id = None
+
+    def get_current_job(self) -> JobStateModel:
+        with self._lock:
+            if not self._running_job_id:
+                raise HTTPException(404, "No job found")
+            return self._jobs[self._running_job_id].to_model()
+
+    def cancel_current_job(self) -> JobResponse:
+        with self._lock:
+            if not self._running_job_id:
+                raise HTTPException(404, "No job running")
+
+            job = self._jobs[self._running_job_id]
+            if job.status not in {"queued", "running"}:
+                raise HTTPException(404, "No job running")
+
+            job.request_cancel()
+            return JobResponse(
+                job_id=job.job_id,
+                status=job.status,
+                message="cancel_requested",
+            )
+
+    def list_jobs(self) -> list[str]:
+        return get_all_job_id(self._log_dir)
+
+    def get_job_log(self, job_id: str) -> Any:
+        try:
+            return get_old_job_state(job_id, self._log_dir)
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail="Log file not found.") from exc
 
 
 def create_app() -> FastAPI:
@@ -31,50 +156,27 @@ def create_app() -> FastAPI:
     app = FastAPI(title="crow API", version="0.1.0")
     setup_api_logger(log_dir, log_level)
 
-    @app.get("/jobs/history", response_model=List[str])
-    def list_jobs():
-        return get_all_job_id(log_dir)
+    job_manager = JobManager(src_dir, dst_dir, log_dir, log_level)
+
+    @app.get("/jobs/history", response_model=list[str])
+    def list_jobs() -> list[str]:
+        return job_manager.list_jobs()
 
     @app.post("/jobs", response_model=JobResponse)
-    def start_jobs(request: JobRequest, background_tasks: BackgroundTasks):
-        global current_job
-        if current_job is not None and current_job.status in ["queued", "running"]:
-            raise HTTPException(status_code=409, detail="A job is already running.")
-
-        job = JobState(request)
-        job.status = "queued"
-        current_job = job
-        background_tasks.add_task(
-            run_job,
-            src_dir,
-            dst_dir,
-            job,
-            request,
-            log_dir,
-            log_level,
-        )
-        return JobResponse(job_id=job.job_id, status=job.status)
+    def start_jobs(request: JobRequest) -> JobResponse:
+        return job_manager.start_job(request)
 
     @app.get(
         "/jobs/status",
         response_model=JobStateModel,
         description="Get the status of the current job",
     )
-    def get_job_status():
-        if current_job is None:
-            raise HTTPException(404, "No job found")
-        return current_job.to_model().model_dump()
+    def get_job_status() -> JobStateModel:
+        return job_manager.get_current_job()
 
     @app.post("/jobs/cancel", response_model=JobResponse)
-    def cancel_job():
-        if current_job is None or current_job.status not in ["queued", "running"]:
-            raise HTTPException(404, "No job running")
-        current_job.request_cancel()
-        return JobResponse(
-            job_id=current_job.job_id,
-            status=current_job.status,
-            message="cancel_requested",
-        )
+    def cancel_job() -> JobResponse:
+        return job_manager.cancel_current_job()
 
     @app.get(
         "/jobs/{job_id}/log",
@@ -82,88 +184,17 @@ def create_app() -> FastAPI:
         response_model=JobStateModel,
     )
     def get_job_log(job_id: str) -> JSONResponse:
-        try:
-            content = get_old_job_state(job_id, log_dir)
-            return JSONResponse(content=content)
-        except FileNotFoundError as e:
-            raise HTTPException(status_code=404, detail="Log file not found.") from e
+        content = job_manager.get_job_log(job_id)
+        return JSONResponse(content=content)
 
-    @app.get("/jobs/doc-codes", response_model=List[DocCodeConfig])
-    def get_doc_codes():
-        # Implement the logic to return available document codes
+    @app.get("/jobs/doc-codes", response_model=list[DocCodeConfig])
+    def get_doc_codes() -> dict[str, list[Any]]:
         return {
-            "doc_codes_definitions": list(map(lambda x: x.model_dump(), code_config)),
+            "doc_codes_definitions": [entry.model_dump() for entry in code_config],
             "available_doc_codes": get_all_document_codes(),
         }
 
     return app
 
-
-def run_job(
-    src_dir: str,
-    dst_dir: str,
-    job: JobState,
-    options: JobRequest,
-    log_dir: str,
-    log_level: str,
-):
-    setup_logger(job.job_id, log_dir, log_level)
-    logger = logging.getLogger("crow.crawling")
-
-    try:
-        request = JobRequest.model_validate(options)
-    except Exception as e:
-        job.fail(f"Invalid job options: {e}")
-        logger.error(job.message)
-        return
-
-    logger.info(f"Starting job {job.job_id} with options: {request.model_dump()}")
-    logger.info(f"Document codes1: {request.doc_codes}")
-    logger.info(f"Document codes2: {request.get_doc_codes()}")
-    try:
-        job.run()
-
-        for s in crawl(
-            src_dir,
-            dst_dir,
-            overwrite=request.overwrite,
-            doc_codes=request.get_doc_codes() or [],
-            doc_id=request.doc_id,
-            max_files=request.max_files,
-        ):
-            if job.cancel_requested:
-                job.cancel()
-                save_job_state(job, log_dir)
-                return
-
-            job.progress(
-                doc_id=s.doc_id,
-                archive_path=str(s.archive_path),
-                status=s.status,
-                message=s.error_message,
-            )
-
-            logger.debug(
-                "Finished processing an archive",
-                extra={
-                    "doc_id": s.doc_id,
-                    "archive_path": str(s.archive_path),
-                    "output_json_dir": str(s.output_json_dir)
-                    if s.output_json_dir
-                    else None,
-                    "status": s.status,
-                    "error_message": s.error_message or "",
-                },
-            )
-        job.complete()
-        save_job_state(job, log_dir)
-    except Exception as e:
-        logger.error(f"Job {job.job_id} failed: {e}", exc_info=True)
-        job.fail(f"Job failed: {e}")
-        save_job_state(job, log_dir)
-
-
-# only one job at a time for now, so global variable is fine.
-current_job: JobState | None = None
 
 app = create_app()
