@@ -17,6 +17,7 @@ from crow.logger import (
 )
 from crow.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
 
+
 class JobManager:
     def __init__(self, src_dir: str, dst_dir: str, log_dir: str, log_level: str):
         self._src_dir = src_dir

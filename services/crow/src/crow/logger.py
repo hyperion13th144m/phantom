@@ -55,6 +55,8 @@ def setup_api_logger(log_dir: str, log_level: str):
                 "interval": 1,
                 "backupCount": 7,
                 "encoding": "utf-8",
+                "delay": True,
+                "suffix": "%Y%m%d",
                 "formatter": "access_formatter",
             },
         },
@@ -94,6 +96,33 @@ def setup_logger(job_id: str, log_dir: str, log_level: str):
         "loggers": {
             "crow.crawling": {
                 "handlers": ["file_handler"],
+                "level": log_level,
+                "propagate": False,
+            },
+        },
+    }
+    logging.config.dictConfig(config)
+
+
+def setup_cli_logger(log_level: str):
+    config: dict[str, Any] = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "formatter": {
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+            },
+        },
+        "handlers": {
+            "stream_handler": {
+                "class": "logging.StreamHandler",
+                "formatter": "formatter",
+            },
+        },
+        "loggers": {
+            "crow.cli": {
+                "handlers": ["stream_handler"],
                 "level": log_level,
                 "propagate": False,
             },

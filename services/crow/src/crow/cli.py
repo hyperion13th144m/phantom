@@ -10,13 +10,11 @@ from crow.crawler.config import (
     get_target_document_codes,
 )
 from crow.crawler.crawler import crawl
-from crow.logger import setup_logger
+from crow.logger import setup_cli_logger
 
-setup_logger()
+setup_cli_logger("INFO")
 logger = logging.getLogger("crow.cli")
 
-# docker コンテナ起動時に /data-dir に
-# 実データがあるディレクトリがマウントされるので、決め打ちで良い。
 SRC_DIR = "/src-dir"
 DATA_DIR = "/data-dir"
 
@@ -24,6 +22,18 @@ DATA_DIR = "/data-dir"
 def get_args() -> dict:
     p = argparse.ArgumentParser(
         description="An application for parsing XML handled by the Internet Application Software."
+    )
+    p.add_argument(
+        "-s",
+        "--src-dir",
+        default=SRC_DIR,
+        help=f"Source directory (default: {SRC_DIR})",
+    )
+    p.add_argument(
+        "-d",
+        "--data-dir",
+        default=DATA_DIR,
+        help=f"Output directory root (default: {DATA_DIR})",
     )
     p.add_argument(
         "-c",
@@ -66,8 +76,8 @@ def get_args() -> dict:
         print_available_doc_codes()
         sys.exit(0)
 
-    src_dir = Path(SRC_DIR)
-    output_dir_root = Path(DATA_DIR)
+    src_dir = Path(args.src_dir)
+    output_dir_root = Path(args.data_dir)
     if not src_dir.exists():
         print(f"Source directory {src_dir} does not exist.")
         sys.exit(1)
@@ -99,21 +109,15 @@ def get_args() -> dict:
     }
 
 
-def main(
-    src_dir: Path,
-    output_dir_root: Path,
-    doc_code: List[str],
-    overwrite: bool,
-    max_files: Optional[int] = None,
-    doc_id: Optional[str] = None,
-):
+def main():
+    args = get_args()
     for s in crawl(
-        str(src_dir),
-        str(output_dir_root),
-        overwrite=overwrite,
-        doc_codes=doc_code,
-        max_files=max_files,
-        doc_id=doc_id,
+        str(args["src_dir"]),
+        str(args["output_dir_root"]),
+        overwrite=args["overwrite"],
+        doc_codes=args["doc_code"],
+        max_files=args["max_files"],
+        doc_id=args["doc_id"],
     ):
         logger.info(
             f"[{s.status}] doc_id={s.doc_id}, archive_path={s.archive_path}, "
@@ -122,15 +126,14 @@ def main(
 
 
 def print_available_doc_codes():
-    for category in code_config.keys():
-        print(f"{category} {code_config.get(category, {}).get('description', '')}")
-        for code, desc in code_config.get(category, {}).get("codes", {}).items():
-            # description = code_config.get(code, {}).get("description", "")
+    for conf in code_config:
+        print(f"{conf.category} {conf.description}")
+        for code, desc in conf.codes.items():
             print(f"\t{code}: {desc}")
     print()
-    print("Available document codes for doc_code:")
+    print("Available codes for -c/--doc-code option")
     print(", ".join(get_all_document_codes()))
 
 
 if __name__ == "__main__":
-    main(**get_args())
+    main()

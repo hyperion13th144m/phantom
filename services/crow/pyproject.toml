@@ -1,18 +1,22 @@
 [project]
 dependencies = [
-    "datamodel-code-generator[ruff]>=0.55.0",
-    "fastapi>=0.135.1",
-    "libefiling>=0.1.42",
-    "python-json-logger>=4.0.0",
-    "queen",
-    "saxonche>=12.9.0",
-    "uvicorn>=0.42.0",
+  "datamodel-code-generator[ruff]>=0.55.0",
+  "fastapi>=0.135.1",
+  "libefiling>=0.1.42",
+  "python-json-logger>=4.0.0",
+  "queen",
+  "saxonche>=12.9.0",
+  "uvicorn>=0.42.0",
 ]
 description = "Add your description here"
 name = "crow"
 readme = "README.md"
 requires-python = ">=3.12"
 version = "0.1.2"
+
+[project.scripts]
+crow-cli = "crow.cli:main"
+crow-serve = "crow.run_server:main"
 
 [build-system]
 build-backend = "uv_build"
@@ -41,4 +45,4 @@ unfixable = ["B"]
 quote-style = "double"
 
 [tool.uv.sources]
-queen = { path = "../queen" }
+queen = {path = "../queen"}
