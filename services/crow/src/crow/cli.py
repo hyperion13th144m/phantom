@@ -2,13 +2,8 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
 
-from crow.crawler.config import (
-    code_config,
-    get_all_document_codes,
-    get_target_document_codes,
-)
+from crow.crawler.config import doc_code_config
 from crow.crawler.crawler import crawl
 from crow.logger import setup_cli_logger
 
@@ -38,7 +33,8 @@ def get_args() -> dict:
     p.add_argument(
         "-c",
         "--doc-code",
-        choices=get_all_document_codes(),
+        nargs="+",
+        choices=doc_code_config.get_all_categories(),
         help="document codes to parse",
     )
     p.add_argument(
@@ -73,7 +69,7 @@ def get_args() -> dict:
     args = p.parse_args()
 
     if args.print_doc_codes:
-        print_available_doc_codes()
+        doc_code_config.print()
         sys.exit(0)
 
     src_dir = Path(args.src_dir)
@@ -102,7 +98,7 @@ def get_args() -> dict:
     return {
         "src_dir": src_dir,
         "output_dir_root": output_dir_root,
-        "doc_code": get_target_document_codes(args.doc_code),
+        "doc_code": doc_code_config.get_codes(args.doc_code),
         "overwrite": args.overwrite,
         "max_files": args.max_files,
         "doc_id": args.doc_id,
@@ -123,16 +119,6 @@ def main():
             f"[{s.status}] doc_id={s.doc_id}, archive_path={s.archive_path}, "
             f"output={s.output_json_dir}, error_message={s.error_message or ''}",
         )
-
-
-def print_available_doc_codes():
-    for conf in code_config:
-        print(f"{conf.category} {conf.description}")
-        for code, desc in conf.codes.items():
-            print(f"\t{code}: {desc}")
-    print()
-    print("Available codes for -c/--doc-code option")
-    print(", ".join(get_all_document_codes()))
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
-from crow.crawler.config import DocCodeConfig, code_config, get_all_document_codes
+from crow.crawler.config import DocCodeCategory, doc_code_config
 from crow.crawler.crawler import crawl
 from crow.logger import (
     get_all_job_id,
@@ -188,11 +188,11 @@ def create_app() -> FastAPI:
         content = job_manager.get_job_log(job_id)
         return JSONResponse(content=content)
 
-    @app.get("/jobs/doc-codes", response_model=list[DocCodeConfig])
+    @app.get("/jobs/doc-codes", response_model=list[DocCodeCategory])
     def get_doc_codes() -> dict[str, list[Any]]:
         return {
-            "doc_codes_definitions": [entry.model_dump() for entry in code_config],
-            "available_doc_codes": get_all_document_codes(),
+            "doc_codes_definitions": doc_code_config.dump(),
+            "available_doc_codes": doc_code_config.get_available_codes(),
         }
 
     return app
