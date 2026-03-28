@@ -5,10 +5,6 @@ export T
 source .envrc
 SRC_XML=$(find $SRC -type f -name "*.xml")
 
-if [ -z "$OUTPUT_DIR" ]; then
-    echo "Output directory not specified. Exiting."
-    exit 1
-fi
 if [ ! -d "$OUT" ]; then
     echo "Output directory does not exist. Creating it."
     mkdir -p "$OUT"

@@ -56,7 +56,6 @@ def setup_api_logger(log_dir: str, log_level: str):
                 "backupCount": 7,
                 "encoding": "utf-8",
                 "delay": True,
-                "suffix": "%Y%m%d",
                 "formatter": "access_formatter",
             },
         },
