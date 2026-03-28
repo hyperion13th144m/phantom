@@ -8,9 +8,9 @@ from itertools import chain
 from pathlib import Path
 from typing import Generator, List
 
-from libefiling import get_document_code
+from libefiling import Source
 
-from crow.crawler.config import get_target_document_codes
+from crow.crawler.config import doc_code_config
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ def find_archives(
     """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
     print(f"Checking codes: {doc_codes}")
     if len(doc_codes) == 0:
-        doc_codes = get_target_document_codes(["ALL"])
+        doc_codes = doc_code_config.get_codes(["ALL"])
 
     for file in chain(Path(directory).rglob("*.JWX"), Path(directory).rglob("*.JPC")):
         if re.match(r".+AAA$", file.stem) or re.match(r".+NNF$", file.stem):
@@ -40,7 +40,8 @@ def find_archives(
 
 def is_target_document(document_filename: Path, doc_codes: list[str]) -> bool:
     """Check if the document code is in the target list."""
-    document_code = get_document_code(document_filename.name)
+    s = Source.create(document_filename)
+    document_code = s.get_document_code()
     return document_code in doc_codes
 
 

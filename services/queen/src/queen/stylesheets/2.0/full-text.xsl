@@ -8,6 +8,10 @@
     
     <xsl:output method="text" encoding="UTF-8" />
     
+    <xsl:include href="common-templates/special-mention-matter-article.xsl" />
+    <xsl:include href="common-templates/string-utils.xsl" />
+    <xsl:include href="debug.xsl"/>
+    
     <xsl:variable name="law-code" select="/root/jp:procedure//jp:law" />
     <xsl:variable name="kind-of-law">
         <xsl:choose>
@@ -19,10 +23,6 @@
         </xsl:choose>
     </xsl:variable>
     <xsl:param name="debug" select="'false'"/>
-    
-    <xsl:include href="common-templates/special-mention-matter-article.xsl" />
-    <xsl:include href="common-templates/string-utils.xsl" />
-    <xsl:include href="debug.xsl"/>
     
     <!-- schema:title is set to the name of this stylesheet -->
     <schema:title>full-text</schema:title>
@@ -44,6 +44,8 @@
                 <xsl:apply-templates select="root/jp:pat-rspns" />
                 <xsl:apply-templates select="root/jp:pat-etc" />
                 <xsl:apply-templates select="root/jp:m-mi-notice-doc" />
+                
+                <xsl:apply-templates select="root/sources" />
             </xf:map>
         </xsl:variable>
         <xsl:choose>
@@ -262,7 +264,21 @@
             <xsl:value-of select="normalize-space(.)" />
         </xf:string>
     </xsl:template>
-    
+   
+    <!-- docId など -->
+    <xsl:template match="sources">
+        <!-- sources/archive の sha を docId とする -->
+        <xf:string key="docId">
+            <xsl:value-of select="archive/@sha256" />
+        </xf:string>
+        <xf:string key="task">
+            <xsl:value-of select="archive/@task" />
+        </xf:string>
+        <xf:string key="kind">
+            <xsl:value-of select="archive/@kind" />
+        </xf:string>
+    </xsl:template>
+
     <xsl:template match="text()" />
     
     <xsl:key name="field-mapping-key" match="item" use="@key" />
@@ -285,8 +301,6 @@
     </xsl:variable>
     
     <schema:object name="full-text" is-root="true">
-        <!-- full-text.json は metadata.json の一部が追加される。
-             docId, task, kind は metadata.json の項目 -->
         <schema:property name="docId" type="string" />
         <schema:property name="task" type="string" />
         <schema:property name="kind" type="string" />

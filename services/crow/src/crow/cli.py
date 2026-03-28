@@ -34,7 +34,7 @@ def get_args() -> dict:
         "-c",
         "--doc-code",
         nargs="+",
-        choices=doc_code_config.get_all_categories(),
+        choices=doc_code_config.get_available_codes(),
         help="document codes to parse",
     )
     p.add_argument(

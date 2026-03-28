@@ -5,9 +5,9 @@ import traceback
 from pathlib import Path
 from typing import Generator, List
 
-from libefiling import get_doc_id, get_document_code
+from libefiling import Manifest
 
-from crow.crawler.config import get_all_document_codes, get_target_document_codes
+from crow.crawler.config import doc_code_config
 from crow.crawler.parse import parse
 
 # docker コンテナ起動時に /test-data-src, /test-data-dst に
@@ -24,7 +24,7 @@ def get_args() -> dict:
         "-c",
         "--doc-code",
         nargs="+",
-        choices=get_all_document_codes(),
+        choices=doc_code_config.get_available_codes(),
         help="document codes to parse",
     )
     p.add_argument(
@@ -50,7 +50,7 @@ def get_args() -> dict:
     return {
         "src_dir": src_dir,
         "output_dir_root": output_dir_root,
-        "doc_code": get_target_document_codes(args.doc_code),
+        "doc_code": doc_code_config.get_codes(args.doc_code),
     }
 
 
@@ -59,7 +59,8 @@ def find_extracted_directories(
 ) -> Generator[Path, None, None]:
     """Find all extracted archive directories contains manifest.json."""
     for m in Path(directory).rglob("manifest.json"):
-        doc_code = get_document_code(str(m))
+        manifest = Manifest.model_validate_json(m.open(encoding="utf-8").read())
+        doc_code = manifest.sources.archive.get_document_code()
         if doc_code in doc_codes:
             yield m.parent
 
@@ -120,7 +121,8 @@ def convert(
     try:
         extracted_dir = src_path
         mp = src_path / "manifest.json"
-        doc_id = get_doc_id(str(mp))
+        manifest = Manifest.model_validate_json(mp.open(encoding="utf-8").read())
+        doc_id = manifest.sources.archive.get_document_code()
         if not doc_id:
             print(
                 f"[SKIP] src_path={src_path} doc_id not found in manifest.json.",

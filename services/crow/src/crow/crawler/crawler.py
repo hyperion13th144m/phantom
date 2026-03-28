@@ -3,7 +3,7 @@ import traceback
 from pathlib import Path
 from typing import List, Literal, Optional
 
-from libefiling import generate_sha256, parse_archive
+from libefiling import Source, parse_archive
 from pydantic import BaseModel
 
 from crow.crawler.config import image_params
@@ -35,7 +35,8 @@ def crawl(
         archive_path, procedure_path = item
 
         # ドキュメントIDが指定されている場合、ID(SHA256ハッシュ)が一致しないアーカイブはスキップ
-        if doc_id and generate_sha256(str(archive_path)) != doc_id:
+        s = Source.create(archive_path)
+        if doc_id and doc_id != s.sha256:
             continue
 
         status = convert(archive_path, procedure_path, Path(output_dir_root), overwrite)
@@ -57,7 +58,10 @@ def convert(
     output_json_dir = None
     try:
         ### check if already processed
-        doc_id = generate_sha256(str(archive_path))
+        s = Source.create(archive_path)
+
+        # treat hash of archive as document ID, which is unique and deterministic for each archive
+        doc_id = s.sha256
         extracted_dir = get_output_dir(doc_id, output_dir_root)
         output_json_dir = extracted_dir / "json"
         if overwrite is False and extracted_dir.exists():

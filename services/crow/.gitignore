@@ -183,3 +183,4 @@ reference
 src/crow/client
 openapi.json
 generated
+.envrc

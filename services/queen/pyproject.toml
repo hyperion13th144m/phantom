@@ -10,7 +10,7 @@ description = "Add your description here"
 name = "queen"
 readme = "README.md"
 requires-python = ">=3.12"
-version = "0.1.21"
+version = "0.1.24"
 
 [build-system]
 build-backend = "uv_build"

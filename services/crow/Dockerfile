@@ -24,4 +24,4 @@ WORKDIR /app
 COPY --chown=$USERNAME:$GROUPNAME . /app
 RUN if [ -n "$(ls deps/queen/queen-*.whl 2>/dev/null)" ]; then uv add "$(ls deps/queen/queen-*.whl | sort -V | tail -n 1)"; uv sync --no-cache --frozen; fi
 ENTRYPOINT [ "uv", "run" ]
-CMD [ "uvicorn", "crow.server:app", "--host", "0.0.0.0", "--port", "8000" ]
+CMD [ "crow-serve", "--host", "0.0.0.0", "--port", "8000" ]

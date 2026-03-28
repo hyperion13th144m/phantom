@@ -3,7 +3,10 @@
         "titleBar.activeBackground": "#898289",
         "titleBar.inactiveBackground": "#a2a0a5",
         "titleBar.activeForeground": "#ffffff",
-        "titleBar.inactiveForeground": "#ffffff"
+        "titleBar.inactiveForeground": "#ffffff",
+        "commandCenter.background": "#000000",
+        "commandCenter.foreground": "#44ff00",
+        "commandCenter.inactiveForeground": "#44ff00",
     },
     "[xslt]": {
         "editor.formatOnPaste": true,

@@ -22,7 +22,7 @@ TranslatorKey = Literal[
     "pat-app-doc",
     "application-body",
     "foreign-language-body",
-    "images-description",
+    "images-information",
     "pat-amnd",
     "pat-rspn",
     "pat-etc",
@@ -74,12 +74,12 @@ translator_config: TranslatorConfig = {
         doctype="foreign-language-body",
         default_filename="foreign-language-body.json",
     ),
-    "images-description": TranslatorConfigItems(
+    "images-information": TranslatorConfigItems(
         ### 画像情報
-        xsl_path=xsl_path("image-desc.xsl"),
+        xsl_path=xsl_path("images-information.xsl"),
         namespace="",
-        doctype="application-body",
-        default_filename="image-description.json",
+        doctype="*",
+        default_filename="images-information.json",
     ),
     "pat-amnd": TranslatorConfigItems(
         ### A1523 手続補正書
