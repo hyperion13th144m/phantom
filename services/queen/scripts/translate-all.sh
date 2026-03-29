@@ -11,10 +11,10 @@ if [ ! -d "$OUT" ]; then
 fi
 if [ "$2" = "--debug" ]; then
     uv run src/queen/translate_all.py $SRC_XML --output-dir $OUT --debug
-    for f in $OUT/*.json; do
-        echo "Prettifying $f"
-        jq . $f > tmp.$$.json && mv tmp.$$.json $f
-    done
+#    for f in $OUT/*.json; do
+#        echo "Prettifying $f"
+#        jq . $f > tmp.$$.json && mv tmp.$$.json $f
+#    done
 else
     uv run src/queen/translate_all.py $SRC_XML --output-dir $OUT --prettify
 fi

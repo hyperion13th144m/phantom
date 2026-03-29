@@ -11,7 +11,7 @@ services:
     volumes:
       - ${SRC_DIR}:/src-dir:ro
       - ${DATA_DIR}:/data-dir
-      - ${LOG_DIR_CRAW}:/var/log/crow
+      - ${LOG_DIR_CROW}:/var/log/crow
       - ./test-data/extracted-archives:/test-data-src
       - ./var/data-debug:/test-data-dst
     networks:
