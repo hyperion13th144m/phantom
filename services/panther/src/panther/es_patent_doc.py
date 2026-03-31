@@ -35,6 +35,7 @@ class EsPatentDoc(BaseModel):
     task: str
     kind: str
     law: str
+    extension: str
     documentName: str
     documentCode: str
 
@@ -44,15 +45,13 @@ class EsPatentDoc(BaseModel):
     internationalApplicationNumber: Optional[str] = None
     registrationNumber: Optional[str] = None
     appealReferenceNumber: Optional[str] = None
+    receiptNumber: Optional[str] = None
 
     # 日付
     date: Optional[str] = None
     # submissionDate: Optional[str] = None
     # dispatchDate: Optional[str] = None
     # 上二つのどちらか。date = submissionDate or dispatchDate として使う。両方ない場合は None。
-
-    # 画像
-    images: List[ImageInfo] = Field(default_factory=list)
 
     # ocr text
     ocrText: Optional[str] = None

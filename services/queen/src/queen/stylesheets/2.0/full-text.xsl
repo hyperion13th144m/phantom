@@ -35,6 +35,7 @@
                 <xsl:apply-templates select="root/jp:foreign-language-body" />
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam-rn" />
                 <xsl:apply-templates select="root/jp:cpy-notice-pat-exam" />
+                <xsl:apply-templates select="root/images" />
                 
                 <!-- 以下、common-templates/bibliographic-items.xsl のテンプレート -->
                 <xsl:apply-templates select="root/jp:pat-app-doc" />
@@ -245,12 +246,13 @@
     
     <!-- 外国語書面出願系 -->
     <xsl:template match="jp:foreign-language-description">
-        <xf:string key="descriptionOfEmbodiments">
+        <xf:string key="embodiments">
             <xsl:value-of select="normalize-space(.)" />
         </xf:string>
     </xsl:template>
     <xsl:template match="jp:foreign-language-claims">
-        <xf:string key="foreignLanguageClaims">
+        <!-- treats all claims as independent claims -->
+        <xf:string key="independentClaims">
             <xsl:value-of select="normalize-space(.)" />
         </xf:string>
     </xsl:template>
@@ -259,8 +261,14 @@
             <xsl:value-of select="normalize-space(.)" />
         </xf:string>
     </xsl:template>
-   
     
+    <!-- ocr from images -->
+    <xsl:template match="root/images">
+        <xf:string key="ocrText">
+            <xsl:value-of select="image/ocr" />
+        </xf:string>
+    </xsl:template>
+
     <xsl:key name="field-mapping-key" match="item" use="@key" />
     <xsl:variable name="field-mapping">
         <item key="invention-title" camel="inventionTitle"/>
@@ -269,8 +277,8 @@
         <item key="tech-problem" camel="techProblem"/>
         <item key="tech-solution" camel="techSolution"/>
         <item key="advantageous-effects" camel="advantageousEffects"/>
-        <item key="description-of-embodiments" camel="descriptionOfEmbodiments"/>
-        <item key="best-mode" camel="bestMode"/>
+        <item key="description-of-embodiments" camel="embodiments"/> <!-- same camel case -->
+        <item key="best-mode" camel="embodiments"/>  <!-- same camel case -->
         <item key="industrial-applicability" camel="industrialApplicability"/>
         <item key="reference-to-deposited-biological-material" camel="referenceToDepositedBiologicalMaterial"/>
         <item key="abstract" camel="abstract"/>
@@ -301,10 +309,7 @@
         <schema:property name="appealReferenceNumber" type="string" optional="true"/>
         <schema:property name="receiptNumber" type="string" optional="true"/>
         <schema:property name="fileReferenceId" type="string" optional="true"/>
-        <schema:property name="submissionDate" type="string" optional="true"/>
-        <schema:property name="submissionTime" type="string" optional="true"/>
-        <schema:property name="dispatchDate" type="string" optional="true"/>
-        <schema:property name="dispatchTime" type="string" optional="true"/>
+        <schema:property name="datetime" type="string" optional="true"/>
  
         <!-- full-text items -->
         <schema:property name="inventionTitle" type="string" optional="true" />
@@ -313,8 +318,7 @@
         <schema:property name="techProblem" type="string" optional="true" />
         <schema:property name="techSolution" type="string" optional="true" />
         <schema:property name="advantageousEffects" type="string" optional="true" />
-        <schema:property name="descriptionOfEmbodiments" type="string" optional="true" />
-        <schema:property name="bestMode" type="string" optional="true" />
+        <schema:property name="embodiments" type="string" optional="true" />
         <schema:property name="industrialApplicability" type="string" optional="true" />
         <schema:property name="referenceToDepositedBiologicalMaterial" type="string"
                          optional="true" />
@@ -331,7 +335,7 @@
                          optional="true" />
         <schema:property name="specialMentionMatterArticle" type="array" item-type="string"
                          optional="true" />
-        <schema:property name="foreignLanguageClaims" type="string" item-type="string" optional="true" />
         <schema:property name="priorityClaims" type="array" item-type="string" optional="true" />
+        <schema:property name="ocrText" type="string" optional="true" />
     </schema:object>
 </xsl:stylesheet>

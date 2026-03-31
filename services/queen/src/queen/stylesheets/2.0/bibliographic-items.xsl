@@ -67,9 +67,6 @@
         <schema:property name="appealReferenceNumber" type="string" optional="true"/>
         <schema:property name="receiptNumber" type="string" optional="true"/>
         <schema:property name="fileReferenceId" type="string" optional="true"/>
-        <schema:property name="submissionDate" type="string" optional="true"/>
-        <schema:property name="submissionTime" type="string" optional="true"/>
-        <schema:property name="dispatchDate" type="string" optional="true"/>
-        <schema:property name="dispatchTime" type="string" optional="true"/>
+        <schema:property name="datetime" type="string" optional="true"/>
     </schema:object>
 </xsl:stylesheet>

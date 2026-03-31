@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Bulk upsert documents into Elasticsearch from:
-  data/<docid>/bibliography.json,full-text.json,images-information.json
+  local: root/<docid>/full-text.json
+  mona API: GET /{docid}/json/full-text
 
 - Use _id = docid
 - Preserve user-added fields in ES (assignee/tags) by NOT sending them in updates
@@ -17,15 +18,22 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Protocol, Tuple
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Protocol,
+    Tuple,
+)
 from urllib.parse import quote, urljoin
 from urllib.request import urlopen
 
 from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
 from panther.es_client import create_es_client
-from panther.models.generated.bibliographic_items import BibliographicItems
 from panther.models.generated.full_text import FullText
-from panther.models.generated.images_information import ImagesInformation
 from panther.patent_doc_editor import PatentDocEditor
 
 logger = logging.getLogger(__name__)
@@ -52,8 +60,8 @@ def add_args(parser: SupportsAddParser) -> None:
     )
     p.add_argument(
         "--data-root",
-        default="data",
-        help="Root directory containing docid/document.json files (default: data)",
+        default="/data-dir",
+        help="Root directory containing docid/full-text.json files (default: /data-dir)",
     )
     p.add_argument(
         "--mona-base-url",
@@ -123,7 +131,14 @@ def execute_upload(
         # Check connection
         if not es.ping():
             logger.error("Error: Cannot connect to Elasticsearch")
-            return 1
+            return UploadResult(
+                {
+                    "source": "none",
+                    "total": 0,
+                    "success": 0,
+                    "failed": 1,
+                }
+            )
 
         logger.info("✓ Connected to Elasticsearch")
         source_label = args.mona_base_url if use_api else str(data_root)
@@ -167,12 +182,14 @@ def execute_upload(
             logger.info("Refreshing index...")
             es.indices.refresh(index=args.index)
 
-        return {
-            "source": source,
-            "total": len(actions),
-            "success": success,
-            "failed": failed,
-        }
+        return UploadResult(
+            {
+                "source": source,
+                "total": len(actions),
+                "success": success,
+                "failed": failed,
+            }
+        )
     finally:
         es.close()
 
@@ -200,40 +217,13 @@ def strip_preserve_fields(doc: Dict) -> Dict:
     return {k: v for k, v in doc.items() if k not in PRESERVE_FIELDS}
 
 
-def iter_documents(root: Path) -> Iterator[Path]:
-    """
-    Yield json_path from root/data/<docid>, bibliography.json exists in the path.
-    """
-    # Expect structure: root/docid/bibliography.json, where root is data/
-    # We'll find all document-sections.json under data/**/document-sections.json
-    for p in root.rglob("bibliography.json"):
-        yield p.parent
-
-
-def load_document_json(
-    path: Path,
-) -> tuple[BibliographicItems, FullText, List[ImagesInformation]]:
-    bib = json.loads((path / "bibliography.json").read_text(encoding="utf-8"))
-    full_text = json.loads((path / "full-text.json").read_text(encoding="utf-8"))
-    images_info = json.loads(
-        (path / "images-information.json").read_text(encoding="utf-8")
-    )
-
-    # pydantic v2: model_validate
-    return (
-        BibliographicItems(**bib),
-        FullText(**full_text),
-        [ImagesInformation(**img) for img in images_info],
-    )
-
-
 def build_action(
     index: str,
-    jsons: tuple[BibliographicItems, FullText, List[ImagesInformation]],
+    full_text: FullText,
     pipeline: Optional[str],
     use_hash_guard: bool,
 ) -> Dict:
-    _doc = PatentDocEditor(*jsons).to_es_model()
+    _doc = PatentDocEditor(full_text).to_es_model()
     edited = _doc.model_dump(exclude_none=True)
     doc = strip_preserve_fields(edited)
 
@@ -294,22 +284,10 @@ def _load_json_url(base_url: str, endpoint: str) -> Any:
         return json.loads(response.read().decode("utf-8"))
 
 
-def load_document_json_from_mona(
-    mona_base_url: str, doc_id: str
-) -> tuple[BibliographicItems, FullText, List[ImagesInformation]]:
+def load_document_json_from_mona(mona_base_url: str, doc_id: str) -> FullText:
     encoded_doc_id = quote(doc_id, safe="")
-    bib = _load_json_url(mona_base_url, f"/{encoded_doc_id}/json/bibliographic-items")
     full_text = _load_json_url(mona_base_url, f"/{encoded_doc_id}/json/full-text")
-    images_info = _load_json_url(
-        mona_base_url, f"/{encoded_doc_id}/json/images-information"
-    )
-
-    images_list = images_info if isinstance(images_info, list) else [images_info]
-    return (
-        BibliographicItems(**bib),
-        FullText(**full_text),
-        [ImagesInformation(**img) for img in images_list],
-    )
+    return FullText(**full_text)
 
 
 def build_actions_from_local(
@@ -320,16 +298,16 @@ def build_actions_from_local(
     should_cancel: Optional[Callable[[], bool]] = None,
 ) -> Iterable[Dict]:
     """Generate bulk update actions from local files."""
-    for path in iter_documents(data_root):
+    for full_text in data_root.rglob("full-text.json"):
         if should_cancel and should_cancel():
             raise UploadCancelledError("Upload was cancelled before completion")
         try:
-            jsons = load_document_json(path)
-            yield build_action(index, jsons, pipeline, use_hash_guard)
+            args = json.loads(full_text.read_text(encoding="utf-8"))
+            yield build_action(index, FullText(**args), pipeline, use_hash_guard)
         except UploadCancelledError:
             raise
         except Exception as e:
-            logger.error(f"[ERROR] {path}: {e}")
+            logger.error(f"[ERROR] {full_text}: {e}")
             continue
 
 
@@ -342,7 +320,11 @@ def build_actions_from_mona_api(
 ) -> Iterable[Dict]:
     """Generate bulk update actions from mona REST API."""
     id_list_payload = _load_json_url(mona_base_url, "/idList")
-    doc_ids = json.loads(id_list_payload) if isinstance(id_list_payload, str) else id_list_payload
+    doc_ids = (
+        json.loads(id_list_payload)
+        if isinstance(id_list_payload, str)
+        else id_list_payload
+    )
     if not isinstance(doc_ids, list):
         raise ValueError("mona /idList response must be list[str]")
 
@@ -350,8 +332,8 @@ def build_actions_from_mona_api(
         if should_cancel and should_cancel():
             raise UploadCancelledError("Upload was cancelled before completion")
         try:
-            jsons = load_document_json_from_mona(mona_base_url, str(doc_id))
-            yield build_action(index, jsons, pipeline, use_hash_guard)
+            full_text = load_document_json_from_mona(mona_base_url, str(doc_id))
+            yield build_action(index, full_text, pipeline, use_hash_guard)
 
         except Exception as e:
             logger.error(f"[ERROR] doc_id={doc_id}: {e}")

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="3.0"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:jp="http://www.jpo.go.jp"
-                xmlns:schema="urn:schema-dsl"
-                xmlns:xf="http://www.w3.org/2005/xpath-functions"
-                exclude-result-prefixes="xsl jp schema xf">
-    
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:jp="http://www.jpo.go.jp"
+    xmlns:schema="urn:schema-dsl"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xf="http://www.w3.org/2005/xpath-functions" exclude-result-prefixes="xsl jp schema xf">
+
     <xsl:output method="text" encoding="UTF-8" />
-    
+
     <!-- ======================
          begin root/jp:procedure
          ====================== -->
@@ -25,7 +25,7 @@
             </xsl:choose>
         </xf:string>
     </xsl:template>
-    
+
     <!-- 文書名 文書コード-->
     <xsl:template match="jp:document-name">
         <xf:string key="documentName">
@@ -35,42 +35,42 @@
             <xsl:value-of select="@jp:document-code" />
         </xf:string>
     </xsl:template>
-    
+
     <!-- 出願番号 -->
     <xsl:template match="jp:application-number">
         <xf:string key="applicationNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
-    
+
     <!-- 登録番号 -->
     <xsl:template match="jp:registration-number">
         <xf:string key="registrationNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
-    
+
     <!-- 国際出願番号 -->
     <xsl:template match="jp:international-application-number">
         <xf:string key="internationalApplicationNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
-    
+
     <!-- 審判番号 -->
     <xsl:template match="jp:appeal-reference-number">
         <xf:string key="appealReferenceNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
-    
+
     <!-- 受領番号 -->
     <xsl:template match="jp:receipt-number">
         <xf:string key="receiptNumber">
             <xsl:value-of select="." />
         </xf:string>
     </xsl:template>
-    
+
     <!-- 整理番号(出願系、発送系と共用) -->
     <xsl:template match="jp:file-reference-id">
         <xsl:if test="normalize-space(.) != ''">
@@ -79,38 +79,58 @@
             </xf:string>
         </xsl:if>
     </xsl:template>
-    
-    <!-- 提出日(出願日) -->
-    <xsl:template match="jp:submission-date">
-        <xf:string key="submissionDate">
-            <xsl:value-of select="jp:date" />
-        </xf:string>
-        <xf:string key="submissionTime">
-            <xsl:value-of select="jp:time" />
-        </xf:string>
-    </xsl:template>
-    
-    <!-- 発送日 -->
-    <xsl:template match="jp:dispatch-date">
-        <xsl:if test="jp:date and jp:time">
-            <xf:string key="dispatchDate">
-                <xsl:value-of select="jp:date" />
+
+    <!-- same key "datetime" is used for submission-date and dispatch-date.
+         only one of them has jp:date and jp:time text content in one document.
+         type is string, value is unix epoch time second
+         to calculate a Unix epoch timestamp (seconds since 1970-01-01T00:00:00Z) in XSLT by:
+          1. Parsing your date/time into an xs:dateTime value.
+          2. Normalizing to UTC (accounting for the timezone).
+          3. Subtracting the Unix epoch start date.
+          4. Converting the resulting duration into total seconds. -->
+    <xsl:template match="jp:submission-date | jp:dispatch-date">
+        <xsl:if test="normalize-space(jp:date) != '' and normalize-space(jp:time) != ''">
+            <xf:string key="datetime">
+                <xsl:call-template name="normalizeDateTime">
+                    <xsl:with-param name="date" select="jp:date" />
+                    <xsl:with-param name="time" select="jp:time" />
+                </xsl:call-template>
             </xf:string>
-            <xf:string key="dispatchTime">
-                <xsl:value-of select="jp:time" />
+        </xsl:if>
+    </xsl:template>
+    <xsl:template name="normalizeDateTime">
+        <xsl:param name="date" />
+        <xsl:param name="time" />
+        <xsl:if test="normalize-space($date) != '' and normalize-space($time) != ''">
+            <xsl:variable name="year" select="substring($date, 1, 4)" />
+            <xsl:variable name="month" select="substring($date, 5, 2)" />
+            <xsl:variable name="day" select="substring($date, 7, 2)" />
+            <xsl:variable name="hour" select="substring($time, 1, 2)" />
+            <xsl:variable name="minute" select="substring($time, 3, 2)" />
+            <xsl:variable name="second" select="substring($time, 5, 2)" />
+            <!-- Assuming the time is in JST (UTC+9), we can create an xs:dateTime and then convert it to UTC -->
+            <xsl:variable name="inputDateTime" as="xs:dateTime" select="xs:dateTime(concat($year, '-', $month, '-', $day, 'T', $hour, ':', $minute, ':', $second, '+09:00'))" />
+            <xsl:variable name="utcDateTime" as="xs:dateTime" select="adjust-dateTime-to-timezone($inputDateTime, xs:dayTimeDuration('PT0H'))" />
+            <xsl:variable name="epochStart" as="xs:dateTime" select="xs:dateTime('1970-01-01T00:00:00Z')" />
+            <xsl:variable name="duration" select="$utcDateTime - $epochStart" />
+            <xsl:variable name="totalSeconds" select="(days-from-duration($duration) * 86400)
+                  + (hours-from-duration($duration) * 3600)
+                  + (minutes-from-duration($duration) * 60)
+                  + seconds-from-duration($duration)"/>
+            <xf:string key="datetime">
+                <xsl:value-of select="$totalSeconds" />
             </xf:string>
         </xsl:if>
     </xsl:template>
     <!-- ======================
          end root/jp:procedure
          ====================== -->
-   
+
     <!-- ======================
          begin root/jp:pat-appd
          の inventors, applicants, agents 呼び出し
          ====================== -->
-    <xsl:template
-        match="jp:application-a63 | jp:application-a631 |
+    <xsl:template match="jp:application-a63 | jp:application-a631 |
             jp:application-a632 | jp:application-a633 |
             jp:application-a634 | jp:application-a635">
         <xsl:apply-templates select="jp:inventors" />
@@ -138,8 +158,7 @@
          そのために、jp:amendment-a51 の直下の jp:applicants, jp:agents を処理対処にする
          補正書以外の書類でも同様に処理する
     -->
-    <xsl:template
-        match="jp:amendment-a51 | jp:amendment-a523 | jp:amendment-a524 |
+    <xsl:template match="jp:amendment-a51 | jp:amendment-a523 | jp:amendment-a524 |
             jp:amendment-a525 | jp:amendment-a529 |
             jp:amendment-a526 | jp:amendment-a5210 |
             jp:amendment-a527 | jp:amendment-a5211 |
@@ -150,7 +169,7 @@
     <!-- ======================
          end root/jp:pat-amnd
          ====================== -->
-     
+
     <!-- ======================
          begin root/jp:pat-rspn
          の applicants, agents 呼び出し
@@ -162,13 +181,12 @@
     <!-- ======================
          end root/jp:pat-rspn
          ====================== -->
-    
+
     <!-- ======================
          begin root/jp:pat-etc
          の applicants, agents 呼び出し
          ====================== -->
-    <xsl:template
-        match="jp:etcetera-a601 | jp:etcetera-a621 | jp:etcetera-a623 |
+    <xsl:template match="jp:etcetera-a601 | jp:etcetera-a621 | jp:etcetera-a623 |
             jp:etcetera-a624 | jp:etcetera-a625 | jp:etcetera-a626 | jp:etcetera-a627 |
             jp:etcetera-a67 | jp:etcetera-a691 | jp:etcetera-a781 | jp:etcetera-a821 |
             jp:etcetera-a831 | jp:etcetera-a87 | jp:etcetera-a871 | jp:etcetera-a872 |
@@ -180,7 +198,7 @@
     <!-- ======================
          end root/jp:pat-etc
          ====================== -->
-         
+
     <!-- ======================
          begin pat-appd, pat-amnd, pat-rspn, jp:pat-etc
          の inventors, applicants, agents 定義
@@ -195,7 +213,7 @@
             </xsl:for-each>
         </xf:array>
     </xsl:template>
-    
+
     <!-- 発明者 -->
     <xsl:template match="jp:inventors">
         <xf:array key="inventors">
@@ -206,7 +224,7 @@
             </xsl:for-each>
         </xf:array>
     </xsl:template>
-   
+
     <!-- 代理人 -->
     <xsl:template match="jp:agents">
         <xf:array key="agents">
@@ -221,11 +239,11 @@
          end pat-appd, pat-amnd, pat-rspn, jp:pat-etc
          の inventors, applicants, agents 定義
          ====================== -->
-         
+
     <!-- ======================
          begin 発送系の出願人、代理人, 整理番号
          ====================== -->
-    <xsl:template match="jp:m-mi-notice-doc" >
+    <xsl:template match="jp:m-mi-notice-doc">
         <!-- 出願人 -->
         <xf:array key="applicants">
             <xsl:for-each select=".//jp:m-applicant-and-attorneys/jp:m-dispatch-applicant-group">
@@ -236,7 +254,7 @@
                 </xsl:for-each>
             </xsl:for-each>
         </xf:array>
-        
+
         <!-- 代理人 -->
         <xf:array key="agents">
             <xsl:for-each select=".//jp:m-applicant-and-attorneys/jp:m-dispatch-attorney-group">
@@ -255,7 +273,7 @@
     <!-- ======================
          end 発送系の出願人、代理人
          ====================== -->
-      
+
     <!-- docId など -->
     <xsl:template match="sources">
         <!-- sources/archive の sha256 を docId とする -->

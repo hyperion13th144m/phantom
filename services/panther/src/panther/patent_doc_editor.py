@@ -24,35 +24,33 @@ from panther.normalize import zenkaku_to_hankaku_all
 # -----------------------------
 @dataclass(frozen=True)
 class PatentDocEditor:
-    bib: BibliographicItems
     full_text: FullText
-    images_info: list[ImagesInformation]
 
     def to_es_model(self) -> EsPatentDoc:
-        submissionDate = get_date(self.bib.submissionDate, self.bib.submissionTime)
-        dispatchDate = get_date(self.bib.dispatchDate, self.bib.dispatchTime)
+        # unix epoch seconds to milis
+        date = f"{self.full_text.datetime}000"
         ### 発送系の jp:file-reference-id は全角になっていることがあるので、半角に変換してからESに入れる。
-        fileReferenceId = zenkaku_to_hankaku_all(self.bib.fileReferenceId or "")
+        fileReferenceId = zenkaku_to_hankaku_all(self.full_text.fileReferenceId or "")
         rejectionReasonArticle = [
             rewrite_rejection_reason_article(r)
             for r in self.full_text.rejectionReasonArticle or []
             if r and r.strip()
         ]
         return EsPatentDoc(
-            docId=self.bib.docId,
+            docId=self.full_text.docId,
             task=self.full_text.task,
             kind=self.full_text.kind,
-            law=self.bib.law.value,
-            documentName=self.bib.documentName,
-            documentCode=self.bib.documentCode,
+            extension=self.full_text.extension,
+            law=self.full_text.law.value,
+            documentName=self.full_text.documentName,
+            documentCode=self.full_text.documentCode,
             fileReferenceId=fileReferenceId,
-            applicationNumber=self.bib.applicationNumber,
-            internationalApplicationNumber=self.bib.internationalApplicationNumber,
-            registrationNumber=self.bib.registrationNumber,
-            appealReferenceNumber=self.bib.appealReferenceNumber,
-            date=submissionDate or dispatchDate,
-            images=get_images(self.images_info),
-            ocrText=get_image_text(self.images_info),
+            applicationNumber=self.full_text.applicationNumber,
+            internationalApplicationNumber=self.full_text.internationalApplicationNumber,
+            registrationNumber=self.full_text.registrationNumber,
+            appealReferenceNumber=self.full_text.appealReferenceNumber,
+            receiptNumber=self.full_text.receiptNumber,
+            date=date,
             inventors=self.full_text.inventors,
             applicants=self.full_text.applicants,
             agents=self.full_text.agents,
@@ -63,8 +61,7 @@ class PatentDocEditor:
             techProblem=self.full_text.techProblem,
             techSolution=self.full_text.techSolution,
             advantageousEffects=self.full_text.advantageousEffects,
-            embodiments=self.full_text.descriptionOfEmbodiments
-            or self.full_text.bestMode,
+            embodiments=self.full_text.embodiments,
             industrialApplicability=self.full_text.industrialApplicability,
             referenceToDepositedBiologicalMaterial=self.full_text.referenceToDepositedBiologicalMaterial,
             lawOfIndustrialRegenerate=self.full_text.lawOfIndustrialRegenerate,
@@ -77,6 +74,7 @@ class PatentDocEditor:
             opinionContentsArticle=self.full_text.opinionContentsArticle,
             contentsOfAmendment=self.full_text.contentsOfAmendment,
             priorityClaims=self.full_text.priorityClaims,
+            ocrText=self.full_text.ocrText,
         )
 
     @staticmethod
@@ -85,53 +83,6 @@ class PatentDocEditor:
             return None
         s2 = s.strip()
         return s2 if s2 else None
-
-
-def get_date(date_str: str | None, time_str: str | None) -> str | None:
-    if not date_str or not time_str:
-        return None
-    if re.match(r"^\d{8}$", date_str) is None:
-        return None
-    if re.match(r"^\d{6}$", time_str) is None:
-        return None
-    dt = datetime.strptime(f"{date_str}{time_str}", "%Y%m%d%H%M%S")
-    dt_jst = dt.replace(tzinfo=ZoneInfo("Asia/Tokyo"))
-    epoch_millis = int(dt_jst.timestamp() * 1000)
-    return str(epoch_millis)
-
-
-def get_image_text(images: List[ImagesInformation]) -> Optional[str]:
-    texts = []
-    for img in images:
-        if img.text:
-            texts.append(img.text)
-    if not texts:
-        return None
-    return "\n".join(texts)
-
-
-def get_images(images_info: list[ImagesInformation]) -> list[ImageInfo]:
-    images = []
-    for img in images_info:
-        for derived in img.derived:
-            attrs = {
-                attr.key: attr.value
-                for attr in derived.attributes or []
-                if attr.key == "sizeTag"
-            }
-            images.append(
-                ImageInfo(
-                    **attrs,
-                    filename=derived.filename,
-                    width=derived.width,
-                    height=derived.height,
-                    number=img.number or "",
-                    kind=img.kind or "",
-                    representative=img.representative or False,
-                    description=img.description or None,
-                )
-            )
-    return images
 
 
 def rewrite_rejection_reason_article(text: str) -> str:
@@ -172,10 +123,9 @@ if __name__ == "__main__":
         bib = BibliographicItems(**bib)
         full_text = FullText(**full_text)
         images_info = [ImagesInformation(**img) for img in images_info]
-        editor = PatentDocEditor(bib=bib, full_text=full_text, images_info=images_info)
+        editor = PatentDocEditor(full_text=full_text)
         es_doc = editor.to_es_model()
         print(es_doc.model_dump_json(indent=2, ensure_ascii=False))
     except ValidationError as e:
         print("Validation error:", e)
-        sys.exit(1)
         sys.exit(1)
