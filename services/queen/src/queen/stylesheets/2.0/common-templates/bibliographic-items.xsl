@@ -118,7 +118,8 @@
                   + (minutes-from-duration($duration) * 60)
                   + seconds-from-duration($duration)"/>
             <xf:string key="datetime">
-                <xsl:value-of select="$totalSeconds" />
+                <!-- datetime in milliseconds -->
+                <xsl:value-of select="$totalSeconds || '000'" />
             </xf:string>
         </xsl:if>
     </xsl:template>

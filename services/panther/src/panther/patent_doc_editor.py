@@ -6,16 +6,12 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime
-from typing import List, Optional
-from zoneinfo import ZoneInfo
+from typing import Optional
 
 from pydantic import ValidationError
 
-from panther.es_patent_doc import EsPatentDoc, ImageInfo
-from panther.models.generated.bibliographic_items import BibliographicItems
+from panther.es_patent_doc import EsPatentDoc
 from panther.models.generated.full_text import FullText
-from panther.models.generated.images_information import ImagesInformation
 from panther.normalize import zenkaku_to_hankaku_all
 
 
@@ -28,7 +24,6 @@ class PatentDocEditor:
 
     def to_es_model(self) -> EsPatentDoc:
         # unix epoch seconds to milis
-        date = f"{self.full_text.datetime}000"
         ### 発送系の jp:file-reference-id は全角になっていることがあるので、半角に変換してからESに入れる。
         fileReferenceId = zenkaku_to_hankaku_all(self.full_text.fileReferenceId or "")
         rejectionReasonArticle = [
@@ -50,7 +45,7 @@ class PatentDocEditor:
             registrationNumber=self.full_text.registrationNumber,
             appealReferenceNumber=self.full_text.appealReferenceNumber,
             receiptNumber=self.full_text.receiptNumber,
-            date=date,
+            datetime=self.full_text.datetime,
             inventors=self.full_text.inventors,
             applicants=self.full_text.applicants,
             agents=self.full_text.agents,
@@ -120,9 +115,7 @@ if __name__ == "__main__":
         images_info = json.load(f)
 
     try:
-        bib = BibliographicItems(**bib)
         full_text = FullText(**full_text)
-        images_info = [ImagesInformation(**img) for img in images_info]
         editor = PatentDocEditor(full_text=full_text)
         es_doc = editor.to_es_model()
         print(es_doc.model_dump_json(indent=2, ensure_ascii=False))

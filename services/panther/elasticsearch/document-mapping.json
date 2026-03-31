@@ -58,6 +58,9 @@
             "task": {
                 "type": "keyword"
             },
+            "extension": {
+                "type": "keyword"
+            },
             "law": {
                 "type": "keyword"
             },
@@ -112,38 +115,18 @@
                     }
                 }
             },
+            "receiptNumber": {
+                "type": "keyword",
+                "fields": {
+                    "ngram": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    }
+                }
+            },
             "date": {
                 "type": "date",
                 "format": "epoch_millis"
-            },
-            "images": {
-                "type": "nested",
-                "properties": {
-                    "filename": {
-                        "type": "keyword"
-                    },
-                    "width": {
-                        "type": "integer"
-                    },
-                    "height": {
-                        "type": "integer"
-                    },
-                    "number": {
-                        "type": "keyword"
-                    },
-                    "kind": {
-                        "type": "keyword"
-                    },
-                    "representative": {
-                        "type": "boolean"
-                    },
-                    "description": {
-                        "type": "text"
-                    },
-                    "sizeTag": {
-                        "type": "keyword"
-                    }
-                }
             },
             "ocrText": {
                 "type": "text",
@@ -174,13 +157,7 @@
                 }
             },
             "agents": {
-                "type": "keyword",
-                "fields": {
-                    "ngram": {
-                        "type": "text",
-                        "analyzer": "my_ngram_analyzer"
-                    }
-                }
+                "type": "keyword"
             },
             "assignees": {
                 "type": "keyword"

@@ -47,11 +47,8 @@ class EsPatentDoc(BaseModel):
     appealReferenceNumber: Optional[str] = None
     receiptNumber: Optional[str] = None
 
-    # 日付
-    date: Optional[str] = None
-    # submissionDate: Optional[str] = None
-    # dispatchDate: Optional[str] = None
-    # 上二つのどちらか。date = submissionDate or dispatchDate として使う。両方ない場合は None。
+    # 日付 unix epoch in milliseconds
+    datetime: Optional[str] = None
 
     # ocr text
     ocrText: Optional[str] = None
