@@ -1,9 +1,10 @@
 import logging
 import logging.config
+import os
 from pathlib import Path
 from typing import Any
 
-LOG_DIR = Path("/var/log/mona")
+LOG_DIR = Path(os.environ.get("LOG_DIR", "/var/log/mona"))
 ACCESS_LOG_PATH = LOG_DIR / "access.log"
 ERROR_LOG_PATH = LOG_DIR / "error.log"
 

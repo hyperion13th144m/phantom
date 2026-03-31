@@ -72,7 +72,8 @@
     </xsl:template>
 
     <!-- 整理番号(出願系、発送系と共用) -->
-    <xsl:template match="jp:file-reference-id">
+    <xsl:template match="jp:file-reference-id |
+        jp:procedure-infomation/jp:application-reference/jp:reference-id">
         <xsl:if test="normalize-space(.) != ''">
             <xf:string key="fileReferenceId">
                 <xsl:value-of select="." />
@@ -117,10 +118,8 @@
                   + (hours-from-duration($duration) * 3600)
                   + (minutes-from-duration($duration) * 60)
                   + seconds-from-duration($duration)"/>
-            <xf:string key="datetime">
-                <!-- datetime in milliseconds -->
-                <xsl:value-of select="$totalSeconds || '000'" />
-            </xf:string>
+            <!-- datetime in milliseconds -->
+            <xsl:value-of select="$totalSeconds || '000'" />
         </xsl:if>
     </xsl:template>
     <!-- ======================
@@ -271,6 +270,7 @@
     <xsl:template match="jp:dispatch-control-article">
         <xsl:apply-templates select="jp:file-reference-id" />
     </xsl:template>
+
     <!-- ======================
          end 発送系の出願人、代理人
          ====================== -->

@@ -19,15 +19,15 @@ class JobRequest(BaseModel):
     mona_base_url: str = Field(
         default_factory=lambda: os.getenv("MONA_BASE_URL", "http://localhost:8000")
     )
-    es: str = Field(default_factory=lambda: os.getenv("ES_URL", "http://localhost:9200"))
+    es: str = Field(
+        default_factory=lambda: os.getenv("ES_URL", "http://localhost:9200")
+    )
     api_key: str | None = Field(default_factory=lambda: os.getenv("ES_API_KEY"))
     user: str | None = Field(default_factory=lambda: os.getenv("ES_USER"))
     password: str | None = Field(default_factory=lambda: os.getenv("ES_PASSWORD"))
-    pipeline: str | None = Field(default_factory=lambda: os.getenv("ES_PIPELINE"))
     chunk_size: int = 500
     max_retries: int = 5
     use_hash_guard: bool = False
-    refresh: bool = False
 
 
 class JobStatus(BaseModel):
@@ -56,13 +56,17 @@ class JobManager:
     def start_job(self, request: JobRequest) -> JobStatus:
         with self._lock:
             if self._running_job_id:
-                raise HTTPException(status_code=409, detail="Another job is already running")
+                raise HTTPException(
+                    status_code=409, detail="Another job is already running"
+                )
 
             if not request.index:
                 raise HTTPException(status_code=400, detail="index is required")
 
             job_id = str(uuid.uuid4())
-            status = JobStatus(job_id=job_id, status="running", started_at=utc_now_iso())
+            status = JobStatus(
+                job_id=job_id, status="running", started_at=utc_now_iso()
+            )
             self._jobs[job_id] = status
             cancel_event = threading.Event()
             self._cancel_events[job_id] = cancel_event
@@ -74,17 +78,17 @@ class JobManager:
         worker.start()
         return status
 
-    def _run_job(self, job_id: str, request: JobRequest, cancel_event: threading.Event) -> None:
+    def _run_job(
+        self, job_id: str, request: JobRequest, cancel_event: threading.Event
+    ) -> None:
         try:
             args = argparse.Namespace(
                 data_root="data",
                 mona_base_url=request.mona_base_url,
                 index=request.index,
-                pipeline=request.pipeline,
                 chunk_size=request.chunk_size,
                 max_retries=request.max_retries,
                 use_hash_guard=request.use_hash_guard,
-                refresh=request.refresh,
                 es=request.es,
                 api_key=request.api_key,
                 user=request.user,
@@ -128,7 +132,9 @@ class JobManager:
 
     def get_current(self) -> dict[str, Any]:
         with self._lock:
-            running_job = self._jobs.get(self._running_job_id) if self._running_job_id else None
+            running_job = (
+                self._jobs.get(self._running_job_id) if self._running_job_id else None
+            )
             latest = None
             if self._jobs:
                 latest = list(self._jobs.values())[-1]

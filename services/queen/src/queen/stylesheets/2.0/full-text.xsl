@@ -44,7 +44,6 @@
                 <xsl:apply-templates select="root/jp:pat-etc" />
                 <xsl:apply-templates select="root/jp:m-mi-notice-doc" />
                 <xsl:apply-templates select="root/jp:procedure" />
-                <xsl:apply-templates select="root//jp:dispatch-control-article/jp:file-reference-id" />
                 <xsl:apply-templates select="root/sources" />
             </xf:map>
         </xsl:variable>
@@ -194,12 +193,17 @@
             jp:etcetera-a67 | jp:etcetera-a691 | jp:etcetera-a781 | jp:etcetera-a821 |
             jp:etcetera-a831 | jp:etcetera-a87 | jp:etcetera-a871 | jp:etcetera-a872 |
             jp:etcetera-a914 | jp:etcetera-a915 | jp:etcetera-a916 | jp:etcetera-a603 |
-            jp:etcetera-a917 | jp:etcetera-a918 | jp:etcetera-a919">
+            jp:etcetera-a917 | jp:etcetera-a918 | jp:etcetera-a919" mode="full-text">
         <xsl:apply-templates select="jp:applicants" />
         <xsl:apply-templates select="jp:agents" />
         <xsl:apply-templates select="jp:opinion-contents-article" />
     </xsl:template>
    
+    <xsl:template match="jp:cpy-notice-pat-exam-rn | jp:cpy-notice-pat-exam">
+        <xsl:apply-templates select=".//jp:conclusion-part-article" />
+        <xsl:apply-templates select=".//jp:drafting-body" />
+        <xsl:apply-templates select=".//jp:article-group" />
+    </xsl:template>
 
     <!-- 発送系、明細書 -->
     <xsl:template

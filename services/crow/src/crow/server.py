@@ -72,7 +72,7 @@ class JobManager:
                 self._src_dir,
                 self._dst_dir,
                 overwrite=request.overwrite,
-                doc_codes=request.get_doc_codes() or [],
+                doc_codes=request.doc_codes,
                 doc_id=request.doc_id,
                 max_files=request.max_files,
             ):
@@ -88,18 +88,31 @@ class JobManager:
                     message=state.error_message,
                 )
 
-                crawling_logger.debug(
-                    "Finished processing an archive",
-                    extra={
-                        "doc_id": state.doc_id,
-                        "archive_path": str(state.archive_path),
-                        "output_json_dir": str(state.output_json_dir)
-                        if state.output_json_dir
-                        else None,
-                        "status": state.status,
-                        "error_message": state.error_message or "",
-                    },
-                )
+                if state.status == "fail":
+                    crawling_logger.error(
+                        "Job %s failed: %s",
+                        job.job_id,
+                        job.message,
+                        extra={
+                            "doc_id": state.doc_id,
+                            "archive_path": str(state.archive_path),
+                            "error_message": state.error_message or "",
+                        },
+                    )
+
+                elif state.status == "success":
+                    crawling_logger.debug(
+                        "Finished processing an archive",
+                        extra={
+                            "doc_id": state.doc_id,
+                            "archive_path": str(state.archive_path),
+                            "output_json_dir": str(state.output_json_dir)
+                            if state.output_json_dir
+                            else None,
+                            "status": state.status,
+                            "error_message": state.error_message or "",
+                        },
+                    )
 
             job.complete()
             save_job_state(job, self._log_dir)
@@ -150,7 +163,7 @@ class JobManager:
 def create_app() -> FastAPI:
     # default は docker コンテナ起動でbind される先のディレクトリ
     src_dir = os.environ.get("SRC_DIR", "/src-dir")
-    dst_dir = os.environ.get("DST_DIR", "/dst-dir")
+    dst_dir = os.environ.get("DST_DIR", "/data-dir")
     log_dir = os.environ.get("LOG_DIR", "/var/log/crow")
     log_level = os.environ.get("LOG_LEVEL", "INFO")
 

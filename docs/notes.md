@@ -2,99 +2,112 @@
 ## Phantom system
 ```mermaid
 block-beta
-  block:all:1
-    columns 1
+  columns 2
 
-    %% Components
-    Queen["Queen\nXSLT Processor for Mona\nInterface provider for Mona, Panther and Fox"]:1
+  %% shared components
+  block:common:1
+    columns 1
+    Queen["Queen\nXSLT Processor for Mona\nInterface provider for Mona, Panther and Fox"]
+    Navi["Navi\nmanager for panther, crow, noir"]
+    nginx["nginx\nReverse Proxy\n/, /_next → Joker\n/docs → Fox\n/images → Mona\n/extra-data → Skull"]
+  end
 
-    %% -----------------------------
-    %% Input / Storage Layer
-    %% -----------------------------
-    block:input_layer
-      columns 2
-      src_dir[("SRC_DIR\nArchives managed by\nInternet Filing Software)")]
-      data_dir[("DATA_DIR\nJSON and Images")]
-    end
-    space
+  block:main:4
+    columns 1
 
-    %% -----------------------------
-    %% Core Data Service (Mona)
-    %% -----------------------------
-    block:mona_layer
-      columns 1
-      Mona["Mona\nXML → JSON converter\nREST data provider"]
-    end
-    space
-    space
+    %% -----------------------------
+    %% Input / Storage Layer
+    %% -----------------------------
+    block:input_layer
+      columns 3
+      src_dir[("SRC_DIR\nArchives managed by\nInternet Filing Software)")]
+      space
+      data_dir[("DATA_DIR\nJSON and Images")]
+    end
+    space
+ 
+    %% -----------------------------
+    %% Core Data Service (Mona)
+    %% -----------------------------
+    block:mona_layer
+      columns 3
+      Crow["Crow\nXML → JSON converter"]
+      space
+      Mona["Mona\nREST data provider\n1:document\n2:full-text\n3:bibliographic items\n4:images information"]
+    end
+    space
+  
+    %% -----------------------------
+    %% Processing Layer
+    %% -----------------------------
+    block:processing_layer
+      columns 5
+      Panther["Panther\njson uploader"]
+        space
+      Noir["Noir\nLLM-based embedding generator\nembedding uploader"]
+        space
+      Violet["Violet\nimage analysis"]
+    end
+    space
+  
+    %% -----------------------------
+    %% Search Engines / Models
+    %% -----------------------------
+    block:engine_layer
+      columns 4
+      Elasticsearch["Elasticsearch\n(full-text + vector index)"]
+      space:2
+      LLM["LLM\n(embedding + query assist)"]
+    end
+    space
 
-    %% -----------------------------
-    %% Processing Layer
-    %% -----------------------------
-    block:processing_layer
-      columns 4
-      extra_data_dir[("EXTRA_DATA_DIR\n(sqlite3)")]
-      Panther["Panther\njson uploader\nextra-data uploader"]
-      Noir["Noir\nLLM-based embedding generator\nembedding uploader"]
-      Fox["Fox\nHTML renderer"]
-    end
-    space
-
-    %% -----------------------------
-    %% Search Engines / Models
-    %% -----------------------------
-    block:engine_layer
-      columns 3
-      Skull["Skull\nExtra-data API provider"]
-      Elasticsearch["Elasticsearch\n(full-text + vector index)"]
-      LLM["LLM\n(embedding + query assist)"]
-    end
-    space
-
-    %% -----------------------------
-    %% UI Layer
-    %% -----------------------------
-    block:ui_layer
-      columns 1
-      Joker["Joker\nSearch UI")]
-    end
+  
+    %% -----------------------------
+    %% UI Layer
+    %% -----------------------------
+    block:ui_layer
+      columns 8
+      block:skull
+        columns 1
+        Skull["Skull\nExtra-data editor"]
+        extra_data_dir[("EXTRA_DATA_DIR\n(sqlite3)")]
+      end
+        space
+      Joker["Joker\nSearch UI")]
+        space:3
+      Fox["Fox\nHTML renderer"]
+    end
   end
-
-  %% nginx is intentionally placed *outside* the main block
-  nginx[["nginx\nReverse Proxy\n/, /_next → Joker\n/docs → Fox\n/images → Mona"]]
-
 
   %% -----------------------------
   %% Data Flows
   %% -----------------------------
 
+  %% Crow
+  src_dir -- "crawl XML" --> Crow
+  Crow -- "store parsed JSON" --> data_dir
+
   %% Mona
-  src_dir -- "crawl XML" --> Mona
-  Mona -- "store parsed JSON" --> data_dir
-  Mona -- "json" --> Panther 
-  Mona -- "json" --> Noir 
-  Mona -- "json" --> Fox 
-  Mona -- "images" --> nginx 
+  data_dir --> Mona
+  Mona -- "2" --> Panther 
+  Mona -- "1,3,4" --> Noir 
+  Mona -- "1,3,4" --> Fox 
+  Mona -- "1,3,4" --> Noir 
+  Mona -- "4" --> Joker
 
   %% Panther
-  extra_data_dir -- "sqlite3" --> Panther
   Panther -- "upload full-text\nrestore extra-data" --> Elasticsearch
 
   %% Noir
   LLM -- "embeddings" --> Noir
   Noir -- "embeddings" --> Elasticsearch
 
-  %% Fox
-  Fox -- "html" --> nginx 
 
   %% Joker
-  Joker -- "search UI, results" --> nginx
-  Joker --> Elasticsearch
-  Elasticsearch -- "search results\nextra data" --> Joker
-  Joker -- "extra data" --> Skull
+  Elasticsearch -- "search/results" --> Joker
 
   %% Skull
-  Skull -- "extra data" --> extra_data_dir
+  Skull -- "extra data" --> Elasticsearch
 
   %% Elasticsearch
 
@@ -102,7 +115,6 @@ block-beta
   LLM --> Joker 
 ```
 
-violet navi crow
 
 joker
 fe0000
@@ -137,9 +149,14 @@ fox
 05d2ff
 1eabd9
 
-## crow
+crow
 dedace
 cbc6b0
+
+violet
+a743d9
+9a36cc
+
 ### development
 install dependencies
 ```bash
@@ -162,6 +179,3 @@ cd ../
 docker build
 ```
 
-violet
-a743d9
-9a36cc

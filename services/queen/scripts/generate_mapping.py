@@ -58,7 +58,7 @@ def _convert_property(field_name: str, prop: dict[str, Any]) -> dict[str, Any]:
             }
         return es_obj
 
-    return _DEFAULT_ES_TYPE.get(js_type, {"type": "keyword"})
+    return _DEFAULT_ES_TYPE.get(js_type or "string", {"type": "keyword"})
 
 
 def build_properties(

@@ -91,7 +91,3 @@ class EsPatentDoc(BaseModel):
     assignees: Optional[List[str]] = Field(default_factory=list)
     tags: Optional[List[str]] = Field(default_factory=list)
     extraNumbers: Optional[List[str]] = Field(default_factory=list)
-
-
-if __name__ == "__main__":
-    pass

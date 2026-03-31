@@ -69,11 +69,6 @@ def add_args(parser: SupportsAddParser) -> None:
         help="Base URL of mona API server, e.g. http://localhost:8000",
     )
     p.add_argument(
-        "--pipeline",
-        default=os.getenv("ES_PIPELINE"),
-        help="Ingest pipeline name (default: $ES_PIPELINE)",
-    )
-    p.add_argument(
         "--chunk-size",
         type=int,
         default=500,
@@ -89,11 +84,6 @@ def add_args(parser: SupportsAddParser) -> None:
         "--use-hash-guard",
         action="store_true",
         help="Skip updates if ingest_hash unchanged",
-    )
-    p.add_argument(
-        "--refresh",
-        action="store_true",
-        help="Refresh index after bulk (slower but makes documents immediately searchable)",
     )
     p.set_defaults(func=main)
 
@@ -149,7 +139,6 @@ def execute_upload(
                 build_actions_from_mona_api(
                     index=args.index,
                     mona_base_url=args.mona_base_url,
-                    pipeline=args.pipeline,
                     use_hash_guard=args.use_hash_guard,
                     should_cancel=should_cancel,
                 )
@@ -160,7 +149,6 @@ def execute_upload(
                 build_actions_from_local(
                     index=args.index,
                     data_root=data_root,
-                    pipeline=args.pipeline,
                     use_hash_guard=args.use_hash_guard,
                     should_cancel=should_cancel,
                 )
@@ -177,10 +165,6 @@ def execute_upload(
             max_backoff=30.0,
             should_cancel=should_cancel,
         )
-
-        if args.refresh:
-            logger.info("Refreshing index...")
-            es.indices.refresh(index=args.index)
 
         return UploadResult(
             {
@@ -220,7 +204,6 @@ def strip_preserve_fields(doc: Dict) -> Dict:
 def build_action(
     index: str,
     full_text: FullText,
-    pipeline: Optional[str],
     use_hash_guard: bool,
 ) -> Dict:
     _doc = PatentDocEditor(full_text).to_es_model()
@@ -272,9 +255,6 @@ def build_action(
             },
         }
 
-    if pipeline:
-        action["pipeline"] = pipeline
-
     return action
 
 
@@ -293,7 +273,6 @@ def load_document_json_from_mona(mona_base_url: str, doc_id: str) -> FullText:
 def build_actions_from_local(
     index: str,
     data_root: Path,
-    pipeline: Optional[str],
     use_hash_guard: bool,
     should_cancel: Optional[Callable[[], bool]] = None,
 ) -> Iterable[Dict]:
@@ -303,7 +282,7 @@ def build_actions_from_local(
             raise UploadCancelledError("Upload was cancelled before completion")
         try:
             args = json.loads(full_text.read_text(encoding="utf-8"))
-            yield build_action(index, FullText(**args), pipeline, use_hash_guard)
+            yield build_action(index, FullText(**args), use_hash_guard)
         except UploadCancelledError:
             raise
         except Exception as e:
@@ -314,7 +293,6 @@ def build_actions_from_local(
 def build_actions_from_mona_api(
     index: str,
     mona_base_url: str,
-    pipeline: Optional[str],
     use_hash_guard: bool,
     should_cancel: Optional[Callable[[], bool]] = None,
 ) -> Iterable[Dict]:
@@ -333,7 +311,7 @@ def build_actions_from_mona_api(
             raise UploadCancelledError("Upload was cancelled before completion")
         try:
             full_text = load_document_json_from_mona(mona_base_url, str(doc_id))
-            yield build_action(index, full_text, pipeline, use_hash_guard)
+            yield build_action(index, full_text, use_hash_guard)
 
         except Exception as e:
             logger.error(f"[ERROR] doc_id={doc_id}: {e}")

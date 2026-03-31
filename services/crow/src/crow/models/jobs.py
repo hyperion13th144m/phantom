@@ -20,12 +20,9 @@ class JobRequest(BaseModel):
     doc_id: Optional[str] = Field(
         default=None, description="crawl only the specified docId"
     )
-    doc_codes: List[Union[Category, DocCode]] = Field(
+    doc_codes: List[str] = Field(
         default_factory=list, description="crawl only the specified docCodes"
     )
-
-    def get_doc_codes(self) -> List[str]:
-        return [str(code) for code in self.doc_codes]
 
 
 class JobResponse(BaseModel):

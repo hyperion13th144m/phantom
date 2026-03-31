@@ -33,7 +33,6 @@
                 <xsl:apply-templates select="root/jp:pat-etc" />
                 <xsl:apply-templates select="root/jp:m-mi-notice-doc" />
                 <xsl:apply-templates select="root/jp:procedure" />
-                <xsl:apply-templates select="root//jp:dispatch-control-article/jp:file-reference-id" />
                 <xsl:apply-templates select="root/sources" />
             </xf:map>
         </xsl:variable>

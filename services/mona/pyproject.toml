@@ -1,9 +1,9 @@
 [project]
 dependencies = [
-    "datamodel-code-generator[ruff]>=0.55.0",
-    "fastapi>=0.135.1",
-    "python-json-logger>=4.0.0",
-    "uvicorn>=0.42.0",
+  "datamodel-code-generator[ruff]>=0.55.0",
+  "fastapi>=0.135.1",
+  "python-json-logger>=4.0.0",
+  "uvicorn>=0.42.0",
 ]
 description = "Add your description here"
 name = "mona"
@@ -36,3 +36,6 @@ unfixable = ["B"]
 [tool.ruff.format]
 # 5. Use double quotes in `ruff format`.
 quote-style = "double"
+
+[project.scripts]
+mona-serve = "mona.run_server:main"

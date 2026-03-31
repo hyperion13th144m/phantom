@@ -20,13 +20,11 @@ def find_archives(
     doc_codes: List[str],
 ) -> Generator[tuple[Path, Path], None, None]:
     """Find all e-filing archives and corresponding procedure XML files in the specified directory."""
-    print(f"Checking codes: {doc_codes}")
-    if len(doc_codes) == 0:
-        doc_codes = doc_code_config.get_codes(["ALL"])
+    valid_codes = doc_code_config.get_codes(doc_codes)
 
     for file in chain(Path(directory).rglob("*.JWX"), Path(directory).rglob("*.JPC")):
         if re.match(r".+AAA$", file.stem) or re.match(r".+NNF$", file.stem):
-            if is_target_document(file, doc_codes):
+            if is_target_document(file, valid_codes):
                 procedure = find_procedure_xml(file)
                 if procedure is None:
                     logger.warning(f"Procedure XML not found for archive: {file}")

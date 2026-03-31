@@ -6,7 +6,7 @@ from typing import List, Literal, Optional
 from libefiling import Source, parse_archive
 from pydantic import BaseModel
 
-from crow.crawler.config import image_params
+from crow.crawler.config import doc_code_config, image_params
 from crow.crawler.find_archives import find_archives
 from crow.crawler.parse import parse
 
@@ -23,12 +23,20 @@ def crawl(
     src_dir: str,
     output_dir_root: str,
     overwrite: bool,
-    doc_codes: Optional[List[str]] = None,
+    doc_codes: List[str],
     doc_id: Optional[str] = None,
     max_files: Optional[int] = None,
 ):
+    valid_codes = doc_code_config.get_codes(doc_codes)
+    if len(doc_codes) == 0:
+        return Result(
+            status="fail",
+            archive_path=Path(src_dir),
+            error_message="No valid doc_codes specified",
+        )
+
     count = 0
-    for item in find_archives(src_dir, doc_codes or []):
+    for item in find_archives(src_dir, valid_codes):
         if max_files and count >= max_files:
             break
 

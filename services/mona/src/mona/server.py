@@ -139,6 +139,6 @@ logger.setLevel(get_log_level())
 
 # docker コンテナ起動時に /data-dir に
 # 実データがあるディレクトリがマウントされるので、決め打ちで良い。
-DATA_DIR = "/data-dir"
+DATA_DIR = os.environ.get("DATA_DIR", "/data-dir")
 
 app = create_app(DATA_DIR)
