@@ -1,25 +1,67 @@
 "use client";
 
-import { useState } from "react";
-import { ImageInformation } from "@/app/interfaces/search-results";
+import { useEffect, useState } from "react";
 import { getImageUrl } from "@/lib/helpers";
+import { ImagesInformation } from "@/app/interfaces/generated/images-information";
 
 interface Props {
     docId: string;
-    images: ImageInformation[];
     thumbnailTag?: string;
     largeTag?: string;
 }
+interface ImageProps {
+    number: string;
+    filename: string;
+    kind: string;
+    sizeTag: string;
+    width: number;
+    height: number;
+    description: string;
+    representative: boolean;
+}
 
-const ImagesArray: React.FC<Props> = ({ docId, images, thumbnailTag = "thumbnail", largeTag = "middle" }) => {
+const flattenImages = (images: ImagesInformation): ImageProps[] => {
+    return images.derived.map(derived => ({
+        number: images.number || "",
+        filename: derived.filename,
+        kind: images.kind,
+        sizeTag: derived.attributes?.find(attr => attr.key === "sizeTag")?.value || "",
+        width: derived.width,
+        height: derived.height,
+        description: images.description || "",
+        representative: images.representative || false,
+    }));
+}
+
+
+const ImagesArray: React.FC<Props> = ({ docId, thumbnailTag = "thumbnail", largeTag = "middle" }) => {
     const [selectedImage, setSelectedImage] = useState<number | null>(null);
-    const figures = images.filter(img => img.kind === "figures");
-    const thumbnails = figures
-        .filter(img => img.sizeTag === thumbnailTag)
-        .sort((a, b) => a.filename.localeCompare(b.filename));
-    const largeImages = figures
-        .filter(img => img.sizeTag === largeTag)
-        .sort((a, b) => a.filename.localeCompare(b.filename));
+    const [thumbnails, setThumbnails] = useState<ImageProps[]>([]);
+    const [largeImages, setLargeImages] = useState<ImageProps[]>([]);
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const res = await fetch(`/api/images/${docId}`);
+            if (res.ok) {
+                const data: ImagesInformation[] = await res.json();
+                const figures = data.filter(img => img.kind === "figures")
+                    .flatMap(flattenImages);
+                const thumbnails = figures
+                    .filter(img => img.sizeTag === thumbnailTag)
+                    .sort((a, b) => a.filename.localeCompare(b.filename));
+                const largeImages = figures
+                    .filter(img => img.sizeTag === largeTag)
+                    .sort((a, b) => a.filename.localeCompare(b.filename));
+                setThumbnails(thumbnails);
+                setLargeImages(largeImages);
+            } else {
+                console.error("Failed to fetch images information");
+            }
+        };
+
+        fetchImages();
+    }, [docId]);
+
     return (
         <>
             <div className="flex flex-wrap gap-2">

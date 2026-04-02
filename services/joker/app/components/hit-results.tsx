@@ -55,9 +55,9 @@ export default function HitResults({ hitResult, keywords }: Props) {
             )}
 
             {/* 画像表示 */}
-            {hitResult.source && hitResult.source.docId && hitResult.source.images && hitResult.source.images.length > 0 && (
+            {hitResult.source && hitResult.source.docId && (
                 <div className="mt-3">
-                    <ImagesArray docId={hitResult.source.docId} images={hitResult.source.images} />
+                    <ImagesArray docId={hitResult.source.docId} />
                 </div>
             )}
         </>

@@ -14,5 +14,5 @@ USER $USERNAME
 WORKDIR /app
 COPY --chown=$USERNAME:$GROUPNAME . /app/
 RUN uv sync --no-dev
-ENTRYPOINT [ "uv", "run" ]
-CMD [ "uvicorn", "mona.server:app", "--host", "0.0.0.0", "--port", "8000" ]
+ENTRYPOINT [ "uv", "run", "uvicorn", "mona.server:app" ]
+CMD [ "--host", "0.0.0.0", "--port", "8000" ]

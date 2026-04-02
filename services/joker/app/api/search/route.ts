@@ -70,7 +70,6 @@ const sourceFields = [
     "tags",
     "specialMentionMatterArticle",
     "rejectionReasonArticle",
-    "images",
     "extraNumbers"
 ];
 

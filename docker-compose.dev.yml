@@ -139,8 +139,10 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./test-data/extracted-archives:/test-data
+      - ./services/mona/src/mona/models/generated:/mona-models
       - ./services/panther/src/panther/models/generated:/panther-models
       - ./services/fox/src/interfaces/generated:/fox-models
+      - ./services/joker/app/interfaces/generated:/joker-models
       - ./infra/es/generated:/es-mapping
     networks:
       - dev-net

@@ -9,6 +9,7 @@ PROJECT_ROOT="$(dirname $SCRIPT_DIR)"
 SRC_DIR="$PROJECT_ROOT/generated/typescript"
 DST_DIR=(
     "/fox-models"
+    "/joker-models"
 )
 
 for dst in "${DST_DIR[@]}"; do

@@ -5,8 +5,6 @@ import re
 import sys
 from pathlib import Path
 
-import uvicorn
-
 from panther.es_client import create_es_client
 from panther.logger import setup_logging
 from panther.upload_documents import execute_upload

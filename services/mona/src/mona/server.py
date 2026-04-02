@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Dict, List
 
@@ -14,19 +15,19 @@ from mona.models.generated.full_text import FullText
 from mona.models.generated.images_information import ImagesInformation
 
 
-def create_app(data_dir: str) -> FastAPI:
+def create_app(data_dir: Path) -> FastAPI:
     app = FastAPI(title="mona API", version="0.1.0")
 
     dir_map = get_docid_dict(data_dir)
     logger.info(f"Loaded {len(dir_map)} documents from {data_dir}")
 
-    @app.get("/idList", response_model=list[str])
+    @app.get("/documents/idList", response_model=list[str])
     async def get_documents_id_list() -> JSONResponse:
         keys = list(dir_map.keys())
         return JSONResponse(json.dumps(keys))
 
     @app.get(
-        "/{doc_id}/json/content",
+        "/documents/{doc_id}/json/content",
         description="this returns the content of the document for rendering to html",
         response_model=List[PatentDocument],
     )
@@ -38,7 +39,7 @@ def create_app(data_dir: str) -> FastAPI:
         )
 
     @app.get(
-        "/{doc_id}/json/images-information",
+        "/documents/{doc_id}/json/images-information",
         description="this returns the image information of the document",
         response_model=ImagesInformation,
     )
@@ -50,7 +51,7 @@ def create_app(data_dir: str) -> FastAPI:
         )
 
     @app.get(
-        "/{doc_id}/json/bibliographic-items",
+        "/documents/{doc_id}/json/bibliographic-items",
         description="this returns the bibliographic items of the document",
         response_model=BibliographicItems,
     )
@@ -62,7 +63,7 @@ def create_app(data_dir: str) -> FastAPI:
         )
 
     @app.get(
-        "/{doc_id}/json/full-text",
+        "/documents/{doc_id}/json/full-text",
         description="this returns the full text of the document",
         response_model=FullText,
     )
@@ -74,7 +75,7 @@ def create_app(data_dir: str) -> FastAPI:
         )
 
     @app.get(
-        "/{doc_id}/images/{file_name}",
+        "/documents/{doc_id}/images/{file_name}",
         description="this returns the image body",
         response_model=None,  # 画像は response_model を定義しない (FileResponse で返すため)
     )
@@ -108,37 +109,37 @@ def create_app(data_dir: str) -> FastAPI:
     return app
 
 
-def get_log_level():
-    level = os.getenv("LOG_LEVEL", "INFO").upper()
-    valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-    if level not in valid_levels:
-        print(f"Invalid LOG_LEVEL '{level}' specified. Defaulting to 'INFO'.")
-        return logging.INFO
-    return getattr(logging, level)
-
-
-def get_docid_dict(data_dir: str) -> Dict[str, str]:
+def get_docid_dict(data_dir: Path) -> Dict[str, str]:
     """
     this function returns dictionary mapping docId to directory
     containing files related to the docId.
     """
     results = {}
-    for file in Path(data_dir).rglob("manifest.json"):
+    for file in data_dir.rglob("manifest.json"):
         # search for directory contains manifest.json and read docId from it
         with file.open() as f:
             manifest = json.load(f)
-            doc_id = manifest.get("document", {}).get("doc_id", None)
+            # treat sources.archive.sha256 as docId
+            doc_id = manifest.get("sources", {}).get("archive", {}).get("sha256", None)
             if doc_id:
                 results[doc_id] = str(file.parent)
     return results
 
 
-setup_logger()
+data_dir = Path(os.environ.get("DATA_DIR", "/data-dir"))
+log_dir = Path(os.environ.get("LOG_DIR", "/var/log/mona"))
+log_level = os.environ.get("LOG_LEVEL", "INFO")
+
+if data_dir is None:
+    print("DATA_DIR environment variable is not set")
+    sys.exit(1)
+
+if not log_dir.is_dir():
+    print("LOG_DIR environment variable is not set or is not a directory")
+    sys.exit(1)
+
+setup_logger(log_dir=Path(log_dir), log_level=log_level)
 logger = logging.getLogger("mona.server")
-logger.setLevel(get_log_level())
 
-# docker コンテナ起動時に /data-dir に
-# 実データがあるディレクトリがマウントされるので、決め打ちで良い。
-DATA_DIR = os.environ.get("DATA_DIR", "/data-dir")
 
-app = create_app(DATA_DIR)
+app = create_app(data_dir)

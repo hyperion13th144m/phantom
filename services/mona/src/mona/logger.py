@@ -1,15 +1,12 @@
 import logging
 import logging.config
-import os
 from pathlib import Path
 from typing import Any
 
-LOG_DIR = Path(os.environ.get("LOG_DIR", "/var/log/mona"))
-ACCESS_LOG_PATH = LOG_DIR / "access.log"
-ERROR_LOG_PATH = LOG_DIR / "error.log"
 
-
-def setup_logger():
+def setup_logger(log_dir: Path, log_level: str = "INFO") -> None:
+    access_log_path = log_dir / "access.log"
+    error_log_path = log_dir / "error.log"
     config: dict[str, Any] = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -32,7 +29,7 @@ def setup_logger():
             },
             "access_file": {
                 "class": "logging.handlers.TimedRotatingFileHandler",
-                "filename": ACCESS_LOG_PATH,
+                "filename": access_log_path,
                 "when": "midnight",
                 "interval": 1,
                 "backupCount": 7,
@@ -41,7 +38,7 @@ def setup_logger():
             },
             "server_file": {
                 "class": "logging.handlers.TimedRotatingFileHandler",
-                "filename": ERROR_LOG_PATH,
+                "filename": error_log_path,
                 "when": "midnight",
                 "interval": 1,
                 "backupCount": 7,
@@ -52,12 +49,12 @@ def setup_logger():
         "loggers": {
             "mona.server": {
                 "handlers": ["server_file", "console"],
-                "level": "INFO",
+                "level": log_level,
                 "propagate": False,
             },
             "uvicorn.access": {
                 "handlers": ["access_file", "console"],
-                "level": "INFO",
+                "level": log_level,
                 "propagate": False,
             },
         },

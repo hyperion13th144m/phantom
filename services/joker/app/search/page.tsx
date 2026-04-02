@@ -8,7 +8,6 @@ import Pagination from "@/app/components/pagination";
 import SimpleInput from "@/app/components/simple-input";
 import { ApiResponse, ApiResponseError, ApiResponseSuccess } from "@/app/interfaces/search-results";
 import { clamp } from "@/lib/helpers";
-import nextConfig from "@/next.config";
 
 const MIN_PAGE = 1;
 const MAX_PAGE = 100000;

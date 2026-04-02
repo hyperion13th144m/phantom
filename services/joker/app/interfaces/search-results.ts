@@ -37,19 +37,9 @@ export interface PatentDocumentSource {
     draftingBody?: string;
     opinionContentsArticle?: string;
     contentsOfAmendment?: string[];
-    images?: {
-        filename: string;
-        width: number;
-        height: number;
-        number: string;
-        kind: string;
-        representative: boolean;
-        description: string;
-        sizeTag: string;
-    }[];
     extraNumbers?: string[];
 }
-export interface ImageInformation {
+interface ImageInformation {
     number: string;
     filename: string;
     kind: string;

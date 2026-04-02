@@ -8,6 +8,7 @@ PROJECT_ROOT="$(dirname $SCRIPT_DIR)"
 # ============================
 SRC_DIR="$PROJECT_ROOT/generated/python"
 DST_DIR=(
+    "/mona-models"
     "/panther-models"
 )
 
