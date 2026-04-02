@@ -256,9 +256,11 @@
     </xsl:template>
     <xsl:template match="jp:foreign-language-claims">
         <!-- treats all claims as independent claims -->
-        <xf:string key="independentClaims">
-            <xsl:value-of select="normalize-space(.)" />
-        </xf:string>
+        <xf:array key="independentClaims">
+            <xf:string>
+                <xsl:value-of select="normalize-space(.)" />
+            </xf:string>
+        </xf:array>
     </xsl:template>
     <xsl:template match="jp:foreign-language-abstract">
         <xf:string key="abstract">

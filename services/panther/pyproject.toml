@@ -19,5 +19,4 @@ build-backend = "uv_build"
 requires = ["uv_build>=0.10.3,<0.11.0"]
 
 [project.scripts]
-panther-cli = "panther.cli:main"
-panther-serve = "panther.server:main"
+panther = "panther.cli:main"

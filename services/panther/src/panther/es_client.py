@@ -1,12 +1,18 @@
+from typing import Optional
+
 from elasticsearch import Elasticsearch
 
 
-def create_es_client(args) -> Elasticsearch:
+def create_es_client(
+    api_key: Optional[str] = None,
+    user: Optional[str] = None,
+    password: Optional[str] = None,
+    es_url: str = "http://localhost:9200",
+) -> Elasticsearch:
     """Create Elasticsearch client from common arguments."""
-    if args.api_key:
-        return Elasticsearch(args.es, api_key=args.api_key)
-    elif args.user and args.password:
-        return Elasticsearch(args.es, basic_auth=(args.user, args.password))
+    if api_key:
+        return Elasticsearch(es_url, api_key=api_key)
+    elif user and password:
+        return Elasticsearch(es_url, basic_auth=(user, password))
     else:
-        return Elasticsearch(args.es)
-
+        return Elasticsearch(es_url)

@@ -10,12 +10,11 @@ Bulk upsert documents into Elasticsearch from:
 - Optional: store ingest_hash to skip no-op updates with a painless script
 """
 
-import argparse
 import hashlib
 import json
 import logging
-import os
 import time
+import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import (
@@ -25,16 +24,15 @@ from typing import (
     Iterable,
     List,
     Optional,
-    Protocol,
     Tuple,
 )
 from urllib.parse import quote, urljoin
 from urllib.request import urlopen
 
-from elasticsearch import Elasticsearch, helpers  # pip install elasticsearch
-from panther.es_client import create_es_client
+from elasticsearch import Elasticsearch, helpers
+
 from panther.models.generated.full_text import FullText
-from panther.patent_doc_editor import PatentDocEditor
+from panther.normalizer import normalize_document
 
 logger = logging.getLogger(__name__)
 
@@ -49,76 +47,20 @@ class UploadResult(Dict[str, int | str]):
     pass
 
 
-class SupportsAddParser(Protocol):
-    def add_parser(self, name: str, **kwargs: Any) -> argparse.ArgumentParser: ...
-
-
-def add_args(parser: SupportsAddParser) -> None:
-    p = parser.add_parser(
-        "upload-documents",
-        help="Upload documents to Elasticsearch",
-    )
-    p.add_argument(
-        "--data-root",
-        default="/data-dir",
-        help="Root directory containing docid/full-text.json files (default: /data-dir)",
-    )
-    p.add_argument(
-        "--mona-base-url",
-        default=os.getenv("MONA_BASE_URL"),
-        help="Base URL of mona API server, e.g. http://localhost:8000",
-    )
-    p.add_argument(
-        "--chunk-size",
-        type=int,
-        default=500,
-        help="Bulk chunk size (default: 500)",
-    )
-    p.add_argument(
-        "--max-retries",
-        type=int,
-        default=5,
-        help="Max retry attempts for transient failures (default: 5)",
-    )
-    p.add_argument(
-        "--use-hash-guard",
-        action="store_true",
-        help="Skip updates if ingest_hash unchanged",
-    )
-    p.set_defaults(func=main)
-
-
-def main(args: argparse.Namespace) -> int:
-    """Upload documents to Elasticsearch."""
-    try:
-        result = execute_upload(args)
-        logger.info(
-            f"\n[DONE] source={result['source']} Total: {result['total']}, Success: {result['success']}, Failed: {result['failed']}"
-        )
-        return 0 if result["failed"] == 0 else 1
-    except UploadCancelledError:
-        logger.warning("Upload cancelled")
-        return 1
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        return 1
-
-
 def execute_upload(
-    args: argparse.Namespace,
+    es: Elasticsearch,
+    index: str,
+    data_root: Optional[Path],
+    mona_url: Optional[str],
+    chunk_size: int = 500,
+    max_retries: int = 5,
+    use_hash_guard: bool = False,
     should_cancel: Optional[Callable[[], bool]] = None,
 ) -> UploadResult:
     """Upload documents to Elasticsearch and return summary details."""
-    data_root = Path(args.data_root)
-    use_api = bool(args.mona_base_url)
-    if not use_api and not data_root.exists():
-        raise FileNotFoundError(f"Data root not found: {data_root}")
-
-    # Connect to Elasticsearch
-    logger.info(f"Connecting to Elasticsearch: {args.es}")
-    es = create_es_client(args)
     try:
         # Check connection
+        logger.info(f"Connecting to Elasticsearch: {es}")
         if not es.ping():
             logger.error("Error: Cannot connect to Elasticsearch")
             return UploadResult(
@@ -131,25 +73,28 @@ def execute_upload(
             )
 
         logger.info("✓ Connected to Elasticsearch")
-        source_label = args.mona_base_url if use_api else str(data_root)
+        use_api = bool(mona_url)
+        source_label = mona_url if use_api else str(data_root)
         logger.info(f"Uploading documents from: {source_label}")
 
         if use_api:
             actions = list(
                 build_actions_from_mona_api(
-                    index=args.index,
-                    mona_base_url=args.mona_base_url,
-                    use_hash_guard=args.use_hash_guard,
+                    index=index,
+                    mona_url=mona_url,
+                    use_hash_guard=use_hash_guard,
                     should_cancel=should_cancel,
                 )
             )
             source = "mona-api"
         else:
+            if data_root is None or not data_root.exists():
+                raise FileNotFoundError(f"Data root not found: {data_root}")
             actions = list(
                 build_actions_from_local(
-                    index=args.index,
+                    index=index,
                     data_root=data_root,
-                    use_hash_guard=args.use_hash_guard,
+                    use_hash_guard=use_hash_guard,
                     should_cancel=should_cancel,
                 )
             )
@@ -159,8 +104,8 @@ def execute_upload(
         success, failed = bulk_upsert_with_retries(
             es,
             actions,
-            chunk_size=args.chunk_size,
-            max_retries=args.max_retries,
+            chunk_size=chunk_size,
+            max_retries=max_retries,
             initial_backoff=1.0,
             max_backoff=30.0,
             should_cancel=should_cancel,
@@ -206,8 +151,10 @@ def build_action(
     full_text: FullText,
     use_hash_guard: bool,
 ) -> Dict:
-    _doc = PatentDocEditor(full_text).to_es_model()
-    edited = _doc.model_dump(exclude_none=True)
+    _doc = normalize_document(full_text)
+    # _doc.model_dump() can't serialize _doc.law having type Law(Enum)
+    # So we convert to JSON and back to dict to ensure all fields are JSON-serializable.
+    edited = json.loads(_doc.model_dump_json(exclude_none=True))
     doc = strip_preserve_fields(edited)
 
     docid = doc["docId"]
@@ -264,9 +211,9 @@ def _load_json_url(base_url: str, endpoint: str) -> Any:
         return json.loads(response.read().decode("utf-8"))
 
 
-def load_document_json_from_mona(mona_base_url: str, doc_id: str) -> FullText:
+def load_document_json_from_mona(mona_url: str, doc_id: str) -> FullText:
     encoded_doc_id = quote(doc_id, safe="")
-    full_text = _load_json_url(mona_base_url, f"/{encoded_doc_id}/json/full-text")
+    full_text = _load_json_url(mona_url, f"/{encoded_doc_id}/json/full-text")
     return FullText(**full_text)
 
 
@@ -287,17 +234,18 @@ def build_actions_from_local(
             raise
         except Exception as e:
             logger.error(f"[ERROR] {full_text}: {e}")
+            logger.error(traceback.format_exc())
             continue
 
 
 def build_actions_from_mona_api(
     index: str,
-    mona_base_url: str,
+    mona_url: str,
     use_hash_guard: bool,
     should_cancel: Optional[Callable[[], bool]] = None,
 ) -> Iterable[Dict]:
     """Generate bulk update actions from mona REST API."""
-    id_list_payload = _load_json_url(mona_base_url, "/idList")
+    id_list_payload = _load_json_url(mona_url, "/idList")
     doc_ids = (
         json.loads(id_list_payload)
         if isinstance(id_list_payload, str)
@@ -310,7 +258,7 @@ def build_actions_from_mona_api(
         if should_cancel and should_cancel():
             raise UploadCancelledError("Upload was cancelled before completion")
         try:
-            full_text = load_document_json_from_mona(mona_base_url, str(doc_id))
+            full_text = load_document_json_from_mona(mona_url, str(doc_id))
             yield build_action(index, full_text, use_hash_guard)
 
         except Exception as e:

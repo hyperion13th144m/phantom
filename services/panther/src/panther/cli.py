@@ -1,117 +1,136 @@
-#!/usr/bin/env python3
-"""
-Panther main CLI - Manage Elasticsearch index and upload documents
-
-Usage:
-    python main.py create-index --index <name> --mapping <file>
-    python main.py upload --index <name> --data-root <path>
-    python main.py upload-extra --index <name> --sqlite-db <file>
-"""
-
 import argparse
 import logging
-import logging.handlers
 import os
+import re
 import sys
 from pathlib import Path
 
-from panther.create_index import add_args as add_create_index_args
-from panther.restore_metadata_to_es import add_args as add_restore_metadata_args
-from panther.upload_documents import add_args as add_upload_args
+import uvicorn
+
+from panther.es_client import create_es_client
+from panther.logger import setup_logging
+from panther.upload_documents import execute_upload
 
 
-def setup_logging():
-    """Configure logging with rotating file handler."""
-    log_dir = Path("/var/log/panther")
-    log_file = log_dir / "panther.log"
-
-    # Create log directory if it doesn't exist
-    log_dir.mkdir(parents=True, exist_ok=True)
-
-    # Set up the root logger
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    # Create rotating file handler (1MB max, keep 10 backup files)
-    file_handler = logging.handlers.RotatingFileHandler(
-        log_file, maxBytes=1024 * 1024, backupCount=10, encoding="utf-8"
-    )
-    file_handler.setLevel(logging.INFO)
-
-    # Create console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-
-    # Create formatter
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    file_handler.setFormatter(formatter)
-    console_handler.setFormatter(formatter)
-
-    # Add handlers to logger
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-
-    logger.info("Logging initialized")
-
-
-def add_common_arguments(parser: argparse.ArgumentParser):
+def get_args():
     """Add common Elasticsearch connection arguments."""
-    parser.add_argument(
-        "--es",
-        default=os.getenv("ES_URL", "http://localhost:9200"),
-        help="Elasticsearch URL (default: $ES_URL or http://localhost:9200)",
-    )
-    parser.add_argument(
-        "--api-key",
-        default=os.getenv("ES_API_KEY"),
-        help="Elastic API key (default: $ES_API_KEY)",
-    )
-    parser.add_argument(
-        "--user",
-        default=os.getenv("ES_USER"),
-        help="Basic auth username (default: $ES_USER)",
-    )
-    parser.add_argument(
-        "--password",
-        default=os.getenv("ES_PASSWORD"),
-        help="Basic auth password (default: $ES_PASSWORD)",
-    )
-    parser.add_argument(
-        "--index",
-        default=os.getenv("ES_INDEX"),
-        help="Elasticsearch index name",
-    )
-
-
-def main():
-    """Main entry point with subcommands."""
-    # Set up logging before anything else
-    setup_logging()
-
     parser = argparse.ArgumentParser(
         description="Panther CLI - Elasticsearch index management and document upload",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    add_common_arguments(parser)
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
-    add_create_index_args(subparsers)
-    add_upload_args(subparsers)
-    add_restore_metadata_args(subparsers)
-    args = parser.parse_args()
+    parser.add_argument(
+        "--es",
+        default=os.environ.get("ES_URL", "http://localhost:9200"),
+        help="Elasticsearch URL",
+    )
+    parser.add_argument(
+        "--api-key",
+        default=os.environ.get("ES_API_KEY"),
+        help="Elastic API key",
+    )
+    parser.add_argument(
+        "--user",
+        default=os.environ.get("ES_USER"),
+        help="Basic auth username",
+    )
+    parser.add_argument(
+        "--password",
+        default=os.environ.get("ES_PASSWORD"),
+        help="Basic auth password",
+    )
+    parser.add_argument(
+        "--index",
+        default=os.environ.get("ES_INDEX", "patent-documents"),
+        help="Elasticsearch index name",
+    )
+    parser.add_argument(
+        "-l",
+        "--log-level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Logging level (default: INFO)",
+    )
+    parser.add_argument(
+        "-d",
+        "--log_dir",
+        default="/var/log/panther",
+        help="Directory to store log files (default: /var/log/panther)",
+    )
+    parser.add_argument(
+        "--data-root",
+        help="Root directory containing full-text.json files",
+    )
+    parser.add_argument(
+        "--mona-url",
+        help="Base URL of mona API server, e.g. http://localhost:8000",
+    )
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=500,
+        help="Bulk chunk size (default: 500)",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=5,
+        help="Max retry attempts for transient failures (default: 5)",
+    )
+    parser.add_argument(
+        "--use-hash-guard",
+        action="store_true",
+        default=False,
+        help="Skip updates if ingest_hash unchanged",
+    )
+    return parser.parse_args()
 
-    # Show help if no command specified
-    if not args.command:
-        parser.print_help()
-        return 1
 
-    if hasattr(args, "func"):
-        return args.func(args)
+def main():
+    args = get_args()
+    setup_logging(log_level=args.log_level, log_dir=args.log_dir)  # type: ignore
+    logger = logging.getLogger(__name__)
+    logger.info("Starting Panther CLI with arguments: %s", args)
+
+    if args.data_root:
+        if args.mona_url:
+            logger.warning(
+                "Both --data-root and --mona-url provided. args.data_root is used."
+            )
+        mona_url = None
+        data_root = Path(args.data_root)
+    elif args.mona_url:
+        mona_url = args.mona_url
+        data_root = None
     else:
-        parser.print_help()
+        logger.error("Either --data-root or --mona-url must be provided.")
         return 1
+
+    if data_root and not data_root.is_dir():
+        logger.error("Data root directory does not exist: %s", data_root)
+        return 1
+
+    if mona_url and re.match(r"^https?://", mona_url) is None:
+        logger.error("Invalid Mona base URL: %s", mona_url)
+        return 1
+
+    logger.info("execute upload in cli mode.")
+    es_client = create_es_client(
+        api_key=args.api_key,
+        user=args.user,
+        password=args.password,
+        es_url=args.es,
+    )
+    results = execute_upload(
+        es_client,
+        args.index,
+        data_root if data_root else None,
+        mona_url,
+        chunk_size=args.chunk_size,
+        max_retries=args.max_retries,
+        use_hash_guard=args.use_hash_guard,
+    )
+    logger.info("Upload completed with results: %s", results)
+    return 0
 
 
 if __name__ == "__main__":

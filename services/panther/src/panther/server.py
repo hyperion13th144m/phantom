@@ -1,30 +1,24 @@
-import argparse
 import logging
 import os
+import re
+import sys
 import threading
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Literal
 
+from elasticsearch import Elasticsearch
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
+from panther.es_client import create_es_client
+from panther.logger import setup_logging
 from panther.upload_documents import UploadCancelledError, execute_upload
-
-logger = logging.getLogger(__name__)
 
 
 class JobRequest(BaseModel):
-    index: str = Field(default_factory=lambda: os.getenv("ES_INDEX", ""))
-    mona_base_url: str = Field(
-        default_factory=lambda: os.getenv("MONA_BASE_URL", "http://localhost:8000")
-    )
-    es: str = Field(
-        default_factory=lambda: os.getenv("ES_URL", "http://localhost:9200")
-    )
-    api_key: str | None = Field(default_factory=lambda: os.getenv("ES_API_KEY"))
-    user: str | None = Field(default_factory=lambda: os.getenv("ES_USER"))
-    password: str | None = Field(default_factory=lambda: os.getenv("ES_PASSWORD"))
+    id_list: list[str] | None = None
     chunk_size: int = 500
     max_retries: int = 5
     use_hash_guard: bool = False
@@ -47,11 +41,21 @@ def utc_now_iso() -> str:
 
 
 class JobManager:
-    def __init__(self):
+    def __init__(
+        self,
+        es: Elasticsearch,
+        index: str,
+        mona_url: str | None = None,
+        data_root: str | None = None,
+    ):
         self._lock = threading.Lock()
         self._jobs: dict[str, JobStatus] = {}
         self._cancel_events: dict[str, threading.Event] = {}
         self._running_job_id: str | None = None
+        self._es = es
+        self._index = index
+        self._mona_url = mona_url
+        self._data_root = data_root
 
     def start_job(self, request: JobRequest) -> JobStatus:
         with self._lock:
@@ -60,7 +64,7 @@ class JobManager:
                     status_code=409, detail="Another job is already running"
                 )
 
-            if not request.index:
+            if not self._index:
                 raise HTTPException(status_code=400, detail="index is required")
 
             job_id = str(uuid.uuid4())
@@ -82,19 +86,16 @@ class JobManager:
         self, job_id: str, request: JobRequest, cancel_event: threading.Event
     ) -> None:
         try:
-            args = argparse.Namespace(
-                data_root="data",
-                mona_base_url=request.mona_base_url,
-                index=request.index,
+            result = execute_upload(
+                es=self._es,
+                index=self._index,
+                data_root=Path(self._data_root) if self._data_root else None,
+                mona_url=self._mona_url,
                 chunk_size=request.chunk_size,
                 max_retries=request.max_retries,
                 use_hash_guard=request.use_hash_guard,
-                es=request.es,
-                api_key=request.api_key,
-                user=request.user,
-                password=request.password,
+                should_cancel=cancel_event.is_set,
             )
-            result = execute_upload(args, should_cancel=cancel_event.is_set)
             new_status = JobStatus(
                 job_id=job_id,
                 status="completed",
@@ -168,7 +169,56 @@ class JobManager:
             return status
 
 
-job_manager = JobManager()
+# build logger
+log_dir = os.environ.get("LOG_DIR", "/var/log/panther")
+log_level = os.environ.get("LOG_LEVEL", "INFO")
+setup_logging(log_level=log_level, log_dir=log_dir)  # type: ignore
+logger = logging.getLogger(__name__)
+
+# build es_client from environment variables
+es_url = os.environ.get("ES_URL", "http://localhost:9200")
+api_key = os.environ.get("ES_API_KEY", "")
+es_user = os.environ.get("ES_USER", "")
+es_password = os.environ.get("ES_PASSWORD", "")
+es_client = create_es_client(
+    api_key=api_key,
+    user=es_user,
+    password=es_password,
+    es_url=es_url,
+)
+
+# data source
+mona_url = os.environ.get("MONA_URL", None)
+data_root = os.environ.get("DATA_ROOT", None)
+if data_root:
+    if mona_url:
+        logger.warning(
+            "Both MONA_URL and DATA_ROOT provided. DATA_ROOT is used. MONA_URL is ignored."
+        )
+        mona_url = None
+    if not Path(data_root).is_dir():
+        logger.error("Data root directory does not exist: %s", data_root)
+        sys.exit(1)
+elif mona_url:
+    data_root = None
+    if re.match(r"^https?://", mona_url) is None:
+        logger.error("Invalid Mona base URL: %s", mona_url)
+        sys.exit(1)
+else:
+    logger.error("Either MONA_URL or DATA_ROOT must be provided.")
+    sys.exit(1)
+
+
+# build other configs from environment variables
+index = os.environ.get("ES_INDEX", "patent-documents")
+
+
+job_manager = JobManager(
+    es=es_client,
+    index=index,
+    mona_url=mona_url,
+    data_root=data_root,
+)
 app = FastAPI(title="panther API", version="0.1.0")
 
 

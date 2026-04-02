@@ -22,13 +22,3 @@ for dst in "${DST_DIR[@]}"; do
 
     cp "$SRC_DIR"/*.py "$dst"/
 done
-
-
-# ============================
-# Generate mapping file for elasticsearch and copy to destination directories.
-# ============================
-SCHEMA="$PROJECT_ROOT/generated/json-schema/full-text.json"
-CONFIG="$PROJECT_ROOT/scripts/mapping-config.json"
-OUTPUT="/panther-models/document-mapping.json"
-uv run python $PROJECT_ROOT/scripts/generate_mapping.py \
-   --schema "$SCHEMA" --config "$CONFIG" --output "$OUTPUT"
