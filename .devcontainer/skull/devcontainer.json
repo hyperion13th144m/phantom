@@ -29,14 +29,10 @@
     // Configure tool-specific properties.
     // "customizations": {},
     // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-    "remoteUser": "pyuser",
+    "remoteUser": "node",
     "customizations": {
         "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "be5invis.toml",
-                "charliermarsh.ruff"
-            ]
+            "extensions": []
         }
     }
 }

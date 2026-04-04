@@ -1,18 +1,32 @@
-FROM python:3.14-slim
+FROM node:24-slim AS deps
 
-ARG USERNAME=pyuser
-ARG GROUPNAME=pygroup
-ARG UID=1000
-ARG GID=1000
-ENV TZ=Asia/Tokyo
-
-RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
-RUN pip install uv
-RUN mkdir /var/log/skull && chown $USERNAME:$GROUPNAME /var/log/skull
-
-USER $USERNAME
+ENV NODE_ENV=production
 WORKDIR /app
-COPY --chown=$USERNAME:$GROUPNAME . /app
-RUN uv sync --no-cache --frozen
-ENTRYPOINT [ "uv", "run" ]
-CMD [ "uvicorn", "skull.server:app", "--host", "0.0.0.0", "--port", "8000" ]
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+
+FROM node:24-slim AS builder
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN yarn build
+
+
+FROM node:24-slim AS runner
+#ENV NODE_ENV=production
+ENV LANG=ja_JP.UTF-8
+ENV TZ=Asia/Tokyo
+ARG USERNAME=node
+ARG GROUPNAME=node
+RUN mkdir /var/log/joker && chown $USERNAME:$GROUPNAME /var/log/joker
+USER node
+WORKDIR /app
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/.next/standalone ./
+EXPOSE 3000
+CMD  [ "node", "server.js" ]
+
+

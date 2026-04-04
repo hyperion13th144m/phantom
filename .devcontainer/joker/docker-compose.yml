@@ -1,5 +1,8 @@
 services:
   joker-dev:
+    build:
+      context: services/skull
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
     tty: true

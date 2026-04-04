@@ -41,15 +41,6 @@ const Header: React.FC = () => {
                                 </h1>
                             )}
                         </div>
-                        <div className="header-metadata-editor">
-                            {pathname === "/metadata" ? (
-                                <h1 className="border-b-2">メタデータ編集</h1>
-                            ) : (
-                                <h1>
-                                    <Link className="hover:underline hover:text-blue-600" href="/metadata">メタデータ編集</Link>
-                                </h1>
-                            )}
-                        </div>
                     </div>
                 </div>
             </nav>

@@ -1,5 +1,8 @@
 services:
   skull-dev:
+    build:
+      context: services/skull
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
     tty: true
