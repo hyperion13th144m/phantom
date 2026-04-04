@@ -1,85 +1,43 @@
-<html>
+<!doctype html>
+<html lang="ja">
 
 <head>
-    <title>Navi Dashboard</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <meta charset="utf-8">
+    <title>Navi 管理画面</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; line-height: 1.5; }
+        h1, h2 { margin-bottom: 0.5rem; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }
+        code { background: #f4f4f4; padding: 0.1rem 0.4rem; border-radius: 4px; }
+    </style>
 </head>
 
 <body>
-    <h1>Navi Dashboard</h1>
-    <hr />
-    <div>
-        <a href="/jobs/start">Start New Job</a>
-    </div>
+    <h1>Navi 管理画面（雛形）</h1>
+    <p>この画面では、管理対象プロジェクトのジョブ起動設定を行います。実際の REST API 呼び出しはまだ実装していません。</p>
 
-    <h2>Latest job status</h2>
-    <div>
-        {% if status %}
-        <h3>request parameters</h3>
-        <ul>
-            <li>Overwrite: {{ status.request.overwrite }}</li>
-            <li>Max files: {{ status.request.max_files }}</li>
-            <li>Doc ID: {{ status.request.doc_id }}</li>
-            <li>Doc Codes: {{ status.request.doc_codes | join(", ") }}</li>
-        </ul>
-
-        <h3>status</h3>
-        <table>
-            <tr>
-                <th>Job ID</th>
-                <th>Status</th>
-                <th>Started At</th>
-                <th>Finished At</th>
-                <th>Total Processed Files</th>
-                <th>Number of Successful Files</th>
-                <th>Number of Failed Files</th>
-                <th>Number of Skipped Files</th>
-            </tr>
-            <tr>
-                <td>{{ status.job_id }}</td>
-                <td>{{ status.status }}</td>
-                <td>{{ status.started_at }}</td>
-                <td>{{ status.finished_at }}</td>
-                <td>{{ status.total }}</td>
-                <td>{{ status.success_files | length }}</td>
-                <td>{{ status.failed_files | length }}</td>
-                <td>{{ status.skipped_files | length }}</td>
-            </tr>
-        </table>
-        {% if status.status == "running" %}
-        <div>processing file: {{ status.current_file }}</div>
-        <div>
-            <a href="/jobs/stop">Stop Job</a>
-        </div>
-        {% endif %}
-
-        {% else %}
-        No current job status available.
-        {% endif %}
-    </div>
-    <h2>Recent Jobs</h2>
-    <table>
-        <tr>
-            <th>Job ID</th>
-            <th>Status</th>
-            <th>Started At</th>
-            <th>Finished At</th>
-            <th>Doc ID</th>
-            <th>Doc Codes</th>
-        </tr>
-        {% for job in recent_jobs %}
-        <tr>
-            <!--
-            <td>{{ job.job_id }}</td>
-            <td>{{ job.status }}</td>
-            <td>{{ job.started_at }}</td>
-            <td>{{ job.finished_at }}</td>
-            <td>{{ job.doc_id }}</td>
-            <td>{{ job.doc_codes | join(", ") }}</td>
-            -->
-        </tr>
+    <h2>管理対象プロジェクト</h2>
+    <div class="cards">
+        {% for project in projects %}
+        <section class="card">
+            <h3>{{ project.name }}</h3>
+            <p>{{ project.description }}</p>
+            <p><a href="/jobs/{{ project.key }}/new">{{ project.name }} のジョブ作成へ</a></p>
+        </section>
         {% endfor %}
-    </table>
+    </div>
+
+    <h2>用意済みジョブテンプレート</h2>
+    <ul>
+        {% for template in job_templates %}
+        <li>
+            <strong>{{ template.project_key }}</strong> / {{ template.job_type.value }}:
+            {{ template.summary }}
+            (<code>{{ template.service_name }}</code> の <code>{{ template.endpoint }}</code>)
+        </li>
+        {% endfor %}
+    </ul>
 </body>
 
 </html>
