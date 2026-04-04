@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>{{ project.name }} ジョブ作成</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; line-height: 1.5; }
+        .panel { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+        input, textarea, select { width: 100%; margin-top: 0.4rem; margin-bottom: 0.9rem; padding: 0.4rem; }
+        button { padding: 0.5rem 1rem; }
+    </style>
+</head>
+
+<body>
+    <h1>{{ project.name }} ジョブ作成（雛形）</h1>
+    <p><a href="/">← ダッシュボードへ戻る</a></p>
+
+    <div class="panel">
+        <h2>想定ジョブ</h2>
+        <ul>
+            {% for template in templates %}
+            <li>{{ template.job_type.value }}: {{ template.summary }}（{{ template.endpoint }}）</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="panel">
+        <h2>起動リクエスト入力（未接続）</h2>
+        <form>
+            <label>ジョブ名</label>
+            <input type="text" placeholder="例: nightly-crawl" disabled>
+
+            <label>対象ドキュメントID</label>
+            <input type="text" placeholder="例: JP-2026-000001" disabled>
+
+            <label>オプション(JSON)</label>
+            <textarea rows="7" placeholder='{"overwrite": false, "max_files": 100}' disabled></textarea>
+
+            <button type="button" disabled>ジョブ起動（未実装）</button>
+        </form>
+    </div>
+</body>
+
+</html>
