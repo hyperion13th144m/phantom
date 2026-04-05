@@ -160,55 +160,57 @@ class JobManager:
             raise HTTPException(status_code=404, detail="Log file not found.") from exc
 
 
-def create_app() -> FastAPI:
-    # default は docker コンテナ起動でbind される先のディレクトリ
-    src_dir = os.environ.get("SRC_DIR", "/src-dir")
-    dst_dir = os.environ.get("DST_DIR", "/data-dir")
-    log_dir = os.environ.get("LOG_DIR", "/var/log/crow")
-    log_level = os.environ.get("LOG_LEVEL", "INFO")
+# default は docker コンテナ起動でbind される先のディレクトリ
+src_dir = os.environ.get("SRC_DIR", "/src-dir")
+dst_dir = os.environ.get("DST_DIR", "/data-dir")
+log_dir = os.environ.get("LOG_DIR", "/var/log/crow")
+log_level = os.environ.get("LOG_LEVEL", "INFO")
 
-    app = FastAPI(title="crow API", version="0.1.0")
-    setup_api_logger(log_dir, log_level)
+app = FastAPI(title="crow API", version="0.1.0")
+setup_api_logger(log_dir, log_level)
 
-    job_manager = JobManager(src_dir, dst_dir, log_dir, log_level)
-
-    @app.get("/jobs/history", response_model=list[str])
-    def list_jobs() -> list[str]:
-        return job_manager.list_jobs()
-
-    @app.post("/jobs", response_model=JobResponse)
-    def start_jobs(request: JobRequest) -> JobResponse:
-        return job_manager.start_job(request)
-
-    @app.get(
-        "/jobs/status",
-        response_model=JobStateModel,
-        description="Get the status of the current job",
-    )
-    def get_job_status() -> JobStateModel:
-        return job_manager.get_current_job()
-
-    @app.post("/jobs/cancel", response_model=JobResponse)
-    def cancel_job() -> JobResponse:
-        return job_manager.cancel_current_job()
-
-    @app.get(
-        "/jobs/{job_id}/log",
-        description="Get the log of a completed job",
-        response_model=JobStateModel,
-    )
-    def get_job_log(job_id: str) -> JSONResponse:
-        content = job_manager.get_job_log(job_id)
-        return JSONResponse(content=content)
-
-    @app.get("/jobs/doc-codes", response_model=list[DocCodeCategory])
-    def get_doc_codes() -> dict[str, list[Any]]:
-        return {
-            "doc_codes_definitions": doc_code_config.dump(),
-            "available_doc_codes": doc_code_config.get_available_codes(),
-        }
-
-    return app
+job_manager = JobManager(src_dir, dst_dir, log_dir, log_level)
 
 
-app = create_app()
+@app.get("/jobs/history", response_model=list[str])
+def list_jobs() -> list[str]:
+    return job_manager.list_jobs()
+
+
+@app.post("/jobs", response_model=JobResponse)
+def start_jobs(request: JobRequest) -> JobResponse:
+    return job_manager.start_job(request)
+
+
+@app.get(
+    "/jobs/status",
+    response_model=JobStateModel,
+    description="Get the status of the current job",
+)
+def get_job_status() -> JobStateModel:
+    return job_manager.get_current_job()
+
+
+@app.post("/jobs/cancel", response_model=JobResponse)
+def cancel_job() -> JobResponse:
+    return job_manager.cancel_current_job()
+
+
+@app.get(
+    "/jobs/{job_id}/log",
+    description="Get the log of a completed job",
+    response_model=JobStateModel,
+)
+def get_job_log(job_id: str) -> JSONResponse:
+    content = job_manager.get_job_log(job_id)
+    return JSONResponse(content=content)
+
+
+@app.get("/jobs/available-codes", response_model=list[str])
+def get_doc_codes() -> list[str]:
+    return doc_code_config.get_available_codes()
+
+
+@app.get("/jobs/codes-description", response_model=list[DocCodeCategory])
+def get_doc_codes_description() -> list[DocCodeCategory]:
+    return doc_code_config.config

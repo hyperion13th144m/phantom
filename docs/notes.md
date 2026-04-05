@@ -96,7 +96,7 @@ block-beta
   Mona -- "4" --> Joker
 
   %% Panther
-  Panther -- "upload full-text\nrestore extra-data" --> Elasticsearch
+  Panther -- "upload full-text" --> Elasticsearch
 
   %% Noir
   LLM -- "embeddings" --> Noir

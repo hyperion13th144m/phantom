@@ -35,7 +35,8 @@
             "extensions": [
                 "ms-python.python",
                 "be5invis.toml",
-                "charliermarsh.ruff"
+                "charliermarsh.ruff",
+                "openai.chatgpt"
             ]
         }
     }

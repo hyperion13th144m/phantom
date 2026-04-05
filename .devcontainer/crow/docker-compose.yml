@@ -1,5 +1,8 @@
 services:
   crow-dev:
+    build:
+      context: services/navi
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
     tty: true

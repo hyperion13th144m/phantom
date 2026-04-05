@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from libefiling.image.params import ImageAttribute, ImageConvertParam
 from pydantic import BaseModel
@@ -121,6 +121,33 @@ _code_config: List[DocCodeCategory] = [
     # DocCode.A1621 #出願審査請求書
     # DocCode.A2623 #実用新案技術評価請求書
     # DocCode.A2624 #実用新案技術評価請求書（他人）
+    DocCodeCategory(
+        category=Category.ALL,
+        description="すべて",
+        codes={
+            DocCode.A101: "特許査定",
+            DocCode.A102: "拒絶査定",
+            DocCode.A1131: "拒絶理由通知書",
+            DocCode.A1191: "補正却下の決定",
+            DocCode.A130: "引用非特許文献",
+            DocCode.A163: "特許願",
+            DocCode.A263: "実用新案登録願",
+            DocCode.A1631: "翻訳文提出書",
+            DocCode.A1632: "国内書面",
+            DocCode.A1634: "国際出願翻訳文提出書",
+            DocCode.A151: "手続補正書（方式）| 手続補正書",
+            DocCode.A1523: "手続補正書 特許",
+            DocCode.A2523: "手続補正書 実案",
+            DocCode.A1529: "特許協力条約第３４条補正の翻訳文提出書",
+            DocCode.A1527: "特許協力条約第１９条補正の写し提出書",
+            DocCode.A15211: "特許協力条約第３４条補正の写し提出書",
+            DocCode.A153: "意見書",
+            DocCode.A1781: "上申書",
+            DocCode.A1871: "早期審査に関する事情説明書",
+            DocCode.A1872: "早期審査に関する事情説明補充書",
+            DocCode.A2242623: "実用新案技術評価の通知",
+        },
+    ),
 ]
 
 
@@ -138,7 +165,8 @@ class DocCodeConfig:
         return [category.category.value for category in self._config]
 
     def get_available_codes(self) -> List[str]:
-        return self.get_all_codes() + self.get_all_categories()
+        s = set(self.get_all_codes() + self.get_all_categories())
+        return sorted(list(s))
 
     def get_codes_by_category(self, category_name: str) -> List[str]:
         category = next(
@@ -160,15 +188,9 @@ class DocCodeConfig:
         print(", ".join(self.get_all_categories()))
         print(", ".join(self.get_all_codes()))
 
-    def dump(self) -> List[Dict[str, str | Dict[str, str]]]:
-        return [
-            {
-                "category": conf.category.value,
-                "description": conf.description,
-                "codes": {code.value: desc for code, desc in conf.codes.items()},
-            }
-            for conf in self._config
-        ]
+    @property
+    def config(self) -> List[DocCodeCategory]:
+        return self._config
 
     def get_codes(self, codes: List[str]) -> List[str]:
         results = set()

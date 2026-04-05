@@ -20,7 +20,7 @@ JOB_TEMPLATES: tuple[JobTemplate, ...] = (
         project_key="crow",
         job_type=JobType.CRAWL,
         service_name="crow",
-        endpoint="POST /jobs/start",
+        endpoint="POST /jobs",
         summary="クローリングジョブを開始する。",
     ),
     JobTemplate(
