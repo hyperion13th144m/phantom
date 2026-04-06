@@ -1,3 +1,4 @@
 .env
 panther/src/panther/models/generated
 var/data/test-data/
+api

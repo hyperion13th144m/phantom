@@ -15,7 +15,7 @@ class CrowConfig:
 
 
 def get_crow_config() -> CrowConfig:
-    base_url = os.getenv("CROW_BASE_URL", "http://crow-dev:8000").rstrip("/")
+    base_url = os.getenv("CROW_URL", "http://crow-dev:8000").rstrip("/")
     return CrowConfig(base_url=base_url)
 
 

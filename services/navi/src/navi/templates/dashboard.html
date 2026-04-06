@@ -25,6 +25,8 @@
             <p>{{ project.description }}</p>
             {% if project.key == "crow" %}
             <p><a href="/crow">Crow の管理画面へ</a></p>
+            {% elif project.key == "panther" %}
+            <p><a href="/panther">Panther の管理画面へ</a></p>
             {% else %}
             <p><a href="/jobs/{{ project.key }}/new">{{ project.name }} のジョブ作成へ</a></p>
             {% endif %}

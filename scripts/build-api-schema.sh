@@ -11,10 +11,14 @@ PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
 BUILD="${1:-ALL}"
 ALL_TARGET=(
   "crow"
+  "panther"
+  "mona"
 )
 
 declare -A SRC_DIR=(
   ["crow"]="$PROJECT_ROOT/services/crow"
+  ["panther"]="$PROJECT_ROOT/services/panther"
+  ["mona"]="$PROJECT_ROOT/services/mona"
 )
 
 if [ "$BUILD" = "ALL" ]; then
@@ -31,11 +35,13 @@ for target in "${TARGET[@]}"; do
   
   echo "Generating OpenAPI schema for $target..."
   env LOG_DIR=/tmp uv run python - <<PY
+import importlib.metadata
+version = importlib.metadata.version(__package__)
 from $target.server import app
 import json
 from pathlib import Path
 schema = app.openapi()
-Path("$OPENAPI_FILE").write_text(json.dumps(schema, indent=2))
+Path(f"$OPENAPI_FILE-{version}").write_text(json.dumps(schema, indent=2))
 PY
 
   popd > /dev/null 

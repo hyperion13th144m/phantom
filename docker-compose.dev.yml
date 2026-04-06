@@ -37,6 +37,8 @@ services:
       context: services/navi
       dockerfile: Dockerfile
     environment:
+      CROW_URL: http://crow-dev:8000
+      PANTHER_URL: http://panther-dev:8000
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
     volumes:

@@ -1,13 +1,46 @@
 import argparse
 import logging
 import os
-import re
 import sys
 from pathlib import Path
+from typing import Sequence
 
 from panther.es_client import create_es_client
 from panther.logger import setup_logging
-from panther.upload_documents import execute_upload
+from panther.document_source import create_document_source
+from panther.upload_documents import execute_upload, format_upload_result_summary
+
+
+def load_id_list_file(path: str) -> list[str]:
+    ids: list[str] = []
+    for raw_line in Path(path).read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        ids.append(line)
+    return ids
+
+
+def collect_requested_ids(
+    explicit_ids: Sequence[str] | None,
+    id_list_file: str | None,
+) -> list[str] | None:
+    requested_ids: list[str] = []
+    if explicit_ids:
+        requested_ids.extend(str(doc_id).strip() for doc_id in explicit_ids if str(doc_id).strip())
+    if id_list_file:
+        requested_ids.extend(load_id_list_file(id_list_file))
+    if not requested_ids:
+        return None
+
+    deduped_ids: list[str] = []
+    seen: set[str] = set()
+    for doc_id in requested_ids:
+        if doc_id in seen:
+            continue
+        seen.add(doc_id)
+        deduped_ids.append(doc_id)
+    return deduped_ids
 
 
 def get_args():
@@ -80,6 +113,17 @@ def get_args():
         default=False,
         help="Skip updates if ingest_hash unchanged",
     )
+    parser.add_argument(
+        "--id",
+        dest="id_list",
+        action="append",
+        default=None,
+        help="Upload only the specified document id. Repeat to add multiple ids.",
+    )
+    parser.add_argument(
+        "--id-list-file",
+        help="Path to a UTF-8 text file containing one document id per line.",
+    )
     return parser.parse_args()
 
 
@@ -89,26 +133,19 @@ def main():
     logger = logging.getLogger(__name__)
     logger.info("Starting Panther CLI with arguments: %s", args)
 
-    if args.data_root:
-        if args.mona_url:
-            logger.warning(
-                "Both --data-root and --mona-url provided. args.data_root is used."
-            )
-        mona_url = None
-        data_root = Path(args.data_root)
-    elif args.mona_url:
-        mona_url = args.mona_url
-        data_root = None
-    else:
-        logger.error("Either --data-root or --mona-url must be provided.")
+    try:
+        source = create_document_source(
+            data_root=Path(args.data_root) if args.data_root else None,
+            mona_url=args.mona_url,
+        )
+    except (ValueError, FileNotFoundError) as exc:
+        logger.error(str(exc))
         return 1
 
-    if data_root and not data_root.is_dir():
-        logger.error("Data root directory does not exist: %s", data_root)
-        return 1
-
-    if mona_url and re.match(r"^https?://", mona_url) is None:
-        logger.error("Invalid Mona base URL: %s", mona_url)
+    try:
+        requested_ids = collect_requested_ids(args.id_list, args.id_list_file)
+    except FileNotFoundError as exc:
+        logger.error("ID list file not found: %s", exc.filename or exc)
         return 1
 
     logger.info("execute upload in cli mode.")
@@ -121,13 +158,17 @@ def main():
     results = execute_upload(
         es_client,
         args.index,
-        data_root if data_root else None,
-        mona_url,
+        source=source,
         chunk_size=args.chunk_size,
         max_retries=args.max_retries,
         use_hash_guard=args.use_hash_guard,
+        id_list=requested_ids,
     )
-    logger.info("Upload completed with results: %s", results)
+    logger.info(format_upload_result_summary(results))
+    if results.requested_ids is not None:
+        logger.info("Requested document ids: %s", results.requested_ids)
+    if results.missing_ids:
+        logger.warning("Missing document ids: %s", results.missing_ids)
     return 0
 
 

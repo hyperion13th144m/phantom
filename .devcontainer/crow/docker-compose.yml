@@ -1,7 +1,7 @@
 services:
   crow-dev:
     build:
-      context: services/navi
+      context: services/crow
       dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached

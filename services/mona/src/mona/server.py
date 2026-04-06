@@ -18,13 +18,31 @@ from mona.models.generated.images_information import ImagesInformation
 def create_app(data_dir: Path) -> FastAPI:
     app = FastAPI(title="mona API", version="0.1.0")
 
-    dir_map = get_docid_dict(data_dir)
-    logger.info(f"Loaded {len(dir_map)} documents from {data_dir}")
+    dir_map: Dict[str, str] = {}
+
+    def reload_dir_map() -> int:
+        refreshed = get_docid_dict(data_dir)
+        dir_map.clear()
+        dir_map.update(refreshed)
+        logger.info(f"Loaded {len(dir_map)} documents from {data_dir}")
+        return len(dir_map)
+
+    reload_dir_map()
 
     @app.get("/documents/idList", response_model=list[str])
     async def get_documents_id_list() -> JSONResponse:
         keys = list(dir_map.keys())
         return JSONResponse(json.dumps(keys))
+
+    @app.post("/documents/reloads")
+    async def reload_documents() -> JSONResponse:
+        count = reload_dir_map()
+        return JSONResponse(
+            content={
+                "message": "Document index reloaded",
+                "count": count,
+            }
+        )
 
     @app.get(
         "/documents/{doc_id}/json/content",

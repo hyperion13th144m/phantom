@@ -2,7 +2,7 @@
 """
 Bulk upsert documents into Elasticsearch from:
   local: root/<docid>/full-text.json
-  mona API: GET /{docid}/json/full-text
+  mona API: GET /documents/{docid}/json/full-text
 
 - Use _id = docid
 - Preserve user-added fields in ES (assignee/tags) by NOT sending them in updates
@@ -14,158 +14,140 @@ import hashlib
 import json
 import logging
 import time
-import traceback
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-)
-from urllib.parse import quote, urljoin
-from urllib.request import urlopen
+from typing import TYPE_CHECKING, Literal, TypedDict
 
 from elasticsearch import Elasticsearch, helpers
 
 from panther.models.generated.full_text import FullText
 from panther.normalizer import normalize_document
 
+if TYPE_CHECKING:
+    from panther.document_source import DocumentSource
+
 logger = logging.getLogger(__name__)
 
-PRESERVE_FIELDS = {"assignees", "tags", "extraNumbers"}  # user-managed fields in ES
+PRESERVE_FIELDS = {"assignees", "tags", "extraNumbers"}
+ProgressCallback = Callable[["UploadProgress"], None]
+BulkProgressCallback = Callable[[int, int], None]
 
 
 class UploadCancelledError(Exception):
     """Raised when a running upload has been cancelled."""
 
 
-class UploadResult(Dict[str, int | str]):
-    pass
+class DocumentPayload(TypedDict, total=False):
+    docId: str
+    ingest_hash: str
+    ingested_at: str
 
 
-def execute_upload(
-    es: Elasticsearch,
-    index: str,
-    data_root: Optional[Path],
-    mona_url: Optional[str],
-    chunk_size: int = 500,
-    max_retries: int = 5,
-    use_hash_guard: bool = False,
-    should_cancel: Optional[Callable[[], bool]] = None,
-) -> UploadResult:
-    """Upload documents to Elasticsearch and return summary details."""
-    try:
-        # Check connection
-        logger.info(f"Connecting to Elasticsearch: {es}")
-        if not es.ping():
-            logger.error("Error: Cannot connect to Elasticsearch")
-            return UploadResult(
-                {
-                    "source": "none",
-                    "total": 0,
-                    "success": 0,
-                    "failed": 1,
-                }
-            )
+class ScriptSpec(TypedDict):
+    lang: str
+    source: str
+    params: dict[str, object]
 
-        logger.info("✓ Connected to Elasticsearch")
-        use_api = bool(mona_url)
-        source_label = mona_url if use_api else str(data_root)
-        logger.info(f"Uploading documents from: {source_label}")
 
-        if use_api:
-            actions = list(
-                build_actions_from_mona_api(
-                    index=index,
-                    mona_url=mona_url,
-                    use_hash_guard=use_hash_guard,
-                    should_cancel=should_cancel,
-                )
-            )
-            source = "mona-api"
-        else:
-            if data_root is None or not data_root.exists():
-                raise FileNotFoundError(f"Data root not found: {data_root}")
-            actions = list(
-                build_actions_from_local(
-                    index=index,
-                    data_root=data_root,
-                    use_hash_guard=use_hash_guard,
-                    should_cancel=should_cancel,
-                )
-            )
-            source = "local"
+class BaseBulkAction(TypedDict):
+    _op_type: Literal["update"]
+    _index: str
+    _id: str
+    retry_on_conflict: int
 
-        # Bulk upsert with retries
-        success, failed = bulk_upsert_with_retries(
-            es,
-            actions,
-            chunk_size=chunk_size,
-            max_retries=max_retries,
-            initial_backoff=1.0,
-            max_backoff=30.0,
-            should_cancel=should_cancel,
-        )
 
-        return UploadResult(
-            {
-                "source": source,
-                "total": len(actions),
-                "success": success,
-                "failed": failed,
-            }
-        )
-    finally:
-        es.close()
+class ScriptedBulkAction(BaseBulkAction):
+    scripted_upsert: Literal[True]
+    script: ScriptSpec
+    upsert: DocumentPayload
+
+
+class DocAsUpsertBulkAction(BaseBulkAction):
+    doc_as_upsert: Literal[True]
+    doc: DocumentPayload
+
+
+BulkAction = ScriptedBulkAction | DocAsUpsertBulkAction
+
+
+@dataclass(frozen=True)
+class UploadProgress:
+    total: int
+    success: int
+    failed: int
+
+    @property
+    def progress(self) -> float:
+        if self.total == 0:
+            return 1.0
+        return (self.success + self.failed) / self.total
+
+
+@dataclass(frozen=True)
+class UploadResult(UploadProgress):
+    source: str
+    requested_ids: list[str] | None = None
+    missing_ids: list[str] = field(default_factory=list)
+
+
+BulkErrorInfo = dict[str, object]
+BulkErrorItem = dict[str, BulkErrorInfo]
 
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def stable_hash(obj: Dict) -> str:
-    """
-    Create a stable hash of a dict (order-independent).
-    """
+def stable_hash(obj: dict[str, object]) -> str:
     data = json.dumps(
         obj, ensure_ascii=False, sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
     return hashlib.sha256(data).hexdigest()
 
 
-def strip_preserve_fields(doc: Dict) -> Dict:
-    """
-    Remove user-managed fields so we never overwrite them by accident.
-    """
-    if not isinstance(doc, dict):
-        raise ValueError("document.json must be a JSON object")
+def strip_preserve_fields(doc: dict[str, object]) -> dict[str, object]:
     return {k: v for k, v in doc.items() if k not in PRESERVE_FIELDS}
+
+
+def notify_progress(
+    on_progress: ProgressCallback | None,
+    total: int,
+    success: int,
+    failed: int,
+) -> None:
+    if on_progress is None:
+        return
+    on_progress(UploadProgress(total=total, success=success, failed=failed))
 
 
 def build_action(
     index: str,
     full_text: FullText,
     use_hash_guard: bool,
-) -> Dict:
-    _doc = normalize_document(full_text)
-    # _doc.model_dump() can't serialize _doc.law having type Law(Enum)
-    # So we convert to JSON and back to dict to ensure all fields are JSON-serializable.
-    edited = json.loads(_doc.model_dump_json(exclude_none=True))
+) -> BulkAction:
+    normalized = normalize_document(full_text)
+    edited = json.loads(normalized.model_dump_json(exclude_none=True))
+    if not isinstance(edited, dict):
+        raise ValueError("normalized document must be a JSON object")
     doc = strip_preserve_fields(edited)
 
-    docid = doc["docId"]
+    docid_value = doc.get("docId")
+    if not isinstance(docid_value, str):
+        raise ValueError("normalized document is missing string docId")
     ingest_hash = stable_hash(doc)
     now = utc_now_iso()
+    stored_doc: DocumentPayload = {
+        **doc,
+        "ingest_hash": ingest_hash,
+        "ingested_at": now,
+    }
 
     if use_hash_guard:
-        action = {
+        return {
             "_op_type": "update",
             "_index": index,
-            "_id": docid,
+            "_id": docid_value,
             "retry_on_conflict": 3,
             "scripted_upsert": True,
             "script": {
@@ -182,99 +164,103 @@ def build_action(
                 """,
                 "params": {"doc": doc, "ingest_hash": ingest_hash, "now": now},
             },
-            "upsert": {
-                **doc,
-                "ingest_hash": ingest_hash,
-                "ingested_at": now,
-            },
-        }
-    else:
-        action = {
-            "_op_type": "update",
-            "_index": index,
-            "_id": docid,
-            "retry_on_conflict": 3,
-            "doc_as_upsert": True,
-            "doc": {
-                **doc,
-                "ingest_hash": ingest_hash,
-                "ingested_at": now,
-            },
+            "upsert": stored_doc,
         }
 
-    return action
+    return {
+        "_op_type": "update",
+        "_index": index,
+        "_id": docid_value,
+        "retry_on_conflict": 3,
+        "doc_as_upsert": True,
+        "doc": stored_doc,
+    }
 
 
-def _load_json_url(base_url: str, endpoint: str) -> Any:
-    url = urljoin(base_url.rstrip("/") + "/", endpoint.lstrip("/"))
-    with urlopen(url) as response:
-        return json.loads(response.read().decode("utf-8"))
-
-
-def load_document_json_from_mona(mona_url: str, doc_id: str) -> FullText:
-    encoded_doc_id = quote(doc_id, safe="")
-    full_text = _load_json_url(mona_url, f"/{encoded_doc_id}/json/full-text")
-    return FullText(**full_text)
-
-
-def build_actions_from_local(
+def execute_upload(
+    es: Elasticsearch,
     index: str,
-    data_root: Path,
-    use_hash_guard: bool,
-    should_cancel: Optional[Callable[[], bool]] = None,
-) -> Iterable[Dict]:
-    """Generate bulk update actions from local files."""
-    for full_text in data_root.rglob("full-text.json"):
-        if should_cancel and should_cancel():
-            raise UploadCancelledError("Upload was cancelled before completion")
-        try:
-            args = json.loads(full_text.read_text(encoding="utf-8"))
-            yield build_action(index, FullText(**args), use_hash_guard)
-        except UploadCancelledError:
-            raise
-        except Exception as e:
-            logger.error(f"[ERROR] {full_text}: {e}")
-            logger.error(traceback.format_exc())
-            continue
+    source: "DocumentSource",
+    chunk_size: int = 500,
+    max_retries: int = 5,
+    use_hash_guard: bool = False,
+    should_cancel: Callable[[], bool] | None = None,
+    on_progress: ProgressCallback | None = None,
+    id_list: Sequence[str] | None = None,
+) -> UploadResult:
+    """Upload documents to Elasticsearch and return summary details."""
+    try:
+        requested_ids = [str(doc_id) for doc_id in id_list] if id_list else None
+        missing_ids = source.missing_ids(id_list=requested_ids)
+        logger.info("Connecting to Elasticsearch: %s", es)
+        if not es.ping():
+            logger.error("Error: Cannot connect to Elasticsearch")
+            notify_progress(on_progress, total=0, success=0, failed=1)
+            return UploadResult(
+                source=source.source,
+                total=0,
+                success=0,
+                failed=1,
+                requested_ids=requested_ids,
+                missing_ids=missing_ids,
+            )
+
+        logger.info("Connected to Elasticsearch")
+        logger.info("Uploading documents from: %s", source.label)
+        actions = [
+            build_action(index=index, full_text=full_text, use_hash_guard=use_hash_guard)
+            for full_text in source.iter_full_texts(
+                should_cancel=should_cancel,
+                id_list=requested_ids,
+            )
+        ]
+        total = len(actions)
+        notify_progress(on_progress, total=total, success=0, failed=0)
+
+        def handle_bulk_progress(success: int, failed: int) -> None:
+            notify_progress(on_progress, total=total, success=success, failed=failed)
+
+        success, failed = bulk_upsert_with_retries(
+            es,
+            actions,
+            chunk_size=chunk_size,
+            max_retries=max_retries,
+            initial_backoff=1.0,
+            max_backoff=30.0,
+            should_cancel=should_cancel,
+            on_progress=handle_bulk_progress,
+        )
+
+        return UploadResult(
+            source=source.source,
+            total=total,
+            success=success,
+            failed=failed,
+            requested_ids=requested_ids,
+            missing_ids=missing_ids,
+        )
+    finally:
+        es.close()
 
 
-def build_actions_from_mona_api(
-    index: str,
-    mona_url: str,
-    use_hash_guard: bool,
-    should_cancel: Optional[Callable[[], bool]] = None,
-) -> Iterable[Dict]:
-    """Generate bulk update actions from mona REST API."""
-    id_list_payload = _load_json_url(mona_url, "/idList")
-    doc_ids = (
-        json.loads(id_list_payload)
-        if isinstance(id_list_payload, str)
-        else id_list_payload
+
+def format_upload_result_summary(result: UploadResult) -> str:
+    return (
+        f"Upload completed: source={result.source} total={result.total} "
+        f"success={result.success} failed={result.failed} progress={result.progress:.2f}"
     )
-    if not isinstance(doc_ids, list):
-        raise ValueError("mona /idList response must be list[str]")
-
-    for doc_id in doc_ids:
-        if should_cancel and should_cancel():
-            raise UploadCancelledError("Upload was cancelled before completion")
-        try:
-            full_text = load_document_json_from_mona(mona_url, str(doc_id))
-            yield build_action(index, full_text, use_hash_guard)
-
-        except Exception as e:
-            logger.error(f"[ERROR] doc_id={doc_id}: {e}")
-            continue
 
 
 def bulk_upsert_with_retries(
     es: Elasticsearch,
-    actions: Iterable[Dict],
+    actions: list[BulkAction],
     chunk_size: int,
     max_retries: int,
     initial_backoff: float,
     max_backoff: float,
-    should_cancel: Optional[Callable[[], bool]] = None,
-) -> Tuple[int, int]:
+    should_cancel: Callable[[], bool] | None = None,
+    on_progress: BulkProgressCallback | None = None,
+) -> tuple[int, int]:
     """
     Bulk upsert with retry/backoff for transient errors.
     Returns: (success, failed)
@@ -282,18 +268,13 @@ def bulk_upsert_with_retries(
     success = 0
     failed = 0
 
-    # helpers.bulk yields a tuple (success_count, errors) if raise_on_error=False.
-    # We'll implement simple retry around streaming_bulk for better control.
-
     backoff = initial_backoff
-    to_send = list(
-        actions
-    )  # materialize once for retry simplicity (OK for moderate size)
+    to_send = list(actions)
     attempt = 0
 
     while True:
         attempt += 1
-        errors_accum: List[Dict] = []
+        errors_accum: list[BulkErrorItem] = []
         ok_count = 0
 
         for ok, item in helpers.streaming_bulk(
@@ -302,7 +283,7 @@ def bulk_upsert_with_retries(
             chunk_size=chunk_size,
             raise_on_error=False,
             raise_on_exception=False,
-            max_retries=0,  # we handle retries ourselves
+            max_retries=0,
         ):
             if ok:
                 ok_count += 1
@@ -311,58 +292,52 @@ def bulk_upsert_with_retries(
             if should_cancel and should_cancel():
                 raise UploadCancelledError("Upload was cancelled during bulk request")
 
-        if not errors_accum:
-            success += ok_count
-            return success, failed
-
-        # If we reach here, some items failed.
-        # Retry only the failed items.
-        failed_items: List[Dict] = []
+        failed_items: list[BulkAction] = []
+        permanent_failures = 0
         for err in errors_accum:
-            # err structure: {'update': {'_index':..., '_id':..., 'status':..., 'error':...}}
             op = next(iter(err.keys()))
             info = err[op]
             status = info.get("status")
-            # Retry on 429/503/502/504 etc.
-            if status in (408, 409, 429, 500, 502, 503, 504):
-                # Rebuild original action from the error info:
-                # helpers doesn't include original body; so we must keep the original actions list.
-                # We'll match by _id.
-                _id = info.get("_id")
-                # Find the action by _id (O(n)); for large sets use a dict.
-                # We'll build a dict once for efficiency.
-                pass
-            else:
-                failed += 1
-                logger.error(f"[FAIL] status={status} item={err}")
+            if status not in (408, 409, 429, 500, 502, 503, 504):
+                permanent_failures += 1
+                logger.error("[FAIL] status=%s item=%s", status, err)
 
-        # Build lookup dict once, then retry set
-        lookup = {a["_id"]: a for a in to_send if "_id" in a}
+        lookup = {action["_id"]: action for action in to_send}
         for err in errors_accum:
             op = next(iter(err.keys()))
             info = err[op]
             status = info.get("status")
             if status in (408, 409, 429, 500, 502, 503, 504):
-                _id = info.get("_id")
-                act = lookup.get(_id)
-                if act:
-                    failed_items.append(act)
+                item_id = info.get("_id")
+                if isinstance(item_id, str) and item_id in lookup:
+                    failed_items.append(lookup[item_id])
                 else:
-                    failed += 1
-                    logger.error(f"[FAIL] could not find original action for _id={_id}")
+                    permanent_failures += 1
+                    logger.error(
+                        "[FAIL] could not find original action for _id=%s", item_id
+                    )
 
-        if not failed_items:
-            success += ok_count
+        success += ok_count
+        failed += permanent_failures
+        if (ok_count or permanent_failures) and on_progress is not None:
+            on_progress(success, failed)
+
+        if not errors_accum or not failed_items:
             return success, failed
 
         if attempt > max_retries:
             failed += len(failed_items)
-            logger.error(f"[GIVE UP] retries exceeded for {len(failed_items)} items")
-            success += ok_count
+            logger.error("[GIVE UP] retries exceeded for %s items", len(failed_items))
+            if on_progress is not None:
+                on_progress(success, failed)
             return success, failed
 
         logger.warning(
-            f"[RETRY] attempt={attempt}/{max_retries} retry_items={len(failed_items)} backoff={backoff:.1f}s"
+            "[RETRY] attempt=%s/%s retry_items=%s backoff=%.1fs",
+            attempt,
+            max_retries,
+            len(failed_items),
+            backoff,
         )
         time.sleep(backoff)
         backoff = min(max_backoff, backoff * 2)

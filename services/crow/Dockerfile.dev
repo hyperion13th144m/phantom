@@ -1,4 +1,4 @@
-FROM python:3.14-slim
+FROM python:3.14-bookworm
 
 ARG USERNAME=pyuser
 ARG GROUPNAME=pygroup
