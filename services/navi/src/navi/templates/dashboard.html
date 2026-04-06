@@ -5,45 +5,113 @@
     <meta charset="utf-8">
     <title>Navi 管理画面</title>
     <style>
-        body { font-family: sans-serif; margin: 2rem; line-height: 1.5; }
-        h1, h2 { margin-bottom: 0.5rem; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-        .card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }
-        code { background: #f4f4f4; padding: 0.1rem 0.4rem; border-radius: 4px; }
+        :root {
+            --bg: #f4f9ef;
+            --surface: #ffffff;
+            --border: #bdd8ae;
+            --text: #21301b;
+            --muted: #56704b;
+            --accent: #5ea048;
+            --accent-strong: #3f7730;
+            --code-bg: #e7f2df;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+            line-height: 1.5;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, #f9fff4, transparent 30%),
+                linear-gradient(180deg, #f9fdf6 0%, var(--bg) 100%);
+        }
+
+        main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 3rem;
+        }
+
+        h1, h2, h3 { margin-bottom: 0.5rem; }
+
+        a { color: var(--accent-strong); }
+
+        .intro {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 10px 28px rgba(36, 67, 25, 0.06);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem;
+            background: var(--surface);
+            box-shadow: 0 10px 26px rgba(36, 67, 25, 0.05);
+        }
+
+        .card h3 { color: var(--accent-strong); }
+
+        .muted {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Navi 管理画面（雛形）</h1>
-    <p>この画面では、管理対象プロジェクトのジョブ起動設定を行います。Crow については REST API 連携を使った管理画面を利用できます。</p>
-
-    <h2>管理対象プロジェクト</h2>
-    <div class="cards">
-        {% for project in projects %}
-        <section class="card">
-            <h3>{{ project.name }}</h3>
-            <p>{{ project.description }}</p>
-            {% if project.key == "crow" %}
-            <p><a href="/crow">Crow の管理画面へ</a></p>
-            {% elif project.key == "panther" %}
-            <p><a href="/panther">Panther の管理画面へ</a></p>
-            {% else %}
-            <p><a href="/jobs/{{ project.key }}/new">{{ project.name }} のジョブ作成へ</a></p>
-            {% endif %}
+    <main>
+        <section class="intro">
+            <h1>Navi 管理画面（雛形）</h1>
+            <p>この画面では、管理対象プロジェクトのジョブ起動や状態確認を行います。Crow / Panther / Mona については REST API 連携を使った管理画面を利用できます。</p>
+            <p class="muted">Navi primary color: <code>#5ea048</code></p>
         </section>
-        {% endfor %}
-    </div>
 
-    <h2>用意済みジョブテンプレート</h2>
-    <ul>
-        {% for template in job_templates %}
-        <li>
-            <strong>{{ template.project_key }}</strong> / {{ template.job_type.value }}:
-            {{ template.summary }}
-            (<code>{{ template.service_name }}</code> の <code>{{ template.endpoint }}</code>)
-        </li>
-        {% endfor %}
-    </ul>
+        <h2>管理対象プロジェクト</h2>
+        <div class="cards">
+            {% for project in projects %}
+            <section class="card">
+                <h3>{{ project.name }}</h3>
+                <p>{{ project.description }}</p>
+                {% if project.key == "crow" %}
+                <p><a href="/crow">Crow の管理画面へ</a></p>
+                {% elif project.key == "panther" %}
+                <p><a href="/panther">Panther の管理画面へ</a></p>
+                {% elif project.key == "mona" %}
+                <p><a href="/mona">Mona の管理画面へ</a></p>
+                {% else %}
+                <p><a href="/jobs/{{ project.key }}/new">{{ project.name }} のジョブ作成へ</a></p>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+
+        <h2>用意済みジョブテンプレート</h2>
+        <ul>
+            {% for template in job_templates %}
+            <li>
+                <strong>{{ template.project_key }}</strong> / {{ template.job_type.value }}:
+                {{ template.summary }}
+                (<code>{{ template.service_name }}</code> の <code>{{ template.endpoint }}</code>)
+            </li>
+            {% endfor %}
+        </ul>
+    </main>
 </body>
 
 </html>

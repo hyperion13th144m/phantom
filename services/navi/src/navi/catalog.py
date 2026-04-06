@@ -13,6 +13,12 @@ PROJECTS: tuple[ManagedProject, ...] = (
         description="アップロード処理を実行するサービス。",
         available_jobs=(JobType.UPLOAD,),
     ),
+    ManagedProject(
+        key="mona",
+        name="Mona",
+        description="documents status の確認と reload を行うサービス。",
+        available_jobs=(),
+    ),
 )
 
 JOB_TEMPLATES: tuple[JobTemplate, ...] = (

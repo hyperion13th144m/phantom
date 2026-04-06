@@ -27,12 +27,43 @@ def create_app(data_dir: Path) -> FastAPI:
         logger.info(f"Loaded {len(dir_map)} documents from {data_dir}")
         return len(dir_map)
 
+    def build_documents_status() -> dict:
+        document_code_counts: Dict[str, int] = {}
+
+        for directory in dir_map.values():
+            manifest_path = Path(directory) / "manifest.json"
+            if not manifest_path.exists():
+                logger.warning(f"Manifest not found: {manifest_path}")
+                continue
+
+            try:
+                manifest = json.loads(manifest_path.read_text())
+            except json.JSONDecodeError:
+                logger.warning(f"Invalid manifest json: {manifest_path}")
+                continue
+
+            document_code = manifest.get("sources", {}).get("document_code")
+            if not document_code:
+                logger.warning(f"Document code not found in manifest: {manifest_path}")
+                continue
+
+            document_code_counts[document_code] = document_code_counts.get(document_code, 0) + 1
+
+        return {
+            "total_documents": len(dir_map),
+            "document_code_counts": document_code_counts,
+        }
+
     reload_dir_map()
 
     @app.get("/documents/idList", response_model=list[str])
     async def get_documents_id_list() -> JSONResponse:
         keys = list(dir_map.keys())
         return JSONResponse(json.dumps(keys))
+
+    @app.get("/documents/status")
+    async def get_documents_status() -> JSONResponse:
+        return JSONResponse(content=build_documents_status())
 
     @app.post("/documents/reloads")
     async def reload_documents() -> JSONResponse:
