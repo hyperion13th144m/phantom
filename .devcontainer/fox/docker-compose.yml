@@ -1,5 +1,8 @@
 services:
   fox-dev:
+    build:
+      context: services/fox
+      dockerfile: Dockerfile.dev
     tty: true
     volumes:
       - .:/workspaces:cached

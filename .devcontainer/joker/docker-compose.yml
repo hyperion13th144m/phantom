@@ -1,7 +1,7 @@
 services:
   joker-dev:
     build:
-      context: services/skull
+      context: services/joker
       dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached

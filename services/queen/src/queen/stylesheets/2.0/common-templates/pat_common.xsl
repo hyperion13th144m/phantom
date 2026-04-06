@@ -2051,7 +2051,7 @@
          end:
          terminal type A elements.
          ====================================================================--> 
-    
+
     <!-- ====================================================================
          container type A elements have a tag and blocks.
          
@@ -2145,7 +2145,61 @@
             </xf:array>
         </xf:map>
     </xsl:template>
-    
+
+    <!-- ====================================================================
+         jp:application-reference 出願書類参照 
+         ====================================================================-->
+    <xsl:template
+        match="jp:application-reference">
+        <xf:map>
+            <xf:string key="tag">
+                <xsl:value-of select="name()" />
+            </xf:string>
+            <xf:array key="blocks">
+                <xsl:choose>
+                    <xsl:when test="parent::jp:earlier-app or parent::jp:parent-application-article">
+                        <xsl:call-template name="出願書類参照編集" />
+                        <xsl:if test=".//jp:date">
+                            <xsl:choose>
+                                <xsl:when test="./@appl-type = 'application'">
+                                    <xsl:choose>
+                                        <xsl:when
+                                            test="
+                                                ((./@appl-type='application') and (.//jp:doc-number !='')) or
+                                                ((following-sibling::jp:application-reference/@appl-type='application' or
+                                                        following-sibling::jp:application-reference/@appl-type='international-application') and
+                                                    (following-sibling::jp:application-reference//jp:doc-number !=''))  or
+                                                ((preceding-sibling::jp:application-reference/@appl-type='application' or
+                                                        preceding-sibling::jp:application-reference/@appl-type='international-application') and
+                                                    (preceding-sibling::jp:application-reference//jp:doc-number !=''))">
+                                            <xsl:call-template name="先の出願日編集" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:apply-templates select=".//jp:date" />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:apply-templates select=".//jp:date" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="jp:document-id/jp:doc-number" />
+                        <xsl:call-template name="出願書類参照編集" />
+                        <xsl:apply-templates select="jp:document-id/jp:date" />
+                    </xsl:otherwise>
+                </xsl:choose>
+                
+                <!-- 未サポート -->
+                <xsl:if test=".//country or .//kind or .//name">
+                    <xsl:apply-templates select=".//country | .//kind | .//name" />
+                </xsl:if>
+            </xf:array>
+        </xf:map>
+    </xsl:template> 
+
     <!-- schema for container type a -->
     <schema:object
         name="pat-common-container-type-a">
@@ -2163,7 +2217,8 @@
                          jp:priority-doc-location-info,
                          jp:payment,
                          jp:representative-group,
-                         jp:representative"/>
+                         jp:representative,
+                         jp:application-reference"/>
         <schema:property name="blocks" type="array">
             <schema:ref name="pat-common-terminal-type-a" />
             <schema:ref name="pat-common-container-type-a" />
@@ -3351,60 +3406,6 @@
     </xsl:template>
     
     <!-- ====================================================================
-         jp:application-reference 出願書類参照 
-         ====================================================================-->
-    <xsl:template
-        match="jp:application-reference">
-        <xf:map>
-            <xf:string key="tag">
-                <xsl:value-of select="name()" />
-            </xf:string>
-            <xf:array key="blocks">
-                <xsl:choose>
-                    <xsl:when test="parent::jp:earlier-app or parent::jp:parent-application-article">
-                        <xsl:call-template name="出願書類参照編集" />
-                        <xsl:if test=".//jp:date">
-                            <xsl:choose>
-                                <xsl:when test="./@appl-type = 'application'">
-                                    <xsl:choose>
-                                        <xsl:when
-                                            test="
-                                                ((./@appl-type='application') and (.//jp:doc-number !='')) or
-                                                ((following-sibling::jp:application-reference/@appl-type='application' or
-                                                        following-sibling::jp:application-reference/@appl-type='international-application') and
-                                                    (following-sibling::jp:application-reference//jp:doc-number !=''))  or
-                                                ((preceding-sibling::jp:application-reference/@appl-type='application' or
-                                                        preceding-sibling::jp:application-reference/@appl-type='international-application') and
-                                                    (preceding-sibling::jp:application-reference//jp:doc-number !=''))">
-                                            <xsl:call-template name="先の出願日編集" />
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:apply-templates select=".//jp:date" />
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:apply-templates select=".//jp:date" />
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:if>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="jp:document-id/jp:doc-number" />
-                        <xsl:call-template name="出願書類参照編集" />
-                        <xsl:apply-templates select="jp:document-id/jp:date" />
-                    </xsl:otherwise>
-                </xsl:choose>
-                
-                <!-- 未サポート -->
-                <xsl:if test=".//country or .//kind or .//name">
-                    <xsl:apply-templates select=".//country | .//kind | .//name" />
-                </xsl:if>
-            </xf:array>
-        </xf:map>
-    </xsl:template>
-    
-    <!-- ====================================================================
          jp:submission-object-list-article 提出物件の目録
          ====================================================================-->
     <xsl:template match="jp:submission-object-list-article">
@@ -3898,7 +3899,6 @@
                    enum="jp:priority-claim,
                          jp:parent-application-article,
                          jp:indication-of-case-article,
-                         jp:application-reference,
                          jp:earlier-app,
                          jp:submission-object-list-article,
                          jp:charge-article,
