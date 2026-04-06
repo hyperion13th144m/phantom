@@ -1,7 +1,7 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import Any, TypedDict
+from typing import Any, TypedDict, cast
 from urllib import error, parse, request
 
 
@@ -71,7 +71,9 @@ class PantherClient:
         return self._as_job_status(data)
 
     def _as_job_status(self, data: Any) -> PantherJobStatus:
-        return data if isinstance(data, dict) else {}
+        if not isinstance(data, dict):
+            return {}
+        return cast(PantherJobStatus, data)
 
     def _request(
         self,

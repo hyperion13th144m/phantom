@@ -1,5 +1,8 @@
 services:
   panther-dev:
+    build:
+      context: services/panther
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
     tty: true

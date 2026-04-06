@@ -5,6 +5,5 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - .:/workspaces:cached
-    # Required so bubblewrap/user-namespace based sandboxes can start.
     tty: true
     entrypoint: ["sh", "-c", "sleep infinity"]
