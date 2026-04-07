@@ -3,7 +3,8 @@ services:
     build:
       context: services/skull
       dockerfile: Dockerfile.dev
+    user: node
+    tty: true
     volumes:
       - .:/workspaces:cached
-    tty: true
-    entrypoint: ["sh", "-c", "sleep infinity"]
+    command: sh -c "sleep infinity"

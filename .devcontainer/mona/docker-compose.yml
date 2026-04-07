@@ -1,5 +1,9 @@
 services:
   mona-dev:
+    build:
+      context: services/mona
+      dockerfile: Dockerfile.dev
+    user: pyuser
     volumes:
       - .:/workspaces:cached
     tty: true

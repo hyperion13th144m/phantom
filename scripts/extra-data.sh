@@ -1,54 +1,30 @@
 #!/bin/bash
 
-SCRIPT_DIR=$(dirname $0)
-PROJECT_DIR="$SCRIPT_DIR/.."
-cd $PROJECT_DIR || exit 1
+SCRIPT_DIR=$(dirname "$0")
+_PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
+PROJECT_ROOT=$(readlink -f "$_PROJECT_ROOT")
 
-# default vars.
-BUILD="false"
+MODE=production
 
-usage () {
-  echo "Usage: $0 [ -b ]"
-  echo "  -b: Build the Docker image before running the script in development mode."
-  echo "  restore extra data from the SQLite database to the Elasticsearch."
-  echo "  RECOMMENDED: this script should be executed after upload.sh for uploading json data to Elasticsearch."
-  echo
-  echo "MODE, EXTRA_DATA_DIR, SQLITE_NAME, ES_USER, ES_PASSWORD and ES_INDEX must be defined in .env file"
-  exit 1
-}
-
-# MODE, ES_USER, ES_PASSWORD and ES_INDEX must be defined in .env file.
-source $PROJECT_DIR/.env
-
-while getopts "hb" opt; do
-  case $opt in
-    h)
-      usage
-      exit 0
-      ;;
-    b)
-      BUILD="true"
-      ;;
-    *)
-      usage
-      exit 1
-      ;;
+while getopts m: OPT
+do
+  case $OPT in
+  m) MODE=$OPTARG
+     ;;
+  *) exit 1
+     ;;
   esac
 done
 
-if [ "$MODE" = "production" ]; then
-  DOCKER_COMPOSE="-f $PROJECT_DIR/docker-compose.yml"
-  CONTAINER_NAME="panther"
-elif [ "$MODE" = "development" ]; then
-  DOCKER_COMPOSE="-f $PROJECT_DIR/docker-compose.dev.yml"
-  CONTAINER_NAME="panther-dev"
-  if [ "$BUILD" = "true" ]; then
-    docker compose $DOCKER_COMPOSE build $CONTAINER_NAME
-  fi
+shift $((OPTIND - 1)) # オプション部分をスキップ
+
+
+if [ $MODE = "production" ]; then
+  CONFIG=docker-compose.yml
+  CONTAINER=skull:main
 else
-  usage
-  exit 1
+  CONFIG=docker-compose.dev.yml
+  CONTAINER=skull-dev
 fi
-docker compose $DOCKER_COMPOSE \
-  run --rm -i $CONTAINER_NAME \
-    restore-metadata
+
+docker compose -f $PROJECT_ROOT/$CONFIG run --rm $CONTAINER npx tsx init-db.ts

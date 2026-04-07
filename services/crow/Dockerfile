@@ -1,4 +1,11 @@
-FROM python:3.14-slim
+FROM python:3.14-slim AS builder
+
+WORKDIR /build
+RUN pip install uv
+COPY queen/ queen/
+RUN uv build --project queen --wheel -o . 
+
+FROM python:3.14-slim AS runtime
 
 ARG USERNAME=pyuser
 ARG GROUPNAME=pygroup
@@ -21,7 +28,14 @@ RUN mkdir -p $LOG_DIR/api $LOG_DIR/jobs $LOG_DIR/crawling && \
 
 USER $USERNAME
 WORKDIR /app
-COPY --chown=$USERNAME:$GROUPNAME . /app
-RUN if [ -n "$(ls deps/queen/queen-*.whl 2>/dev/null)" ]; then uv add "$(ls deps/queen/queen-*.whl | sort -V | tail -n 1)"; uv sync --no-cache --frozen; fi
+COPY --chown=$USERNAME:$GROUPNAME \
+    crow/README.md crow/pyproject.toml crow/uv.lock /app/
+COPY --chown=$USERNAME:$GROUPNAME crow/src/ /app/src/
+COPY --chown=$USERNAME:$GROUPNAME \
+    --from=builder /build/queen-*.whl /app/deps/
+RUN uv add deps/queen-*.whl
+RUN uv sync --no-dev --no-cache
+
+EXPOSE 8000
 ENTRYPOINT [ "uv", "run" ]
-CMD [ "crow-serve", "--host", "0.0.0.0", "--port", "8000" ]
+CMD [ "uvicorn", "crow.server:app", "--host", "0.0.0.0", "--port", "8000" ]

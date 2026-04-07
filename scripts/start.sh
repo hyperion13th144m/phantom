@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SCRIPT_DIR=$(dirname $0)
-PROJECT_DIR="$SCRIPT_DIR/.."
-cd $PROJECT_DIR || exit 1
+SCRIPT_DIR=$(dirname "$0")
+_PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
+PROJECT_ROOT=$(readlink -f "$_PROJECT_ROOT")
 
-docker compose -f $PROJECT_DIR/docker-compose.yml \
-    up -d joker fox es01 nginx
+docker compose -f $PROJECT_ROOT/docker-compose.yml \
+    up -d crow mona panther joker fox skull es nginx

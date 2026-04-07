@@ -8,8 +8,5 @@ ENV TZ=Asia/Tokyo
 
 RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
 RUN pip install uv
-RUN mkdir /var/log/navi && chown $USERNAME:$GROUPNAME /var/log/navi
 
 USER $USERNAME
-WORKDIR /app
-ENTRYPOINT [ "sh", "-c", "sleep infinity" ]

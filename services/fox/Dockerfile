@@ -26,6 +26,5 @@ ENV PORT=4321
 EXPOSE 4321
 ENV LANG=ja_JP.UTF-8
 ENV TZ=Asia/Tokyo
-RUN mkdir /var/log/fox && chown $USERNAME:$GROUPNAME /var/log/fox
 USER $USERNAME
 CMD ["node", "./dist/server/entry.mjs"]

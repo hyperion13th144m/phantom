@@ -8,8 +8,6 @@ Usage: $0 <command> [options]
 
 Available commands:
   build-all          Build all components
-  build-pkg          Build package
-  build-schema       Build schema
   gen-test-data      Generate test data
   run-test           Run tests
   translate-all      Translate all documents
@@ -43,14 +41,8 @@ case "$COMMAND" in
     build-all)
         exec ./scripts/build-all.sh "$@"
         ;;
-    build-pkg)
-        exec ./scripts/build-pkg.sh "$@"
-        ;;
-    build-schema)
-        exec ./scripts/build-schema.sh "$@"
-        ;;
-    gen-test-data)
-        exec ./scripts/gen-test-data.sh "$@"
+    build-es-mapping)
+        exec ./scripts/build-es-mapping.sh "$@"
         ;;
     run-test)
         exec ./scripts/run-test.sh "$@"

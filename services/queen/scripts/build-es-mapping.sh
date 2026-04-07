@@ -8,6 +8,6 @@ PROJECT_ROOT="$(dirname $SCRIPT_DIR)"
 # ============================
 SCHEMA="$PROJECT_ROOT/generated/json-schema/full-text.json"
 CONFIG="$PROJECT_ROOT/scripts/mapping-config.json"
-OUTPUT="/es-mapping/document-mapping.json"
+OUTPUT="/es-mapping/mapping.json"
 uv run python $PROJECT_ROOT/scripts/generate_mapping.py \
    --schema "$SCHEMA" --config "$CONFIG" --output "$OUTPUT"

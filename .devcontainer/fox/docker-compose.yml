@@ -3,6 +3,7 @@ services:
     build:
       context: services/fox
       dockerfile: Dockerfile.dev
+    user: node
     tty: true
     volumes:
       - .:/workspaces:cached

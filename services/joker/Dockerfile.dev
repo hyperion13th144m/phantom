@@ -2,10 +2,3 @@ FROM node:24-bookworm
 
 ENV LANG=ja_JP.UTF-8
 ENV TZ=Asia/Tokyo
-ARG USERNAME=node
-ARG GROUPNAME=node
-RUN mkdir /var/log/joker && chown $USERNAME:$GROUPNAME /var/log/joker
-USER node
-WORKDIR /app
-EXPOSE 3000
-CMD  [ "sh", "-c", "sleep infinity" ]

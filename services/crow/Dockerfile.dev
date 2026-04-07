@@ -11,7 +11,6 @@ ENV TZ=Asia/Tokyo
 ### to avoid low performance on running in multi-processing environment
 ENV OMP_THREAD_LIMIT=1
 
-RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
 RUN apt-get update && \
     apt-get install -y tesseract-ocr tesseract-ocr-jpn && \
     rm -rf /var/lib/apt/lists/*
@@ -20,4 +19,4 @@ RUN mkdir -p $LOG_DIR/api $LOG_DIR/jobs $LOG_DIR/crawling && \
     chown -R $USERNAME:$GROUPNAME $LOG_DIR
 
 USER $USERNAME
-WORKDIR /app
+

@@ -25,7 +25,7 @@ REPO_ROOT = SCRIPT_DIR.parent.parent
 
 DEFAULT_SCHEMA = REPO_ROOT / "generated" / "json-schema" / "full-text.json"
 DEFAULT_CONFIG = SCRIPT_DIR / "mapping-config.json"
-DEFAULT_OUTPUT = REPO_ROOT / "reference" / "document-mapping.json"
+DEFAULT_OUTPUT = REPO_ROOT / "generated" / "document-mapping.json"
 
 # JSON Schema type -> Elasticsearch type のデフォルト変換表
 _DEFAULT_ES_TYPE: dict[str, dict[str, Any]] = {

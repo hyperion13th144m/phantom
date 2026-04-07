@@ -14,6 +14,6 @@ USER $USERNAME
 WORKDIR /app
 COPY --chown=$USERNAME:$GROUPNAME . ./
 RUN uv sync
-
-ENTRYPOINT [ "uv", "run", "uvicorn", "panther.server:app" ]
-CMD ["--host", "0.0.0.0", "--port", "8000" ]
+EXPOSE 8000
+ENTRYPOINT [ "uv", "run" ]
+CMD ["uvicorn", "panther.server:app", "--host", "0.0.0.0", "--port", "8000" ]

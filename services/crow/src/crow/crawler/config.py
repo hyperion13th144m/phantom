@@ -233,4 +233,4 @@ if __name__ == "__main__":
     doc_code_config.print()
     codes = doc_code_config.get_codes(["EXAM", "A163", "A1523"])
     print(codes)
-    print(doc_code_config.dump())
+    print(doc_code_config.config)

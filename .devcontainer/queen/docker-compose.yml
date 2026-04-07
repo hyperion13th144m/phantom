@@ -1,5 +1,9 @@
 services:
   queen-dev:
+    build:
+      context: services/queen
+      dockerfile: Dockerfile.dev
+    user: pyuser
     volumes:
       - .:/workspaces:cached
     tty: true

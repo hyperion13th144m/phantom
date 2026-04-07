@@ -3,6 +3,7 @@ services:
     build:
       context: services/navi
       dockerfile: Dockerfile.dev
+    user: pyuser
     volumes:
       - .:/workspaces:cached
     tty: true

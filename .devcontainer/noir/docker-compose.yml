@@ -1,5 +1,9 @@
 services:
   noir-dev:
+    build:
+      context: services/noir
+      dockerfile: Dockerfile.dev
+    user: pyuser
     volumes:
       - .:/workspaces:cached
     tty: true

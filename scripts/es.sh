@@ -1,7 +1,8 @@
 #!/bin/bash
 
 SCRIPT_DIR=$(dirname "$0")
-PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
+_PROJECT_ROOT=$(dirname "$SCRIPT_DIR")
+PROJECT_ROOT=$(readlink -f "$_PROJECT_ROOT")
 
 INDEX=patent-documents
 ES_HOST=localhost
@@ -26,7 +27,7 @@ done
 
 shift $((OPTIND - 1)) # オプション部分をスキップ
 
-MAPPING_FILE=${1:-$SCRIPT_DIR/mapping.json}
+MAPPING_FILE=${1:-$PROJECT_ROOT/infra/es/generated/mapping.json}
 
 if [ $MODE = "production" ]; then
   CONFIG=docker-compose.yml

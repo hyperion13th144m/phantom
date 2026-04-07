@@ -1,9 +1,6 @@
 import { Client } from "@elastic/elasticsearch";
 
-const node = process.env.ES_URL;
-if (!node) {
-    throw new Error("ES_URL is not set");
-}
+const node = process.env.ES_URL ?? "http://localhost:9200";
 
 export const esClient = new Client({
     node,

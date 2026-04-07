@@ -1,11 +1,10 @@
 import type { APIRoute } from 'astro';
 
-const MONA_URL = import.meta.env.MONA_URL;
+const MONA_URL = process.env.MONA_URL ?? "http://mona-dev:8000";
 
 export const GET: APIRoute = async ({ params }) => {
     const docId = params.docId;
     const dataType = params.dataType;
-    console.log(`Received request for docId: ${docId}, dataType: ${dataType}`);
     if (!docId) {
         return new Response(JSON.stringify({ error: 'docId is required' }), { status: 400 });
     }

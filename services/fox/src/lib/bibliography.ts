@@ -9,16 +9,16 @@ const pct_number_re = /^[A-Za-z]{2}[0-9]{4}[0-9]{6}$/;
 export const getBibliography = async (docId: string) => {
     try {
         const res = await fetch(`http://localhost:4321/api/${docId}/bibliographic-items`);
+        console.log(`Fetching bibliography for docId: ${docId}, status: ${res.status}`);
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         const data: BibliographicItems = await res.json();
 
-        const submissionDate = data.submissionDate ? formatDate(data.submissionDate) : null;
-        const dispatchDate = data.dispatchDate ? formatDate(data.dispatchDate) : null;
+        const date = data.datetime ? formatDate(data.datetime) : null;
+        console.log(`Fetched bibliography data for docId: ${docId}, date: ${date}`);
 
         return {
             ...data,
-            submissionDate,
-            dispatchDate,
+            date,
         } as BibliographicItems
     } catch (err) {
         console.error(err);

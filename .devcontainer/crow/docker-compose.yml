@@ -3,6 +3,7 @@ services:
     build:
       context: services/crow
       dockerfile: Dockerfile.dev
+    user: pyuser
     volumes:
       - .:/workspaces:cached
     tty: true

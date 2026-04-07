@@ -3,7 +3,8 @@ services:
     build:
       context: services/joker
       dockerfile: Dockerfile.dev
+    user: node
+    tty: true
     volumes:
       - .:/workspaces:cached
-    tty: true
     command: sh -c "sleep infinity"
