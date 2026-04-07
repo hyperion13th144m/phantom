@@ -8,6 +8,9 @@ services:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
       LOG_DIR: /var/log/crow
+      NAVI_ORCHESTRATION_WEBHOOK_URL: ${NAVI_ORCHESTRATION_WEBHOOK_URL:-http://navi-dev:8000/orchestration/crow-completed}
+      NAVI_ORCHESTRATION_WEBHOOK_SECRET: ${ORCHESTRATION_WEBHOOK_SECRET:-}
+      NAVI_ORCHESTRATION_WEBHOOK_TIMEOUT_SECONDS: ${NAVI_ORCHESTRATION_WEBHOOK_TIMEOUT_SECONDS:-5}
     volumes:
       - ${SRC_DIR}:/src-dir:ro
       - ${DATA_DIR}:/data-dir
@@ -41,6 +44,7 @@ services:
       PANTHER_URL: http://panther-dev:8000
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
+      ORCHESTRATION_WEBHOOK_SECRET: ${ORCHESTRATION_WEBHOOK_SECRET:-}
     volumes:
       - ${LOG_DIR_NAVI}:/var/log/navi
     networks:

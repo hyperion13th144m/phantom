@@ -16,6 +16,7 @@ from crow.logger import (
     setup_logger,
 )
 from crow.models.jobs import JobRequest, JobResponse, JobState, JobStateModel
+from crow.orchestration import OrchestrationWebhookNotifier
 
 
 class JobManager:
@@ -28,6 +29,7 @@ class JobManager:
         self._lock = threading.Lock()
         self._jobs: dict[str, JobState] = {}
         self._running_job_id: str | None = None
+        self._orchestration_notifier = OrchestrationWebhookNotifier()
 
     def start_job(self, request: JobRequest) -> JobResponse:
         with self._lock:
@@ -59,6 +61,7 @@ class JobManager:
             job.fail(f"Invalid job options: {exc}")
             save_job_state(job, self._log_dir)
             crawling_logger.error(job.message)
+            self._notify_orchestration(job)
             self._clear_running_job(job_id)
             return
 
@@ -121,7 +124,13 @@ class JobManager:
             job.fail(f"Job failed: {exc}")
             save_job_state(job, self._log_dir)
         finally:
+            self._notify_orchestration(job)
             self._clear_running_job(job_id)
+
+    def _notify_orchestration(self, job: JobState) -> None:
+        if job.status not in {"completed", "failed", "canceled"}:
+            return
+        self._orchestration_notifier.notify_crow_job_finished(job)
 
     def _clear_running_job(self, job_id: str) -> None:
         with self._lock:

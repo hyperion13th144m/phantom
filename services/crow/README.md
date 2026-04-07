@@ -70,3 +70,25 @@ $ scripts/run-test.sh
 
 ## REST API
 
+
+## Navi 連携 (Webhook)
+
+`crow` ジョブが終了したときに `navi` のオーケストレーション webhook へ通知できます。
+
+- `NAVI_ORCHESTRATION_WEBHOOK_URL`: 例 `http://navi-dev:8000/orchestration/crow-completed`
+- `NAVI_ORCHESTRATION_WEBHOOK_SECRET`: 任意。設定時は `X-Webhook-Signature` (HMAC-SHA256) を付与
+- `NAVI_ORCHESTRATION_WEBHOOK_TIMEOUT_SECONDS`: 任意。デフォルト `5`
+
+通知 payload 例:
+
+```json
+{
+  "crow_job_id": "a1b2c3d4",
+  "status": "completed",
+  "finished_at": "2026-04-07T12:34:56+00:00"
+}
+```
+
+備考:
+- 通知はジョブ終端状態 (`completed` / `failed` / `canceled`) で送信されます。
+- webhook 通知失敗時も crow ジョブ結果自体は維持され、処理は継続します（警告ログのみ）。
