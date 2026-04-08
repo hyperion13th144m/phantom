@@ -34,9 +34,15 @@
             padding: 2rem 1.25rem 3rem;
         }
 
-        a { color: var(--accent-strong); }
+        a {
+            color: var(--accent-strong);
+        }
 
-        h1, h2, h3 { margin-bottom: 0.5rem; }
+        h1,
+        h2,
+        h3 {
+            margin-bottom: 0.5rem;
+        }
 
         .intro {
             margin-bottom: 1.5rem;
@@ -46,7 +52,8 @@
             background: rgba(251, 250, 247, 0.92);
         }
 
-        .message, .error {
+        .message,
+        .error {
             margin-bottom: 1rem;
             padding: 0.9rem 1rem;
             border-radius: 12px;
@@ -186,7 +193,7 @@
 <body>
     <main>
         <section class="intro">
-            <p><a href="/">← ダッシュボードへ戻る</a></p>
+            <p><a href="{{ url_for('dashboard') }}">← ダッシュボードへ戻る</a></p>
             <h1>Crow 管理画面</h1>
             <p>Crow の current job を開始・キャンセルし、現在状態と履歴を確認します。</p>
             <p class="muted">接続先: <code>{{ crow_base_url }}</code></p>
@@ -203,23 +210,27 @@
         <section class="grid">
             <article class="panel">
                 <h2>クローリング開始</h2>
-                <form method="post" action="/crow/start">
+                <form method="post" action="{{ url_for('crow_start') }}">
                     <label for="doc_id">doc_id</label>
-                    <input id="doc_id" name="doc_id" type="text" placeholder="例: JP-2026-000001" value="{{ form_doc_id or '' }}">
+                    <input id="doc_id" name="doc_id" type="text" placeholder="例: JP-2026-000001"
+                        value="{{ form_doc_id or '' }}">
 
                     <label for="max_files">max_files</label>
-                    <input id="max_files" name="max_files" type="number" min="0" placeholder="例: 100" value="{{ form_max_files or '' }}">
+                    <input id="max_files" name="max_files" type="number" min="0" placeholder="例: 100"
+                        value="{{ form_max_files or '' }}">
 
                     <label for="doc_codes">doc_codes</label>
                     <select id="doc_codes" name="doc_codes" multiple size="12">
                         {% for code in available_doc_codes %}
-                        <option value="{{ code }}" {% if code in (form_doc_codes or []) %}selected{% endif %}>{{ code }}</option>
+                        <option value="{{ code }}" {% if code in (form_doc_codes or []) %}selected{% endif %}>{{ code }}
+                        </option>
                         {% endfor %}
                     </select>
                     <p class="muted field-hint">Ctrl または Cmd を使って複数選択できます。</p>
 
                     <div class="checkbox">
-                        <input id="overwrite" name="overwrite" type="checkbox" {% if form_overwrite %}checked{% endif %}>
+                        <input id="overwrite" name="overwrite" type="checkbox" {% if form_overwrite %}checked{% endif
+                            %}>
                         <label for="overwrite">既存ファイルがあっても上書きして crawl する</label>
                     </div>
 
@@ -257,7 +268,7 @@
                     <dd>{{ status.message or "-" }}</dd>
                 </dl>
 
-                <form method="post" action="/crow/cancel">
+                <form method="post" action="{{ url_for('crow_cancel') }}">
                     <button class="secondary" type="submit">現在ジョブをキャンセル</button>
                 </form>
                 {% else %}
@@ -293,7 +304,7 @@
                     <ul>
                         {% for job_id in history %}
                         <li>
-                            <a href="/crow?job_id={{ job_id }}">{{ job_id }}</a>
+                            <a href="{{ url_for('crow_detail', job_id=job_id) }}">{{ job_id }}</a>
                             {% if selected_log_job_id == job_id %}<strong>(選択中)</strong>{% endif %}
                         </li>
                         {% endfor %}

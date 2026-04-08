@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Request
-
 from navi.catalog import PROJECTS, list_job_templates
 from navi.ui import templates
 
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", name="dashboard")
 def dashboard(request: Request):
     return templates.TemplateResponse(
         "dashboard.html",

@@ -34,10 +34,17 @@
             padding: 2rem 1.25rem 3rem;
         }
 
-        a { color: var(--accent-strong); }
-        h1, h2 { margin-bottom: 0.5rem; }
+        a {
+            color: var(--accent-strong);
+        }
 
-        .intro, .panel {
+        h1,
+        h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .intro,
+        .panel {
             border: 1px solid var(--border);
             border-radius: 16px;
             background: var(--surface-strong);
@@ -53,7 +60,8 @@
             padding: 1rem 1.1rem;
         }
 
-        .message, .error {
+        .message,
+        .error {
             margin-bottom: 1rem;
             padding: 0.9rem 1rem;
             border-radius: 12px;
@@ -111,7 +119,7 @@
 <body>
     <main>
         <section class="intro">
-            <p><a href="/">← ダッシュボードへ戻る</a></p>
+            <p><a href="{{ url_for('dashboard') }}">← ダッシュボードへ戻る</a></p>
             <h1>Mona 管理画面</h1>
             <p>Mona の documents status を確認し、reload を実行します。</p>
             <p class="muted">接続先: <code>{{ mona_base_url }}</code></p>
@@ -129,7 +137,7 @@
             <article class="panel">
                 <h2>documents reload</h2>
                 <p class="muted">Mona の document キャッシュや状態を再読み込みします。</p>
-                <form method="post" action="/mona/reload">
+                <form method="post" action="{{ url_for('mona_reload') }}">
                     <button type="submit">reload を実行</button>
                 </form>
             </article>

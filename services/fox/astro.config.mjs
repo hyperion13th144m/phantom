@@ -20,6 +20,5 @@ export default defineConfig({
                 '~': '/src',
             }
         },
-        publicDir: process.env.NODE_ENV === "production" ? false : "public",
     },
 });

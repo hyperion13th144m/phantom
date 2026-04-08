@@ -4,7 +4,6 @@ from urllib import parse
 
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import RedirectResponse
-
 from navi.mona_client import MonaClient, MonaClientError, get_mona_config
 from navi.ui import templates
 
@@ -41,7 +40,7 @@ def _build_page_context(
     }
 
 
-@router.get("/")
+@router.get("/", name="mona")
 def mona_admin(
     request: Request,
     message: str | None = Query(default=None),
@@ -57,18 +56,20 @@ def mona_admin(
     )
 
 
-@router.post("/reload")
-def reload_mona_documents():
+@router.post("/reload", name="mona_reload")
+def reload_mona_documents(request: Request):
     client = MonaClient()
     try:
         response = client.reload_documents()
     except MonaClientError as exc:
+        u = request.url_for("mona", error=parse.quote(_format_error_message(exc)))
         return RedirectResponse(
-            url=f"/mona?error={parse.quote(_format_error_message(exc))}",
+            url=u,
             status_code=303,
         )
 
     flash = "documents reload を実行しました"
     if response:
         flash = f"{flash}: {json.dumps(response, ensure_ascii=False)}"
-    return RedirectResponse(url=f"/mona?message={parse.quote(flash)}", status_code=303)
+    u = request.url_for("mona", message=parse.quote(flash))
+    return RedirectResponse(url=u, status_code=303)

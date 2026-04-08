@@ -143,7 +143,7 @@
 <body>
     <main>
         <section class="intro">
-            <p><a href="/">← ダッシュボードへ戻る</a></p>
+            <p><a href="{{ url_for('dashboard') }}">← ダッシュボードへ戻る</a></p>
             <h1>Orchestration 管理画面</h1>
             <p>Crow 完了 webhook を起点に、Panther / Mona へ fan-out した実行結果を確認します。</p>
             <p class="muted">表示件数: {{ limit }} 件</p>
@@ -156,7 +156,8 @@
                 <ul class="pipeline-list">
                     {% for item in items %}
                     <li>
-                        <a href="/orchestration?job_id={{ item.crow_job_id }}&limit={{ limit }}">{{ item.crow_job_id }}</a>
+                        <a href="{{ url_for('orchestration', job_id=item.crow_job_id, limit=limit) }}">{{
+                            item.crow_job_id }}</a>
                         <span class="chip">state={{ item.state }}</span>
                         {% if item.panther and item.panther.ok %}
                         <span class="chip ok">panther ok</span>

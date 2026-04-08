@@ -1,13 +1,13 @@
 ---
 import "../styles/global.css";
 const title = Astro.props.title || "Document";
-//<meta name="generator" content={Astro.generator} />
 ---
 
 <!doctype html>
 <html lang="ja">
     <head>
         <meta charset="UTF-8" />
+        <meta name="generator" content={Astro.generator} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
     </head>

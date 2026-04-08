@@ -8,14 +8,20 @@ from threading import Lock
 from typing import Any, TypedDict
 
 from fastapi import APIRouter, HTTPException, Query, Request
-
 from navi.mona_client import MonaClient, MonaClientError
 from navi.panther_client import PantherClient, PantherClientError
 from navi.ui import templates
 
 router = APIRouter(prefix="/orchestration", tags=["orchestration"])
 
-_SUCCESS_STATUSES = {"completed", "complete", "success", "succeeded", "finished", "done"}
+_SUCCESS_STATUSES = {
+    "completed",
+    "complete",
+    "success",
+    "succeeded",
+    "finished",
+    "done",
+}
 
 
 class _CrowCompletedPayload(TypedDict, total=False):
@@ -186,7 +192,7 @@ def _run_mona_step(payload: _CrowCompletedPayload) -> _PipelineStepResult:
     }
 
 
-@router.get("/")
+@router.get("/", name="orchestration")
 def orchestration_admin(
     request: Request,
     job_id: str | None = Query(default=None),
@@ -198,7 +204,9 @@ def orchestration_admin(
     selected_pipeline = state.get(selected_job_id) if selected_job_id else None
     selected_pipeline_pretty = None
     if selected_pipeline is not None:
-        selected_pipeline_pretty = json.dumps(selected_pipeline, ensure_ascii=False, indent=2)
+        selected_pipeline_pretty = json.dumps(
+            selected_pipeline, ensure_ascii=False, indent=2
+        )
 
     return templates.TemplateResponse(
         "orchestration/index.html",
@@ -213,7 +221,7 @@ def orchestration_admin(
     )
 
 
-@router.post("/crow-completed")
+@router.post("/crow-completed", name="orchestration_crow_completed")
 async def handle_crow_completed_webhook(request: Request):
     raw_body = await request.body()
     _verify_webhook_signature(raw_body, request.headers.get("X-Webhook-Signature"))
@@ -286,7 +294,7 @@ async def handle_crow_completed_webhook(request: Request):
     }
 
 
-@router.get("/pipelines/{crow_job_id}")
+@router.get("/pipelines/{crow_job_id}", name="orchestration_pipeline_detail")
 def get_pipeline(crow_job_id: str):
     pipeline = state.get(crow_job_id)
     if pipeline is None:
@@ -294,6 +302,6 @@ def get_pipeline(crow_job_id: str):
     return pipeline
 
 
-@router.get("/pipelines")
+@router.get("/pipelines", name="orchestration_pipelines")
 def list_pipelines(limit: int = 20):
     return {"items": state.list_recent(limit=limit)}

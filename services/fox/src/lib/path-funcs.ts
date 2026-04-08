@@ -5,7 +5,7 @@ export const getImageUrl = (docId: string, imageName: string) => {
         return `/documents/${docId}/images/${imageName}`;
     } else if (import.meta.env.NODE_ENV === "development") {
         // in development, generates url to local API.
-        return `/fox/api/${docId}/images/${imageName}`;
+        return `/api/${docId}/images/${imageName}`;
     } else {
         throw new Error("Unknown environment");
     }

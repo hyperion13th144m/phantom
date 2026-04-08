@@ -5,10 +5,9 @@ from urllib import parse
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
-from starlette.datastructures import UploadFile
-
 from navi.crow_client import CrowClient, CrowClientError, get_crow_config
 from navi.ui import templates
+from starlette.datastructures import UploadFile
 
 router = APIRouter(prefix="/crow", tags=["crow"])
 
@@ -106,7 +105,7 @@ def _build_page_context(
     }
 
 
-@router.get("/")
+@router.get("/", name="crow")
 def crow_admin(
     request: Request,
     message: str | None = Query(default=None),
@@ -124,7 +123,25 @@ def crow_admin(
     )
 
 
-@router.post("/start")
+@router.get("/{job_id}", name="crow_detail")
+def crow_admin(
+    request: Request,
+    job_id: str,
+    message: str | None = Query(default=None),
+    error: str | None = Query(default=None),
+):
+    return templates.TemplateResponse(
+        "crow/index.html",
+        _build_page_context(
+            request=request,
+            flash=message,
+            error_message=error,
+            selected_log_job_id=job_id,
+        ),
+    )
+
+
+@router.post("/start", name="crow_start")
 async def start_crow_job(request: Request):
     form = await request.form()
     selected_doc_codes = _normalize_doc_codes(form.getlist("doc_codes"))
@@ -140,7 +157,9 @@ async def start_crow_job(request: Request):
         try:
             payload["max_files"] = int(max_files_value)
         except ValueError as exc:
-            raise HTTPException(status_code=400, detail="max_files must be an integer") from exc
+            raise HTTPException(
+                status_code=400, detail="max_files must be an integer"
+            ) from exc
 
     doc_id_value = str(form.get("doc_id", "")).strip()
     if doc_id_value:
@@ -171,17 +190,19 @@ async def start_crow_job(request: Request):
     flash = f"ジョブを開始しました: job_id={job_id}, status={status}"
     if message:
         flash = f"{flash}, message={message}"
-    return RedirectResponse(url=f"/crow?message={parse.quote(flash)}", status_code=303)
+    u = request.url_for("crow", message=parse.quote(flash))
+    return RedirectResponse(url=u, status_code=303)
 
 
-@router.post("/cancel")
-def cancel_crow_job():
+@router.post("/cancel", name="crow_cancel")
+def cancel_crow_job(request: Request):
     client = CrowClient()
     try:
         response = client.cancel_job()
     except CrowClientError as exc:
+        u = request.url_for("crow", error=parse.quote(_format_error_message(exc)))
         return RedirectResponse(
-            url=f"/crow?error={parse.quote(_format_error_message(exc))}",
+            url=u,
             status_code=303,
         )
 
@@ -190,4 +211,5 @@ def cancel_crow_job():
     flash = f"キャンセルを送信しました: status={status}"
     if message:
         flash = f"{flash}, message={message}"
-    return RedirectResponse(url=f"/crow?message={parse.quote(flash)}", status_code=303)
+    u = request.url_for("crow", message=parse.quote(flash))
+    return RedirectResponse(url=u, status_code=303)

@@ -190,7 +190,7 @@
 <body>
     <main>
         <section class="intro">
-            <p><a href="/">← ダッシュボードへ戻る</a></p>
+            <p><a href="{{ url_for('dashboard') }}">← ダッシュボードへ戻る</a></p>
             <h1>Panther 管理画面</h1>
             <p>Panther の upload job を開始し、現在状態とジョブ詳細を確認します。</p>
             <p class="muted">接続先: <code>{{ panther_base_url }}</code></p>
@@ -207,19 +207,23 @@
         <section class="grid">
             <article class="panel">
                 <h2>アップロード開始</h2>
-                <form method="post" action="/panther/start">
+                <form method="post" action="{{ url_for('panther_start') }}">
                     <label for="id_list">id_list</label>
-                    <textarea id="id_list" name="id_list" placeholder="1行1ID または カンマ区切りで入力">{{ form_id_list or '' }}</textarea>
+                    <textarea id="id_list" name="id_list"
+                        placeholder="1行1ID または カンマ区切りで入力">{{ form_id_list or '' }}</textarea>
                     <p class="muted">未入力の場合は API のデフォルト対象を処理します。</p>
 
                     <label for="chunk_size">chunk_size</label>
-                    <input id="chunk_size" name="chunk_size" type="number" min="1" value="{{ form_chunk_size or '500' }}">
+                    <input id="chunk_size" name="chunk_size" type="number" min="1"
+                        value="{{ form_chunk_size or '500' }}">
 
                     <label for="max_retries">max_retries</label>
-                    <input id="max_retries" name="max_retries" type="number" min="0" value="{{ form_max_retries or '5' }}">
+                    <input id="max_retries" name="max_retries" type="number" min="0"
+                        value="{{ form_max_retries or '5' }}">
 
                     <div class="checkbox">
-                        <input id="use_hash_guard" name="use_hash_guard" type="checkbox" {% if form_use_hash_guard %}checked{% endif %}>
+                        <input id="use_hash_guard" name="use_hash_guard" type="checkbox" {% if form_use_hash_guard
+                            %}checked{% endif %}>
                         <label for="use_hash_guard">use_hash_guard を有効化する</label>
                     </div>
 
@@ -260,7 +264,7 @@
                 </dl>
 
                 {% if current_job.job_id %}
-                <form method="post" action="/panther/cancel">
+                <form method="post" action="{{ url_for('panther_cancel') }}">
                     <input name="job_id" type="hidden" value="{{ current_job.job_id }}">
                     <button class="secondary" type="submit">現在ジョブをキャンセル</button>
                 </form>
@@ -279,10 +283,11 @@
                     <ul>
                         {% for job_id in job_list %}
                         <li>
-                            <a href="/panther?job_id={{ job_id }}">{{ job_id }}</a>
-                            <form method="post" action="/panther/cancel" style="display:inline;">
+                            <a href="{{ url_for('panther', job_id=job_id) }}">{{ job_id }}</a>
+                            <form method="post" action="{{ url_for('panther_cancel') }}" style="display:inline;">
                                 <input name="job_id" type="hidden" value="{{ job_id }}">
-                                <button class="secondary" type="submit" style="margin-top:0;margin-left:0.4rem;padding:0.35rem 0.75rem;">cancel</button>
+                                <button class="secondary" type="submit"
+                                    style="margin-top:0;margin-left:0.4rem;padding:0.35rem 0.75rem;">cancel</button>
                             </form>
                             {% if selected_job_id == job_id %}<strong>(選択中)</strong>{% endif %}
                         </li>
@@ -296,9 +301,10 @@
 
             <article class="panel">
                 <h2>任意 job_id のキャンセル</h2>
-                <form method="post" action="/panther/cancel">
+                <form method="post" action="{{ url_for('panther_cancel') }}">
                     <label for="manual_job_id">job_id</label>
-                    <input id="manual_job_id" name="job_id" type="text" placeholder="例: 6f6d09a8-..." value="{{ selected_job_id or '' }}">
+                    <input id="manual_job_id" name="job_id" type="text" placeholder="例: 6f6d09a8-..."
+                        value="{{ selected_job_id or '' }}">
                     <button class="secondary" type="submit">指定ジョブをキャンセル</button>
                 </form>
             </article>

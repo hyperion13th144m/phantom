@@ -29,6 +29,7 @@ import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
 import { getCarouselImage } from "~/lib/carousel-images";
 import { getDocument } from "~/lib/document";
+import "../../../styles/global.css";
 
 const { docId } = Astro.params as { docId: string };
 const json = await getDocument(docId);

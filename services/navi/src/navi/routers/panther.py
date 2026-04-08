@@ -4,7 +4,6 @@ from urllib import parse
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
-
 from navi.panther_client import (
     PantherClient,
     PantherClientError,
@@ -87,7 +86,7 @@ def _build_page_context(
     }
 
 
-@router.get("/")
+@router.get("/", name="panther")
 def panther_admin(
     request: Request,
     message: str | None = Query(default=None),
@@ -105,7 +104,7 @@ def panther_admin(
     )
 
 
-@router.post("/start")
+@router.post("/start", name="panther_start")
 async def start_panther_job(request: Request):
     form = await request.form()
 
@@ -117,12 +116,16 @@ async def start_panther_job(request: Request):
     try:
         chunk_size = int(chunk_size_raw)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail="chunk_size must be an integer") from exc
+        raise HTTPException(
+            status_code=400, detail="chunk_size must be an integer"
+        ) from exc
 
     try:
         max_retries = int(max_retries_raw)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail="max_retries must be an integer") from exc
+        raise HTTPException(
+            status_code=400, detail="max_retries must be an integer"
+        ) from exc
 
     payload: PantherJobRequest = {
         "id_list": _parse_id_list(id_list_raw),
@@ -157,10 +160,12 @@ async def start_panther_job(request: Request):
     if message:
         flash = f"{flash}, message={message}"
 
-    return RedirectResponse(url=f"/panther?message={parse.quote(flash)}", status_code=303)
+    return RedirectResponse(
+        url=f"/panther?message={parse.quote(flash)}", status_code=303
+    )
 
 
-@router.post("/cancel")
+@router.post("/cancel", name="panther_cancel")
 async def cancel_panther_job(request: Request):
     form = await request.form()
     job_id = str(form.get("job_id", "")).strip()
