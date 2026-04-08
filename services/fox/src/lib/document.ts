@@ -24,10 +24,10 @@ const order = [
     isAttachingDocument,
 ];
 
-export const getDocument = async (docId: string, imageSizeTag: string = "large") => {
+export const getDocument = async (docId: string, origin: string, imageSizeTag: string = "large") => {
     let json: any[] = [];
     try {
-        const res = await fetch(`http://localhost:4321/api/${docId}/content`);
+        const res = await fetch(`${origin}/api/${docId}/content`);
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         json = await res.json();
     } catch (err) {
@@ -35,7 +35,7 @@ export const getDocument = async (docId: string, imageSizeTag: string = "large")
     }
 
     try {
-        const imageMeta = await fetchImageMetadata(docId, imageSizeTag);
+        const imageMeta = await fetchImageMetadata(docId, imageSizeTag, origin);
         hydrateImageContainers(json, imageMeta);
     } catch (err) {
         console.error(err);
@@ -54,8 +54,8 @@ type ResolvedImageInfo = {
     alt: string;
 };
 
-const fetchImageMetadata = async (docId: string, sizeTag: string) => {
-    const res = await fetch(`http://localhost:4321/api/${docId}/images-information`);
+const fetchImageMetadata = async (docId: string, sizeTag: string, origin: string) => {
+    const res = await fetch(`${origin}/api/${docId}/images-information`);
     if (!res.ok) throw new Error(`API Error: ${res.status}`);
     const images: ImagesInformation[] = await res.json();
 

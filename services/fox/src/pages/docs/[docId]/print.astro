@@ -24,8 +24,9 @@ import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
 import { getDocument } from "~/lib/document";
 
 const { docId } = Astro.params as { docId: string };
-const json = await getDocument(docId);
-const bibliography = await getBibliography(docId);
+const origin = new URL(Astro.request.url).origin;
+const json = await getDocument(docId, origin);
+const bibliography = await getBibliography(docId, origin);
 const title = bibliography
     ? `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`
     : "Error: Bibliography not found";

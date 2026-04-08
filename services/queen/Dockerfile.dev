@@ -1,0 +1,15 @@
+FROM python:3.14-bookworm
+
+ARG USERNAME=pyuser
+ARG GROUPNAME=pygroup
+ARG UID=1000
+ARG GID=1000
+ENV TZ=Asia/Tokyo
+
+# install nodejs for building interfaces
+RUN apt-get update && \
+    apt-get install -y nodejs npm && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install uv
+
+USER $USERNAME

@@ -6,9 +6,9 @@ const domestic_number_re = /^[0-9]{10}$/;
 // pct 出願番号形式（例：PCTJP2023XXXXXX)
 const pct_number_re = /^[A-Za-z]{2}[0-9]{4}[0-9]{6}$/;
 
-export const getBibliography = async (docId: string) => {
+export const getBibliography = async (docId: string, origin: string) => {
     try {
-        const res = await fetch(`http://localhost:4321/api/${docId}/bibliographic-items`);
+        const res = await fetch(`${origin}/api/${docId}/bibliographic-items`);
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         const data: BibliographicItems = await res.json();
 

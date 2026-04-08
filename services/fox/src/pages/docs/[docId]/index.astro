@@ -32,13 +32,14 @@ import { getDocument } from "~/lib/document";
 import "../../../styles/global.css";
 
 const { docId } = Astro.params as { docId: string };
-const json = await getDocument(docId);
-const bibliography = await getBibliography(docId);
+const origin = new URL(Astro.request.url).origin;
+const json = await getDocument(docId, origin);
+const bibliography = await getBibliography(docId, origin);
 const title = bibliography
     ? `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`
     : "Error: Bibliography not found";
-const thumbnails = await getCarouselImage(docId, "figures", "thumbnail");
-const images = await getCarouselImage(docId, "figures", "middle");
+const thumbnails = await getCarouselImage(docId, "figures", "thumbnail", origin);
+const images = await getCarouselImage(docId, "figures", "middle", origin);
 const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
 ---
 
