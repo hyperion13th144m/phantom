@@ -8,13 +8,14 @@ export default function Home() {
                     <a
                         href="/skull/search"
                         className="text-blue-500 hover:underline"
+                        target="_blank"
                     >
                         メタデータ編集
                     </a>
                 </li>
                 <li>
                     <a
-                        href="/navi"
+                        href="/navi" target="_blank"
                         className="text-blue-500 hover:underline"
                     >
                         管理画面

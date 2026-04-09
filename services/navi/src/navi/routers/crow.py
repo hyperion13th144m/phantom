@@ -1,16 +1,19 @@
 import json
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 from typing import Any
 from urllib import parse
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from navi.crow_client import CrowClient, CrowClientError, get_crow_config
 from navi.crow_scheduler import CrowScheduleError, CrowScheduleManager
 from navi.ui import templates
 from starlette.datastructures import UploadFile
 
 router = APIRouter(prefix="/crow", tags=["crow"])
+
+JST = ZoneInfo("Asia/Tokyo")
 
 
 def _format_error_message(exc: Exception) -> str:
@@ -41,13 +44,33 @@ def _normalize_doc_codes(values: list[str | UploadFile]) -> list[str]:
 def _to_datetime_string(timestamp: float | int | None) -> str | None:
     if timestamp is None:
         return None
-    return datetime.fromtimestamp(timestamp, tz=UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
+    return datetime.fromtimestamp(timestamp, tz=UTC).astimezone(JST).strftime("%Y-%m-%d %H:%M:%S JST")
 
 
 def _format_datetime(value: datetime | None) -> str:
     if value is None:
         return "-"
     return value.astimezone(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def _serialize_status(status: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not status:
+        return None
+
+    return {
+        "job_id": status.get("job_id"),
+        "status": status.get("status"),
+        "started_at": _to_datetime_string(status.get("started_at")) or "-",
+        "finished_at": _to_datetime_string(status.get("finished_at")) or "-",
+        "current_doc_id": status.get("current_doc_id") or "-",
+        "current_file": status.get("current_file") or "-",
+        "total": status.get("total"),
+        "success_files": len(status.get("success_files") or []),
+        "failed_files": len(status.get("failed_files") or []),
+        "skipped_files": len(status.get("skipped_files") or []),
+        "cancel_requested": status.get("cancel_requested"),
+        "message": status.get("message") or "-",
+    }
 
 
 def _get_schedule_manager(request: Request) -> CrowScheduleManager:
@@ -67,6 +90,7 @@ async def _build_page_context(
     client = CrowClient()
     status = None
     history: list[str] = []
+    history_entries: list[dict[str, str | float | None]] = []
     available_doc_codes: list[str] = []
     doc_code_categories: list[dict] = []
     selected_log = None
@@ -82,6 +106,29 @@ async def _build_page_context(
         history = client.list_history()
     except CrowClientError as exc:
         error_message = error_message or _format_error_message(exc)
+
+    for job_id in history:
+        finished_at_timestamp = None
+        finished_at = None
+        try:
+            job_log = client.get_job_log(job_id)
+            finished_at_timestamp = job_log.get("finished_at")
+            finished_at = _to_datetime_string(finished_at_timestamp) or "-"
+        except CrowClientError as exc:
+            error_message = error_message or _format_error_message(exc)
+        history_entries.append(
+            {
+                "job_id": job_id,
+                "finished_at": finished_at or "-",
+                "finished_at_timestamp": finished_at_timestamp,
+            }
+        )
+
+    history_entries.sort(
+        key=lambda item: float(item.get("finished_at_timestamp") or 0), reverse=True
+    )
+    history_entries = history_entries[:20]
+    history = [str(item["job_id"]) for item in history_entries]
 
     try:
         available_doc_codes = client.get_available_doc_codes()
@@ -112,6 +159,7 @@ async def _build_page_context(
         "crow_base_url": get_crow_config().base_url,
         "status": status,
         "history": history,
+        "history_entries": history_entries,
         "available_doc_codes": available_doc_codes,
         "doc_code_categories": doc_code_categories,
         "selected_log_job_id": selected_log_job_id,
@@ -163,6 +211,20 @@ async def crow_admin_detail(
     )
 
 
+@router.get("/status/poll", name="crow_status")
+async def crow_status():
+    client = CrowClient()
+    try:
+        status = client.get_status()
+    except CrowClientError as exc:
+        return JSONResponse(
+            {"status": None, "error_message": _format_error_message(exc)},
+            status_code=502,
+        )
+
+    return JSONResponse({"status": _serialize_status(status), "error_message": None})
+
+
 @router.post("/start", name="crow_start")
 async def start_crow_job(request: Request):
     form = await request.form()
@@ -212,7 +274,8 @@ async def start_crow_job(request: Request):
     flash = f"ジョブを開始しました: job_id={job_id}, status={status}"
     if message:
         flash = f"{flash}, message={message}"
-    u = request.url_for("crow", message=parse.quote(flash))
+    u = request.url_for("crow")
+    u = f"{u}?message={parse.quote(flash)}"
     return RedirectResponse(url=u, status_code=303)
 
 
@@ -222,7 +285,8 @@ def cancel_crow_job(request: Request):
     try:
         response = client.cancel_job()
     except CrowClientError as exc:
-        u = request.url_for("crow", error=parse.quote(_format_error_message(exc)))
+        u = request.url_for("crow")
+        u = f"{u}?error={parse.quote(_format_error_message(exc))}"
         return RedirectResponse(
             url=u,
             status_code=303,
@@ -233,7 +297,8 @@ def cancel_crow_job(request: Request):
     flash = f"キャンセルを送信しました: status={status}"
     if message:
         flash = f"{flash}, message={message}"
-    u = request.url_for("crow", message=parse.quote(flash))
+    u = request.url_for("crow")
+    u = f"{u}?message={parse.quote(flash)}"
     return RedirectResponse(url=u, status_code=303)
 
 
@@ -285,11 +350,13 @@ async def create_crow_schedule(request: Request):
             interval_minutes=interval_minutes,
         )
     except CrowScheduleError as exc:
-        u = request.url_for("crow", error=parse.quote(_format_error_message(exc)))
+        u = request.url_for("crow")
+        u = f"{u}?error={parse.quote(_format_error_message(exc))}"
         return RedirectResponse(url=u, status_code=303)
 
     flash = f"予約ジョブを作成しました: schedule_id={schedule.id}, next_run={_format_datetime(schedule.next_run_at)}"
-    u = request.url_for("crow", message=parse.quote(flash))
+    u = request.url_for("crow")
+    u = f"{u}?message={parse.quote(flash)}"
     return RedirectResponse(url=u, status_code=303)
 
 
@@ -297,9 +364,11 @@ async def create_crow_schedule(request: Request):
 async def delete_crow_schedule(request: Request, schedule_id: str):
     deleted = await _get_schedule_manager(request).delete_schedule(schedule_id)
     if not deleted:
-        u = request.url_for("crow", error=parse.quote("指定された予約ジョブは存在しません。"))
+        u = request.url_for("crow")
+        u = f"{u}?error={parse.quote('指定された予約ジョブは存在しません。')}"
         return RedirectResponse(url=u, status_code=303)
-    u = request.url_for("crow", message=parse.quote(f"予約ジョブを削除しました: {schedule_id}"))
+    u = request.url_for("crow")
+    u = f"{u}?message={parse.quote(f'予約ジョブを削除しました: {schedule_id}')}"
     return RedirectResponse(url=u, status_code=303)
 
 
@@ -309,9 +378,11 @@ async def toggle_crow_schedule(request: Request, schedule_id: str):
     try:
         schedule = await manager.toggle_schedule(schedule_id)
     except CrowScheduleError as exc:
-        u = request.url_for("crow", error=parse.quote(_format_error_message(exc)))
+        u = request.url_for("crow")
+        u = f"{u}?error={parse.quote(_format_error_message(exc))}"
         return RedirectResponse(url=u, status_code=303)
 
     state = "有効化" if schedule.enabled else "無効化"
-    u = request.url_for("crow", message=parse.quote(f"予約ジョブを{state}しました: {schedule_id}"))
+    u = request.url_for("crow")
+    u = f"{u}?message={parse.quote(f'予約ジョブを{state}しました: {schedule_id}')}"
     return RedirectResponse(url=u, status_code=303)

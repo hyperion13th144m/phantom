@@ -156,7 +156,7 @@
                 <ul class="pipeline-list">
                     {% for item in items %}
                     <li>
-                        <a href="{{ url_for('orchestration', job_id=item.crow_job_id, limit=limit) }}">{{
+                        <a href="{{ url_for('orchestration') }}?job_id={{ item.crow_job_id }}&limit={{ limit }}">{{
                             item.crow_job_id }}</a>
                         <span class="chip">state={{ item.state }}</span>
                         {% if item.panther and item.panther.ok %}

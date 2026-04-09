@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import threading
@@ -140,7 +141,21 @@ class JobManager:
     def get_current_job(self) -> JobStateModel:
         with self._lock:
             if not self._running_job_id:
-                raise HTTPException(404, "No job found")
+                return JobStateModel(
+                    job_id="",
+                    status="idle",
+                    started_at=None,
+                    finished_at=None,
+                    current_doc_id=None,
+                    current_file=None,
+                    total=0,
+                    success_files=[],
+                    failed_files=[],
+                    skipped_files=[],
+                    message="",
+                    cancel_requested=False,
+                    request=JobRequest(),
+                )
             return self._jobs[self._running_job_id].to_model()
 
     def cancel_current_job(self) -> JobResponse:
@@ -212,6 +227,8 @@ def cancel_job() -> JobResponse:
 )
 def get_job_log(job_id: str) -> JSONResponse:
     content = job_manager.get_job_log(job_id)
+    if isinstance(content, str):
+        content = json.loads(content)
     return JSONResponse(content=content)
 
 

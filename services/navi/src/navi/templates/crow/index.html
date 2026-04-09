@@ -172,8 +172,9 @@
         }
 
         .history-list {
-            max-height: 14rem;
-            overflow: auto;
+            /*max-height: 28rem;
+            overflow: auto;*/
+            padding-left: 2rem;
         }
 
         .muted {
@@ -242,7 +243,7 @@
                         <label for="overwrite">既存ファイルがあっても上書きして crawl する</label>
                     </div>
 
-                    <button type="submit">ジョブ開始</button>
+                    <button type="submit" class="secondary">ジョブ開始</button>
                 </form>
             </article>
 
@@ -263,7 +264,8 @@
                         </div>
                         <div>
                             <label for="interval_minutes">間隔（分）</label>
-                            <input id="interval_minutes" name="interval_minutes" type="number" min="1" placeholder="例: 60">
+                            <input id="interval_minutes" name="interval_minutes" type="number" min="1"
+                                placeholder="例: 60">
                         </div>
                     </div>
 
@@ -285,46 +287,48 @@
                         <label for="schedule_overwrite">既存ファイルがあっても上書きして crawl する</label>
                     </div>
 
-                    <button type="submit">予約を作成</button>
+                    <button type="submit" class="secondary">予約を作成</button>
                 </form>
             </article>
 
             <article class="panel">
                 <h2>現在の状態</h2>
-                {% if status %}
-                <dl>
-                    <dt>job_id</dt>
-                    <dd>{{ status.job_id }}</dd>
-                    <dt>status</dt>
-                    <dd>{{ status.status }}</dd>
-                    <dt>started_at</dt>
-                    <dd>{{ format_timestamp(status.started_at) or "-" }}</dd>
-                    <dt>finished_at</dt>
-                    <dd>{{ format_timestamp(status.finished_at) or "-" }}</dd>
-                    <dt>current_doc_id</dt>
-                    <dd>{{ status.current_doc_id or "-" }}</dd>
-                    <dt>current_file</dt>
-                    <dd>{{ status.current_file or "-" }}</dd>
-                    <dt>total</dt>
-                    <dd>{{ status.total }}</dd>
-                    <dt>success_files</dt>
-                    <dd>{{ status.success_files | length }}</dd>
-                    <dt>failed_files</dt>
-                    <dd>{{ status.failed_files | length }}</dd>
-                    <dt>skipped_files</dt>
-                    <dd>{{ status.skipped_files | length }}</dd>
-                    <dt>cancel_requested</dt>
-                    <dd>{{ status.cancel_requested }}</dd>
-                    <dt>message</dt>
-                    <dd>{{ status.message or "-" }}</dd>
-                </dl>
+                <div id="crow-status-panel" data-status-url="{{ url_for('crow_status') }}">
+                    {% if status %}
+                    <dl id="crow-status-list">
+                        <dt>job_id</dt>
+                        <dd>{{ status.job_id }}</dd>
+                        <dt>status</dt>
+                        <dd>{{ status.status }}</dd>
+                        <dt>started_at</dt>
+                        <dd>{{ format_timestamp(status.started_at) or "-" }}</dd>
+                        <dt>finished_at</dt>
+                        <dd>{{ format_timestamp(status.finished_at) or "-" }}</dd>
+                        <dt>current_doc_id</dt>
+                        <dd>{{ status.current_doc_id or "-" }}</dd>
+                        <dt>current_file</dt>
+                        <dd>{{ status.current_file or "-" }}</dd>
+                        <dt>total</dt>
+                        <dd>{{ status.total }}</dd>
+                        <dt>success_files</dt>
+                        <dd>{{ status.success_files | length }}</dd>
+                        <dt>failed_files</dt>
+                        <dd>{{ status.failed_files | length }}</dd>
+                        <dt>skipped_files</dt>
+                        <dd>{{ status.skipped_files | length }}</dd>
+                        <dt>cancel_requested</dt>
+                        <dd>{{ status.cancel_requested }}</dd>
+                        <dt>message</dt>
+                        <dd>{{ status.message or "-" }}</dd>
+                    </dl>
+                    {% else %}
+                    <p id="crow-status-empty" class="muted">現在状態を取得できませんでした。</p>
+                    {% endif %}
+                </div>
 
                 <form method="post" action="{{ url_for('crow_cancel') }}">
                     <button class="secondary" type="submit">現在ジョブをキャンセル</button>
                 </form>
-                {% else %}
-                <p class="muted">現在状態を取得できませんでした。</p>
-                {% endif %}
             </article>
         </section>
 
@@ -353,10 +357,11 @@
                 {% if history %}
                 <div class="history-list">
                     <ul>
-                        {% for job_id in history %}
+                        {% for item in history_entries %}
                         <li>
-                            <a href="{{ url_for('crow_detail', job_id=job_id) }}">{{ job_id }}</a>
-                            {% if selected_log_job_id == job_id %}<strong>(選択中)</strong>{% endif %}
+                            <a href="{{ url_for('crow_detail', job_id=item.job_id) }}">{{ item.job_id }}</a>
+                            {% if selected_log_job_id == item.job_id %}<strong>(選択中)</strong>{% endif %}<br>
+                            <span class="muted">finished_at: {{ item.finished_at }}</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -402,10 +407,15 @@
                             </td>
                             <td>{{ '有効' if schedule.enabled else '無効' }}</td>
                             <td>
-                                <form method="post" action="{{ url_for('crow_schedule_toggle', schedule_id=schedule.id) }}" style="display:inline-block; margin-right:0.4rem;">
-                                    <button class="secondary" type="submit">{{ '無効化' if schedule.enabled else '有効化' }}</button>
+                                <form method="post"
+                                    action="{{ url_for('crow_schedule_toggle', schedule_id=schedule.id) }}"
+                                    style="display:inline-block; margin-right:0.4rem;">
+                                    <button class="secondary" type="submit">{{ '無効化' if schedule.enabled else '有効化'
+                                        }}</button>
                                 </form>
-                                <form method="post" action="{{ url_for('crow_schedule_delete', schedule_id=schedule.id) }}" style="display:inline-block;">
+                                <form method="post"
+                                    action="{{ url_for('crow_schedule_delete', schedule_id=schedule.id) }}"
+                                    style="display:inline-block;">
                                     <button type="submit">削除</button>
                                 </form>
                             </td>
@@ -430,6 +440,99 @@
             {% endif %}
         </section>
     </main>
+    <script>
+        (() => {
+            const panel = document.getElementById("crow-status-panel");
+            if (!panel) {
+                return;
+            }
+
+            const statusUrl = panel.dataset.statusUrl;
+            const fields = [
+                ["job_id", "job_id"],
+                ["status", "status"],
+                ["started_at", "started_at"],
+                ["finished_at", "finished_at"],
+                ["current_doc_id", "current_doc_id"],
+                ["current_file", "current_file"],
+                ["total", "total"],
+                ["success_files", "success_files"],
+                ["failed_files", "failed_files"],
+                ["skipped_files", "skipped_files"],
+                ["cancel_requested", "cancel_requested"],
+                ["message", "message"],
+            ];
+            let pollTimer = null;
+
+            function isRunning(status) {
+                return String(status?.status ?? "").toLowerCase() === "running";
+            }
+
+            function stopPolling() {
+                if (pollTimer !== null) {
+                    window.clearInterval(pollTimer);
+                    pollTimer = null;
+                }
+            }
+
+            function startPolling() {
+                if (pollTimer !== null) {
+                    return;
+                }
+                pollTimer = window.setInterval(refreshStatus, 5000);
+            }
+
+            function renderStatus(status) {
+                const list = document.createElement("dl");
+                list.id = "crow-status-list";
+
+                for (const [label, key] of fields) {
+                    const dt = document.createElement("dt");
+                    dt.textContent = label;
+                    const dd = document.createElement("dd");
+                    dd.textContent = status?.[key] ?? "-";
+                    list.append(dt, dd);
+                }
+
+                panel.replaceChildren(list);
+            }
+
+            function renderEmpty(message) {
+                const empty = document.createElement("p");
+                empty.id = "crow-status-empty";
+                empty.className = "muted";
+                empty.textContent = message;
+                panel.replaceChildren(empty);
+            }
+
+            async function refreshStatus() {
+                try {
+                    const response = await fetch(statusUrl, {
+                        headers: { "Accept": "application/json" },
+                        cache: "no-store",
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.status) {
+                        stopPolling();
+                        renderEmpty(payload.error_message || "現在状態を取得できませんでした。");
+                        return;
+                    }
+
+                    renderStatus(payload.status);
+                    if (isRunning(payload.status)) {
+                        startPolling();
+                    } else {
+                        stopPolling();
+                    }
+                } catch (_error) {
+                    stopPolling();
+                    renderEmpty("現在状態を取得できませんでした。");
+                }
+            }
+
+            refreshStatus();
+        })();
+    </script>
 </body>
 
 </html>

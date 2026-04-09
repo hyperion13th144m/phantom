@@ -42,7 +42,15 @@ class CrowClient:
     def get_job_log(self, job_id: str) -> dict[str, Any]:
         safe_job_id = parse.quote(job_id, safe="")
         data = self._request("GET", f"/jobs/{safe_job_id}/log")
-        return data if isinstance(data, dict) else {}
+        if isinstance(data, dict):
+            return data
+        if isinstance(data, str):
+            try:
+                parsed = json.loads(data)
+            except json.JSONDecodeError:
+                return {}
+            return parsed if isinstance(parsed, dict) else {}
+        return {}
 
     def start_job(self, payload: dict[str, Any]) -> dict[str, Any]:
         data = self._request("POST", "/jobs", payload)

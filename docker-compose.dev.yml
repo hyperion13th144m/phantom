@@ -15,8 +15,6 @@ services:
       - ${SRC_DIR}:/src-dir:ro
       - ${DATA_DIR}:/data-dir
       - ${LOG_DIR_CROW}:/var/log/crow
-      - ./test-data/extracted-archives:/test-data-src
-      - ./var/data-debug:/test-data-dst
     networks:
       - dev-net
 
@@ -95,7 +93,6 @@ services:
       MONA_URL: http://mona-dev:8000
     volumes:
       - ${LOG_DIR_FOX}:/var/log/fox
-      - ./test-data/fox:/test-data
     networks:
       - dev-net
 
@@ -154,7 +151,6 @@ services:
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
     volumes:
-      - ./test-data/extracted-archives:/test-data
       - ./services/mona/src/mona/models/generated:/mona-models
       - ./services/panther/src/panther/models/generated:/panther-models
       - ./services/fox/src/interfaces/generated:/fox-models

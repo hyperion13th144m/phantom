@@ -1,9 +1,11 @@
 import json
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import Any
 from urllib import parse
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from navi.panther_client import (
     PantherClient,
     PantherClientError,
@@ -14,6 +16,8 @@ from navi.ui import templates
 
 router = APIRouter(prefix="/panther", tags=["panther"])
 
+JST = ZoneInfo("Asia/Tokyo")
+
 
 def _format_error_message(exc: Exception) -> str:
     return str(exc).strip() or exc.__class__.__name__
@@ -21,6 +25,42 @@ def _format_error_message(exc: Exception) -> str:
 
 def _parse_checkbox(value: str | None) -> bool:
     return value in {"on", "true", "1", "yes"}
+
+
+def _format_timestamp_to_jst(value: str | None) -> str:
+    if not value or value == "-":
+        return "-"
+
+    try:
+        dt = datetime.fromisoformat(value)
+    except ValueError:
+        return value
+
+    if dt.tzinfo is None:
+        return value
+
+    return dt.astimezone(JST).strftime("%Y-%m-%d %H:%M:%S JST")
+
+
+def _serialize_current_job(current_job: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not current_job:
+        return None
+
+    return {
+        "job_id": current_job.get("job_id") or "-",
+        "status": current_job.get("status") or "-",
+        "started_at": _format_timestamp_to_jst(current_job.get("started_at")),
+        "updated_at": _format_timestamp_to_jst(current_job.get("updated_at")),
+        "finished_at": _format_timestamp_to_jst(current_job.get("finished_at")),
+        "progress": current_job.get("progress") if current_job.get("progress") is not None else 0,
+        "total": current_job.get("total") or 0,
+        "success": current_job.get("success") or 0,
+        "failed": current_job.get("failed") or 0,
+        "requested_ids": current_job.get("requested_ids") or [],
+        "missing_ids": current_job.get("missing_ids") or [],
+        "source": current_job.get("source") or "-",
+        "error": current_job.get("error") or "-",
+    }
 
 
 def _parse_id_list(raw: str) -> list[str] | None:
@@ -49,11 +89,12 @@ def _build_page_context(
 
     current_job = None
     job_list: list[str] = []
+    job_entries: list[dict[str, str | None]] = []
     selected_job = None
     selected_job_pretty = None
 
     try:
-        current_job = client.get_current_job()
+        current_job = _serialize_current_job(client.get_current_job())
     except PantherClientError as exc:
         error_message = error_message or _format_error_message(exc)
 
@@ -61,6 +102,26 @@ def _build_page_context(
         job_list = client.list_jobs()
     except PantherClientError as exc:
         error_message = error_message or _format_error_message(exc)
+
+    for job_id in job_list:
+        finished_at_raw = None
+        finished_at = "-"
+        try:
+            job = client.get_job(job_id)
+            finished_at_raw = job.get("finished_at")
+            finished_at = _format_timestamp_to_jst(finished_at_raw)
+        except PantherClientError as exc:
+            error_message = error_message or _format_error_message(exc)
+        job_entries.append(
+            {
+                "job_id": job_id,
+                "finished_at": finished_at,
+                "finished_at_raw": finished_at_raw,
+            }
+        )
+
+    job_entries.sort(key=lambda item: str(item.get("finished_at_raw") or ""), reverse=True)
+    job_list = [str(item["job_id"]) for item in job_entries]
 
     if selected_job_id:
         try:
@@ -76,6 +137,7 @@ def _build_page_context(
         "panther_base_url": get_panther_config().base_url,
         "current_job": current_job,
         "job_list": job_list,
+        "job_entries": job_entries,
         "selected_job_id": selected_job_id,
         "selected_job": selected_job,
         "selected_job_pretty": selected_job_pretty,
@@ -102,6 +164,20 @@ def panther_admin(
             selected_job_id=job_id,
         ),
     )
+
+
+@router.get("/status/poll", name="panther_status")
+def panther_status():
+    client = PantherClient()
+    try:
+        current_job = _serialize_current_job(client.get_current_job())
+    except PantherClientError as exc:
+        return JSONResponse(
+            {"current_job": None, "error_message": _format_error_message(exc)},
+            status_code=502,
+        )
+
+    return JSONResponse({"current_job": current_job, "error_message": None})
 
 
 @router.post("/start", name="panther_start")
@@ -160,9 +236,9 @@ async def start_panther_job(request: Request):
     if message:
         flash = f"{flash}, message={message}"
 
-    return RedirectResponse(
-        url=f"/panther?message={parse.quote(flash)}", status_code=303
-    )
+    u = request.url_for("panther")
+    u = f"{u}?message={parse.quote(flash)}&job_id={parse.quote(job_id)}"
+    return RedirectResponse(url=u, status_code=303)
 
 
 @router.post("/cancel", name="panther_cancel")
@@ -170,8 +246,10 @@ async def cancel_panther_job(request: Request):
     form = await request.form()
     job_id = str(form.get("job_id", "")).strip()
     if not job_id:
+        u = request.url_for("panther")
+        u = f"{u}?error={parse.quote('job_id を指定してください')}"
         return RedirectResponse(
-            url=f"/panther?error={parse.quote('job_id を指定してください')}",
+            url=u,
             status_code=303,
         )
 
@@ -179,8 +257,10 @@ async def cancel_panther_job(request: Request):
     try:
         response = client.cancel_job(job_id)
     except PantherClientError as exc:
+        u = request.url_for("panther")
+        u = f"{u}?error={parse.quote(_format_error_message(exc))}"
         return RedirectResponse(
-            url=f"/panther?error={parse.quote(_format_error_message(exc))}",
+            url=u,
             status_code=303,
         )
 
@@ -190,7 +270,9 @@ async def cancel_panther_job(request: Request):
     if message:
         flash = f"{flash}, message={message}"
 
+    u = request.url_for("panther")
+    u = f"{u}?message={parse.quote(flash)}&job_id={parse.quote(job_id)}"
     return RedirectResponse(
-        url=f"/panther?message={parse.quote(flash)}&job_id={parse.quote(job_id)}",
+        url=u,
         status_code=303,
     )

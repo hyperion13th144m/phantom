@@ -233,45 +233,47 @@
 
             <article class="panel">
                 <h2>現在の状態</h2>
-                {% if current_job %}
-                <dl>
-                    <dt>job_id</dt>
-                    <dd>{{ current_job.job_id or '-' }}</dd>
-                    <dt>status</dt>
-                    <dd>{{ current_job.status or '-' }}</dd>
-                    <dt>started_at</dt>
-                    <dd>{{ current_job.started_at or '-' }}</dd>
-                    <dt>updated_at</dt>
-                    <dd>{{ current_job.updated_at or '-' }}</dd>
-                    <dt>finished_at</dt>
-                    <dd>{{ current_job.finished_at or '-' }}</dd>
-                    <dt>progress</dt>
-                    <dd>{{ current_job.progress if current_job.progress is not none else 0 }}%</dd>
-                    <dt>total</dt>
-                    <dd>{{ current_job.total or 0 }}</dd>
-                    <dt>success</dt>
-                    <dd>{{ current_job.success or 0 }}</dd>
-                    <dt>failed</dt>
-                    <dd>{{ current_job.failed or 0 }}</dd>
-                    <dt>requested_ids</dt>
-                    <dd>{{ current_job.requested_ids | join(', ') if current_job.requested_ids else '-' }}</dd>
-                    <dt>missing_ids</dt>
-                    <dd>{{ current_job.missing_ids | join(', ') if current_job.missing_ids else '-' }}</dd>
-                    <dt>source</dt>
-                    <dd>{{ current_job.source or '-' }}</dd>
-                    <dt>error</dt>
-                    <dd>{{ current_job.error or '-' }}</dd>
-                </dl>
+                <div id="panther-status-panel" data-status-url="{{ url_for('panther_status') }}">
+                    {% if current_job %}
+                    <dl id="panther-status-list">
+                        <dt>job_id</dt>
+                        <dd>{{ current_job.job_id or '-' }}</dd>
+                        <dt>status</dt>
+                        <dd>{{ current_job.status or '-' }}</dd>
+                        <dt>started_at</dt>
+                        <dd>{{ current_job.started_at or '-' }}</dd>
+                        <dt>updated_at</dt>
+                        <dd>{{ current_job.updated_at or '-' }}</dd>
+                        <dt>finished_at</dt>
+                        <dd>{{ current_job.finished_at or '-' }}</dd>
+                        <dt>progress</dt>
+                        <dd>{{ current_job.progress if current_job.progress is not none else 0 }}%</dd>
+                        <dt>total</dt>
+                        <dd>{{ current_job.total or 0 }}</dd>
+                        <dt>success</dt>
+                        <dd>{{ current_job.success or 0 }}</dd>
+                        <dt>failed</dt>
+                        <dd>{{ current_job.failed or 0 }}</dd>
+                        <dt>requested_ids</dt>
+                        <dd>{{ current_job.requested_ids | join(', ') if current_job.requested_ids else '-' }}</dd>
+                        <dt>missing_ids</dt>
+                        <dd>{{ current_job.missing_ids | join(', ') if current_job.missing_ids else '-' }}</dd>
+                        <dt>source</dt>
+                        <dd>{{ current_job.source or '-' }}</dd>
+                        <dt>error</dt>
+                        <dd>{{ current_job.error or '-' }}</dd>
+                    </dl>
 
-                {% if current_job.job_id %}
-                <form method="post" action="{{ url_for('panther_cancel') }}">
-                    <input name="job_id" type="hidden" value="{{ current_job.job_id }}">
-                    <button class="secondary" type="submit">現在ジョブをキャンセル</button>
-                </form>
-                {% endif %}
-                {% else %}
-                <p class="muted">現在状態を取得できませんでした。</p>
-                {% endif %}
+                    {% if current_job.job_id %}
+                    <form method="post" action="{{ url_for('panther_cancel') }}">
+                        <input name="job_id" type="hidden" value="{{ current_job.job_id }}">
+                        <button class="secondary" type="submit">現在ジョブをキャンセル</button>
+                    </form>
+                    {% endif %}
+                    {% else %}
+                    <p id="panther-status-empty" class="muted">現在状態を取得できませんでした。</p>
+                    {% endif %}
+                </div>
             </article>
         </section>
 
@@ -281,15 +283,16 @@
                 {% if job_list %}
                 <div class="history-list">
                     <ul>
-                        {% for job_id in job_list %}
+                        {% for item in job_entries %}
                         <li>
-                            <a href="{{ url_for('panther', job_id=job_id) }}">{{ job_id }}</a>
+                            <a href="{{ url_for('panther') }}?job_id={{ item.job_id }}">{{ item.job_id }}</a>
                             <form method="post" action="{{ url_for('panther_cancel') }}" style="display:inline;">
-                                <input name="job_id" type="hidden" value="{{ job_id }}">
+                                <input name="job_id" type="hidden" value="{{ item.job_id }}">
                                 <button class="secondary" type="submit"
                                     style="margin-top:0;margin-left:0.4rem;padding:0.35rem 0.75rem;">cancel</button>
                             </form>
-                            {% if selected_job_id == job_id %}<strong>(選択中)</strong>{% endif %}
+                            {% if selected_job_id == item.job_id %}<strong>(選択中)</strong>{% endif %}<br>
+                            <span class="muted">finished_at: {{ item.finished_at }}</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -320,6 +323,133 @@
             {% endif %}
         </section>
     </main>
+    <script>
+        (() => {
+            const panel = document.getElementById("panther-status-panel");
+            if (!panel) {
+                return;
+            }
+
+            const statusUrl = panel.dataset.statusUrl;
+            const fields = [
+                ["job_id", "job_id"],
+                ["status", "status"],
+                ["started_at", "started_at"],
+                ["updated_at", "updated_at"],
+                ["finished_at", "finished_at"],
+                ["progress", "progress"],
+                ["total", "total"],
+                ["success", "success"],
+                ["failed", "failed"],
+                ["requested_ids", "requested_ids"],
+                ["missing_ids", "missing_ids"],
+                ["source", "source"],
+                ["error", "error"],
+            ];
+            let pollTimer = null;
+
+            function isRunning(job) {
+                const status = String(job?.status ?? "").toLowerCase();
+                return status === "queued" || status === "running";
+            }
+
+            function stopPolling() {
+                if (pollTimer !== null) {
+                    window.clearInterval(pollTimer);
+                    pollTimer = null;
+                }
+            }
+
+            function startPolling() {
+                if (pollTimer !== null) {
+                    return;
+                }
+                pollTimer = window.setInterval(refreshStatus, 5000);
+            }
+
+            function formatValue(key, value) {
+                if (key === "progress") {
+                    return `${value ?? 0}%`;
+                }
+                if (key === "requested_ids" || key === "missing_ids") {
+                    return Array.isArray(value) && value.length > 0 ? value.join(", ") : "-";
+                }
+                return value ?? "-";
+            }
+
+            function renderStatus(job) {
+                const fragment = document.createDocumentFragment();
+                const list = document.createElement("dl");
+                list.id = "panther-status-list";
+
+                for (const [label, key] of fields) {
+                    const dt = document.createElement("dt");
+                    dt.textContent = label;
+                    const dd = document.createElement("dd");
+                    dd.textContent = formatValue(key, job?.[key]);
+                    list.append(dt, dd);
+                }
+
+                fragment.append(list);
+
+                if (job?.job_id && job.job_id !== "-") {
+                    const form = document.createElement("form");
+                    form.method = "post";
+                    form.action = "{{ url_for('panther_cancel') }}";
+
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "job_id";
+                    input.value = job.job_id;
+
+                    const button = document.createElement("button");
+                    button.type = "submit";
+                    button.className = "secondary";
+                    button.textContent = "現在ジョブをキャンセル";
+
+                    form.append(input, button);
+                    fragment.append(form);
+                }
+
+                panel.replaceChildren(fragment);
+            }
+
+            function renderEmpty(message) {
+                const empty = document.createElement("p");
+                empty.id = "panther-status-empty";
+                empty.className = "muted";
+                empty.textContent = message;
+                panel.replaceChildren(empty);
+            }
+
+            async function refreshStatus() {
+                try {
+                    const response = await fetch(statusUrl, {
+                        headers: { "Accept": "application/json" },
+                        cache: "no-store",
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.current_job) {
+                        stopPolling();
+                        renderEmpty(payload.error_message || "現在状態を取得できませんでした。");
+                        return;
+                    }
+
+                    renderStatus(payload.current_job);
+                    if (isRunning(payload.current_job)) {
+                        startPolling();
+                    } else {
+                        stopPolling();
+                    }
+                } catch (_error) {
+                    stopPolling();
+                    renderEmpty("現在状態を取得できませんでした。");
+                }
+            }
+
+            refreshStatus();
+        })();
+    </script>
 </body>
 
 </html>

@@ -71,5 +71,6 @@ def reload_mona_documents(request: Request):
     flash = "documents reload を実行しました"
     if response:
         flash = f"{flash}: {json.dumps(response, ensure_ascii=False)}"
-    u = request.url_for("mona", message=parse.quote(flash))
+    u = request.url_for("mona")
+    u = f"{u}?message={parse.quote(flash)}"
     return RedirectResponse(url=u, status_code=303)
