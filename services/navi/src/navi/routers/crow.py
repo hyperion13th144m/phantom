@@ -6,6 +6,7 @@ from urllib import parse
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 from navi.crow_client import CrowClient, CrowClientError, get_crow_config
+from navi.crow_scheduler import CrowScheduleError, CrowScheduleManager
 from navi.ui import templates
 from starlette.datastructures import UploadFile
 
@@ -43,7 +44,20 @@ def _to_datetime_string(timestamp: float | int | None) -> str | None:
     return datetime.fromtimestamp(timestamp, tz=UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
 
 
-def _build_page_context(
+def _format_datetime(value: datetime | None) -> str:
+    if value is None:
+        return "-"
+    return value.astimezone(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def _get_schedule_manager(request: Request) -> CrowScheduleManager:
+    manager = getattr(request.app.state, "schedule_manager", None)
+    if manager is None:
+        raise RuntimeError("schedule_manager is not configured")
+    return manager
+
+
+async def _build_page_context(
     *,
     request: Request,
     flash: str | None = None,
@@ -57,6 +71,7 @@ def _build_page_context(
     doc_code_categories: list[dict] = []
     selected_log = None
     selected_log_pretty = None
+    schedules = []
 
     try:
         status = client.get_status()
@@ -85,6 +100,11 @@ def _build_page_context(
         except CrowClientError as exc:
             error_message = error_message or _format_error_message(exc)
 
+    try:
+        schedules = await _get_schedule_manager(request).list_schedules()
+    except Exception as exc:  # noqa: BLE001
+        error_message = error_message or _format_error_message(exc)
+
     return {
         "request": request,
         "flash": flash,
@@ -98,6 +118,8 @@ def _build_page_context(
         "selected_log": selected_log,
         "selected_log_pretty": selected_log_pretty,
         "format_timestamp": _to_datetime_string,
+        "format_datetime": _format_datetime,
+        "schedules": schedules,
         "form_doc_id": "",
         "form_max_files": "",
         "form_doc_codes": [],
@@ -106,7 +128,7 @@ def _build_page_context(
 
 
 @router.get("/", name="crow")
-def crow_admin(
+async def crow_admin(
     request: Request,
     message: str | None = Query(default=None),
     error: str | None = Query(default=None),
@@ -114,7 +136,7 @@ def crow_admin(
 ):
     return templates.TemplateResponse(
         "crow/index.html",
-        _build_page_context(
+        await _build_page_context(
             request=request,
             flash=message,
             error_message=error,
@@ -124,7 +146,7 @@ def crow_admin(
 
 
 @router.get("/{job_id}", name="crow_detail")
-def crow_admin(
+async def crow_admin_detail(
     request: Request,
     job_id: str,
     message: str | None = Query(default=None),
@@ -132,7 +154,7 @@ def crow_admin(
 ):
     return templates.TemplateResponse(
         "crow/index.html",
-        _build_page_context(
+        await _build_page_context(
             request=request,
             flash=message,
             error_message=error,
@@ -172,7 +194,7 @@ async def start_crow_job(request: Request):
         return templates.TemplateResponse(
             "crow/index.html",
             {
-                **_build_page_context(
+                **await _build_page_context(
                     request=request,
                     error_message=_format_error_message(exc),
                 ),
@@ -212,4 +234,84 @@ def cancel_crow_job(request: Request):
     if message:
         flash = f"{flash}, message={message}"
     u = request.url_for("crow", message=parse.quote(flash))
+    return RedirectResponse(url=u, status_code=303)
+
+
+@router.post("/schedules", name="crow_schedule_create")
+async def create_crow_schedule(request: Request):
+    form = await request.form()
+    selected_doc_codes = _normalize_doc_codes(form.getlist("doc_codes"))
+    payload: dict[str, Any] = {
+        "overwrite": _parse_checkbox(_form_value_as_str(form.get("overwrite"))),
+        "max_files": None,
+        "doc_id": None,
+        "doc_codes": selected_doc_codes,
+    }
+
+    max_files_value = str(form.get("max_files", "")).strip()
+    if max_files_value:
+        try:
+            payload["max_files"] = int(max_files_value)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=400, detail="max_files must be an integer"
+            ) from exc
+
+    doc_id_value = str(form.get("doc_id", "")).strip()
+    if doc_id_value:
+        payload["doc_id"] = doc_id_value
+
+    schedule_type = str(form.get("schedule_type", "daily")).strip()
+    if schedule_type not in {"daily", "interval"}:
+        raise HTTPException(status_code=400, detail="invalid schedule_type")
+
+    daily_time = str(form.get("daily_time", "")).strip() or None
+    interval_minutes_raw = str(form.get("interval_minutes", "")).strip()
+    interval_minutes = None
+    if interval_minutes_raw:
+        try:
+            interval_minutes = int(interval_minutes_raw)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=400, detail="interval_minutes must be an integer"
+            ) from exc
+
+    manager = _get_schedule_manager(request)
+    try:
+        schedule = await manager.create_schedule(
+            schedule_type=schedule_type,
+            payload=payload,
+            daily_time=daily_time,
+            interval_minutes=interval_minutes,
+        )
+    except CrowScheduleError as exc:
+        u = request.url_for("crow", error=parse.quote(_format_error_message(exc)))
+        return RedirectResponse(url=u, status_code=303)
+
+    flash = f"予約ジョブを作成しました: schedule_id={schedule.id}, next_run={_format_datetime(schedule.next_run_at)}"
+    u = request.url_for("crow", message=parse.quote(flash))
+    return RedirectResponse(url=u, status_code=303)
+
+
+@router.post("/schedules/{schedule_id}/delete", name="crow_schedule_delete")
+async def delete_crow_schedule(request: Request, schedule_id: str):
+    deleted = await _get_schedule_manager(request).delete_schedule(schedule_id)
+    if not deleted:
+        u = request.url_for("crow", error=parse.quote("指定された予約ジョブは存在しません。"))
+        return RedirectResponse(url=u, status_code=303)
+    u = request.url_for("crow", message=parse.quote(f"予約ジョブを削除しました: {schedule_id}"))
+    return RedirectResponse(url=u, status_code=303)
+
+
+@router.post("/schedules/{schedule_id}/toggle", name="crow_schedule_toggle")
+async def toggle_crow_schedule(request: Request, schedule_id: str):
+    manager = _get_schedule_manager(request)
+    try:
+        schedule = await manager.toggle_schedule(schedule_id)
+    except CrowScheduleError as exc:
+        u = request.url_for("crow", error=parse.quote(_format_error_message(exc)))
+        return RedirectResponse(url=u, status_code=303)
+
+    state = "有効化" if schedule.enabled else "無効化"
+    u = request.url_for("crow", message=parse.quote(f"予約ジョブを{state}しました: {schedule_id}"))
     return RedirectResponse(url=u, status_code=303)

@@ -91,6 +91,8 @@
 
         input[type="text"],
         input[type="number"],
+        input[type="time"],
+        select,
         select[multiple] {
             width: 100%;
             box-sizing: border-box;
@@ -103,6 +105,12 @@
 
         select[multiple] {
             min-height: 14rem;
+        }
+
+        .inline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
         }
 
         .field-hint {
@@ -238,6 +246,49 @@
                 </form>
             </article>
 
+
+            <article class="panel">
+                <h2>定期実行予約（Cron 風）</h2>
+                <form method="post" action="{{ url_for('crow_schedule_create') }}">
+                    <label for="schedule_type">実行方式</label>
+                    <select id="schedule_type" name="schedule_type">
+                        <option value="daily">毎日指定時刻（UTC）</option>
+                        <option value="interval">定期間隔（分）</option>
+                    </select>
+
+                    <div class="inline-grid">
+                        <div>
+                            <label for="daily_time">毎日実行時刻 (HH:MM)</label>
+                            <input id="daily_time" name="daily_time" type="time" value="03:00">
+                        </div>
+                        <div>
+                            <label for="interval_minutes">間隔（分）</label>
+                            <input id="interval_minutes" name="interval_minutes" type="number" min="1" placeholder="例: 60">
+                        </div>
+                    </div>
+
+                    <label for="schedule_doc_id">doc_id</label>
+                    <input id="schedule_doc_id" name="doc_id" type="text" placeholder="例: JP-2026-000001">
+
+                    <label for="schedule_max_files">max_files</label>
+                    <input id="schedule_max_files" name="max_files" type="number" min="0" placeholder="例: 100">
+
+                    <label for="schedule_doc_codes">doc_codes</label>
+                    <select id="schedule_doc_codes" name="doc_codes" multiple size="8">
+                        {% for code in available_doc_codes %}
+                        <option value="{{ code }}">{{ code }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="checkbox">
+                        <input id="schedule_overwrite" name="overwrite" type="checkbox">
+                        <label for="schedule_overwrite">既存ファイルがあっても上書きして crawl する</label>
+                    </div>
+
+                    <button type="submit">予約を作成</button>
+                </form>
+            </article>
+
             <article class="panel">
                 <h2>現在の状態</h2>
                 {% if status %}
@@ -315,6 +366,59 @@
                 {% endif %}
             </article>
         </section>
+
+
+        <section class="panel" style="margin-top: 1rem;">
+            <h2>予約ジョブ一覧</h2>
+            {% if schedules %}
+            <div style="overflow-x:auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left; border-bottom: 1px solid var(--border);">schedule_id</th>
+                            <th style="text-align:left; border-bottom: 1px solid var(--border);">方式</th>
+                            <th style="text-align:left; border-bottom: 1px solid var(--border);">次回実行</th>
+                            <th style="text-align:left; border-bottom: 1px solid var(--border);">前回結果</th>
+                            <th style="text-align:left; border-bottom: 1px solid var(--border);">状態</th>
+                            <th style="text-align:left; border-bottom: 1px solid var(--border);">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                        <tr>
+                            <td><code>{{ schedule.id }}</code></td>
+                            <td>
+                                {% if schedule.schedule_type == 'daily' %}
+                                毎日 {{ schedule.daily_time }} UTC
+                                {% else %}
+                                {{ schedule.interval_minutes }}分ごと
+                                {% endif %}
+                            </td>
+                            <td>{{ format_datetime(schedule.next_run_at) }}</td>
+                            <td>
+                                {{ schedule.last_result or '-' }}<br>
+                                <span class="muted">{{ format_datetime(schedule.last_run_at) }}</span><br>
+                                <span class="muted">{{ schedule.last_message or '' }}</span>
+                            </td>
+                            <td>{{ '有効' if schedule.enabled else '無効' }}</td>
+                            <td>
+                                <form method="post" action="{{ url_for('crow_schedule_toggle', schedule_id=schedule.id) }}" style="display:inline-block; margin-right:0.4rem;">
+                                    <button class="secondary" type="submit">{{ '無効化' if schedule.enabled else '有効化' }}</button>
+                                </form>
+                                <form method="post" action="{{ url_for('crow_schedule_delete', schedule_id=schedule.id) }}" style="display:inline-block;">
+                                    <button type="submit">削除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="muted">予約ジョブはまだありません。</p>
+            {% endif %}
+        </section>
+
 
         <section class="panel" style="margin-top: 1rem;">
             <h2>ジョブログ</h2>
