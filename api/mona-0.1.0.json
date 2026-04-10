@@ -1,0 +1,1207 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "mona API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/documents/idList": {
+      "get": {
+        "summary": "Get Documents Id List",
+        "operationId": "get_documents_id_list_documents_idList_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Response Get Documents Id List Documents Idlist Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/reloads": {
+      "post": {
+        "summary": "Reload Documents",
+        "operationId": "reload_documents_documents_reloads_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/json/content": {
+      "get": {
+        "summary": "Get Document File",
+        "description": "this returns the content of the document for rendering to html",
+        "operationId": "get_document_file_documents__doc_id__json_content_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PatentDocument"
+                  },
+                  "title": "Response Get Document File Documents  Doc Id  Json Content Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/json/images-information": {
+      "get": {
+        "summary": "Get Images Information",
+        "description": "this returns the image information of the document",
+        "operationId": "get_images_information_documents__doc_id__json_images_information_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesInformation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/json/bibliographic-items": {
+      "get": {
+        "summary": "Get Bibliographic Items",
+        "description": "this returns the bibliographic items of the document",
+        "operationId": "get_bibliographic_items_documents__doc_id__json_bibliographic_items_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BibliographicItems"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/json/full-text": {
+      "get": {
+        "summary": "Get Full Text",
+        "description": "this returns the full text of the document",
+        "operationId": "get_full_text_documents__doc_id__json_full_text_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullText"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/images/{file_name}": {
+      "get": {
+        "summary": "Get Image",
+        "description": "this returns the image body",
+        "operationId": "get_image_documents__doc_id__images__file_name__get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          },
+          {
+            "name": "file_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BibliographicItems": {
+        "properties": {
+          "docId": {
+            "type": "string",
+            "title": "Docid"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "extension": {
+            "type": "string",
+            "title": "Extension"
+          },
+          "inventors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inventors"
+          },
+          "applicants": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Applicants"
+          },
+          "agents": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agents"
+          },
+          "law": {
+            "$ref": "#/components/schemas/Law"
+          },
+          "documentName": {
+            "type": "string",
+            "title": "Documentname"
+          },
+          "documentCode": {
+            "type": "string",
+            "title": "Documentcode"
+          },
+          "applicationNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicationnumber"
+          },
+          "registrationNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registrationnumber"
+          },
+          "internationalApplicationNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internationalapplicationnumber"
+          },
+          "appealReferenceNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appealreferencenumber"
+          },
+          "receiptNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receiptnumber"
+          },
+          "fileReferenceId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filereferenceid"
+          },
+          "datetime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datetime"
+          }
+        },
+        "type": "object",
+        "required": [
+          "docId",
+          "task",
+          "kind",
+          "extension",
+          "applicants",
+          "law",
+          "documentName",
+          "documentCode"
+        ],
+        "title": "BibliographicItems"
+      },
+      "DerivedImage": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "media_type": {
+            "type": "string",
+            "title": "Media Type"
+          },
+          "width": {
+            "type": "integer",
+            "title": "Width"
+          },
+          "height": {
+            "type": "integer",
+            "title": "Height"
+          },
+          "attributes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ImageAttributes"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attributes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filename",
+          "sha256",
+          "media_type",
+          "width",
+          "height"
+        ],
+        "title": "DerivedImage"
+      },
+      "FullText": {
+        "properties": {
+          "docId": {
+            "type": "string",
+            "title": "Docid"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "extension": {
+            "type": "string",
+            "title": "Extension"
+          },
+          "inventors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inventors"
+          },
+          "applicants": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Applicants"
+          },
+          "agents": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agents"
+          },
+          "law": {
+            "$ref": "#/components/schemas/Law"
+          },
+          "documentName": {
+            "type": "string",
+            "title": "Documentname"
+          },
+          "documentCode": {
+            "type": "string",
+            "title": "Documentcode"
+          },
+          "applicationNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicationnumber"
+          },
+          "registrationNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registrationnumber"
+          },
+          "internationalApplicationNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internationalapplicationnumber"
+          },
+          "appealReferenceNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appealreferencenumber"
+          },
+          "receiptNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receiptnumber"
+          },
+          "fileReferenceId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filereferenceid"
+          },
+          "datetime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datetime"
+          },
+          "inventionTitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inventiontitle"
+          },
+          "technicalField": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technicalfield"
+          },
+          "backgroundArt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Backgroundart"
+          },
+          "techProblem": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Techproblem"
+          },
+          "techSolution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Techsolution"
+          },
+          "advantageousEffects": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Advantageouseffects"
+          },
+          "embodiments": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embodiments"
+          },
+          "industrialApplicability": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industrialapplicability"
+          },
+          "referenceToDepositedBiologicalMaterial": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referencetodepositedbiologicalmaterial"
+          },
+          "abstract": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Abstract"
+          },
+          "lawOfIndustrialRegenerate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lawofindustrialregenerate"
+          },
+          "conclusionPartArticle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conclusionpartarticle"
+          },
+          "draftingBody": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Draftingbody"
+          },
+          "opinionContentsArticle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opinioncontentsarticle"
+          },
+          "independentClaims": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Independentclaims"
+          },
+          "dependentClaims": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependentclaims"
+          },
+          "rejectionReasonArticle": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejectionreasonarticle"
+          },
+          "contentsOfAmendment": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contentsofamendment"
+          },
+          "specialMentionMatterArticle": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specialmentionmatterarticle"
+          },
+          "priorityClaims": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priorityclaims"
+          },
+          "ocrText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocrtext"
+          },
+          "assignees": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignees"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          },
+          "extraNumbers": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extranumbers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "docId",
+          "task",
+          "kind",
+          "extension",
+          "applicants",
+          "law",
+          "documentName",
+          "documentCode"
+        ],
+        "title": "FullText"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageAttributes": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "value"
+        ],
+        "title": "ImageAttributes"
+      },
+      "ImagesInformation": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "mediaType": {
+            "type": "string",
+            "title": "Mediatype"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "ocrText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocrtext"
+          },
+          "representative": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Representative"
+          },
+          "derived": {
+            "items": {
+              "$ref": "#/components/schemas/DerivedImage"
+            },
+            "type": "array",
+            "title": "Derived"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filename",
+          "sha256",
+          "mediaType",
+          "kind",
+          "derived"
+        ],
+        "title": "ImagesInformation"
+      },
+      "Law": {
+        "type": "string",
+        "enum": [
+          "patent",
+          "utilityModel",
+          "design",
+          "trademark"
+        ],
+        "title": "Law"
+      },
+      "PatentDocument": {
+        "properties": {
+          "tag": {
+            "type": "string",
+            "title": "Tag"
+          },
+          "jpTag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jptag"
+          },
+          "indentLevel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indentlevel"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "convertedText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Convertedtext"
+          },
+          "number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number"
+          },
+          "imageKind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagekind"
+          },
+          "file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "isLastSentence": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Islastsentence"
+          },
+          "isIndependent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Isindependent"
+          },
+          "blocks": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PatentDocument"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blocks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag",
+          "jpTag",
+          "indentLevel",
+          "text",
+          "convertedText",
+          "number",
+          "imageKind",
+          "file",
+          "isLastSentence",
+          "isIndependent",
+          "blocks"
+        ],
+        "title": "PatentDocument"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
