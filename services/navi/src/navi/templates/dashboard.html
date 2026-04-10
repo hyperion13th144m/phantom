@@ -85,9 +85,9 @@
 <body>
     <main>
         <section class="intro">
-            <h1>Navi 管理画面（雛形）</h1>
-            <p>この画面では、管理対象プロジェクトのジョブ起動や状態確認を行います。Crow / Panther / Mona については REST API 連携を使った管理画面を利用できます。</p>
-            <p class="muted">Navi primary color: <code>#5ea048</code></p>
+            <h1>全文検索システム管理画面</h1>
+            <p>特許出願関連データの収集と、アップロードの管理を行います。</p>
+            <p>Crow で文書収集すればOK. Crowで特許文書を収集すれば自動的にデータベースに登録されます。</p>
         </section>
 
         <h2>管理対象プロジェクト</h2>
@@ -109,18 +109,7 @@
 
         <h2>運用メニュー</h2>
         <ul>
-            <li><a href="{{ url_for('orchestration') }}">Orchestration の管理画面へ</a></li>
-        </ul>
-
-        <h2>用意済みジョブテンプレート</h2>
-        <ul>
-            {% for template in job_templates %}
-            <li>
-                <strong>{{ template.project_key }}</strong> / {{ template.job_type.value }}:
-                {{ template.summary }}
-                (<code>{{ template.service_name }}</code> の <code>{{ template.endpoint }}</code>)
-            </li>
-            {% endfor %}
+            <li><a href="{{ url_for('orchestration') }}">オーケストレーションの管理画面へ</a></li>
         </ul>
     </main>
 </body>

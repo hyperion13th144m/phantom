@@ -14,11 +14,3 @@ class ManagedProject:
     description: str
     available_jobs: tuple[JobType, ...]
 
-
-@dataclass(frozen=True)
-class JobTemplate:
-    project_key: str
-    job_type: JobType
-    service_name: str
-    endpoint: str
-    summary: str

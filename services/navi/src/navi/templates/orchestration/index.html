@@ -144,14 +144,14 @@
     <main>
         <section class="intro">
             <p><a href="{{ url_for('dashboard') }}">← ダッシュボードへ戻る</a></p>
-            <h1>Orchestration 管理画面</h1>
-            <p>Crow 完了 webhook を起点に、Panther / Mona へ fan-out した実行結果を確認します。</p>
+            <h1>オーケストレーション管理画面</h1>
+            <p>Crow(文書収集), Panther(文書登録), Mona(文書サービスのリスタート) の一連のプロセス(オーケストレーション)の実行結果を確認できます。</p>
             <p class="muted">表示件数: {{ limit }} 件</p>
         </section>
 
         <section class="grid">
             <article class="panel">
-                <h2>最近のパイプライン</h2>
+                <h2>最近の処理結果</h2>
                 {% if items %}
                 <ul class="pipeline-list">
                     {% for item in items %}
@@ -173,7 +173,7 @@
                     {% endfor %}
                 </ul>
                 {% else %}
-                <p class="muted">まだ webhook 受信履歴がありません。</p>
+                <p class="muted">実行履歴はありません</p>
                 {% endif %}
             </article>
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-from navi.catalog import PROJECTS, list_job_templates
+from navi.catalog import PROJECTS
 from navi.ui import templates
 
 router = APIRouter()
@@ -12,6 +12,5 @@ def dashboard(request: Request):
         {
             "request": request,
             "projects": PROJECTS,
-            "job_templates": list_job_templates(),
         },
     )

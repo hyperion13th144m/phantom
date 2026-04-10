@@ -5,11 +5,11 @@ import json
 import os
 from datetime import UTC, datetime
 from threading import Lock
-from typing import Any, TypedDict
+from typing import Any, NotRequired, TypedDict, cast
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from navi.mona_client import MonaClient, MonaClientError
-from navi.panther_client import PantherClient, PantherClientError
+from navi.panther_client import PantherClient, PantherClientError, PantherJobRequest
 from navi.ui import templates
 
 router = APIRouter(prefix="/orchestration", tags=["orchestration"])
@@ -24,13 +24,13 @@ _SUCCESS_STATUSES = {
 }
 
 
-class _CrowCompletedPayload(TypedDict, total=False):
+class _CrowCompletedPayload(TypedDict):
     crow_job_id: str
     status: str
-    finished_at: str
-    panther_request: dict[str, Any]
-    skip_panther: bool
-    skip_mona: bool
+    finished_at: str | None
+    panther_request: NotRequired[PantherJobRequest]
+    skip_panther: NotRequired[bool]
+    skip_mona: NotRequired[bool]
 
 
 class _PipelineStepResult(TypedDict, total=False):
@@ -128,7 +128,7 @@ def _validate_payload(data: dict[str, Any]) -> _CrowCompletedPayload:
 
     panther_request = data.get("panther_request")
     if isinstance(panther_request, dict):
-        payload["panther_request"] = panther_request
+        payload["panther_request"] = cast(PantherJobRequest, panther_request)
     return payload
 
 
@@ -140,7 +140,7 @@ def _run_panther_step(payload: _CrowCompletedPayload) -> _PipelineStepResult:
     if payload.get("skip_panther"):
         return {"triggered": False, "ok": True, "response": None, "error": None}
 
-    default_request: dict[str, Any] = {
+    default_request: PantherJobRequest = {
         "id_list": None,
         "chunk_size": 500,
         "max_retries": 5,

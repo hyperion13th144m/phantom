@@ -205,7 +205,8 @@
             <p><a href="{{ url_for('dashboard') }}">← ダッシュボードへ戻る</a></p>
             <h1>Crow 管理画面</h1>
             <p>Crow の current job を開始・キャンセルし、現在状態と履歴を確認します。</p>
-            <p class="muted">接続先: <code>{{ crow_base_url }}</code></p>
+            <p>"クローリング開始" 文書収集を単発だけ実行する。基本的にはdoc_codesの「ALL」を選択し、「ジョブ開始」でよい。</p>
+            <p>"定期実行予約" 毎日決まった時刻や、数時間おきなど、定期的にクローリングを実行する予約を作成します。予約はサーバーが稼動している限り有効で、サーバーを再起動したら再設定してください。</p>
         </section>
 
         {% if flash %}
@@ -249,7 +250,7 @@
 
 
             <article class="panel">
-                <h2>定期実行予約（Cron 風）</h2>
+                <h2>定期実行予約</h2>
                 <form method="post" action="{{ url_for('crow_schedule_create') }}">
                     <label for="schedule_type">実行方式</label>
                     <select id="schedule_type" name="schedule_type">

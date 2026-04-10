@@ -10,6 +10,7 @@ from navi.panther_client import (
     PantherClient,
     PantherClientError,
     PantherJobRequest,
+    PantherJobStatus,
     get_panther_config,
 )
 from navi.ui import templates
@@ -42,7 +43,7 @@ def _format_timestamp_to_jst(value: str | None) -> str:
     return dt.astimezone(JST).strftime("%Y-%m-%d %H:%M:%S JST")
 
 
-def _serialize_current_job(current_job: dict[str, Any] | None) -> dict[str, Any] | None:
+def _serialize_current_job(current_job: PantherJobStatus | None) -> dict[str, Any] | None:
     if not current_job:
         return None
 
