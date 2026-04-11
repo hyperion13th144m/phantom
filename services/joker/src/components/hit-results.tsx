@@ -1,9 +1,9 @@
 "use client";
 
-import Highlight from "@/app/components/highlight";
-import ImagesArray from "@/app/components/images-array";
+import Highlight from "@/components/highlight";
+import ImagesArray from "@/components/images-array";
 import { dateTag, getDocUrl, formatApplicationNumber, formatDate } from "@/lib/helpers";
-import { Hit } from "@/app/interfaces/search-results";
+import { Hit } from "@/interfaces/search-results";
 
 interface Props {
     hitResult: Hit;

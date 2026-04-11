@@ -6,5 +6,6 @@
         "titleBar.inactiveForeground": "#000000"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "css.lint.unknownAtRules": "ignore"
 }
