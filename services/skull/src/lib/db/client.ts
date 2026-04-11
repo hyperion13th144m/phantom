@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 
-const sqlitePath = process.env.SQLITE_PATH?.trim() || "./sqlite/skull.db";
+export const sqlitePath = process.env.SQLITE_PATH?.trim() || "./sqlite/skull.db";
 
 if (sqlitePath !== ":memory:" && !sqlitePath.startsWith("file:")) {
     const sqliteDir = path.dirname(sqlitePath);
@@ -12,5 +12,5 @@ if (sqlitePath !== ":memory:" && !sqlitePath.startsWith("file:")) {
     }
 }
 
-const sqlite = new Database(sqlitePath);
+export const sqlite = new Database(sqlitePath);
 export const db = drizzle(sqlite);

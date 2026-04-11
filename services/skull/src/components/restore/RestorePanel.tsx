@@ -117,12 +117,12 @@ export default function RestorePanel({
             className="space-y-4 rounded-xl border bg-white p-4 shadow-sm"
         >
             <div className="space-y-1">
-                <h2 className="text-lg font-semibold">restore</h2>
+                <h2 className="text-lg font-semibold">リストア</h2>
                 <p className="text-sm text-gray-600">
-                    SQLite に保存された metadata を、sync_status に関係なく Elasticsearch に再投入します。
+                    メタデータがデータベースに登録,未登録であるかに関係なくデータベースに再投入(リストア)させます
                 </p>
                 <div className="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-900">
-                    先に panther 側で元文書を Elasticsearch に再登録しておく前提です。
+                    先に 特許文書をデータベースに再登録しておいてください（管理画面のcrowサービスにてその再登録ができます）。
                 </div>
             </div>
 
