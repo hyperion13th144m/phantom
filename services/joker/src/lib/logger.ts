@@ -1,94 +1,124 @@
-// Edge Runtimeではfsモジュールが使えないため、Node.js環境でのみインポート
-let fs: typeof import('fs') | null = null;
-let path: typeof import('path') | null = null;
+type NodeFs = typeof import("fs");
+type NodePath = typeof import("path");
 
-try {
-    fs = require('fs');
-    path = require('path');
-} catch {
-    // Edge Runtimeなどでfsが使えない場合は無視
-}
+type NodeModules = {
+  fs: NodeFs;
+  path: NodePath;
+};
 
-const LOG_DIR = '/var/log/joker';
-const LOG_FILE = path ? path.join(LOG_DIR, 'joker.log') : '/var/log/joker/joker.log';
-const MAX_LOG_SIZE = 128 * 1024; // 128KB
+let cachedNodeModules: NodeModules | null | undefined;
 
-// ログディレクトリを作成
-function ensureLogDir() {
-    if (!fs) return;
-    try {
-        if (!fs.existsSync(LOG_DIR)) {
-            fs.mkdirSync(LOG_DIR, { recursive: true, mode: 0o755 });
-        }
-    } catch (error) {
-        // 開発環境などでディレクトリ作成できない場合は無視
-        console.error('Failed to create log directory:', error);
+function getNodeModules(): NodeModules | null {
+  if (cachedNodeModules !== undefined) {
+    return cachedNodeModules;
+  }
+
+  if (typeof window !== "undefined") {
+    cachedNodeModules = null;
+    return cachedNodeModules;
+  }
+
+  try {
+    const dynamicRequire = Function(
+      "return typeof require !== \"undefined\" ? require : null;",
+    )() as ((id: string) => unknown) | null;
+
+    if (!dynamicRequire) {
+      cachedNodeModules = null;
+      return cachedNodeModules;
     }
-}
 
-// ログファイルのローテーション
-function rotateLogFile() {
-    if (!fs || !path) return;
-    try {
-        if (!fs.existsSync(LOG_FILE)) {
-            return;
-        }
-
-        const stats = fs.statSync(LOG_FILE);
-        if (stats.size >= MAX_LOG_SIZE) {
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const rotatedFile = path.join(LOG_DIR, `joker.log.${timestamp}`);
-            fs.renameSync(LOG_FILE, rotatedFile);
-
-            // 古いログファイルを削除（10個以上保持しない）
-            const files = fs.readdirSync(LOG_DIR)
-                .filter(f => f.startsWith('joker.log.'))
-                .sort()
-                .reverse();
-
-            if (files.length > 10) {
-                files.slice(10).forEach(f => {
-                    fs!.unlinkSync(path!.join(LOG_DIR, f));
-                });
-            }
-        }
-    } catch (error) {
-        console.error('Failed to rotate log file:', error);
-    }
-}
-
-// ログ書き込み
-function writeLog(level: string, message: string, data?: any) {
-    const timestamp = new Date().toISOString();
-    const logEntry = {
-        timestamp,
-        level,
-        message,
-        ...(data && { data })
+    cachedNodeModules = {
+      fs: dynamicRequire("fs") as NodeFs,
+      path: dynamicRequire("path") as NodePath,
     };
 
-    const logLine = JSON.stringify(logEntry) + '\n';
+    return cachedNodeModules;
+  } catch {
+    cachedNodeModules = null;
+    return cachedNodeModules;
+  }
+}
 
-    // Node.js環境の場合のみファイルに書き込み
-    if (fs) {
-        try {
-            ensureLogDir();
-            rotateLogFile();
-            fs.appendFileSync(LOG_FILE, logLine, { mode: 0o644 });
-        } catch (error) {
-            console.error('Failed to write log:', error);
-        }
+const LOG_DIR = "/var/log/joker";
+const MAX_LOG_SIZE = 128 * 1024;
+
+function getLogFile(nodeModules: NodeModules): string {
+  return nodeModules.path.join(LOG_DIR, "joker.log");
+}
+
+function ensureLogDir(nodeModules: NodeModules) {
+  try {
+    if (!nodeModules.fs.existsSync(LOG_DIR)) {
+      nodeModules.fs.mkdirSync(LOG_DIR, { recursive: true, mode: 0o755 });
+    }
+  } catch (error) {
+    console.error("Failed to create log directory:", error);
+  }
+}
+
+function rotateLogFile(nodeModules: NodeModules, logFile: string) {
+  try {
+    if (!nodeModules.fs.existsSync(logFile)) {
+      return;
     }
 
-    // 開発環境またはEdge Runtimeではコンソールに出力
-    if (process.env.NODE_ENV !== 'production' || !fs) {
-        console.log(logLine.trim());
+    const stats = nodeModules.fs.statSync(logFile);
+    if (stats.size < MAX_LOG_SIZE) {
+      return;
     }
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const rotatedFile = nodeModules.path.join(LOG_DIR, `joker.log.${timestamp}`);
+    nodeModules.fs.renameSync(logFile, rotatedFile);
+
+    const files = nodeModules.fs
+      .readdirSync(LOG_DIR)
+      .filter((file) => file.startsWith("joker.log."))
+      .sort()
+      .reverse();
+
+    if (files.length > 10) {
+      files.slice(10).forEach((file) => {
+        nodeModules.fs.unlinkSync(nodeModules.path.join(LOG_DIR, file));
+      });
+    }
+  } catch (error) {
+    console.error("Failed to rotate log file:", error);
+  }
+}
+
+function writeLog(level: string, message: string, data?: unknown) {
+  const timestamp = new Date().toISOString();
+  const logEntry = {
+    timestamp,
+    level,
+    message,
+    ...(data !== undefined ? { data } : {}),
+  };
+  const logLine = JSON.stringify(logEntry) + "\n";
+  const nodeModules = getNodeModules();
+
+  if (nodeModules) {
+    const logFile = getLogFile(nodeModules);
+
+    try {
+      ensureLogDir(nodeModules);
+      rotateLogFile(nodeModules, logFile);
+      nodeModules.fs.appendFileSync(logFile, logLine, { mode: 0o644 });
+    } catch (error) {
+      console.error("Failed to write log:", error);
+    }
+  }
+
+  if (process.env.NODE_ENV !== "production" || !nodeModules) {
+    console.log(logLine.trim());
+  }
 }
 
 export const logger = {
-    info: (message: string, data?: any) => writeLog('INFO', message, data),
-    error: (message: string, data?: any) => writeLog('ERROR', message, data),
-    warn: (message: string, data?: any) => writeLog('WARN', message, data),
-    debug: (message: string, data?: any) => writeLog('DEBUG', message, data),
+  info: (message: string, data?: unknown) => writeLog("INFO", message, data),
+  error: (message: string, data?: unknown) => writeLog("ERROR", message, data),
+  warn: (message: string, data?: unknown) => writeLog("WARN", message, data),
+  debug: (message: string, data?: unknown) => writeLog("DEBUG", message, data),
 };

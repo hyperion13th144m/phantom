@@ -1,245 +1,65 @@
-import { es } from "@/lib/es";
-import { logger } from "@/lib/logger";
+import type { DocListApiError, DocListSource } from "@/interfaces/doc-list-results";
+import { getEsClient } from "@/lib/es";
+import {
+  buildDocListSearchRequest,
+  DOC_LIST_MAX_RESULTS,
+  hasDocListCriteria,
+  logDocListFailure,
+  logDocListRequest,
+  logDocListSuccess,
+  parseDocListSearchParams,
+  toDocListApiResponse,
+} from "@/lib/doc-list";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const INDEX = "patent-documents";
-const MAX_RESULTS = 100;
-
-interface DocResult {
-    docId: string;
-    applicants: string[];
-    fileReferenceId: string;
-    date: string;
-    documentName: string;
-    documentCode: string;
-    extraNumbers?: string[];
-}
-
-interface GroupResult {
-    law: string;
-    applicationNumber: string;
-    docs: DocResult[];
-}
-
 export async function GET(req: NextRequest) {
-    const { searchParams } = new URL(req.url);
+  const parsed = parseDocListSearchParams(req.nextUrl.searchParams);
 
-    // 検索キーワード
-    const applicantKeyword = (searchParams.get("applicants") ?? "").trim();
-    const inventorKeyword = (searchParams.get("inventors") ?? "").trim();
-    const applicationNumberKeyword = (searchParams.get("applicationNumber") ?? "").trim();
-    const fileReferenceIdKeyword = (searchParams.get("fileReferenceId") ?? "").trim();
-    const law = (searchParams.get("law") ?? "").trim();
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
 
-    logger.info("DocList search request received", {
-        applicants: applicantKeyword,
-        inventors: inventorKeyword,
-        applicationNumber: applicationNumberKeyword,
-        fileReferenceId: fileReferenceIdKeyword,
-        law,
-        url: req.url,
-    });
+  const params = parsed.data;
 
-    if (!applicantKeyword && !inventorKeyword && !applicationNumberKeyword && !fileReferenceIdKeyword && !law) {
-        return NextResponse.json(
-            {
-                error: "Bad Request",
-                message: "At least one of applicants, inventors, applicationNumber, fileReferenceId, or law parameter is required",
-            },
-            { status: 400 }
-        );
-    }
+  logDocListRequest(params, req.url);
 
-    try {
-        // クエリ条件の構築（AND条件）
-        const mustQueries: any[] = [];
+  if (!hasDocListCriteria(params)) {
+    return NextResponse.json(
+      {
+        error: "Bad Request",
+        message:
+          "At least one of applicants, inventors, applicationNumber, fileReferenceId, or law parameter is required",
+      } as DocListApiError,
+      { status: 400 },
+    );
+  }
 
-        if (inventorKeyword) {
-            mustQueries.push({
-                bool: {
-                    should: [
-                        {
-                            match_phrase: {
-                                "inventors.ngram": inventorKeyword,
-                            },
-                        }
-                    ],
-                    minimum_should_match: 1,
-                },
-            });
-        }
+  try {
+    const result = await (await getEsClient()).search<DocListSource>(buildDocListSearchRequest(params));
+    const { groups, meta } = toDocListApiResponse(result);
 
-        if (applicantKeyword) {
-            mustQueries.push({
-                bool: {
-                    should: [
-                        {
-                            match_phrase: {
-                                "applicants.ngram": applicantKeyword,
-                            },
-                        }
-                    ],
-                    minimum_should_match: 1,
-                },
-            });
-        }
+    logDocListSuccess(params, meta);
 
-        if (applicationNumberKeyword) {
-            mustQueries.push({
-                match_phrase: {
-                    "applicationNumber.ngram": applicationNumberKeyword,
-                },
-            });
-        }
+    const response = NextResponse.json(groups);
+    response.headers.set("X-Results-Capped", meta.isResultsCapped ? "1" : "0");
+    response.headers.set("X-Results-Limit", String(DOC_LIST_MAX_RESULTS));
+    response.headers.set("X-Total-Hits", String(meta.totalHits));
 
-        if (fileReferenceIdKeyword) {
-            mustQueries.push({
-                bool: {
-                    should: [
-                        {
-                            match_phrase: {
-                                "fileReferenceId.ngram": fileReferenceIdKeyword,
-                            },
-                        },
-                        {
-                            match_phrase: {
-                                "extraNumbers.ngram": fileReferenceIdKeyword,
-                            },
-                        }
-                    ],
-                    minimum_should_match: 1,
-                },
-            });
-        }
+    return response;
+  } catch (error: unknown) {
+    logDocListFailure(params, error);
 
-        if (law) {
-            mustQueries.push({
-                match: {
-                    law: {
-                        query: law,
-                        fuzziness: "AUTO",
-                        operator: "and",
-                    },
-                },
-            });
-        }
-
-        // 検索結果の上限
-        const result = await es.search({
-            index: INDEX,
-            size: MAX_RESULTS,
-            track_total_hits: true,
-            query: {
-                bool: {
-                    must: mustQueries.length > 0 ? mustQueries : [{ match_all: {} }],
-                },
-            },
-            sort: [
-                { applicationNumber: "desc" },
-            ],
-            _source: [
-                "docId",
-                "law",
-                "applicationNumber",
-                "applicants",
-                "fileReferenceId",
-                "date",
-                "documentName",
-                "documentCode",
-                "extraNumbers"
-            ],
-        });
-
-        const hits = result.hits.hits ?? [];
-        const totalHits =
-            typeof result.hits.total === "number"
-                ? result.hits.total
-                : (result.hits.total?.value ?? hits.length);
-        const isResultsCapped = totalHits > MAX_RESULTS;
-
-        // law と applicationNumber でグループ化
-        const groupMap = new Map<string, GroupResult>();
-        const groupKeySet = new Set<string>();
-
-        hits.forEach((hit) => {
-            const source = hit._source as any;
-            const resultLaw = source.law || "";
-            const resultApplicationNumber = source.applicationNumber || "";
-            const groupKey = `${resultLaw}|${resultApplicationNumber}`;
-
-            const doc: DocResult = {
-                docId: source.docId || hit._id || "",
-                applicants: Array.isArray(source.applicants)
-                    ? source.applicants
-                    : source.applicants
-                        ? [source.applicants]
-                        : [],
-                fileReferenceId: source.fileReferenceId || "",
-                date: source.date || "",
-                documentName: source.documentName || "",
-                documentCode: source.documentCode || "",
-                extraNumbers: Array.isArray(source.extraNumbers)
-                    ? source.extraNumbers
-                    : source.extraNumbers
-                        ? [source.extraNumbers]
-                        : [],
-            };
-
-            if (!groupMap.has(groupKey)) {
-                groupMap.set(groupKey, {
-                    law: resultLaw,
-                    applicationNumber: resultApplicationNumber,
-                    docs: [],
-                });
-                groupKeySet.add(groupKey);
-            }
-
-            groupMap.get(groupKey)!.docs.push(doc);
-        });
-
-        // グループを配列に変換し、順序を保証
-        const results: GroupResult[] = Array.from(groupKeySet).map((key) =>
-            groupMap.get(key)!
-        );
-
-        logger.info("DocList search completed successfully", {
-            applicants: applicantKeyword,
-            inventors: inventorKeyword,
-            applicationNumber: applicationNumberKeyword,
-            fileReferenceId: fileReferenceIdKeyword,
-            law,
-            totalHits,
-            returnedHits: hits.length,
-            groupCount: results.length,
-            maxResults: MAX_RESULTS,
-            isResultsCapped,
-        });
-
-        const response = NextResponse.json(results);
-        response.headers.set("X-Results-Capped", isResultsCapped ? "1" : "0");
-        response.headers.set("X-Results-Limit", String(MAX_RESULTS));
-        response.headers.set("X-Total-Hits", String(totalHits));
-
-        return response;
-    } catch (e: unknown) {
-        logger.error("Elasticsearch docList search failed", {
-            applicants: applicantKeyword,
-            inventors: inventorKeyword,
-            applicationNumber: applicationNumberKeyword,
-            fileReferenceId: fileReferenceIdKeyword,
-            law,
-            error: (e as Error)?.message ?? String(e),
-            stack: (e as Error)?.stack,
-        });
-
-        return NextResponse.json(
-            {
-                error: "Elasticsearch search failed",
-                message: (e as Error)?.message ?? String(e),
-            },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json(
+      {
+        error: "Elasticsearch search failed",
+        message: (error as Error)?.message ?? String(error),
+      } as DocListApiError,
+      { status: 500 },
+    );
+  }
 }

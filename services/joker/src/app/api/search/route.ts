@@ -2,7 +2,7 @@ import {
   ApiResponseError,
   PatentDocumentSource,
 } from "@/interfaces/search-results";
-import { es } from "@/lib/es";
+import { getEsClient } from "@/lib/es";
 import {
   buildSearchRequest,
   logSearchFailure,
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   logSearchRequest(params, req.url);
 
   try {
-    const result = await es.search<PatentDocumentSource>(
+    const result = await (await getEsClient()).search<PatentDocumentSource>(
       buildSearchRequest(params),
     );
     const response = toSearchApiResponse(result, params);
