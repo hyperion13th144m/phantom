@@ -29,12 +29,14 @@ import Layout from "~/layouts/Layout.astro";
 import { formatApplicationNumber, getBibliography } from "~/lib/bibliography";
 import { getCarouselImage } from "~/lib/carousel-images";
 import { getDocument } from "~/lib/document";
+import { getDocumentMetadata } from "~/lib/es-document-metadata";
 import "../../../styles/global.css";
 
 const { docId } = Astro.params as { docId: string };
 const origin = new URL(Astro.request.url).origin;
 const json = await getDocument(docId, origin);
 const bibliography = await getBibliography(docId, origin);
+const metadata = await getDocumentMetadata(docId, origin);
 const title = bibliography
     ? `${formatApplicationNumber(bibliography.law, bibliography.applicationNumber || bibliography.internationalApplicationNumber || "")} ${bibliography.fileReferenceId} ${bibliography.documentName}`
     : "Error: Bibliography not found";
@@ -45,7 +47,7 @@ const hasCarouselImages = images.length > 0 && thumbnails.length > 0;
 
 <Layout title={title}>
     <main class="w-full my-2">
-        {bibliography && <Bibliography bibliography={bibliography} />}
+        {bibliography && <Bibliography bibliography={bibliography} metadata={metadata} />}
         <KeywordHighlighter urlParamKey="q">
             <div
                 class={`grid gap-4 ${hasCarouselImages ? " lg:grid-cols-2" : ""}`}

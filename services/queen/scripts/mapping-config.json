@@ -307,6 +307,25 @@
         "datetime": {
             "type": "date",
             "format": "epoch_millis"
+        }
+   },
+    "_comment_extra_fields": "JSON Schema には存在しないが ES マッピングに追加するフィールド。",
+    "extra_fields": {
+        "memo": {
+            "type": "text",
+            "analyzer": "my_kuromoji_analyzer",
+            "fields": {
+                "ngram": {
+                    "type": "text",
+                    "analyzer": "my_ngram_analyzer"
+                }
+            }
+        },
+         "assignees": {
+            "type": "keyword"
+        },
+        "tags": {
+            "type": "keyword"
         },
         "extraNumbers": {
             "type": "keyword",
@@ -317,7 +336,5 @@
                 }
             }
         }
-    },
-    "_comment_extra_fields": "JSON Schema には存在しないが ES マッピングに追加するフィールド。",
-    "extra_fields": {}
+    }
 }

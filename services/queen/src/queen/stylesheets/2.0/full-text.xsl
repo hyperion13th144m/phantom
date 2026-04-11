@@ -343,10 +343,5 @@
                          optional="true" />
         <schema:property name="priorityClaims" type="array" item-type="string" optional="true" />
         <schema:property name="ocrText" type="string" optional="true" />
-        
-        <!-- extra fields. xsl では変換対象ではない。 全文検索のためのフィールド -->
-        <schema:property name="assignees" type="array" item-type="string" optional="true" />
-        <schema:property name="tags" type="array" item-type="string" optional="true" />
-        <schema:property name="extraNumbers" type="array" item-type="string" optional="true" />
     </schema:object>
 </xsl:stylesheet>

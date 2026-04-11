@@ -6,23 +6,31 @@ import Inventors from "~/components/bibliographic-items/Inventors.astro";
 import Print from "~/components/bibliographic-items/Print.astro";
 import Drawer from "~/components/ui/Drawer.astro";
 import type { BibliographicItems } from "~/interfaces/generated/bibliographic-items";
+import type { DocumentMetadata } from "~/lib/es-document-metadata";
 
 export interface Props {
     bibliography: BibliographicItems;
+    metadata?: DocumentMetadata | null;
 }
 
-const { bibliography } = Astro.props as Props;
+const { bibliography, metadata = null } = Astro.props as Props;
 const printPath = `${Astro.url.pathname}/print`;
 const an =
     bibliography.applicationNumber ||
     bibliography.internationalApplicationNumber ||
     "";
+const hasMetadata =
+    !!metadata &&
+    (metadata.extraNumbers.length > 0 ||
+        metadata.assignees.length > 0 ||
+        metadata.tags.length > 0 ||
+        !!metadata.memo);
+const searchPrefix = process.env.JOKER_PATH ?? "/joker";
+const getSearchHref = (key: string, value: string) => `${searchPrefix}/docList?${key}=${encodeURIComponent(value)}`;
 ---
 
 <nav class="sticky top-0 mb-4 bg-gray-100 z-10 p-4 rounded-md shadow-md">
-    <!-- 1段目 PC/smartphone 双方で表示される -->
     <div class="flex items-center justify-between gap-2">
-        <!-- ハンバーガー：スマホだけ表示 -->
         <Drawer>
             <span slot="button" class="text-xl leading-none">☰</span>
             <div slot="content" class="space-y-4">
@@ -35,13 +43,64 @@ const an =
                     <Inventors inventors={bibliography.inventors} />
                     <Print href={printPath} size="3em" />
                 </div>
+                {
+                    hasMetadata && (
+                        <div class="space-y-3 text-sm text-gray-700">
+                            {
+                                metadata.extraNumbers.length > 0 && (
+                                    <div>
+                                        <div class="mb-1 font-semibold">追加番号</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            {metadata.extraNumbers.map((value) => (
+                                                <a href={getSearchHref('extraNumbers', value)} class="rounded-md bg-amber-100 px-2 py-1 shadow-sm hover:bg-blue-200">{value}</a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                metadata.assignees.length > 0 && (
+                                    <div>
+                                        <div class="mb-1 font-semibold">担当者</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            {metadata.assignees.map((value) => (
+                                                <a href={getSearchHref('assignees', value)} class="rounded-md bg-blue-100 px-2 py-1 shadow-sm hover:bg-blue-200">{value}</a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                metadata.tags.length > 0 && (
+                                    <div>
+                                        <div class="mb-1 font-semibold">タグ</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            {metadata.tags.map((value) => (
+                                                <a href={getSearchHref('tags', value)} class="rounded-md bg-violet-100 px-2 py-1 shadow-sm hover:bg-violet-200">{value}</a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                metadata.memo && (
+                                    <div>
+                                        <div class="mb-1 font-semibold">メモ</div>
+                                        <div class="rounded-md bg-white/80 px-3 py-2 leading-relaxed whitespace-pre-wrap shadow-sm">
+                                            {metadata.memo}
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    )
+                }
             </div>
         </Drawer>
     </div>
 
-    <!-- 2段目 PCで表示, スマホではドロワー -->
-    <div class="hidden md:block">
-        <div class="flex items-center justify-between">
+    <div class="hidden md:block space-y-3">
+        <div class="flex items-center justify-between gap-4">
             <div class="flex gap-4">
                 <ApplicationNumber law={bibliography.law} appNumber={an} />
                 <FileReferenceId
@@ -52,5 +111,51 @@ const an =
             </div>
             <Print href={printPath} size="3em" />
         </div>
+        {
+            hasMetadata && (
+                <div class="rounded-md border border-gray-200 bg-white/70 p-3 text-sm text-gray-700">
+                    <div class="flex flex-wrap gap-3">
+                        {
+                            metadata.extraNumbers.length > 0 && (
+                                <div class="flex flex-wrap items-start gap-2">
+                                    <span class="font-semibold text-gray-900">追加番号</span>
+                                    {metadata.extraNumbers.map((value) => (
+                                       <a href={getSearchHref('extraNumbers', value)} class="rounded-md bg-amber-100 px-2 py-1 shadow-sm hover:bg-blue-200">{value}</a>
+                                    ))}
+                                </div>
+                            )
+                        }
+                        {
+                            metadata.assignees.length > 0 && (
+                                <div class="flex flex-wrap items-start gap-2">
+                                    <span class="font-semibold text-gray-900">担当者</span>
+                                    {metadata.assignees.map((value) => (
+                                        <a href={getSearchHref('assignees', value)} class="rounded-md bg-blue-100 px-2 py-1 shadow-sm hover:bg-blue-200">{value}</a>
+                                    ))}
+                                </div>
+                            )
+                        }
+                        {
+                            metadata.tags.length > 0 && (
+                                <div class="flex flex-wrap items-start gap-2">
+                                    <span class="font-semibold text-gray-900">タグ</span>
+                                    {metadata.tags.map((value) => (
+                                        <a href={getSearchHref('tags', value)} class="rounded-md bg-violet-100 px-2 py-1 shadow-sm hover:bg-violet-200">{value}</a>
+                                    ))}
+                                </div>
+                            )
+                        }
+                    </div>
+                    {
+                        metadata.memo && (
+                            <div class="mt-3 border-t border-gray-200 pt-3">
+                                <div class="mb-1 font-semibold text-gray-900">メモ</div>
+                                <div class="leading-relaxed whitespace-pre-wrap">{metadata.memo}</div>
+                            </div>
+                        )
+                    }
+                </div>
+            )
+        }
     </div>
 </nav>

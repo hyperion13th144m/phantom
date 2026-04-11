@@ -88,9 +88,14 @@ services:
       dockerfile: Dockerfile
     environment:
       NODE_ENV: development
+      ES_URL: http://es-dev:9200
+      ES_USER: ${ES_USER}
+      ES_PASSWORD: ${ES_PASSWORD}
+      ES_INDEX: ${ES_INDEX}
       LANG: ja_JP.UTF-8
       TZ: Asia/Tokyo
       MONA_URL: http://mona-dev:8000
+      JOKER_PATH: /joker
     volumes:
       - ${LOG_DIR_FOX}:/var/log/fox
     networks:

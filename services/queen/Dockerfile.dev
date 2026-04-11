@@ -11,5 +11,6 @@ RUN apt-get update && \
     apt-get install -y nodejs npm && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install uv
+RUN groupadd -g $GID $GROUPNAME && useradd -m -s /bin/bash -u $UID -g $GID $USERNAME
 
 USER $USERNAME
