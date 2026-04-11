@@ -39,16 +39,7 @@ export interface PatentDocumentSource {
     contentsOfAmendment?: string[];
     extraNumbers?: string[];
 }
-interface ImageInformation {
-    number: string;
-    filename: string;
-    kind: string;
-    sizeTag: string;
-    width: number;
-    height: number;
-    description: string;
-    representative: boolean;
-}
+
 
 export interface Hit {
     id: string;
@@ -57,21 +48,25 @@ export interface Hit {
     highlight?: Record<string, string[]>;
 }
 
+export type SearchAggregationBucket = { key: string; doc_count: number };
+
+export type SearchAggregations = {
+    applicants: SearchAggregationBucket[];
+    inventors: SearchAggregationBucket[];
+    assignees: SearchAggregationBucket[];
+    tags: SearchAggregationBucket[];
+    documentNames: SearchAggregationBucket[];
+    specialMentionMatterArticle: SearchAggregationBucket[];
+    rejectionReasonArticle: SearchAggregationBucket[];
+    priorityClaims: SearchAggregationBucket[];
+};
+
 export interface ApiResponseSuccess {
     page: number;
     size: number;
     total: number;
     hits: Hit[];
-    aggregations: {
-        applicants: { key: string; doc_count: number }[];
-        inventors: { key: string; doc_count: number }[];
-        assignees: { key: string; doc_count: number }[];
-        tags: { key: string; doc_count: number }[];
-        documentNames: { key: string; doc_count: number }[];
-        specialMentionMatterArticle: { key: string; doc_count: number }[];
-        rejectionReasonArticle: { key: string; doc_count: number }[];
-        priorityClaims: { key: string; doc_count: number }[];
-    }
+    aggregations: SearchAggregations;
 };
 
 export interface ApiResponseError {
