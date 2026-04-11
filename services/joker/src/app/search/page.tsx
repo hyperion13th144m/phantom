@@ -1,339 +1,197 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import ErrorMessage from "@/components/error-message";
-import HitResults from "@/components/hit-results";
-import Pagination from "@/components/pagination";
-import SimpleInput from "@/components/simple-input";
 import {
-  ApiResponse,
-  ApiResponseError,
-  ApiResponseSuccess,
-} from "@/interfaces/search-results";
+  buildSearchParams,
+  getInitialFilters,
+  MAX_PAGE,
+  parseSearchQuery,
+  SearchForm,
+  SearchResults,
+  useSearch,
+  type FilterParam,
+  type SearchFilters,
+  type SearchQuery,
+} from "@/components/search";
 import { clamp } from "@/lib/helpers";
 
-const MIN_PAGE = 1;
-const MAX_PAGE = 100000;
-const MIN_SIZE = 1;
-const MAX_SIZE = 100;
-
-type SearchQuery = {
-  q: string;
-  page: number;
-  size: number;
-  applicant: string;
-  inventor: string;
-  assignee: string;
-  tag: string;
-  documentName: string;
-  specialMentionMatterArticle: string;
-  rejectionReasonArticle: string;
-  priorityClaims: string;
+type ContentProps = {
+  initialQuery: SearchQuery;
 };
 
-type AggregationKey = keyof ApiResponseSuccess["aggregations"];
-type FilterParam = Exclude<keyof SearchQuery, "q" | "page" | "size">;
-
-type FilterDefinition = {
-  key: AggregationKey;
+type ActiveSearchFilter = {
+  key: string;
   label: string;
-  param: FilterParam;
+  value: string;
 };
 
-const FILTERS: FilterDefinition[] = [
-  { key: "applicants", label: "出願人", param: "applicant" },
-  { key: "inventors", label: "発明者", param: "inventor" },
-  { key: "assignees", label: "担当者", param: "assignee" },
-  { key: "tags", label: "タグ", param: "tag" },
-  { key: "documentNames", label: "文書名", param: "documentName" },
-  {
-    key: "specialMentionMatterArticle",
-    label: "特記事項",
-    param: "specialMentionMatterArticle",
-  },
-  {
-    key: "rejectionReasonArticle",
-    label: "拒絶理由",
-    param: "rejectionReasonArticle",
-  },
-  { key: "priorityClaims", label: "優先権", param: "priorityClaims" },
-];
+const searchFilterLabels: Record<keyof SearchFilters, string> = {
+  applicant: "出願人",
+  inventor: "発明者",
+  assignee: "担当者",
+  tag: "タグ",
+  documentName: "文書名",
+  specialMentionMatterArticle: "特記事項",
+  rejectionReasonArticle: "拒絶理由",
+  priorityClaims: "優先権",
+};
 
-function parseSearchQuery(sp: ReturnType<typeof useSearchParams>): SearchQuery {
-  return {
-    q: sp.get("q") ?? "",
-    page: clamp(Number(sp.get("page") ?? "1") || 1, MIN_PAGE, MAX_PAGE),
-    size: clamp(Number(sp.get("size") ?? "10") || 10, MIN_SIZE, MAX_SIZE),
-    applicant: sp.get("applicant") ?? "",
-    inventor: sp.get("inventor") ?? "",
-    assignee: sp.get("assignee") ?? "",
-    tag: sp.get("tag") ?? "",
-    documentName: sp.get("documentName") ?? "",
-    specialMentionMatterArticle: sp.get("specialMentionMatterArticle") ?? "",
-    rejectionReasonArticle: sp.get("rejectionReasonArticle") ?? "",
-    priorityClaims: sp.get("priorityClaims") ?? "",
-  };
-}
+function getActiveSearchFilters(
+  q: string,
+  filters: SearchFilters,
+): ActiveSearchFilter[] {
+  const items: ActiveSearchFilter[] = [];
 
-function buildSearchParams(query: SearchQuery): URLSearchParams {
-  const params = new URLSearchParams();
+  if (q.trim()) {
+    items.push({ key: "q", label: "キーワード", value: q.trim() });
+  }
 
-  if (query.q.trim()) params.set("q", query.q.trim());
-  params.set("page", String(query.page));
-  params.set("size", String(query.size));
-  params.set("withHighlight", "true");
-
-  FILTERS.forEach(({ param }) => {
-    const value = query[param];
-    if (value) params.set(param, value);
-  });
-
-  return params;
-}
-
-function SearchPageContent() {
-  const router = useRouter();
-  const sp = useSearchParams();
-  const queryFromUrl = parseSearchQuery(sp);
-
-  const [q, setQ] = useState(queryFromUrl.q);
-  const [page, setPage] = useState(queryFromUrl.page);
-  const [size, setSize] = useState(queryFromUrl.size);
-  const [filters, setFilters] = useState<Record<FilterParam, string>>({
-    applicant: queryFromUrl.applicant,
-    inventor: queryFromUrl.inventor,
-    assignee: queryFromUrl.assignee,
-    tag: queryFromUrl.tag,
-    documentName: queryFromUrl.documentName,
-    specialMentionMatterArticle: queryFromUrl.specialMentionMatterArticle,
-    rejectionReasonArticle: queryFromUrl.rejectionReasonArticle,
-    priorityClaims: queryFromUrl.priorityClaims,
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ApiResponseSuccess | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    setQ(queryFromUrl.q);
-    setPage(queryFromUrl.page);
-    setSize(queryFromUrl.size);
-    setFilters({
-      applicant: queryFromUrl.applicant,
-      inventor: queryFromUrl.inventor,
-      assignee: queryFromUrl.assignee,
-      tag: queryFromUrl.tag,
-      documentName: queryFromUrl.documentName,
-      specialMentionMatterArticle: queryFromUrl.specialMentionMatterArticle,
-      rejectionReasonArticle: queryFromUrl.rejectionReasonArticle,
-      priorityClaims: queryFromUrl.priorityClaims,
-    });
-  }, [
-    queryFromUrl.q,
-    queryFromUrl.page,
-    queryFromUrl.size,
-    queryFromUrl.applicant,
-    queryFromUrl.inventor,
-    queryFromUrl.assignee,
-    queryFromUrl.tag,
-    queryFromUrl.documentName,
-    queryFromUrl.specialMentionMatterArticle,
-    queryFromUrl.rejectionReasonArticle,
-    queryFromUrl.priorityClaims,
-  ]);
-
-  const fetchSearch = useCallback(async (query: SearchQuery) => {
-    const params = buildSearchParams(query);
-
-    setLoading(true);
-    setErr(null);
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_PATH}/api/search?${params.toString()}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-      const json: ApiResponse = await res.json();
-      if (!res.ok) {
-        const e = json as ApiResponseError;
-        throw new Error(e?.message || e?.error || `HTTP ${res.status}`);
+  (Object.entries(filters) as Array<[keyof SearchFilters, string]>).forEach(
+    ([key, value]) => {
+      if (value.trim()) {
+        items.push({
+          key,
+          label: searchFilterLabels[key],
+          value: value.trim(),
+        });
       }
-      setData(json as ApiResponseSuccess);
-    } catch (e: unknown) {
-      setErr((e as Error)?.message ?? String(e));
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+  );
+
+  return items;
+}
+
+function SearchPageSection({ initialQuery }: ContentProps) {
+  const router = useRouter();
+  const [q, setQ] = useState(initialQuery.q);
+  const [size, setSize] = useState(initialQuery.size);
+  const [filters, setFilters] = useState<SearchFilters>(
+    getInitialFilters(initialQuery),
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { data, err, fetchSearch, loading } = useSearch();
+  const activeFilters = useMemo(
+    () => getActiveSearchFilters(q, filters),
+    [q, filters],
+  );
 
   useEffect(() => {
-    fetchSearch(queryFromUrl);
-  }, [
-    fetchSearch,
-    queryFromUrl.q,
-    queryFromUrl.page,
-    queryFromUrl.size,
-    queryFromUrl.applicant,
-    queryFromUrl.inventor,
-    queryFromUrl.assignee,
-    queryFromUrl.tag,
-    queryFromUrl.documentName,
-    queryFromUrl.specialMentionMatterArticle,
-    queryFromUrl.rejectionReasonArticle,
-    queryFromUrl.priorityClaims,
-  ]);
+    fetchSearch(initialQuery);
+  }, [fetchSearch, initialQuery]);
 
   function pushQuery(next: SearchQuery) {
     router.push(`/search?${buildSearchParams(next).toString()}`);
   }
 
   function submit() {
-    pushQuery({ ...queryFromUrl, ...filters, q, size, page: 1 });
+    pushQuery({ ...initialQuery, ...filters, q, size, page: 1 });
     setIsDrawerOpen(false);
   }
 
-  function onFilterChange(param: FilterParam, value: string) {
+  function handleFilterChange(param: FilterParam, value: string) {
     const nextFilters = { ...filters, [param]: value };
     setFilters(nextFilters);
-    pushQuery({ ...queryFromUrl, ...nextFilters, q, size, page: 1 });
+    pushQuery({ ...initialQuery, ...nextFilters, q, size, page: 1 });
     setIsDrawerOpen(false);
   }
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.size)) : 1;
 
-  const filterForm = (
-    <div className="flex gap-4 flex-wrap">
-      {FILTERS.map((filter) => {
-        const aggregation = data?.aggregations?.[filter.key];
-        if (!aggregation || aggregation.length === 0) return null;
-
-        return (
-          <div key={filter.key} className="flex-1 min-w-[220px]">
-            <label className="text-sm font-semibold text-gray-700 mb-1 block">
-              {filter.label}
-            </label>
-            <select
-              value={filters[filter.param]}
-              onChange={(e) => onFilterChange(filter.param, e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            >
-              <option value="">すべて</option>
-              {aggregation.slice(0, 20).map((bucket) => (
-                <option key={bucket.key} value={bucket.key}>
-                  {bucket.key} ({bucket.doc_count})
-                </option>
-              ))}
-            </select>
-          </div>
-        );
-      })}
-    </div>
-  );
-
   return (
-    <div className="max-w-[980px] mx-auto my-6">
-      <div className="md:hidden sticky top-12 z-40 bg-white px-2 py-2 border-b border-gray-200">
-        <button
-          onClick={() => setIsDrawerOpen(true)}
-          className="w-full px-4 py-2 rounded border border-gray-800 bg-gray-800 text-white"
-        >
-          検索条件を開く
-        </button>
-      </div>
-
-      <div className="hidden md:block bg-white sticky top-12 z-40 px-2 py-4">
-        <SimpleInput
-          value={q}
-          onChange={setQ}
-          onSubmit={submit}
-          size={size}
-          onSizeChange={setSize}
-        />
-        {filterForm}
-      </div>
-
-      {isDrawerOpen && (
-        <div className="md:hidden fixed inset-0 z-50">
-          <button
-            aria-label="ドロワーを閉じる"
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setIsDrawerOpen(false)}
-          />
-          <div className="absolute right-0 top-0 h-full w-[92%] max-w-md bg-white shadow-xl overflow-y-auto p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">検索条件</h2>
-              <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="px-3 py-1 rounded border border-gray-300 text-sm"
-              >
-                閉じる
-              </button>
-            </div>
-            <SimpleInput
-              value={q}
-              onChange={setQ}
-              onSubmit={submit}
-              size={size}
-              onSizeChange={setSize}
-            />
-            {filterForm}
+    <div className="min-h-screen bg-slate-100 px-4 py-8">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div className="rounded-3xl bg-gray-100 px-6 py-8 text-black shadow-sm">
+          <div className="max-w-3xl">
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+              全文検索
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-black">
+              キーワード検索に加えて、出願人、発明者、文書名、タグなどの集計結果から段階的に絞り込めます。
+              ハイライトと図面サムネイルを見ながら関連文書をすばやく確認できます。
+            </p>
           </div>
         </div>
-      )}
 
-      <div className="flex justify-center mt-2">
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
+        <SearchForm
+          data={data}
+          filters={filters}
+          isDrawerOpen={isDrawerOpen}
+          onCloseDrawer={() => setIsDrawerOpen(false)}
+          onFilterChange={handleFilterChange}
+          onOpenDrawer={() => setIsDrawerOpen(true)}
+          onQueryChange={setQ}
+          onSizeChange={setSize}
+          onSubmit={submit}
+          q={q}
+          size={size}
+        />
+
+        {activeFilters.length > 0 && (
+          <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-slate-900">
+                  現在の検索条件
+                </div>
+                <p className="mt-1 text-sm text-slate-600">
+                  条件を保ったまま、集計からさらに絞り込みできます。
+                </p>
+              </div>
+              <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                {activeFilters.length} 条件
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {activeFilters.map((filter) => (
+                <span
+                  key={filter.key}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700"
+                >
+                  {filter.label}: {filter.value}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <SearchResults
+          data={data}
+          err={err}
+          keywords={initialQuery.q}
           loading={loading}
-          totalItems={data?.total}
           onPageChange={(newPage) => {
             const clampedPage = clamp(
               newPage,
-              MIN_PAGE,
+              1,
               Math.min(totalPages, MAX_PAGE),
             );
             pushQuery({
-              ...queryFromUrl,
-              ...filters,
-              q: queryFromUrl.q,
-              size: queryFromUrl.size,
+              ...initialQuery,
               page: clampedPage,
             });
           }}
+          page={initialQuery.page}
+          totalPages={totalPages}
         />
       </div>
-
-      {err && <ErrorMessage err={err} />}
-
-      {data && (
-        <div className="flex flex-col gap-2 mt-3">
-          {data.hits.map((hit) => (
-            <div key={hit.id} className="border border-gray-300 rounded-xl p-3">
-              <HitResults hitResult={hit} keywords={queryFromUrl.q} />
-            </div>
-          ))}
-          {data.hits.length === 0 && (
-            <div className="text-gray-600 p-3 border border-gray-300 rounded-xl text-center">
-              ヒットがありませんでした。
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
+}
+
+function SearchPageContent() {
+  const searchParams = useSearchParams();
+  const searchKey = searchParams.toString();
+  const initialQuery = parseSearchQuery(searchParams);
+
+  return <SearchPageSection key={searchKey} initialQuery={initialQuery} />;
 }
 
 export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-[980px] mx-auto my-6 text-center">
+        <div className="mx-auto my-6 max-w-[980px] text-center">
           読み込み中...
         </div>
       }

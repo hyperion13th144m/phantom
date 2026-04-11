@@ -114,7 +114,7 @@ function DocListPageSection({ initialForm }: ContentProps) {
   return (
     <div className="min-h-screen bg-slate-100 px-4 py-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 rounded-3xl bg-red-50 px-6 py-8 text-black shadow-sm">
+        <div className="mb-8 rounded-3xl bg-gray-100 px-6 py-8 text-black shadow-sm">
           <div className="max-w-3xl">
             <h1 className="mt-3 text-3xl font-semibold tracking-tight">
               書誌検索
