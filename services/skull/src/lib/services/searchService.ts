@@ -7,6 +7,12 @@ export async function searchDocumentsWithMetadata(params: {
     q: string;
     page: number;
     size: number;
+    applicants?: string[];
+    inventors?: string[];
+    law?: string[];
+    documentName?: string[];
+    tags?: string[];
+    assignees?: string[];
 }): Promise<SearchResponse> {
     const result = await searchDocuments(params);
     const docIds = result.items.map((item) => item.docId);
@@ -27,5 +33,6 @@ export async function searchDocumentsWithMetadata(params: {
         size: params.size,
         total: result.total,
         items,
+        aggregations: result.aggregations,
     };
 }

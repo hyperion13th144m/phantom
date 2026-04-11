@@ -3,19 +3,88 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #f9f242;
+  --secondary: #4255f9;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f1117;
+    --foreground: #e8eaf0;
+  }
+
+  /* カード・コンテナ背景 */
+  .bg-white {
+    background-color: rgb(26 30 40);
+  }
+  .bg-zinc-50 {
+    background-color: rgb(10 12 18);
+  }
+  .bg-gray-50 {
+    background-color: rgb(36 40 52);
+  }
+  .bg-gray-100 {
+    background-color: rgb(50 55 70);
+  }
+
+  /* テキスト */
+  .text-gray-400 {
+    color: rgb(120 130 150);
+  }
+  .text-gray-500 {
+    color: rgb(150 160 178);
+  }
+  .text-gray-600 {
+    color: rgb(185 193 210);
+  }
+  .text-gray-700 {
+    color: rgb(210 216 228);
+  }
+  .text-gray-800 {
+    color: rgb(228 232 240);
+  }
+  .text-black {
+    color: rgb(232 234 240);
+  }
+  .text-red-800 {
+    color: rgb(252 165 165);
+  }
+  .text-gray-800.border-gray-200 {
+    border-color: rgb(55 62 80);
+  }
+
+  /* ボーダー */
+  .border-gray-200 {
+    border-color: rgb(55 62 80);
+  }
+  /* デフォルト border カラー */
+  .border,
+  .border-b {
+    border-color: rgb(55 62 80);
+  }
+
+  /* ホバー */
+  .hover\:bg-gray-50:hover {
+    background-color: rgb(36 40 52);
+  }
+
+  /* フォームコントロール */
+  select,
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea {
+    background-color: rgb(26 30 40);
+    color: rgb(228 232 240);
+    border-color: rgb(55 62 80);
+    color-scheme: dark;
   }
 }
 

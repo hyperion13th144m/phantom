@@ -111,7 +111,7 @@ export default function SyncStatusTable({ items }: SyncStatusTableProps) {
 
                                     <td className="border-b px-4 py-3">
                                         <Link
-                                            href={`/docs/${encodeURIComponent(item.docId)}`}
+                                            href={`${process.env.NEXT_PUBLIC_BASE_PATH}/docs/${encodeURIComponent(item.docId)}`}
                                             className="rounded border px-3 py-1 hover:bg-gray-50"
                                         >
                                             詳細

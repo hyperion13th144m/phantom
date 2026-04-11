@@ -17,7 +17,7 @@ export default function ResyncButton({ docId }: ResyncButtonProps) {
         setMessage("");
 
         try {
-            const res = await fetch("/api/metadata/sync", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/metadata/sync`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

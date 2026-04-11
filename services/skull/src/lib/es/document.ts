@@ -29,16 +29,28 @@ export async function getDocumentById(
                 ? source.tags.filter((v): v is string => typeof v === "string")
                 : undefined,
             independentClaims:
-                typeof source.independentClaims === "string"
-                    ? source.independentClaims
+                Array.isArray(source.independentClaims)
+                    ? source.independentClaims.filter((v): v is string => typeof v === "string")
                     : undefined,
             dependentClaims:
-                typeof source.dependentClaims === "string"
-                    ? source.dependentClaims
+                Array.isArray(source.dependentClaims)
+                    ? source.dependentClaims.filter((v): v is string => typeof v === "string")
                     : undefined,
-            embodiments:
-                typeof source.embodiments === "string"
-                    ? source.embodiments
+            contentsOfAmendment:
+                typeof source.contentsOfAmendment === "string"
+                    ? source.contentsOfAmendment
+                    : undefined,
+            conclusionPartArticle:
+                typeof source.conclusionPartArticle === "string"
+                    ? source.conclusionPartArticle
+                    : undefined,
+            draftingBody:
+                typeof source.draftingBody === "string"
+                    ? source.draftingBody
+                    : undefined,
+            opinionContentsArticle:
+                typeof source.opinionContentsArticle === "string"
+                    ? source.opinionContentsArticle
                     : undefined,
         };
     } catch (error: unknown) {

@@ -60,7 +60,7 @@ export default function MetadataEditor({
                 checked,
             };
 
-            const res = await fetch(`/api/metadata/${encodeURIComponent(docId)}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/metadata/${encodeURIComponent(docId)}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export default function MetadataEditor({
             className="space-y-6 rounded-xl border bg-white p-6 shadow-sm"
         >
             <div className="space-y-1">
-                <h2 className="text-xl font-semibold">付加データ編集</h2>
+                <h2 className="text-xl font-semibold">メタデータ編集</h2>
                 <p className="text-sm text-gray-600">docId: {docId}</p>
                 {updatedAt ? (
                     <p className="text-xs text-gray-500">updatedAt: {updatedAt}</p>
@@ -100,7 +100,7 @@ export default function MetadataEditor({
 
             <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">assignees</label>
+                    <label className="block text-sm font-medium">担当者</label>
                     <textarea
                         value={assigneesText}
                         onChange={(e) => setAssigneesText(e.target.value)}
@@ -111,7 +111,7 @@ export default function MetadataEditor({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">tags</label>
+                    <label className="block text-sm font-medium">タグ</label>
                     <textarea
                         value={tagsText}
                         onChange={(e) => setTagsText(e.target.value)}
@@ -122,7 +122,7 @@ export default function MetadataEditor({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">extraNumbers</label>
+                    <label className="block text-sm font-medium">追加整理番号</label>
                     <textarea
                         value={extraNumbersText}
                         onChange={(e) => setExtraNumbersText(e.target.value)}
@@ -133,7 +133,7 @@ export default function MetadataEditor({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">memo</label>
+                    <label className="block text-sm font-medium">メモ</label>
                     <textarea
                         value={memo}
                         onChange={(e) => setMemo(e.target.value)}
@@ -152,7 +152,7 @@ export default function MetadataEditor({
                     onChange={(e) => setChecked(e.target.checked)}
                 />
                 <label htmlFor="checked" className="text-sm font-medium">
-                    checked
+                    チェック済み
                 </label>
             </div>
 

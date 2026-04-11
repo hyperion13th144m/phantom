@@ -35,8 +35,18 @@ export type SearchResultItem = {
     assignee?: string | null;
     tags?: string[];
     abstract?: string;
+    documentName?: string;
     metadata?: MetadataRecord | null;
     syncStatus?: MetadataSyncStatusRecord | null;
+};
+
+export type SearchAggregations = {
+    applicants: string[];
+    inventors: string[];
+    law: string[];
+    documentName: string[];
+    tags: string[];
+    assignees: string[];
 };
 
 export type SearchResponse = {
@@ -44,4 +54,5 @@ export type SearchResponse = {
     size: number;
     total: number;
     items: SearchResultItem[];
+    aggregations: SearchAggregations;
 };

@@ -27,4 +27,4 @@ EXPOSE 4321
 ENV LANG=ja_JP.UTF-8
 ENV TZ=Asia/Tokyo
 USER $USERNAME
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ["node", "./dist/server/entry.mjs" ]

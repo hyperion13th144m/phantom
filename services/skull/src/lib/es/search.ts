@@ -1,40 +1,94 @@
-import type { SearchResultItem } from "../types/metadata";
+import type { QueryDslQueryContainer } from "@elastic/elasticsearch/lib/api/types";
+import type { SearchAggregations, SearchResultItem } from "../types/metadata";
 import { ES_INDEX, esClient } from "./client";
+
+const AGG_SIZE = 200;
 
 export async function searchDocuments(params: {
     q: string;
     page: number;
     size: number;
+    applicants?: string[];
+    inventors?: string[];
+    law?: string[];
+    documentName?: string[];
+    tags?: string[];
+    assignees?: string[];
 }): Promise<{
     total: number;
     items: SearchResultItem[];
+    aggregations: SearchAggregations;
 }> {
     const from = (params.page - 1) * params.size;
+
+    const filterClauses: QueryDslQueryContainer[] = [];
+    if (params.applicants?.length) filterClauses.push({ terms: { applicants: params.applicants } });
+    if (params.inventors?.length) filterClauses.push({ terms: { inventors: params.inventors } });
+    if (params.law?.length) filterClauses.push({ terms: { law: params.law } });
+    if (params.documentName?.length) filterClauses.push({ terms: { documentName: params.documentName } });
+    if (params.tags?.length) filterClauses.push({ terms: { tags: params.tags } });
+    if (params.assignees?.length) filterClauses.push({ terms: { assignees: params.assignees } });
+
+    let query: QueryDslQueryContainer;
+    if (filterClauses.length > 0) {
+        query = {
+            bool: {
+                ...(params.q
+                    ? {
+                        must: [{
+                            multi_match: {
+                                query: params.q,
+                                fields: [
+                                    "inventionTitle^3",
+                                    "abstract^2",
+                                    "independentClaims",
+                                    "dependentClaims",
+                                    "embodiments",
+                                    "applicants",
+                                    "assignee",
+                                    "tags",
+                                ],
+                            },
+                        }],
+                    }
+                    : {}),
+                filter: filterClauses,
+            },
+        };
+    } else if (params.q) {
+        query = {
+            multi_match: {
+                query: params.q,
+                fields: [
+                    "inventionTitle^3",
+                    "abstract^2",
+                    "independentClaims",
+                    "dependentClaims",
+                    "embodiments",
+                    "applicants",
+                    "assignee",
+                    "tags",
+                ],
+            },
+        };
+    } else {
+        query = { match_all: {} };
+    }
 
     const response = await esClient.search({
         index: ES_INDEX,
         from,
         size: params.size,
-        query: params.q
-            ? {
-                multi_match: {
-                    query: params.q,
-                    fields: [
-                        "inventionTitle^3",
-                        "abstract^2",
-                        "independentClaims",
-                        "dependentClaims",
-                        "embodiments",
-                        "applicants",
-                        "assignee",
-                        "tags",
-                    ],
-                },
-            }
-            : {
-                match_all: {},
-            },
+        query,
         sort: [{ _score: { order: "desc" } }],
+        aggs: {
+            applicants: { terms: { field: "applicants", size: AGG_SIZE } },
+            inventors:  { terms: { field: "inventors",  size: AGG_SIZE } },
+            law:        { terms: { field: "law",        size: AGG_SIZE } },
+            documentName: { terms: { field: "documentName", size: AGG_SIZE } },
+            tags:       { terms: { field: "tags",       size: AGG_SIZE } },
+            assignees:  { terms: { field: "assignees",   size: AGG_SIZE } },
+        },
     });
 
     const total =
@@ -61,8 +115,26 @@ export async function searchDocuments(params: {
                 : undefined,
             abstract:
                 typeof source.abstract === "string" ? source.abstract : undefined,
+            documentName:
+                typeof source.documentName === "string" ? source.documentName : undefined,
         };
     });
 
-    return { total, items };
+    function extractBucketKeys(aggName: string): string[] {
+        const agg = (response.aggregations as Record<string, unknown> | undefined)?.[aggName];
+        if (!agg || typeof agg !== "object") return [];
+        const buckets = (agg as { buckets?: Array<{ key: string }> }).buckets ?? [];
+        return buckets.map((b) => b.key);
+    }
+
+    const aggregations: SearchAggregations = {
+        applicants:   extractBucketKeys("applicants"),
+        inventors:    extractBucketKeys("inventors"),
+        law:          extractBucketKeys("law"),
+        documentName: extractBucketKeys("documentName"),
+        tags:         extractBucketKeys("tags"),
+        assignees:    extractBucketKeys("assignees"),
+    };
+
+    return { total, items, aggregations };
 }

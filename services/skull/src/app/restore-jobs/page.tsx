@@ -38,7 +38,7 @@ function buildHref(params: { limit: number; offset: number }) {
         limit: String(params.limit),
         offset: String(params.offset),
     });
-    return `/restore-jobs?${sp.toString()}`;
+    return `${process.env.NEXT_PUBLIC_BASE_PATH}/restore-jobs?${sp.toString()}`;
 }
 
 export default async function RestoreJobsPage({ searchParams }: PageProps) {
@@ -57,7 +57,7 @@ export default async function RestoreJobsPage({ searchParams }: PageProps) {
                 </div>
 
                 <Link
-                    href="/sync-status"
+                    href={`${process.env.NEXT_PUBLIC_BASE_PATH}/sync-status`}
                     className="rounded-lg border px-4 py-2 hover:bg-gray-50"
                 >
                     sync statusへ

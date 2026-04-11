@@ -10,7 +10,7 @@ type DocumentSummaryProps = {
 
 function Section(props: {
     title: string;
-    value?: string | null;
+    value?: string | string[] | null;
     multiline?: boolean;
 }) {
     const { title, value, multiline } = props;
@@ -25,7 +25,7 @@ function Section(props: {
                         : "rounded-lg bg-gray-50 p-3 text-sm break-words"
                 }
             >
-                {value && value.trim() ? value : "—"}
+                {Array.isArray(value) ? value.join(", ") : value && value.trim() ? value : "—"}
             </div>
         </section>
     );
@@ -61,7 +61,9 @@ export default function DocumentSummary({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-2">
                     <h2 className="text-xl font-semibold">文書概要</h2>
-                    <p className="text-sm text-gray-600">docId: {document.docId}</p>
+                    <p className="text-sm text-blue-600">
+                        <a href={`${process.env.NEXT_PUBLIC_DOCUMENT_BASE_URL}/${document.docId}`}>詳細表示</a>
+                    </p>
                 </div>
 
                 <div className="space-y-3">
@@ -86,14 +88,17 @@ export default function DocumentSummary({
                     title="出願人"
                     value={document.applicants?.join(", ") ?? ""}
                 />
-                <Section title="assignee" value={document.assignee ?? ""} />
-                <Section title="tags" value={document.tags?.join(", ") ?? ""} />
+                <Section title="担当者" value={document.assignee ?? ""} />
+                <Section title="タグ" value={document.tags?.join(", ") ?? ""} />
             </div>
 
             <Section title="要約" value={document.abstract} multiline />
             <Section title="独立請求項" value={document.independentClaims} multiline />
             <Section title="従属請求項" value={document.dependentClaims} multiline />
-            <Section title="実施形態" value={document.embodiments} multiline />
+            <Section title="補正内容" value={document.contentsOfAmendment} multiline />
+            <Section title="拒絶理由結論" value={document.conclusionPartArticle} multiline />
+            <Section title="拒絶理由" value={document.draftingBody} multiline />
+            <Section title="意見内容" value={document.opinionContentsArticle} multiline />
         </div>
     );
 }

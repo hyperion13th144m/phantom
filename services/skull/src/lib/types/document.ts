@@ -7,9 +7,12 @@ export type DocumentDetail = {
     applicants?: string[];
     assignee?: string | null;
     tags?: string[];
-    independentClaims?: string;
-    dependentClaims?: string;
-    embodiments?: string;
+    independentClaims?: string[];
+    dependentClaims?: string[];
+    contentsOfAmendment?: string;
+    conclusionPartArticle?: string;
+    draftingBody?: string;
+    opinionContentsArticle?: string;
 };
 
 export type DocumentWithMetadata = {

@@ -12,7 +12,24 @@ export async function GET(req: NextRequest) {
             100,
         );
 
-        const result = await searchDocumentsWithMetadata({ q, page, size });
+        const parseCSV = (key: string): string[] | undefined => {
+            const raw = searchParams.get(key);
+            if (!raw) return undefined;
+            const values = raw.split(",").map((v) => v.trim()).filter(Boolean);
+            return values.length > 0 ? values : undefined;
+        };
+
+        const result = await searchDocumentsWithMetadata({
+            q,
+            page,
+            size,
+            applicants: parseCSV("applicants"),
+            inventors: parseCSV("inventors"),
+            law: parseCSV("law"),
+            documentName: parseCSV("documentName"),
+            tags: parseCSV("tags"),
+            assignees: parseCSV("assignees"),
+        });
 
         return NextResponse.json(result, { status: 200 });
     } catch (error) {

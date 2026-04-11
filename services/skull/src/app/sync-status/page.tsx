@@ -54,7 +54,7 @@ function buildPageHref(params: {
         limit: String(params.limit),
         offset: String(params.offset),
     });
-    return `/sync-status?${sp.toString()}`;
+    return `${process.env.NEXT_PUBLIC_BASE_PATH}/sync-status?${sp.toString()}`;
 }
 
 export default async function SyncStatusPage({
@@ -88,7 +88,7 @@ export default async function SyncStatusPage({
 
                 <div className="flex gap-2">
                     <Link
-                        href="/search"
+                        href={`${process.env.NEXT_PUBLIC_BASE_PATH}/search`}
                         className="rounded-lg border px-4 py-2 hover:bg-gray-50"
                     >
                         検索へ
@@ -99,7 +99,7 @@ export default async function SyncStatusPage({
             <RestorePanel defaultBatchSize={200} defaultLimit={1000} />
 
             <form
-                action="/sync-status"
+                action={`${process.env.NEXT_PUBLIC_BASE_PATH}/sync-status`}
                 method="GET"
                 className="rounded-xl border bg-white p-4 shadow-sm"
             >

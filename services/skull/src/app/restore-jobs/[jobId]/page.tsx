@@ -53,7 +53,7 @@ export default async function RestoreJobDetailPage({ params, searchParams }: Pag
                 </div>
 
                 <Link
-                    href="/restore-jobs"
+                    href={`${process.env.NEXT_PUBLIC_BASE_PATH}/restore-jobs`}
                     className="rounded-lg border px-4 py-2 hover:bg-gray-50"
                 >
                     履歴一覧へ

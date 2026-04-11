@@ -17,9 +17,11 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next/standalone ./
-COPY scripts/init-db.ts ./
+COPY scripts/init-db.ts ./scripts/init-db.ts
+COPY entrypoint.sh ./entrypoint.sh
 
 RUN npm install --omit=dev --only=production
+RUN chmod +x ./entrypoint.sh
 USER node
 EXPOSE 3000
-CMD  [ "node", "server.js" ]
+ENTRYPOINT [ "./entrypoint.sh" ]

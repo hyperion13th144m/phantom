@@ -63,7 +63,7 @@ export default function BulkEditToolbar({
         setSaveState({ type: "idle" });
 
         try {
-            const res = await fetch("/api/metadata/bulk", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/metadata/bulk`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export default function BulkEditToolbar({
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">tags を追加</label>
+                    <label className="block text-sm font-medium">タグを追加</label>
                     <textarea
                         value={tagsText}
                         onChange={(e) => setTagsText(e.target.value)}
@@ -143,7 +143,7 @@ export default function BulkEditToolbar({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">assignees を追加</label>
+                    <label className="block text-sm font-medium">担当者を追加</label>
                     <textarea
                         value={assigneesText}
                         onChange={(e) => setAssigneesText(e.target.value)}
@@ -154,7 +154,7 @@ export default function BulkEditToolbar({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">extraNumbers を追加</label>
+                    <label className="block text-sm font-medium">整理番号を追加</label>
                     <textarea
                         value={extraNumbersText}
                         onChange={(e) => setExtraNumbersText(e.target.value)}
@@ -165,18 +165,18 @@ export default function BulkEditToolbar({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">memo に追記</label>
+                    <label className="block text-sm font-medium">メモに追記</label>
                     <textarea
                         value={memoAppend}
                         onChange={(e) => setMemoAppend(e.target.value)}
                         rows={4}
                         className="w-full rounded-lg border px-3 py-2 text-sm"
-                        placeholder="各文書の memo 末尾に追記します"
+                        placeholder="各文書のメモ末尾に追記します"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label className="block text-sm font-medium">checked</label>
+                    <label className="block text-sm font-medium">チェック状態</label>
                     <select
                         value={checkedMode}
                         onChange={(e) =>

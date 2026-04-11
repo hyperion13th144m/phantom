@@ -71,7 +71,7 @@ export default function RestorePanel({
                 };
             }
 
-            const res = await fetch("/api/metadata/restore", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/metadata/restore`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -219,7 +219,7 @@ export default function RestorePanel({
                 </button>
 
                 <a
-                    href="/restore-jobs"
+                    href={`${process.env.NEXT_PUBLIC_BASE_PATH}/restore-jobs`}
                     className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-50"
                 >
                     restore履歴
